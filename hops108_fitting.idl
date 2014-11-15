@@ -1,0 +1,60 @@
+outdir = '~/HOPS108/'
+objname = 'HOPS108'
+
+readcol, '~/HOPS108/hops108_CentralSpectrum_B2B.txt',format='D,D,D,D,D',wl_b2b, weight_b2b, flux_b2b, flag_b2b, seg_b2b,/silent
+readcol, '~/HOPS108/hops108_CentralSpectrum_B3A.txt',format='D,D,D,D,D',wl_b2a, weight_b2a, flux_b2a, flag_b2a, seg_b2a,/silent
+readcol, '~/HOPS108/hops108_CentralSpectrum_R1_long.txt',format='D,D,D,D,D',wl_r1l, weight_r1l, flux_r1l, flag_r1l, seg_r1l,/silent
+readcol, '~/HOPS108/hops108_CentralSpectrum_R1_short.txt',format='D,D,D,D,D',wl_r1s, weight_r1s, flux_r1s, flag_r1s, seg_r1s,/silent
+
+flux_b2a = flux_b2a[where(wl_b2a ge 54.80 and wl_b2a le 71.04)]*weight_b2a[where(wl_b2a ge 54.80 and wl_b2a le 71.04)]
+wl_b2a = wl_b2a[where(wl_b2a ge 54.80 and wl_b2a le 71.04)]
+
+flux_b2b = flux_b2b[where(wl_b2b ge 71.04 and wl_b2b le 95.05)]*weight_b2b[where(wl_b2b ge 71.04 and wl_b2b le 95.05)]
+wl_b2b = wl_b2b[where(wl_b2b ge 71.04 and wl_b2b le 95.05)]
+
+flux_r1s = flux_r1s[where(wl_r1s ge 103 and wl_r1s le 143)]*weight_r1s[where(wl_r1s ge 103 and wl_r1s le 143)]
+wl_r1s = wl_r1s[where(wl_r1s ge 103 and wl_r1s le 143)]
+
+flux_r1l = flux_r1l[where(wl_r1l ge 143 and wl_r1l le 190.31)]*weight_r1l[where(wl_r1l ge 143 and wl_r1l le 190.31)]
+wl_r1l = wl_r1l[where(wl_r1l ge 143 and wl_r1l le 190.31)]
+
+wl = [wl_b2a, wl_b2b, wl_r1s, wl_r1l]
+flux = [flux_b2a, flux_b2b, flux_r1s, flux_r1l]
+wl = wl[where(flux gt 0)]
+flux = flux[where(flux gt 0)]
+
+name = '_pacs'
+
+set_plot, 'ps'
+!p.font=0
+loadct,13,/silent
+!p.thick=3 & !x.thick=3 & !y.thick=3
+device, filename = outdir+objname+name+'.eps', /helvetica, /portrait, /encapsulated, isolatin = 1, font_size = 10, decomposed = 0, /color
+plot, wl, flux, xtitle = 'Wavelength (!9m!3m)', ytitle = '!3Flux (Jy)!3',/nodata
+;if objname eq 'EC82' then stop
+if n_elements(wl_b2a) gt 1 then oplot, wl_b2a, flux_b2a, color=60    ;blue
+if n_elements(wl_b2b) gt 1 then oplot, wl_b2b, flux_b2b, color=160   ;green
+if n_elements(wl_r1s) gt 1 then oplot, wl_r1s, flux_r1s, color=237   ;orange
+if n_elements(wl_r1l) gt 1 then oplot, wl_r1l, flux_r1l, color=250   ;red
+al_legend, ['B3A','B2B','R1A','R1B'],textcolors = [60, 160, 237, 250],/right
+device, /close_file,decomposed=1
+!p.multi = 0
+openw, lun, outdir+objname+name+'_trim.txt',/get_lun
+for i = 0, n_elements(wl)-1 do printf, lun, format='(2(g16.6,2X))',wl[i],flux[i]
+free_lun, lun
+close, lun
+
+; keywords setting for "extract_pacs"
+current_obj = objname
+noiselevel = 3 
+ra = 0
+dec = 0
+localbaseline = 10
+global_noise = 20
+fixed_width = 0
+no_plot = 0
+double_gauss = 1
+
+extract_pacs, indir=outdir+'/', filename=current_obj+name+'_trim', outdir=outdir+current_obj+'/advanced_products/', plotdir=outdir+current_obj+'/advanced_products/plots/', noiselevel=noiselevel,$
+						  ra=ra,dec=dec,localbaseline=localbaseline,global_noise=global_noise,fixed_width=fixed_width,/opt_width,/continuum_sub,/flat,object=current_obj,$
+						  no_plot=no_plot,double_gauss=double_gauss

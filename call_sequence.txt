@@ -1,0 +1,96 @@
+ _____
+|BHR71|
+ ¯¯¯¯¯
+#Extract the spectrum from fits file
+<<finalcube>>
+get_pacs, filename=['OBSID_1342212230_blue_finalcubes_stdcalblock_os2.fits','OBSID_1342212231_blue_finalcubes_stdcalblock_os2.fits','OBSID_1342212230_red_finalcubes_stdcalblock_os2.fits',$
+'OBSID_1342212231_red_finalcubes_stdcalblock_os2.fits'], indir='~/bhr71/data/', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/'
+
+
+extract_pacs, indir='~/bhr71/data/', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', pospath='~/bhr71/data/pacs_coord.txt',$
+ noiselevel=3,/test, central9path='/BHR71_V65/central9Spaxels.txt', centralpath='/BHR71_V65/centralSpaxels.txt'
+extract_spire
+
+<<central 1/9 spaxel>>
+get_pacs_1d, indir='~/bhr71/data/BHR71_V65/',filename=['OBSID_1342212230_BHR71_blue_central9Spaxels_PointSourceCorrected_slice_00_os8sf7.fits',$
+'OBSID_1342212231_BHR71_blue_central9Spaxels_PointSourceCorrected_slice_00_os8sf7.fits','OBSID_1342212230_BHR71_red_central9Spaxels_PointSourceCorrected_slice_00_os8sf7.fits',$
+'OBSID_1342212231_BHR71_red_central9Spaxels_PointSourceCorrected_slice_00_os8sf7.fits'],/central9
+
+get_pacs_1d, indir='~/bhr71/data/BHR71_V65/',filename=['OBSID_1342212230_BHR71_blue_centralSpaxel_PointSourceCorrected_Corrected3x3YES_slice_00_os8sf7.fits',$
+'OBSID_1342212231_BHR71_blue_centralSpaxel_PointSourceCorrected_Corrected3x3YES_slice_00_os8sf7.fits','OBSID_1342212230_BHR71_red_centralSpaxel_PointSourceCorrected_Corrected3x3YES_slice_00_os8sf7.fits',$
+'OBSID_1342212231_BHR71_red_centralSpaxel_PointSourceCorrected_Corrected3x3YES_slice_00_os8sf7.fits'],/center,/corrected
+
+get_pacs_1d, indir='~/bhr71/data/BHR71_V65/',filename=['OBSID_1342212230_BHR71_blue_centralSpaxel_PointSourceCorrected_Corrected3x3NO_slice_00_os8sf7.fits',$
+'OBSID_1342212231_BHR71_blue_centralSpaxel_PointSourceCorrected_Corrected3x3NO_slice_00_os8sf7.fits','OBSID_1342212230_BHR71_red_centralSpaxel_PointSourceCorrected_Corrected3x3NO_slice_00_os8sf7.fits',$
+'OBSID_1342212231_BHR71_red_centralSpaxel_PointSourceCorrected_Corrected3x3NO_slice_00_os8sf7.fits'],/center
+
+#Fit the pacs spectrum in each pixel
+readcol, '~/bhr71/data/pacs_coord.txt', format='D,D,D', pix_ind, ra, dec
+for i=1,25 do extract_pacs, indir='~/bhr71/data/', filename='pacs_pixel'+strtrim(string(i),1), outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', pospath='~/bhr71/data/pacs_coord.txt',$
+ noiselevel=3,/test,ra=ra[i-1], dec=dec[i-1]
+ 
+#Fit the pacs spectrum in central9Spaxels & centralSpaxels
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='central9Spaxels', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,ra=180.40109,dec=-65.147993
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='centralSpaxels_correctedYES', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,ra=180.40109,dec=-65.147993
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='centralSpaxels_correctedNO', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,ra=180.40109,dec=-65.147993
+
+#Using local baseline
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='central9Spaxels', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,$
+ra=180.40109,dec=-65.147993,localbaseline=10,/global_noise,/fixed_width
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='centralSpaxels_correctedYES', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,$
+ra=180.40109,dec=-65.147993,localbaseline=10,/global_noise,/fixed_width
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='centralSpaxels_correctedNO', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,$
+ra=180.40109,dec=-65.147993,localbaseline=10,/global_noise,/fixed_width
+
+
+Fit the pacs spectrum in finalcube 3x3 and 5x5 summed
+extract_pacs, indir='~/bhr71/data/', filename='pacs_finalcube_3x3_summed', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,ra=180.40109,dec=-65.147993
+extract_pacs, indir='~/bhr71/data/', filename='pacs_finalcube_5x5_summed', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,ra=180.40109,dec=-65.147993
+
+ _____
+|TMC-1|
+ ¯¯¯¯¯
+ #Extract the spectrum from fits file
+<<finalcube>>
+get_pacs, filename=['OBSID_1342212230_blue_finalcubes_stdcalblock_os2.fits','OBSID_1342212231_blue_finalcubes_stdcalblock_os2.fits','OBSID_1342212230_red_finalcubes_stdcalblock_os2.fits',$
+'OBSID_1342212231_red_finalcubes_stdcalblock_os2.fits'], indir='~/bhr71/data/', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/'
+
+extract_pacs, indir='~/tmc1/data/', outdir='~/tmc1/data/', plotdir='~/tmc1/plots/', pospath='~/tmc1/data/pacs_coord.txt',$
+ noiselevel=3,/test, central9path='/BHR71_V65/central9Spaxels.txt', centralpath='/BHR71_V65/centralSpaxels.txt'
+extract_spire
+
+<<central 1/9 spaxel>>
+get_pacs_1d, indir='~/tmc1/data/',filename=['OBSID_1342225803_TMC1_blue_central9Spaxels_PointSourceCorrected_slice_00_os8sf7.fits',$
+'OBSID_1342225804_TMC1_blue_central9Spaxels_PointSourceCorrected_slice_00_os8sf7.fits','OBSID_1342225803_TMC1_red_central9Spaxels_PointSourceCorrected_slice_00_os8sf7.fits',$
+'OBSID_1342225804_TMC1_red_central9Spaxels_PointSourceCorrected_slice_00_os8sf7.fits'],/central9
+
+get_pacs_1d, indir='~/tmc1/data/',filename=['OBSID_1342225803_TMC1_blue_centralSpaxel_PointSourceCorrected_Corrected3x3YES_slice_00_os8sf7.fits',$
+'OBSID_1342225804_TMC1_blue_centralSpaxel_PointSourceCorrected_Corrected3x3YES_slice_00_os8sf7.fits','OBSID_1342225803_TMC1_red_centralSpaxel_PointSourceCorrected_Corrected3x3YES_slice_00_os8sf7.fits',$
+'OBSID_1342225804_TMC1_red_centralSpaxel_PointSourceCorrected_Corrected3x3YES_slice_00_os8sf7.fits'],/center,/corrected
+
+get_pacs_1d, indir='~/tmc1/data/',filename=['OBSID_1342225803_TMC1_blue_centralSpaxel_PointSourceCorrected_Corrected3x3NO_slice_00_os8sf7.fits',$
+'OBSID_1342225803_TMC1_blue_centralSpaxel_PointSourceCorrected_Corrected3x3NO_slice_00_os8sf7.fits','OBSID_1342225804_TMC1_red_centralSpaxel_PointSourceCorrected_Corrected3x3NO_slice_00_os8sf7.fits',$
+'OBSID_1342225804_TMC1_red_centralSpaxel_PointSourceCorrected_Corrected3x3NO_slice_00_os8sf7.fits'],/center
+
+#Fit the pacs spectrum in each pixel
+readcol, '~/bhr71/data/pacs_coord.txt', format='D,D,D', pix_ind, ra, dec
+for i=1,25 do extract_pacs, indir='~/bhr71/data/', filename='pacs_pixel'+strtrim(string(i),1), outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', pospath='~/bhr71/data/pacs_coord.txt',$
+ noiselevel=3,/test,ra=ra[i-1], dec=dec[i-1]
+ 
+#Fit the pacs spectrum in central9Spaxels & centralSpaxels
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='central9Spaxels', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,ra=180.40109,dec=-65.147993
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='centralSpaxels_correctedYES', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,ra=180.40109,dec=-65.147993
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='centralSpaxels_correctedNO', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,ra=180.40109,dec=-65.147993
+
+#Using local baseline
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='central9Spaxels', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,$
+ra=180.40109,dec=-65.147993,localbaseline=5,/global_noise,/fixed_width
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='centralSpaxels_correctedYES', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,$
+ra=180.40109,dec=-65.147993,localbaseline=5,/global_noise,/fixed_width
+extract_pacs, indir='~/bhr71/data/BHR71_V65/', filename='centralSpaxels_correctedNO', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,$
+ra=180.40109,dec=-65.147993,localbaseline=5,/global_noise,/fixed_width
+
+
+Fit the pacs spectrum in finalcube 3x3 and 5x5 summed
+extract_pacs, indir='~/bhr71/data/', filename='pacs_finalcube_3x3_summed', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,ra=180.40109,dec=-65.147993
+extract_pacs, indir='~/bhr71/data/', filename='pacs_finalcube_5x5_summed', outdir='~/bhr71/data/', plotdir='~/bhr71/plots/', noiselevel=3,/test,ra=180.40109,dec=-65.147993

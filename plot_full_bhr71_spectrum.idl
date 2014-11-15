@@ -1,0 +1,39 @@
+pro full_spec, obj, scale=scale
+
+;obj = 'BHR71'
+
+if not keyword_set(scale) then scale = 0.6
+
+readcol, '~/data/digit_v65/'+obj+'/'+obj+'_centralSpaxel_PointSourceCorrected_CorrectedYES_trim.txt',format='D,D',wl_pacs,flux_pacs
+readcol,'~/data/digit_v65_slim/'+obj+'/data/'+obj+'_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_smooth_sed.txt',format='D,D',wl_pacs_cont,flux_pacs_cont
+readcol,'~/data/digit_v65_slim/'+obj+'/data/'+obj+'_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_flat_spectrum.txt',format='D,D',wl_pacs_flat,flux_pacs_flat
+readcol,'~/data/hipe12spire/'+obj+'/'+obj+'_spire_corrected.txt',format='D,D',wl_spire,flux_spire
+readcol,'~/data/hipe12spire/'+obj+'/data/'+obj+'_spire_corrected_smooth_sed.txt',format='D,D',wl_spire_cont,flux_spire_cont
+readcol,'~/data/hipe12spire/'+obj+'/data/'+obj+'_spire_corrected_flat_spectrum.txt',format='D,D',wl_spire_flat,flux_spire_flat
+
+; Plot
+set_plot,'ps'
+!p.font=0
+loadct,12,/silent
+device, filename='~/bhr71/plots/'+obj+'_full_spectrum.eps',/helvetica,/portrait,/encapsulated,isolatin=1,font_size=14,decomposed=0,/color
+!p.thick=4 & !x.thick=5 & !y.thick=5	
+plot, [wl_pacs,wl_spire],[flux_pacs,flux_spire*scale], /nodata, xtitle='Wavelength ['+greek('mu',/append_font)+'m]',ytitle='Flux Density [Jy]',yrange=[-10,1.1*max([flux_pacs,flux_spire*0.6])],xrange=[40,680],xstyle=1,ystyle=1
+; Original data
+oplot, wl_pacs[where(wl_pacs lt 100)],flux_pacs[where(wl_pacs lt 100)],psym=10
+oplot, wl_pacs[where(wl_pacs ge 100)],flux_pacs[where(wl_pacs ge 100)],psym=10
+oplot, wl_spire,flux_spire*scale,psym=10
+; Continuum
+oplot, wl_pacs_cont[where(wl_pacs lt 100)],flux_pacs_cont[where(wl_pacs lt 100)],psym=10,color=100
+oplot, wl_pacs_cont[where(wl_pacs ge 100)],flux_pacs_cont[where(wl_pacs ge 100)],psym=10,color=100
+oplot, wl_spire_cont,flux_spire_cont*scale,psym=10,color=100
+; Flat noise
+oplot, wl_pacs_flat[where(wl_pacs lt 100)],flux_pacs_flat[where(wl_pacs lt 100)],psym=10,color=10
+oplot, wl_pacs_flat[where(wl_pacs ge 100)],flux_pacs_flat[where(wl_pacs ge 100)],psym=10,color=10
+oplot, wl_spire_flat,flux_spire_flat,psym=10,color=10
+; Legend
+al_legend,['Data','Continuum','Lines+Noise'],textcolor=[0,100,10],/right
+al_legend,[obj],textcolor=[0],/left,box=0
+device, /close_file, decomposed=1
+!p.multi=0
+
+end

@@ -1,0 +1,7 @@
+readcol, '~/pixel_spectrum/extended_correction/SLWC3.txt', wl, cor_ext
+readcol, '~/pixel_spectrum/point/SLWC3.txt', wl, point
+set_plot, 'ps'
+device, filename = 'comparison_point_extended_aft_corretion.ps', /helvetica, /portrait, /encapsulated, isolatin = 1, font_size = 12, decomposed = 0, /color
+!p.thick = 4 & !x.thick = 3 & !y.thick = 3
+plot, wl, point/cor_ext, xtitle = '!9m!3m', ytitle = 'Point / Extended (beamsize corrected)'
+device, /close_file, decomposed = 1
