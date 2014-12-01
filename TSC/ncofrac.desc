@@ -1,0 +1,21 @@
+Hi Mike,
+
+I'm sending several files that contain the results of my collapse code,
+i.e. the Terebey Shu & Cassen 1984 collapse models.
+
+ncofrac.f is fortran code. It shows how to use the data file called
+grid.plt34. This data file contains the numerical solution for the
+TSC collapse model.
+
+I also attach a brief description written by one of my students
+that may be helpful.
+
+We should talk about what you need, and in what format, but
+I am sending this so we can at least get started.
+
+(I'm feeling much better, thanks).
+
+Regards,
+Susan
+
+

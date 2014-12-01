@@ -27,8 +27,8 @@ def grade_dist(filepath,title,outdir):
 #import matplotlib
 #print matplotlib
 
-filepath = '/Users/yaolun/Dropbox/UT-Austin/TA/AST301_Robinson/Exam_11/11141332Z.al.csv'
-title = r'$\mathrm{Exam~11}$'
-outdir = '/Users/yaolun/Dropbox/UT-Austin/TA/AST301_Robinson/Exam_11/'
+filepath = '/Users/yaolun/Dropbox/UT-Austin/TA/AST301_Robinson/Exam_12/11211103Z.al.csv'
+title = r'$\mathrm{Exam~12}$'
+outdir = '/Users/yaolun/Dropbox/UT-Austin/TA/AST301_Robinson/Exam_12/'
 
 grade_dist(filepath,title,outdir)
