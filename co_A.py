@@ -1,4 +1,4 @@
-def co_A(J_low, J_hi):
+def co_line_ref(J_low, J_hi):
 	# Calculate the Einstein-A, upper energy and g-value for 12C16O
 	import numpy as np
 	import astropy.constants as const
@@ -64,4 +64,4 @@ def co_A(J_low, J_hi):
 	for i in range(0,len(J)):
 		print 'CO J=%2d-%2d: Wave= %.8f um, Eu = %.8f K, A = %.8e s-1, g = %2d' % (J[i], J[i]-1, c/v[i]*1e4, E_u[i], A[i], 2*J[i]+1)
 
-co_A(1,49)
+co_line_ref(1,49)
