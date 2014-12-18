@@ -252,4 +252,4 @@ def extract_hyperion(filename,indir=None,dstar=178.0):
 	plt.tight_layout()
 	fig.savefig(indir+'/hyperion/simple_cube_plot.pdf', format='pdf', dpi=300, bbox_inches='tight') 
 indir = '/Users/yaolun/bhr71'
-extract_hyperion('/hyperion/best_model_scaled.rtout',indir=indir)
+extract_hyperion('/hyperion/best_model.rtout',indir=indir)

@@ -1,0 +1,20 @@
+;  Test for finding out the problem in BHR71 spectra in PACS
+;  indir needs to be defined first
+foo = 'OBSID_1342212230_BHR71_red_centralSpaxel_PointSourceCorrected_Corrected3x3YES_slice_00_os8sf7.fits'
+
+wls = tbget(headfits(foo,exten=1),readfits(foo,exten=1),1)
+fluxs = tbget(headfits(foo,exten=1),readfits(foo,exten=1),4)
+fluxs = fluxs[sort(wls)]
+wls = wls[sort(wls)]
+
+ffoo = 'OBSID_1342212231_BHR71_red_centralSpaxel_PointSourceCorrected_Corrected3x3YES_slice_00_os8sf7.fits'
+
+wll = tbget(headfits(ffoo,exten=1),readfits(ffoo,exten=1),1)
+fluxl = tbget(headfits(ffoo,exten=1),readfits(ffoo,exten=1),4)
+fluxl = fluxl[sort(wll)]
+wll = wll[sort(wll)]
+
+print, min(wls),min(wll)
+
+set_plot,'x'
+plot,[wls,wll], [fluxs,fluxl]
