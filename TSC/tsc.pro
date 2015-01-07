@@ -158,7 +158,9 @@ for i=0,nr-1 do begin
                 if(abs((theta[j]/pi2)-1) le 1.0d-5) then begin
                     if(zeta le 1.0) then begin
                         theta_0=pi2
-                    endif else theta_0=-100.0
+                    endif else begin
+                        theta_0=-100.0
+                    endelse
                 endif
                 if(theta_0 eq -999.0) then begin ;continue on if needed
                     temp1=zeta
