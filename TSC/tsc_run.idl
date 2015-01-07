@@ -39,7 +39,7 @@ phii         = !pi*2.0*dindgen(nz+1)/nz
 ; Keep the constant cell size in r-direction
 ;
 ri_cellsize = ri[1:-1]-ri[0:-2]
-ind = (where(ri_cellsize/AU > 100.0))[0]      ; The largest cell size is 100 AU
+ind = (where(ri_cellsize/AU gt 100.0))[0]      ; The largest cell size is 100 AU
 ri = np.hstack((ri[0:ind],ri[ind]+dindgen(ceil((rout-ri[ind])/100/AU))*100*AU))
 nx = n_elements(ri)-1    
 
