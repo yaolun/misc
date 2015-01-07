@@ -1,4 +1,4 @@
-pro tsc
+pro tsc, modeltime, c_s, Omega_0, r, theta, indir=indir, outdir=outdir
 ;
 ; Set up the envelope
 ; Modified by MMD - This version calculates the TSC profile
@@ -21,6 +21,26 @@ pro tsc
 ;                   Set rho=rhofloor for all radii less than renv_in
 ;                   Set rho=rhofloor for all r>rout_new if t>time_past
 ;                   Calculate and print out envelope mass
+;
+; Modified by YLY
+; indir           - The input directory of the grid data from Susan. If not 
+;                   assigned, the code will take its directory instead.
+; outdir          - Output directory path
+; modeltime       - The age of the protostellar system in years. 
+; c_s             - Sound speed
+; Omega_0         - The rotating speed as the perturbation to the collapse model
+; r
+; theta
+; 
+
+
+
+; Modified by YLY
+; input setup
+if not keyword_set(indir) then indir = ''
+GG = 6.67259e-8        ; Gravitational constant
+nr = n_elements(r)
+nt = n_elements(theta)
 
 print,''
 print,'Using the TSC84 density profile'
@@ -28,7 +48,7 @@ print,''
 mcol=12
 lcol=987
 Delta_Q=-3.52e-4
-readcol,'grid.plt34.mod',dd1,dd2,dd3,dd4,dd5,dd6,dd7,dd8,dd9,dd10,dd11,dd12,format='D,D,D,D,D,D,D,D,D,D,D,D',skipline=1
+readcol,indir+'grid.plt34.mod',dd1,dd2,dd3,dd4,dd5,dd6,dd7,dd8,dd9,dd10,dd11,dd12,format='D,D,D,D,D,D,D,D,D,D,D,D',skipline=1
 dd=[dd1,dd2,dd3,dd4,dd5,dd6,dd7,dd8,dd9,dd10,dd11,dd12]
 sz_dd=n_elements(dd)
 
@@ -244,12 +264,12 @@ endfor
 ;
 ; Mutually exclude the densities
 ; 
-ii = where( rhodisk gt rhoenv ) 
-if ii[0] ge 0 then rhoenv[ii] = rhofloor
-ii = where( rhodisk le rhoenv ) 
-if ii[0] ge 0 then rhodisk[ii] = rhofloor
+; ii = where( rhodisk gt rhoenv ) 
+; if ii[0] ge 0 then rhoenv[ii] = rhofloor
+; ii = where( rhodisk le rhoenv ) 
+; if ii[0] ge 0 then rhodisk[ii] = rhofloor
 
-rho=rhodisk+rhoenv
+; rho=rhodisk+rhoenv
 
 end
 
