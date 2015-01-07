@@ -38,12 +38,9 @@ y_tsc_1d=dblarr(nr*nt)
 step=0
 for i=0,nr-1 do begin
     for j=0,nt-1 do begin
-        ; transform from (r, theta, t) -> (x, theta, tau)
         x_tsc[i,j]=r[i]/(c_s*modeltime*365.0*24.0*3600.0)
         tau_tsc[i,j]=Omega_0*(modeltime*365.0*24.0*3600.0)
-        ; Second order Legendre polynomial
         p2=(1./2.)*((3.0*cos(theta[j])*cos(theta[j]))-1.0)
-        ; Calculate the streched coordiantes
         y_tsc[i,j]=x_tsc[i,j]*(1.+((tau_tsc[i,j]^2.0)*Delta_Q*p2))
         y_tsc_1d[step]=x_tsc[i,j]*(1.+((tau_tsc[i,j]^2.0)*Delta_Q*p2))
         step=step+1
