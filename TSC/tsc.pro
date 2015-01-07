@@ -1,3 +1,4 @@
+pro tsc
 ;
 ; Set up the envelope
 ; Modified by MMD - This version calculates the TSC profile
@@ -249,4 +250,6 @@ ii = where( rhodisk le rhoenv )
 if ii[0] ge 0 then rhodisk[ii] = rhofloor
 
 rho=rhodisk+rhoenv
+
+end
 
