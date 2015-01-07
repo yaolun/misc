@@ -243,13 +243,14 @@ for i=0,nr-1 do begin
         if(x_tsc[i,j] ge (tau_tsc[i,j]^2.0)) then begin    ;TSC solution
             rhoenv[i,j]=(1./(4.*!pi*GG*((modeltime*365.0*24.0*3600.0)^2.0)))*(alpha_0_tsc[i,j]+((tau_tsc[i,j]^2.0)*(alpha_M_tsc[i,j]+(alpha_Q_tsc[i,j]*p2))))
         endif
-        if(r[i] lt renv_in) then rhoenv[i,j]=rhofloor
+        if(r[i] lt renv_in) then rhoenv[i,j] = rhofloor
         step=step+1
 
-        if(finite(rhoenv[i,j]) eq 0) then begin
-           rhoenv[i,j]=0.0
-           nan='nan'
-        endif
+        ; if (rhoend[i,j] lt rhofloor) then rhoenv[i,j] = rhofloor
+        ; if(finite(rhoenv[i,j]) eq 0) then begin
+        ;    rhoenv[i,j]=0.0
+        ;    nan='nan'
+        ; endif
 
         ;rhoenv[i,j]=0.0 ;switch off the envelope
 
