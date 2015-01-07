@@ -153,6 +153,7 @@ for i=0,nr-1 do begin
             ; openw,2,'RESULTS/velocity.dat.'+strcompress(string(long(timestep)),/remove_all)
             printf,1,0.0
             ; printf,2,0.0
+            free_lun, 1
             close,1
             ; close,2
         endif
@@ -161,6 +162,7 @@ for i=0,nr-1 do begin
             ; openw,2,'RESULTS/velocity.dat.'+strcompress(string(long(timestep)),/remove_all)
             printf,1,(-1.0)*u_r[nr-1,nt-1]
             ; printf,2,(-1.0)*u_r[nr-1,nt-1]
+            free_lun, 1
             close,1
             ; close,2
         endif
