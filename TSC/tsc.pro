@@ -1,4 +1,4 @@
-pro tsc, modeltime, c_s, Omega_0, r, theta, indir=indir, outdir=outdir
+pro tsc, modeltime, c_s, Omega_0, r, theta, rhoenv, rhofloor, indir=indir, outdir=outdir
 ;
 ; Set up the envelope
 ; Modified by MMD - This version calculates the TSC profile
@@ -23,14 +23,20 @@ pro tsc, modeltime, c_s, Omega_0, r, theta, indir=indir, outdir=outdir
 ;                   Calculate and print out envelope mass
 ;
 ; Modified by YLY
+; INPUTS
 ; indir           - The input directory of the grid data from Susan. If not 
 ;                   assigned, the code will take its directory instead.
 ; outdir          - Output directory path
 ; modeltime       - The age of the protostellar system in years. 
 ; c_s             - Sound speed
 ; Omega_0         - The rotating speed as the perturbation to the collapse model
-; r
-; theta
+; r               - R-coordinate of the model
+; theta           - Theta-coordinate of the model
+; timestep        - (Not sure about the function of this right now)
+; rhofloor        - The lowest density allowed in the model. Primarily designed for preventing zero in calculation.
+;
+; OUTPUTS
+; rhoenv          - The density profile of envelope returned from the code.
 ; 
 
 
@@ -144,19 +150,19 @@ for i=0,nr-1 do begin
         u_r[i,j]=c_s*(V_0_tsc[i,j]+((tau_tsc[i,j]^2.0)*(V_M_tsc[i,j]+(V_Q_tsc[i,j]*p2))))
         if(alog10(y_tsc[nr-1,nt-1]) gt 0.0) then begin
             openw,1,'velocity.dat'
-            openw,2,'RESULTS/velocity.dat.'+strcompress(string(long(timestep)),/remove_all)
+            ; openw,2,'RESULTS/velocity.dat.'+strcompress(string(long(timestep)),/remove_all)
             printf,1,0.0
-            printf,2,0.0
+            ; printf,2,0.0
             close,1
-            close,2
+            ; close,2
         endif
         if(alog10(y_tsc[nr-1,nt-1]) le 0.0) then begin
             openw,1,'velocity.dat'
-            openw,2,'RESULTS/velocity.dat.'+strcompress(string(long(timestep)),/remove_all)
+            ; openw,2,'RESULTS/velocity.dat.'+strcompress(string(long(timestep)),/remove_all)
             printf,1,(-1.0)*u_r[nr-1,nt-1]
-            printf,2,(-1.0)*u_r[nr-1,nt-1]
+            ; printf,2,(-1.0)*u_r[nr-1,nt-1]
             close,1
-            close,2
+            ; close,2
         endif
 
         if(x_tsc[i,j] lt (tau_tsc[i,j]^2.0)) then begin    ;inner solution

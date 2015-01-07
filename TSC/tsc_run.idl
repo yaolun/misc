@@ -52,4 +52,4 @@ phic         = 0.5*( phii[0:nz-1]   + phii[1:nz] )
 stop
 indir = ''
 outdir = ''
-tsc, modeltime, c_s, Omega_0, rc, thetac, indir=indir, outdir=outdir
+tsc, modeltime, c_s, Omega_0, rc, thetac, rhoenv, 1e-40, indir=indir, outdir=outdir
