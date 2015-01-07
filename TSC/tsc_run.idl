@@ -62,6 +62,6 @@ tsc, modeltime, c_s, Omega_0, rc, thetac, rhoenv, 1e-40, R_env_min, indir=indir,
 
 ; Print the results into file so that I can use python read them in
 openw, lun, indir+'rhoenv.dat', /get_lun
-for i = 0, n_elements(rhoenv[0,*])-1 do printf, lun, format='('+strtrim(string(n_elements(rhoenv[*,0])),1)+'(g12,2x))',rhoenv[*,i]
+for i = 0, n_elements(rhoenv[0,*])-1 do printf, lun, format='('+strtrim(string(n_elements(rhoenv[*,0])),1)+'(g,2x))',rhoenv[*,i]
 free_lun, lun
 close, lun
