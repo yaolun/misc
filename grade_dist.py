@@ -19,7 +19,7 @@ def grade_dist(filepath,title,outdir):
 	ax.set_xlabel('Score',fontsize=16*mag)
 	ax.set_ylabel('No. of students',fontsize=16*mag)
 	ax.set_xlim([0,105])
-	ax.set_ylim([0,80])
+	ax.set_ylim([0,30])
 	[ax.spines[axis].set_linewidth(1.5*mag) for axis in ['top','bottom','left','right']]
 	ax.tick_params('both',labelsize=mag*16,width=1.5*mag,which='major',length=5*mag)
 	fig.savefig(filename=outdir+'score_distribution.eps',format='eps',dpi=300,bbox_inches='tight')
@@ -27,8 +27,8 @@ def grade_dist(filepath,title,outdir):
 #import matplotlib
 #print matplotlib
 
-filepath = '/Users/yaolun/Dropbox/UT-Austin/TA/AST301_Robinson/Exam_12/11211103Z.al.csv'
-title = r'$\mathrm{Exam~12}$'
-outdir = '/Users/yaolun/Dropbox/UT-Austin/TA/AST301_Robinson/Exam_12/'
+filepath = '/Users/yaolun/Dropbox/UT-Austin/TA/AST301_Robinson/Final_exam/12151059C.al.csv'
+title = r'$\mathrm{Final~Exam}$'
+outdir = '/Users/yaolun/Dropbox/UT-Austin/TA/AST301_Robinson/Final_exam/'
 
 grade_dist(filepath,title,outdir)
