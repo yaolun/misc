@@ -1,4 +1,4 @@
-pro tsc, modeltime, c_s, Omega_0, r, theta, rhoenv, rhofloor, indir=indir, outdir=outdir
+pro tsc, modeltime, c_s, Omega_0, r, theta, rhoenv, rhofloor, renv_in, indir=indir, outdir=outdir
 ;
 ; Set up the envelope
 ; Modified by MMD - This version calculates the TSC profile
@@ -34,6 +34,7 @@ pro tsc, modeltime, c_s, Omega_0, r, theta, rhoenv, rhofloor, indir=indir, outdi
 ; theta           - Theta-coordinate of the model
 ; timestep        - (Not sure about the function of this right now)
 ; rhofloor        - The lowest density allowed in the model. Primarily designed for preventing zero in calculation.
+; renv_in         - The inner radius of the envelope in cm.
 ;
 ; OUTPUTS
 ; rhoenv          - The density profile of envelope returned from the code.

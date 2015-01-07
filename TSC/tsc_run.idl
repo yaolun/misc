@@ -24,6 +24,7 @@ nz        = double(50.0)
 ; Manually input the model Parameters
 rstar     = 5 * RS
 R_env_max = 9.756000e+03 * AU
+R_env_min = 8.000000e-01 * AU
 R_cen     = 1.500000e+01 * AU
 rin       = rstar
 rout      = R_env_max
@@ -51,4 +52,9 @@ phic         = 0.5*( phii[0:nz-1]   + phii[1:nz] )
 
 indir = ''
 outdir = ''
-tsc, modeltime, c_s, Omega_0, rc, thetac, rhoenv, 1e-40, indir=indir, outdir=outdir
+
+; Compile
+.r ~/programs/misc/TSC/cubesolve.pro
+.r ~/programs/misc/TSC/loglin_interp2pt.pro
+.r ~/programs/misc/TSC/tsc.pro
+tsc, modeltime, c_s, Omega_0, rc, thetac, rhoenv, 1e-40, R_env_min, indir=indir, outdir=outdir
