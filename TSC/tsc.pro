@@ -226,19 +226,19 @@ for i=0,nr-1 do begin
     endfor
 endfor
 
-mass_envelope_temp=mass(rhoenv/gastodust,r,theta,gastodust=gastodust)
-ratio=menv_input/mass_envelope_temp
-rhoenv=rhoenv*ratio
-mass_envelope_final=mass(rhoenv/gastodust,r,theta,gastodust=gastodust)
-print,''
-print,'The envelope mass should be:  ',menv_input/MS,' Msun'
-print,'The envelope mass was originally:  ',mass_envelope_temp/MS,'  Msun'
-print,'The ratio of the two is:  ',ratio
-print,'The modified, final envelope mass is:  ',mass_envelope_final/MS,' Msun'
-print,''
-openw,1,'RESULTS_MENV/menv_'+strcompress(string(long(timestep)),/remove_all)+'.dat'
-printf,1,modeltime,mass_envelope_final/MS,'    ',nan
-close,1
+; mass_envelope_temp=mass(rhoenv/gastodust,r,theta,gastodust=gastodust)
+; ratio=menv_input/mass_envelope_temp
+; rhoenv=rhoenv*ratio
+; mass_envelope_final=mass(rhoenv/gastodust,r,theta,gastodust=gastodust)
+; print,''
+; print,'The envelope mass should be:  ',menv_input/MS,' Msun'
+; print,'The envelope mass was originally:  ',mass_envelope_temp/MS,'  Msun'
+; print,'The ratio of the two is:  ',ratio
+; print,'The modified, final envelope mass is:  ',mass_envelope_final/MS,' Msun'
+; print,''
+; openw,1,'RESULTS_MENV/menv_'+strcompress(string(long(timestep)),/remove_all)+'.dat'
+; printf,1,modeltime,mass_envelope_final/MS,'    ',nan
+; close,1
 
 ;
 ; Mutually exclude the densities
