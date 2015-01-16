@@ -217,7 +217,7 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
                     rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
         rho_env  = rho_env  + 1e-40
         rho_disk = rho_disk + 1e-40
-        rho      = rho      + 1e-40
+        rho      = rho      + 1e-40 
 
     # Insert the calculated grid and dust density profile into hyperion
     m.set_spherical_polar_grid(ri, thetai, phii)
