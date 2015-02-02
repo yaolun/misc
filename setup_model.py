@@ -246,7 +246,7 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
 
     # number of photons for temp and image
     m.set_raytracing(True)
-    m.set_n_photons(initial=1000000, imaging=1000000, raytracing_sources=1000000, raytracing_dust=1000000)
+    m.set_n_photons(initial=5000000, imaging=5000000, raytracing_sources=5000000, raytracing_dust=5000000)
     # number of iteration to compute dust specific energy (temperature)
     m.set_n_initial_iterations(20)
     m.set_convergence(True, percentile=99., absolute=1.5, relative=1.02)
