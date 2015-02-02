@@ -258,4 +258,4 @@ indir = '/Users/yaolun/bhr71/'
 outdir = '/Users/yaolun/bhr71/hyperion/'
 # extract_hyperion('/hyperion/best_model.rtout',indir=indir)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
-extract_hyperion('/hyperion/best_model_5e6photons.rtout',indir=indir,outdir=outdir+'bettyjo/5e6_')
+extract_hyperion('/hyperion/best_model.rtout',indir=indir,outdir=outdir+'bettyjo/newton_')

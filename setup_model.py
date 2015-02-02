@@ -7,6 +7,7 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
     import os
     from matplotlib.colors import LogNorm
     from scipy.optimize import fsolve
+    from scipy.optimize import newton
     from scipy.integrate import nquad
     from envelope_func import func
     from hyperion.model import Model
@@ -138,6 +139,9 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
     def f(w,z,beta,rstar,h100):
         f = 2*PI*w*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/(w**beta*h100/100**beta))**2)
         return f
+    def fprime(x, r, rcen, mu):
+        return 3*float(x)**2 + float(r)/float(rcen)-1
+
     rho_0 = M_disk/(nquad(f,[[R_disk_min,R_disk_max],[-R_env_max,R_env_max]], args=(beta,rstar,h100)))[0]
     i = 0
     j = 0
@@ -170,7 +174,8 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
                         else:
                             j += 1
                             mu = abs(np.cos(thetac[itheta]))
-                            mu_o = np.abs(fsolve(func,[0.5,0.5,0.5],args=(rc[ir],rcen,mu))[0])
+                            # mu_o = np.abs(fsolve(func,[0.5,0.5,0.5],args=(rc[ir],rcen,mu))[0])
+                            mu_o = abs(newton(func, 0.5, fprime=fprime, args=(rc[ir],rcen,mu)))
                             rho_env[ir,itheta,iphi] = M_env_dot/(4*PI*(G*mstar*rcen**3)**0.5)*(rc[ir]/rcen)**(-3./2)*(1+mu/mu_o)**(-0.5)*(mu/mu_o+2*mu_o**2*rcen/rc[ir])**(-1)
                         # Disk profile
                         if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
@@ -207,7 +212,8 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
                     else:
                         j += 1
                         mu = abs(np.cos(thetac[itheta]))
-                        mu_o = np.abs(fsolve(func,[0.5,0.5,0.5],args=(rc[ir],rcen,mu))[0])
+                        # mu_o = np.abs(fsolve(func,[0.5,0.5,0.5],args=(rc[ir],rcen,mu))[0])
+                        mu_o = abs(newton(func, 0.5, fprime=fprime, args=(rc[ir],rcen,mu)))
                         rho_env[ir,itheta,iphi] = M_env_dot/(4*PI*(G*mstar*rcen**3)**0.5)*(rc[ir]/rcen)**(-3./2)*(1+mu/mu_o)**(-0.5)*(mu/mu_o+2*mu_o**2*rcen/rc[ir])**(-1)
                     # Disk profile
                     if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
@@ -246,7 +252,7 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
 
     # number of photons for temp and image
     m.set_raytracing(True)
-    m.set_n_photons(initial=5000000, imaging=5000000, raytracing_sources=5000000, raytracing_dust=5000000)
+    m.set_n_photons(initial=1000000, imaging=1000000, raytracing_sources=1000000, raytracing_dust=1000000)
     # number of iteration to compute dust specific energy (temperature)
     m.set_n_initial_iterations(20)
     m.set_convergence(True, percentile=99., absolute=1.5, relative=1.02)
