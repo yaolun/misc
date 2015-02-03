@@ -199,43 +199,43 @@ for i=0,nr-1 do begin
                     temp4=(-1.0)*cos(theta[j])
                     tsc_b=[temp1,temp2,temp3,temp4]
                     xone=1.0
-                    ; result_cubesolve=cubesolve(tsc_b)
-                    ; if(result_cubesolve[3] gt 0.0) then begin
-                    ;     if((result_cubesolve[0] ge ((-1.0)*xone)) and (result_cubesolve[0] le xone)) then begin
-                    ;         costheta_0=result_cubesolve[0]
-                    ;     endif else begin
-                    ;         costheta_0=-0.5
-                    ;         print,'Problem with cube root, costheta_0=',result_cubesolve[0]
-                    ;     endelse
-                    ; endif else begin
-                    ;     costheta_0=-0.5
-                    ;     iroot=0
-                    ;     for z=0,2 do begin
-                    ;         if(((cos(theta[j])*result_cubesolve[z]) ge 0.0) and (result_cubesolve[z] ge ((-1.0)*xone)) and (result_cubesolve[z] le xone)) then begin
-                    ;             costheta_0=p[z]
-                    ;             iroot=iroot+1
-                    ;         endif
-                    ;     endfor
-                    ; endelse
-                    ; Modified by YLY.  Implement a new cubic solver
-                    result_cubesolve = cuberoot([temp4,temp3,temp2,temp1])
-                    if n_elements(where(result_cubesolve le -1e20)) eq 2 then begin
-                        if (result_cubesolve[0] ge -1d0) and (result_cubesolve[0] le 1d0) then begin
+                    result_cubesolve=cubesolve(tsc_b)
+                    if(result_cubesolve[3] gt 0.0) then begin
+                        if((result_cubesolve[0] ge ((-1.0)*xone)) and (result_cubesolve[0] le xone)) then begin
                             costheta_0=result_cubesolve[0]
                         endif else begin
-                            costheta_0 = -0.5
+                            costheta_0=-0.5
                             print,'Problem with cube root, costheta_0=',result_cubesolve[0]
                         endelse
                     endif else begin
-                        costheta_0 = -0.5
-                        iroot = 0
-                        for z = 0, 2 do begin
-                            if(((cos(theta[j])*result_cubesolve[z]) ge 0.0) and (result_cubesolve[z] ge -1d0) and (result_cubesolve[z] le 1d0)) then begin
-                                costheta_0=result_cubesolve[z]
+                        costheta_0=-0.5
+                        iroot=0
+                        for z=0,2 do begin
+                            if(((cos(theta[j])*result_cubesolve[z]) ge 0.0) and (result_cubesolve[z] ge ((-1.0)*xone)) and (result_cubesolve[z] le xone)) then begin
+                                costheta_0=p[z]
                                 iroot=iroot+1
                             endif
                         endfor
                     endelse
+                    ; Modified by YLY.  Implement a new cubic solver
+                    ; result_cubesolve = cuberoot([temp4,temp3,temp2,temp1])
+                    ; if n_elements(where(result_cubesolve le -1e20)) eq 2 then begin
+                    ;     if (result_cubesolve[0] ge -1d0) and (result_cubesolve[0] le 1d0) then begin
+                    ;         costheta_0=result_cubesolve[0]
+                    ;     endif else begin
+                    ;         costheta_0 = -0.5
+                    ;         print,'Problem with cube root, costheta_0=',result_cubesolve[0]
+                    ;     endelse
+                    ; endif else begin
+                    ;     costheta_0 = -0.5
+                    ;     iroot = 0
+                    ;     for z = 0, 2 do begin
+                    ;         if(((cos(theta[j])*result_cubesolve[z]) ge 0.0) and (result_cubesolve[z] ge -1d0) and (result_cubesolve[z] le 1d0)) then begin
+                    ;             costheta_0=result_cubesolve[z]
+                    ;             iroot=iroot+1
+                    ;         endif
+                    ;     endfor
+                    ; endelse
 
                     theta_0=acos(costheta_0)
                 endif
