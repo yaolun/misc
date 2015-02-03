@@ -231,7 +231,7 @@ for i=0,nr-1 do begin
                         iroot = 0
                         for z = 0, 2 do begin
                             if(((cos(theta[j])*result_cubesolve[z]) ge 0.0) and (result_cubesolve[z] ge -1d0) and (result_cubesolve[z] le 1d0)) then begin
-                                costheta_0=p[z]
+                                costheta_0=result_cubesolve[z]
                                 iroot=iroot+1
                             endif
                         endfor
