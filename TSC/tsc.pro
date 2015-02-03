@@ -226,6 +226,7 @@ for i=0,nr-1 do begin
                             costheta_0 = -0.5
                             print,'Problem with cube root, costheta_0=',result_cubesolve[0]
                             print, '[x^3, x^2, x^1, x^0]', [temp1,temp2,temp3,temp4]
+                            stop
                         endelse
                     endif else begin
                         costheta_0 = -0.5
