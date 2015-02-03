@@ -42,7 +42,7 @@ if r^2 lt q^3 then begin
    x3=-2.*sqrt(q)*cos((theta-6.28319)/3.)-a1/3.
 endif else begin
 ;  Get the one real root:
-   a=-r/abs(r) * (abs(r)+sqrt(r^2-q^3))^.33333
+   a=-r/abs(r) * (abs(r)+sqrt(r^2-q^3))^double(1/3.);.33333
    if a eq 0. then b=0. else b=q/a
    x1=(a+b)-a1/3.
    x2=unreal
