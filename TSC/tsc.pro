@@ -173,8 +173,8 @@ for i=0,nr-1 do begin
             if(x_tsc[i,j] eq 0.0) then rhoenv[i,j]=0.0
             if(x_tsc[i,j] gt 0.0) then begin
                 fv=(-1.0)*sqrt(xmo/x_tsc[i,j])
-                tsq=tau_tsc[i,j]*tau_tsc[i,j]
-                zeta=(xmo^3)*tsq/(16.*x_tsc[i,j])
+                tsq=tau_tsc[i,j]*tau_tsc[i,j]           
+                zeta=(xmo^3)*tsq/(16.*x_tsc[i,j])       ; TSC84, eq. 83 and 85 plus some information from Shu77
                 ao=xmo/((x_tsc[i,j])^2.0)
 
                 ;solve transcendental equation for theta_0
@@ -199,24 +199,44 @@ for i=0,nr-1 do begin
                     temp4=(-1.0)*cos(theta[j])
                     tsc_b=[temp1,temp2,temp3,temp4]
                     xone=1.0
-                    result_cubesolve=cubesolve(tsc_b)
-                    if(result_cubesolve[3] gt 0.0) then begin
-                        if((result_cubesolve[0] ge ((-1.0)*xone)) and (result_cubesolve[0] le xone)) then begin
+                    ; result_cubesolve=cubesolve(tsc_b)
+                    ; if(result_cubesolve[3] gt 0.0) then begin
+                    ;     if((result_cubesolve[0] ge ((-1.0)*xone)) and (result_cubesolve[0] le xone)) then begin
+                    ;         costheta_0=result_cubesolve[0]
+                    ;     endif else begin
+                    ;         costheta_0=-0.5
+                    ;         print,'Problem with cube root, costheta_0=',result_cubesolve[0]
+                    ;     endelse
+                    ; endif else begin
+                    ;     costheta_0=-0.5
+                    ;     iroot=0
+                    ;     for z=0,2 do begin
+                    ;         if(((cos(theta[j])*result_cubesolve[z]) ge 0.0) and (result_cubesolve[z] ge ((-1.0)*xone)) and (result_cubesolve[z] le xone)) then begin
+                    ;             costheta_0=p[z]
+                    ;             iroot=iroot+1
+                    ;         endif
+                    ;     endfor
+                    ; endelse
+                    ; Modified by YLY.  Implement a new cubic solver
+                    result_cubesolve = cuberoot([temp4,temp3,temp2,temp1])
+                    if n_elements(where(result_cubesolve le -1e20)) eq 2 then begin
+                        if (result_cubesolve[0] ge -1d0) and (result_cubesolve[0] le 1d0) then begin
                             costheta_0=result_cubesolve[0]
                         endif else begin
-                            costheta_0=-0.5
+                            costheta_0 = -0.5
                             print,'Problem with cube root, costheta_0=',result_cubesolve[0]
                         endelse
                     endif else begin
-                        costheta_0=-0.5
-                        iroot=0
-                        for z=0,2 do begin
-                            if(((cos(theta[j])*result_cubesolve[z]) ge 0.0) and (result_cubesolve[z] ge ((-1.0)*xone)) and (result_cubesolve[z] le xone)) then begin
-                                costheta_0=result_cubesolve[z]
+                        costheta_0 = -0.5
+                        iroot = 0
+                        for z = 0, 2 do begin
+                            if(((cos(theta[j])*result_cubesolve[z]) ge 0.0) and (result_cubesolve[z] ge -1d0) and (result_cubesolve[z] le 1d0)) then begin
+                                costheta_0=p[z]
                                 iroot=iroot+1
                             endif
                         endfor
                     endelse
+
                     theta_0=acos(costheta_0)
                 endif
 
@@ -238,7 +258,8 @@ for i=0,nr-1 do begin
                     rhoenv[i,j]=(1./(4.*!pi*GG*((modeltime*365.0*24.0*3600.0)^2.0)))*((-1.0)*ao)/(fv*f1*f4)
                 endif
             endif
-            if finite(rhoenv[i,j]) eq 0 then stop 
+            if finite(rhoenv[i,j]) eq 0 then stop
+            if (i eq 0) and (j eq 67) then stop 
             ;rhoenv[i,j]=1.0e-4*(muh2*1.67e-24) ;switch off inner solution
         endif
         if(x_tsc[i,j] ge (tau_tsc[i,j]^2.0)) then begin    ;TSC solution
