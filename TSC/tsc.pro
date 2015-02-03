@@ -258,8 +258,8 @@ for i=0,nr-1 do begin
                     rhoenv[i,j]=(1./(4.*!pi*GG*((modeltime*365.0*24.0*3600.0)^2.0)))*((-1.0)*ao)/(fv*f1*f4)
                 endif
             endif
-            if finite(rhoenv[i,j]) eq 0 then stop
-            if (i eq 0) and (j eq 67) then stop 
+            ; if finite(rhoenv[i,j]) eq 0 then stop
+            ; if (i eq 0) and (j eq 67) then stop 
             ;rhoenv[i,j]=1.0e-4*(muh2*1.67e-24) ;switch off inner solution
         endif
         if(x_tsc[i,j] ge (tau_tsc[i,j]^2.0)) then begin    ;TSC solution
