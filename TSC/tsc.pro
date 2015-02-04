@@ -241,6 +241,14 @@ for i=0,nr-1 do begin
                                 iroot=iroot+1
                             endif
                         endfor
+                        ; if still nothing, check if there is a root that very close to 1
+                        if costheta_0 eq -0.5 the begin
+                            for z = 0, 2 do begin
+                                if (cos(theta[j]) * result_cubesolve[z] ge 0.0) and (abs(result_cubesolve[z] - 1.0) le 1e-5) then begin
+                                    costheta_0 = 1.0
+                                endif
+                            endfor
+                        endif
                     endelse
 
                     theta_0=acos(costheta_0)
