@@ -108,7 +108,9 @@ for i=0,sz_y_tsc_1d-1 do begin
     if(lp[i] eq 999.0) then begin
         winterp=where(lp lt lp[i-1])
         temp=max(winterp)
-        winterp=winterp[temp]
+        winterp = winterp[where(winterp eq temp)]
+        ; I don't understand this
+        ; winterp=winterp[temp]
         alpha_0_tsc_1d[i]=2.0*(y_tsc_1d[i]^(-2.0))
         alpha_M_tsc_1d[i]=loglin_interp2pt(y_tsc_1d[winterp],alpha_M_tsc_1d[winterp],y_tsc_1d[i-1],alpha_M_tsc_1d[i-1],y_tsc_1d[i])
         alpha_Q_tsc_1d[i]=-1.0*loglin_interp2pt(y_tsc_1d[winterp],-1.0*alpha_Q_tsc_1d[winterp],y_tsc_1d[i-1],-1.0*alpha_Q_tsc_1d[i-1],y_tsc_1d[i])
@@ -219,6 +221,7 @@ for i=0,nr-1 do begin
                     ; endelse
                     ; Modified by YLY.  Implement a new cubic solver
                     result_cubesolve = cuberoot([temp4,temp3,temp2,temp1])
+                    ; one real root
                     if n_elements(where(result_cubesolve le -1e20)) eq 2 then begin
                         if (result_cubesolve[0] ge -1d0) and (result_cubesolve[0] le 1d0) then begin
                             costheta_0=result_cubesolve[0]
@@ -228,6 +231,7 @@ for i=0,nr-1 do begin
                             print, '[x^3, x^2, x^1, x^0]', [temp1,temp2,temp3,temp4]
                             stop
                         endelse
+                    ; multiple roots
                     endif else begin
                         costheta_0 = -0.5
                         iroot = 0
