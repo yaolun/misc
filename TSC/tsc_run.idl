@@ -10,9 +10,9 @@ G         = 6.67259e-8     ; Gravitational constant  [cm3/g/s^2]
 yr        = 60*60*24*365.0 ; Years in seconds
 
 ; variable setup for tsc.pro
-modeltime = 292750.0   ; use a typical 1 million year age as a test
-c_s = 0.2052 * 1e5  ; 0.35 km/s from Terebey 1984
-Omega_0 = 1.549e-14   ; Terebey 1984
+modeltime = 32815.0   
+c_s = 0.505957626614 * 1e5  ; 0.35 km/s from Terebey 1984
+Omega_0 = 2.62836312414e-13   ; Terebey 1984
 
 ; Grid Parameters
 nx        = double(100.0)
@@ -23,7 +23,7 @@ nz        = double(50.0)
 ;
 ; Manually input the model Parameters
 rstar     = 5 * RS
-R_env_max = 9.756000e+03 * AU
+R_env_max = 1.000000e+04 * AU
 R_env_min = 8.000000e-01 * AU
 R_cen     = 1.500000e+01 * AU
 rin       = rstar
