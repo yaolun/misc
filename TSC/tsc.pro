@@ -249,6 +249,8 @@ for i=0,nr-1 do begin
                                 endif
                             endfor
                         endif
+                        print, result_cubesolve
+                        print, costheta_0
                     endelse
 
                     theta_0=acos(costheta_0)
