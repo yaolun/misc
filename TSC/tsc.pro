@@ -239,7 +239,7 @@ for i=0,nr-1 do begin
                         for z = 0, 2 do begin
                             if ((cos(theta[j])*result_cubesolve[z]) ge 0.0) then begin
                                 if abs(abs(result_cubesolve[z]) - 1.0) le 1e-5 then begin
-                                    costheta_0= 1.0 * signum(cos(theta[j]))
+                                    costheta_0= 1.0 * cos(theta[j])/abs(cos(theta[j]))
                                     iroot=iroot+1
                                 endif else begin
                                     costheta_0 = result_cubesolve[z]
