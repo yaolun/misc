@@ -222,6 +222,7 @@ for i=0,nr-1 do begin
                     ; Modified by YLY.  Implement a new cubic solver
                     result_cubesolve = cuberoot([temp4,temp3,temp2,temp1])
                     ; one real root
+                    ; imaginary roots are set to -1e30
                     if n_elements(where(result_cubesolve le -1e20)) eq 2 then begin
                         if (result_cubesolve[0] ge -1d0) and (result_cubesolve[0] le 1d0) then begin
                             costheta_0=result_cubesolve[0]
@@ -236,21 +237,19 @@ for i=0,nr-1 do begin
                         costheta_0 = -0.5
                         iroot = 0
                         for z = 0, 2 do begin
-                            if(((cos(theta[j])*result_cubesolve[z]) ge 0.0) and (result_cubesolve[z] ge -1d0) and (result_cubesolve[z] le 1d0)) then begin
-                                costheta_0=result_cubesolve[z]
-                                iroot=iroot+1
+                            if(((cos(theta[j])*result_cubesolve[z]) ge 0.0) then begin
+                                if abs(abs(result_cubesolve[z]) - 1.0) le 1e-5 then begin
+                                    costheta_0= 1.0 * signum(cos(theta[j]))
+                                    iroot=iroot+1
+                                endif else begin
+                                    costheta_0 = result_cubesolve[z]
+                                endelse
                             endif
                         endfor
                         ; if still nothing, check if there is a root that very close to 1
                         if costheta_0 eq -0.5 then begin
-                            for z = 0, 2 do begin
-                                if (cos(theta[j]) * result_cubesolve[z] ge 0.0) and (abs(result_cubesolve[z] - 1.0) le 1e-5) then begin
-                                    costheta_0 = 1.0
-                                endif
-                            endfor
+                            print, 'Problem with cubic solving, roots are: ', result_cubesolve
                         endif
-                        print, result_cubesolve
-                        print, costheta_0
                     endelse
 
                     theta_0=acos(costheta_0)
