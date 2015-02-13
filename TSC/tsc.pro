@@ -108,9 +108,11 @@ for i=0,sz_y_tsc_1d-1 do begin
     if(lp[i] eq 999.0) then begin
         winterp=where(lp lt lp[i-1])
         temp=max(winterp)
+        ; Modified by YLY
         winterp = winterp[where(winterp eq temp)]
-        ; I don't understand this
+        ; I don't understand this -- YLY
         ; winterp=winterp[temp]
+        ;if i eq 0 then stop
         alpha_0_tsc_1d[i]=2.0*(y_tsc_1d[i]^(-2.0))
         alpha_M_tsc_1d[i]=loglin_interp2pt(y_tsc_1d[winterp],alpha_M_tsc_1d[winterp],y_tsc_1d[i-1],alpha_M_tsc_1d[i-1],y_tsc_1d[i])
         alpha_Q_tsc_1d[i]=-1.0*loglin_interp2pt(y_tsc_1d[winterp],-1.0*alpha_Q_tsc_1d[winterp],y_tsc_1d[i-1],-1.0*alpha_Q_tsc_1d[i-1],y_tsc_1d[i])
@@ -122,6 +124,7 @@ for i=0,sz_y_tsc_1d-1 do begin
         if(V_Q_tsc_1d[i-1] gt 0) then begin
             V_Q_tsc_1d[i]=loglin_interp2pt(y_tsc_1d[winterp],V_Q_tsc_1d[winterp],y_tsc_1d[i-1],V_Q_tsc_1d[i-1],y_tsc_1d[i])
         endif
+        if finite(alpha_M_tsc_1d[i]) eq 0 then stop
     endif
 endfor
 

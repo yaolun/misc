@@ -131,9 +131,9 @@
         read(lun,*) mcol,lcol
         print *,mcol,lcol
         do 10 l=1,lcol
-!       print *,l,m
-        read(lun,*,end=900) (dd((m-1)*lcol+l),m=1,mcol)
-!       print *,dd((m-1)*lcol+l),m,mcol
+          print *,l,m
+          read(lun,*,end=900) (dd((m-1)*lcol+l),m=1,mcol)
+!         print *,dd((m-1)*lcol+l),m,mcol
 10      continue
 !
         close(lun)
