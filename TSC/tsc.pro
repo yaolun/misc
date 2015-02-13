@@ -124,7 +124,7 @@ for i=0,sz_y_tsc_1d-1 do begin
         if(V_Q_tsc_1d[i-1] gt 0) then begin
             V_Q_tsc_1d[i]=loglin_interp2pt(y_tsc_1d[winterp],V_Q_tsc_1d[winterp],y_tsc_1d[i-1],V_Q_tsc_1d[i-1],y_tsc_1d[i])
         endif
-        if finite(alpha_M_tsc_1d[i]) eq 0 then stop
+;        if finite(alpha_M_tsc_1d[i]) eq 0 then stop
     endif
 endfor
 
