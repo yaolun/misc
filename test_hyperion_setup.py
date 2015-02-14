@@ -44,6 +44,7 @@ rho_cav   = 1e-21
 nx        = 100L
 ny        = 400L
 nz        = 50L
+grid = np.array([nx, ny, nz])
 
 # Do the variable conversion
 cs = (G * M_env_dot / 0.975)**(1/3.)  # cm/s
