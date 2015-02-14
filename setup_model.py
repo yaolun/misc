@@ -1,4 +1,4 @@
-def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=False,flat=True,scale=1.0):
+def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,plot=False,low_res=False,flat=True,scale=1.0):
     import numpy as np
     import astropy.constants as const
     import scipy as sci
@@ -53,31 +53,6 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
     # Grids and Density
     # Calculation inherited from the script used for RADMC-3D
 
-    # Parameters setup
-    # Import the model parameters from another file 
-    #
-    params     = np.genfromtxt(indir+'/params.dat',dtype=None)
-    tstar      = params[0][1]
-    mstar      = params[1][1]*MS
-    rstar      = params[2][1]*RS
-    M_env_dot  = params[3][1]*MS/yr
-    M_disk_dot = params[4][1]*MS/yr
-    R_env_max  = params[5][1]*AU
-    R_env_min  = params[6][1]*AU
-    theta_cav  = params[7][1]
-    R_disk_max = params[8][1]*AU
-    R_disk_min = params[9][1]*AU
-    R_cen      = R_disk_max
-    M_disk     = params[10][1]*MS
-    beta       = params[11][1]
-    h100       = params[12][1]*AU
-    rho_cav    = params[13][1]
-    if denser_wall == True:
-        wall       = params[14][1]*AU
-        rho_wall   = params[15][1]
-    rho_cav_center = params[16][1]
-    rho_cav_edge   = params[17][1]*AU
-    
     # Grid Parameters
     nx        = 300L
     if low_res == True:
@@ -85,23 +60,77 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
     ny        = 400L
     nz        = 50L
     [nx, ny, nz] = [scale*nx, scale*ny, scale*nz]
-    # nx        = 20
-    # ny        = 40
-    # nz        = 5
 
-    
-    # Model Parameters
-    #
-    rin       = rstar
-    rout      = R_env_max
-    rcen      = R_cen
+    if tsc == False:
+        # Parameters setup
+        # Import the model parameters from another file 
+        #
+        params     = np.genfromtxt(indir+'/params.dat',dtype=None)
+        tstar      = params[0][1]
+        mstar      = params[1][1]*MS
+        rstar      = params[2][1]*RS
+        M_env_dot  = params[3][1]*MS/yr
+        M_disk_dot = params[4][1]*MS/yr
+        R_env_max  = params[5][1]*AU
+        R_env_min  = params[6][1]*AU
+        theta_cav  = params[7][1]
+        R_disk_max = params[8][1]*AU
+        R_disk_min = params[9][1]*AU
+        R_cen      = R_disk_max
+        M_disk     = params[10][1]*MS
+        beta       = params[11][1]
+        h100       = params[12][1]*AU
+        rho_cav    = params[13][1]
+        if denser_wall == True:
+            wall       = params[14][1]*AU
+            rho_wall   = params[15][1]
+        rho_cav_center = params[16][1]
+        rho_cav_edge   = params[17][1]*AU
 
-    # Star Parameters
-    #
-    mstar    = mstar
-    rstar    = rstar*0.9999
-    tstar    = tstar
-    pstar    = [0.,0.,0.]
+        # Model Parameters
+        #
+        rin       = rstar
+        rout      = R_env_max
+        rcen      = R_cen
+
+        # Star Parameters
+        #
+        mstar    = mstar
+        rstar    = rstar*0.9999
+        tstar    = tstar
+        pstar    = [0.,0.,0.]
+    else:
+        # TSC model input setting
+        params    = np.genfromtxt(indir+'/tsc_params.dat', dtype=None)
+        # TSC model parameter
+        M_env_dot = params[0][1]*MS/yr
+        R_cen     = params[1][1]*AU
+        R_inf     = params[2][1]*AU
+        # protostar parameter
+        tstar     = params[3][1]
+        R_env_max = params[4][1]*AU
+        theta_cav = params[5][1]
+        rho_cav_center = params[6][1]
+        rho_cav_edge   = params[7][1]*AU
+        rstar     = params[8][1]*RS
+        # Calculate the dust sublimation radius
+        T_sub = 2000
+        a     = 1   #in micron
+        d_sub = (306.86*(a/0.1)**-0.4 * (4*np.pi*rstar**2*sigam*tstar**4/LS) / T_sub)**0.5 *AU
+        # use the dust sublimation radius as the inner radius of disk and envelope
+        R_disk_min = d_sub
+        R_env_min  = d_sub
+        # mostly fixed parameter
+        M_disk    = 0.5*MS
+        beta      = 1.093
+        h100      = 8.123*AU
+        rho_cav   = 1e-21
+
+        # Do the variable conversion
+        cs = (G * M_env_dot / 0.975)**(1/3.)  # cm/s
+        t = R_inf / cs / yr
+        mstar = M_env_dot * t * yr
+        omega = (R_cen * 16*cs**8 / (G**3 * mstar**3))**0.5 
 
     # Make the Coordinates
     #
@@ -128,31 +157,31 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
     # Make the dust density model
     # Make the density profile of the envelope
     #
-    print 'Calculating the dust density profile...'
-    if theta_cav != 0:
-        c = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
-    else:
-        c = 0
-    rho_env  = np.zeros([len(rc),len(thetac),len(phic)])
-    rho_disk = np.zeros([len(rc),len(thetac),len(phic)])
-    rho      = np.zeros([len(rc),len(thetac),len(phic)])
-    def f(w,z,beta,rstar,h100):
-        f = 2*PI*w*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/(w**beta*h100/100**beta))**2)
-        return f
-    def fprime(x, r, rcen, mu):
-        return 3*float(x)**2 + float(r)/float(rcen)-1
+    if tsc == False:
+        print 'Calculating the dust density profile with infall solution...'
+        if theta_cav != 0:
+            c = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
+        else:
+            c = 0
+        rho_env  = np.zeros([len(rc),len(thetac),len(phic)])
+        rho_disk = np.zeros([len(rc),len(thetac),len(phic)])
+        rho      = np.zeros([len(rc),len(thetac),len(phic)])
+        def f(w,z,beta,rstar,h100):
+            f = 2*PI*w*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/(w**beta*h100/100**beta))**2)
+            return f
+        def fprime(x, r, rcen, mu):
+            return 3*float(x)**2 + float(r)/float(rcen)-1
 
-    rho_0 = M_disk/(nquad(f,[[R_disk_min,R_disk_max],[-R_env_max,R_env_max]], args=(beta,rstar,h100)))[0]
-    i = 0
-    j = 0
-    if 'rho_cav_center' in locals() == False:
-        rho_cav_center = 5.27e-18 # 1.6e-17  # 5.27e-18
-        print 'Use 5.27e-18 as the default value for cavity center'
-    if 'rho_cav_edge' in locals() == False:
-        rho_cav_edge = 40*AU
-        print 'Use 40 AU as the default value for size of the inner region'
-    discont = 1
-    if denser_wall == False:
+        rho_0 = M_disk/(nquad(f,[[R_disk_min,R_disk_max],[-R_env_max,R_env_max]], args=(beta,rstar,h100)))[0]
+        i = 0
+        j = 0
+        if 'rho_cav_center' in locals() == False:
+            rho_cav_center = 5.27e-18 # 1.6e-17  # 5.27e-18
+            print 'Use 5.27e-18 as the default value for cavity center'
+        if 'rho_cav_edge' in locals() == False:
+            rho_cav_edge = 40*AU
+            print 'Use 40 AU as the default value for size of the inner region'
+        discont = 1
         for ir in range(0,len(rc)):
             for itheta in range(0,len(thetac)):
                 for iphi in range(0,len(phic)):
@@ -173,9 +202,27 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
                             i += 1
                         else:
                             j += 1
-                            mu = abs(np.cos(thetac[itheta]))
-                            # mu_o = np.abs(fsolve(func,[0.5,0.5,0.5],args=(rc[ir],rcen,mu))[0])
-                            mu_o = abs(newton(func, 0.5, fprime=fprime, args=(rc[ir],rcen,mu)))
+                            mu = abs(np.cos(PI/2 - thetac[itheta]))
+                            # Implement new root finding algorithm
+                            roots = np.roots(np.array([1.0, 0.0, rc[ir]/rcen-1.0, -mu*rc[ir]/rcen]))
+                            if len(roots[roots.imag == 0]) == 1:
+                                if (abs(roots[roots.imag == 0]) - 1.0) <= 0.0:
+                                    mu_o_dum = roots[roots.imag == 0]
+                                else:
+                                    mu_o_dum = -0.5
+                                    print 'Problem with cubic solving, cos(theta) = ', mu_o_dum
+                                    print 'parameters are ', np.array([1.0, 0.0, rc[ir]/rcen-1.0, -mu*rc[ir]/rcen])
+                            else:
+                                mu_o_dum = -0.5
+                                for imu in range(0, len(roots)):
+                                    if roots[imu]*mu >= 0.0:
+                                        if (abs((abs(roots[imu]) - 1.0)) <= 1e-5):
+                                            mu_o_dum = 1.0 * np.sign(mu)
+                                        else:
+                                            mu_o_dum = roots[imu]
+                                if mu_o_dum == -0.5:
+                                    print 'Problem with cubic solving, roots are: ', roots
+                            mu_o = mu_o_dum.real
                             rho_env[ir,itheta,iphi] = M_env_dot/(4*PI*(G*mstar*rcen**3)**0.5)*(rc[ir]/rcen)**(-3./2)*(1+mu/mu_o)**(-0.5)*(mu/mu_o+2*mu_o**2*rcen/rc[ir])**(-1)
                         # Disk profile
                         if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
@@ -188,42 +235,92 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
         rho_env  = rho_env  + 1e-40
         rho_disk = rho_disk + 1e-40
         rho      = rho      + 1e-40
+    # TSC model
     else:
+        print 'Calculating the dust density profile with TSC solution...'
+        if theta_cav != 0:
+            c = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
+        else:
+            c = 0
+        # If needed, calculate the TSC model via IDL
+        #
+        if idl == True:
+            import pidly
+            idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
+            idl('tsc_run, outdir=outdir, grid=[nx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max')
+        # read in the exist file
+        rho_env_tsc = np.genfromtxt(outdir+'rhoenv.dat').T
+        # extrapolate for the NaN values at the outer radius, usually at radius beyond the infall radius
+        # map the 2d strcuture onto 3d grid
+        def poly(x, y, x0, deg=1):
+            import numpy as np
+            p = np.polyfit(x, y, deg)
+            y0 = 0
+            for i in range(0, len(p)):
+                y0 = y0 + p[i]*x0**(len(p)-i-1)
+            return y0
+        rho_env_copy = np.array(rho_env_tsc)
+        for ithetac in range(0, len(thetac)):
+            rho_dum = np.log10(rho_env_copy[(rc > 1.1*r_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
+            rc_dum = np.log10(rc[(rc > 1.1*r_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
+            rc_dum_nan = np.log10(rc[(rc > 1.1*r_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
+            for i in range(0, len(rc_dum_nan)):
+                rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
+                rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
+        rho_env2d = rho_env_copy
+        rho_env = np.empty((nx,ny,nz))
+        for i in range(0, nz):
+            rho_env[:,:,i] = rho_env2d
+        # create the array of density of disk and the whole structure
+        #
+        rho_disk = np.zeros([len(rc),len(thetac),len(phic)])
+        rho      = np.zeros([len(rc),len(thetac),len(phic)])
+        # Calculate the disk scale height by the normalization of h100
+        def f(w,z,beta,rstar,h100):
+            f = 2*PI*w*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/(w**beta*h100/100**beta))**2)
+            return f
+        # The function for calculating the normalization of disk using the total disk mass
+        #
+        rho_0 = M_disk/(nquad(f,[[R_disk_min,R_disk_max],[-R_env_max,R_env_max]], args=(beta,rstar,h100)))[0]
+        i = 0
+        j = 0
+        if 'rho_cav_center' in locals() == False:
+            rho_cav_center = 5.27e-18 # 1.6e-17  # 5.27e-18
+            print 'Use 5.27e-18 as the default value for cavity center'
+        if 'rho_cav_edge' in locals() == False:
+            rho_cav_edge = 40*AU
+            print 'Use 40 AU as the default value for size of the inner region'
+        discont = 1
         for ir in range(0,len(rc)):
             for itheta in range(0,len(thetac)):
                 for iphi in range(0,len(phic)):
-                    # Envelope profile
-                    w = abs(rc[ir]*np.cos(thetac[itheta]))
-                    z = rc[ir]*np.sin(thetac[itheta])
-                    z_cav = c*abs(w)**1.5
-                    z_cav_wall = c*abs(w-wall)**1.5
-                    if z_cav == 0:
-                        z_cav = R_env_max
-                    if abs(z) > abs(z_cav):
-                        # rho_env[ir,itheta,iphi] = rho_cav
-                        # Modification for using density gradient in the cavity
-                        if rc[ir] <= 20*AU:
-                            rho_env[ir,itheta,iphi] = rho_cav_center*((rc[ir]/AU)**2)
-                        else:
-                            rho_env[ir,itheta,iphi] = rho_cav_center*discont*(20*AU/rc[ir])**2
-                        i += 1
-                    elif (abs(z) > abs(z_cav_wall)) and (abs(z) < abs(z_cav)):
-                        rho_env[ir,itheta,iphi] = rho_wall
+                    if rc[ir] > R_env_min:
+                        # Envelope profile
+                        w = abs(rc[ir]*np.cos(thetac[itheta]))
+                        z = rc[ir]*np.sin(thetac[itheta])
+                        z_cav = c*abs(w)**1.5
+                        if z_cav == 0:
+                            z_cav = R_env_max
+                        # Cavity
+                        if abs(z) > abs(z_cav):
+                            # rho_env[ir,itheta,iphi] = rho_cav
+                            # Modification for using density gradient in the cavity
+                            if rc[ir] <= rho_cav_edge:
+                                rho_env[ir,itheta,iphi] = rho_cav_center#*((rc[ir]/AU)**2)
+                            else:
+                                rho_env[ir,itheta,iphi] = rho_cav_center*discont*(rho_cav_edge/rc[ir])**2
+                            i += 1
+                        # Disk profile
+                        if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
+                            h = ((w/(100*AU))**beta)*h100
+                            rho_disk[ir,itheta,iphi] = rho_0*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/h)**2)
+                        # Combine envelope and disk
+                        rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
                     else:
-                        j += 1
-                        mu = abs(np.cos(thetac[itheta]))
-                        # mu_o = np.abs(fsolve(func,[0.5,0.5,0.5],args=(rc[ir],rcen,mu))[0])
-                        mu_o = abs(newton(func, 0.5, fprime=fprime, args=(rc[ir],rcen,mu)))
-                        rho_env[ir,itheta,iphi] = M_env_dot/(4*PI*(G*mstar*rcen**3)**0.5)*(rc[ir]/rcen)**(-3./2)*(1+mu/mu_o)**(-0.5)*(mu/mu_o+2*mu_o**2*rcen/rc[ir])**(-1)
-                    # Disk profile
-                    if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
-                        h = ((w/(100*AU))**beta)*h100
-                        rho_disk[ir,itheta,iphi] = rho_0*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/h)**2)
-                    # Combine envelope and disk
-                    rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
+                        rho[ir,itheta,iphi] = 1e-30
         rho_env  = rho_env  + 1e-40
         rho_disk = rho_disk + 1e-40
-        rho      = rho      + 1e-40 
+        rho      = rho      + 1e-40
 
     # Insert the calculated grid and dust density profile into hyperion
     m.set_spherical_polar_grid(ri, thetai, phii)
