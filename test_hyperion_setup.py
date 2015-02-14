@@ -14,6 +14,7 @@ PI        = np.pi          # PI constant
 sigma     = const.sigma_sb.cgs.value  # Stefan-Boltzmann constant 
 
 indir = '/Users/yaolun/bhr71/radmc3d_params'
+outdir = '/Users/yaolun/programs/misc/TSC/'
 
 # TSC model input setting
 params    = np.genfromtxt(indir+'/tsc_params.dat', dtype=None)
