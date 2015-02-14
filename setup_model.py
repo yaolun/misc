@@ -116,7 +116,7 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
         # Calculate the dust sublimation radius
         T_sub = 2000
         a     = 1   #in micron
-        d_sub = (306.86*(a/0.1)**-0.4 * (4*np.pi*rstar**2*sigam*tstar**4/LS) / T_sub)**0.5 *AU
+        d_sub = (306.86*(a/0.1)**-0.4 * (4*np.pi*rstar**2*sigma*tstar**4/LS) / T_sub)**0.5 *AU
         # use the dust sublimation radius as the inner radius of disk and envelope
         R_disk_min = d_sub
         R_env_min  = d_sub
@@ -128,9 +128,9 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
 
         # Do the variable conversion
         cs = (G * M_env_dot / 0.975)**(1/3.)  # cm/s
-        t = R_inf / cs / yr
+        t = R_inf / cs / yr   # in year
         mstar = M_env_dot * t * yr
-        omega = (R_cen * 16*cs**8 / (G**3 * mstar**3))**0.5 
+        omega = (R_cen * 16*cs**8 / (G**3 * mstar**3))**0.5
 
     # Make the Coordinates
     #
