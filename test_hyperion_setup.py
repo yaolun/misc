@@ -59,3 +59,5 @@ import pidly
 idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
 idl('.r ~/programs/misc/TSC/tsc.pro')
 idl.pro('tsc_run', outdir=outdir, grid=[nx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
+
+rho_env_tsc = np.genfromtxt(outdir+'rhoenv.dat').T
