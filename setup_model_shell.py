@@ -216,6 +216,7 @@ def setup_model_shell(indir,outdir,outname,rin_shell=None,denser_wall=False,tsc=
             print 'Read the pre-computed TSC model.'
         # read in the exist file
         rho_env_tsc = np.genfromtxt(outdir+'rhoenv.dat').T
+        print np.shape(rho_env_tsc)
         # extrapolate for the NaN values at the outer radius, usually at radius beyond the infall radius
         # map the 2d strcuture onto 3d grid
         def poly(x, y, x0, deg=1):
