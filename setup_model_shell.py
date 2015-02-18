@@ -206,6 +206,7 @@ def setup_model_shell(indir,outdir,outname,rin_shell=None,denser_wall=False,tsc=
         print 'Calculating the dust density profile with TSC solution...'
         # If needed, calculate the TSC model via IDL
         #
+        print [nx,ny,nz], R_env_min/AU, R_env_max/AU
         if idl == True:
             print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
