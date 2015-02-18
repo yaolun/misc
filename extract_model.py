@@ -204,7 +204,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	# Extract the image for the first inclination, and scale to 300pc. We
 	# have to specify group=1 as there is no image in group 0.
 	image = m.get_image(inclination=0, distance=dstar * pc, units='MJy/sr')
-	print image.wav
+	print np.shape(image.val)
+	print image.nu
 
 	# Open figure and create axes
 	fig = plt.figure(figsize=(8, 8))
@@ -268,4 +269,4 @@ indir = '/Users/yaolun/bhr71/'
 outdir = '/Users/yaolun/bhr71/hyperion/'
 # extract_hyperion('/hyperion/best_model.rtout',indir=indir)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
-extract_hyperion('/hyperion/bhr71_init_mono.rtout',indir=indir,outdir=outdir)
+extract_hyperion('/hyperion/tsc_shell.rtout',indir=indir,outdir=outdir)

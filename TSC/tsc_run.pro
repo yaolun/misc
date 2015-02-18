@@ -45,7 +45,7 @@ pro tsc_run, outdir=outdir, grid=grid, time=time, c_s=c_s, omega=omega, rstar=rs
 	;
 	ri           = rin * (rout/rin)^(dindgen(nx+1)/nx)
 	ri           = [0.0, ri]
-	thetai       = !pi/2  - !pi*dindgen(ny+1)/ny  ; the angle respect to the rotaional axis
+	thetai       = !pi*dindgen(ny+1)/ny  ; the angle respect to the rotaional axis
 	phii         = !pi*2.0*dindgen(nz+1)/nz
 
 	; Keep the constant cell size in r-direction
