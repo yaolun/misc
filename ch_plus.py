@@ -1,4 +1,4 @@
-def ch_plus():
+def ch_plus(J_low, J_hi):
 	# 	 FREQ	  ERR   LGINT DR	  ELO GUP	    TAG QNFMT, QN0, QN0
  #  835078.9500  0.0750 -0.0958 2    0.0000  3 -130031303 1 0 0       0 0 0       
  # 1669173.3384  0.5485  0.7208 2   27.8552  5  130031303 2 0 0       1 0 0       
@@ -10,12 +10,23 @@ def ch_plus():
  # 6598272.4546 18.2536  0.8063 2  775.8181 17  130031303 8 0 0       7 0 0       
  # 7398193.9149 26.2137  0.4757 2  995.9128 19  130031303 9 0 0       8 0 0  
  	import numpy as np
- 	import astorpy.constants as const
+ 	import astropy.constants as const
 
  	c = const.c.cgs.value
  	h = const.h.cgs.value
  	k = const.k_B.cgs.value
- 	wave = c/np.array([ 835078.9500,1669173.3384,2501299.9662,3330478.3679,4155732.1742,4976090.4780,5790589.2001,6598272.4546,7398193.9149])
+ 	h_bar = h/2/np.pi
+	pi = np.pi
+
+	J = np.arange(J_low, J_hi+1).astype('float')
+ 	v = 1e6*np.array([ 835078.9500,1669173.3384,2501299.9662,3330478.3679,4155732.1742,4976090.4780,5790589.2001,6598272.4546,7398193.9149])
+ 	wave = c/v*1e4
  	E_u = np.array([ 27.8552,83.5329,166.9673,278.0601,416.6804,582.6649,775.8181,995.9128,995.9128+h*7398193.9149*1e6/k])
 
- 	u0 = 
+ 	mu = 1.683 * 1e-18 # reference CDMS catalog
+ 	A = (8*pi*h*v**3/c**3)*((2*J-1)/(2*J+1))*(8*pi**3/3/h**2)*mu**2*(J)/(2*J-1)
+
+ 	for i in range(len(J)):
+ 		print 'CH+ J=%2d-%2d: Wave= %.8f um, Eu = %.8f K, A = %.8e s-1, g = %2d' % (J[i], J[i]-1, c/v[i]*1e4, E_u[i], A[i], 2*J[i]+1)
+
+ch_plus(1,9)
