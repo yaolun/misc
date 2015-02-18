@@ -149,6 +149,7 @@ def setup_model_shell(indir,outdir,outname,rin_shell=None,denser_wall=False,tsc=
         ri_cellsize = ri[1:-1]-ri[0:-2]
         ind = np.where(ri_cellsize/AU > 100.0)[0][0]       # The largest cell size is 100 AU
         ri = np.hstack((ri[0:ind],ri[ind]+np.arange(np.ceil((rout-ri[ind])/100/AU))*100*AU))
+        nxx = nx
         nx = len(ri)-1    
 
     # Assign the coordinates of the center of cell as its coordinates.
@@ -206,18 +207,16 @@ def setup_model_shell(indir,outdir,outname,rin_shell=None,denser_wall=False,tsc=
         print 'Calculating the dust density profile with TSC solution...'
         # If needed, calculate the TSC model via IDL
         #
-        print [nx,ny,nz], R_env_min/AU, R_env_max/AU
         if idl == True:
             print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
             idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
-            idl.pro('tsc_run', outdir=outdir, grid=[nx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
+            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
         else:
             print 'Read the pre-computed TSC model.'
         # read in the exist file
         rho_env_tsc = np.genfromtxt(outdir+'rhoenv.dat').T
-        print np.shape(rho_env_tsc)
         # extrapolate for the NaN values at the outer radius, usually at radius beyond the infall radius
         # map the 2d strcuture onto 3d grid
         def poly(x, y, x0, deg=1):
