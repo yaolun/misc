@@ -1,4 +1,4 @@
-def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,plot=False,low_res=False,flat=True,scale=1.0):
+def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=False,low_res=False,flat=True,scale=1.0):
     import numpy as np
     import astropy.constants as const
     import scipy as sci
@@ -120,6 +120,9 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
         # use the dust sublimation radius as the inner radius of disk and envelope
         R_disk_min = d_sub
         R_env_min  = d_sub
+        rin        = rstar
+        rout       = R_env_max
+        R_disk_max = R_cen
         # mostly fixed parameter
         M_disk    = 0.5*MS
         beta      = 1.093
@@ -160,9 +163,9 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
     if tsc == False:
         print 'Calculating the dust density profile with infall solution...'
         if theta_cav != 0:
-            c = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
+            c0 = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
         else:
-            c = 0
+            c0 = 0
         rho_env  = np.zeros([len(rc),len(thetac),len(phic)])
         rho_disk = np.zeros([len(rc),len(thetac),len(phic)])
         rho      = np.zeros([len(rc),len(thetac),len(phic)])
@@ -189,7 +192,7 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
                         # Envelope profile
                         w = abs(rc[ir]*np.cos(thetac[itheta]))
                         z = rc[ir]*np.sin(thetac[itheta])
-                        z_cav = c*abs(w)**1.5
+                        z_cav = c0*abs(w)**1.5
                         if z_cav == 0:
                             z_cav = R_env_max
                         if abs(z) > abs(z_cav):
@@ -239,15 +242,19 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
     else:
         print 'Calculating the dust density profile with TSC solution...'
         if theta_cav != 0:
-            c = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
+            c0 = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
         else:
-            c = 0
+            c0 = 0
         # If needed, calculate the TSC model via IDL
         #
         if idl == True:
+            print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
             idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
-            idl('tsc_run, outdir=outdir, grid=[nx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max')
+            idl('.r ~/programs/misc/TSC/tsc.pro')
+            idl.pro('tsc_run', outdir=outdir, grid=[nx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
+        else:
+            print 'Read the pre-computed TSC model.'
         # read in the exist file
         rho_env_tsc = np.genfromtxt(outdir+'rhoenv.dat').T
         # extrapolate for the NaN values at the outer radius, usually at radius beyond the infall radius
@@ -261,9 +268,9 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
             return y0
         rho_env_copy = np.array(rho_env_tsc)
         for ithetac in range(0, len(thetac)):
-            rho_dum = np.log10(rho_env_copy[(rc > 1.1*r_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
-            rc_dum = np.log10(rc[(rc > 1.1*r_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
-            rc_dum_nan = np.log10(rc[(rc > 1.1*r_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
+            rho_dum = np.log10(rho_env_copy[(rc > 1.1*R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
+            rc_dum = np.log10(rc[(rc > 1.1*R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
+            rc_dum_nan = np.log10(rc[(rc > 1.1*R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
             for i in range(0, len(rc_dum_nan)):
                 rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
                 rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
@@ -298,7 +305,7 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
                         # Envelope profile
                         w = abs(rc[ir]*np.cos(thetac[itheta]))
                         z = rc[ir]*np.sin(thetac[itheta])
-                        z_cav = c*abs(w)**1.5
+                        z_cav = c0*abs(w)**1.5
                         if z_cav == 0:
                             z_cav = R_env_max
                         # Cavity
@@ -334,9 +341,64 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
     source.position = (0., 0., 0.)
     print 'L_center =  % 5.2f L_sun' % ((4*PI*rstar**2)*sigma*(tstar**4)/LS)
 
+    # Setting up the wavelength for monochromatic radiative transfer
+    lambda0 = 0.1
+    lambda1 = 2.0
+    lambda2 = 50.0
+    lambda3 = 95.0
+    lambda4 = 200.0
+    lambda5 = 314.0
+    lambda6 = 670.0
+    n01     = 10.0
+    n12     = 20.0
+    n23     = (lambda3-lambda2)/0.02
+    n34     = (lambda4-lambda3)/0.03
+    n45     = (lambda5-lambda4)/0.1
+    n56     = (lambda6-lambda5)/0.1
+
+    lam01   = lambda0 * (lambda1/lambda0)**(np.arange(n01)/n01)
+    lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
+    lam23   = lambda2 * (lambda3/lambda2)**(np.arange(n23)/n23)
+    lam34   = lambda3 * (lambda4/lambda3)**(np.arange(n34)/n34)
+    lam45   = lambda4 * (lambda5/lambda4)**(np.arange(n45)/n45)
+    lam56   = lambda5 * (lambda6/lambda5)**(np.arange(n56+1)/n56)
+
+    lam     = np.concatenate([lam01,lam12,lam23,lam34,lam45,lam56])
+    nlam    = len(lam)
+
+    # Create camera wavelength points
+    n12     = 70.0
+    n23     = 70.0
+    n34     = 70.0
+    n45     = 50.0
+    n56     = 50.0
+    
+    lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
+    lam23   = lambda2 * (lambda3/lambda2)**(np.arange(n23)/n23)
+    lam34   = lambda3 * (lambda4/lambda3)**(np.arange(n34)/n34)
+    lam45   = lambda4 * (lambda5/lambda4)**(np.arange(n45)/n45)
+    lam56   = lambda5 * (lambda6/lambda5)**(np.arange(n56+1)/n56)
+
+    lam_cam = np.concatenate([lam12,lam23,lam34,lam45,lam56])
+    n_lam_cam = len(lam_cam)
+
+    # Radiative transfer setting
+
+    # number of photons for temp and image
+    m.set_raytracing(True)
+    m.set_monochromatic(True, wavelengths=[3.6, 4.5, 5.8, 8.0, 24, 70, 100, 160, 250, 350, 500])
+    m.set_n_photons(initial=100000, imaging_sources=100000, imaging_dust=100000,raytracing_sources=100000, raytracing_dust=100000)
+    # imaging=100000, raytracing_sources=100000, raytracing_dust=100000
+    # number of iteration to compute dust specific energy (temperature)
+    m.set_n_initial_iterations(5)
+    m.set_convergence(True, percentile=99., absolute=1.5, relative=1.02)
+    m.set_mrw(True)   # Gamma = 1 by default
+    # m.set_forced_first_scattering(forced_first_scattering=True)
     # Setting up images and SEDs
     image = m.add_peeled_images()
-    image.set_wavelength_range(300, 2.0, 670.0)
+    # image.set_wavelength_range(300, 2.0, 670.0)
+    # use the index of wavelength array used by the monochromatic radiative transfer
+    image.set_wavelength_index_range(0,10)
     # pixel number
     image.set_image_size(300, 300)
     image.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
@@ -344,16 +406,6 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
     image.set_uncertainties(True)
     # output as 64-bit
     image.set_output_bytes(8)
-
-    # Radiative transfer setting
-
-    # number of photons for temp and image
-    m.set_raytracing(True)
-    m.set_n_photons(initial=1000000, imaging=1000000, raytracing_sources=1000000, raytracing_dust=1000000)
-    # number of iteration to compute dust specific energy (temperature)
-    m.set_n_initial_iterations(20)
-    m.set_convergence(True, percentile=99., absolute=1.5, relative=1.02)
-    m.set_mrw(True)   # Gamma = 1 by default
 
     # Output setting
     # Density
@@ -368,7 +420,7 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
     # Number of unique photons that passed through the cell
     m.conf.output.output_n_photons = 'last'
 
-    m.write(outdir+'best_model.rtin')
+    m.write(outdir+outname+'.rtin')
 
 
 
@@ -377,4 +429,4 @@ def setup_model(indir,outdir,model=False,denser_wall=False,tsc=True,idl=False,pl
 
 indir = '/Users/yaolun/bhr71/radmc3d_params'
 outdir = '/Users/yaolun/bhr71/hyperion/'
-setup_model(indir,outdir,low_res=True,scale=1.0)
+setup_model(indir,outdir,'bhr71_init_mono',low_res=True,scale=1)

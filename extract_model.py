@@ -41,7 +41,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 
 	import matplotlib.pyplot as plt
 	import numpy as np
-
+	import os
 	from hyperion.model import ModelOutput
 	from hyperion.util.constants import pc, c
 
@@ -50,6 +50,10 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 		indir = '/Users/yaolun/bhr71/'
 	if outdir == None:
 		outdir = '/Users/yaolun/bhr71/hyperion/'
+
+	# assign the file name from the input file
+	print_name = os.path.splitext(os.path.basename(filename))[0]
+	#
 	[wl_pacs,flux_pacs,unc_pacs] = np.genfromtxt(indir+'obs_for_radmc/BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',\
 										dtype='float',skip_header=1).T
 	# Convert the unit from Jy to erg cm-2 Hz-1
@@ -191,7 +195,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	plt.gca().add_artist(lg_sim)
 
 	# Write out the plot
-	fig.savefig(outdir+'best_model_sed.pdf',format='pdf',dpi=300,bbox_inches='tight')
+	fig.savefig(outdir+print_name+'_sed.pdf',format='pdf',dpi=300,bbox_inches='tight')
 	fig.clf()
 
 	# Package for matching the colorbar
@@ -200,19 +204,25 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	# Extract the image for the first inclination, and scale to 300pc. We
 	# have to specify group=1 as there is no image in group 0.
 	image = m.get_image(inclination=0, distance=dstar * pc, units='MJy/sr')
+	print image.wav
 
 	# Open figure and create axes
 	fig = plt.figure(figsize=(8, 8))
 
 	# Pre-set maximum for colorscales
 	VMAX = {}
-	VMAX[3.6] = 10.
-	VMAX[24] = 100.
-	VMAX[160] = 2000.
+	# VMAX[3.6] = 10.
+	# VMAX[24] = 100.
+	# VMAX[160] = 2000.
+	# VMAX[500] = 2000.
+	VMAX[70] = 10.
+	VMAX[100] = 100.
+	VMAX[250] = 2000.
 	VMAX[500] = 2000.
 
 	# We will now show four sub-plots, each one for a different wavelength
-	for i, wav in enumerate([3.6, 24, 160, 500]):
+	# for i, wav in enumerate([3.6, 24, 160, 500]):
+	for i, wav in enumerate([70, 100, 250, 500]):
 
 		ax = fig.add_subplot(2, 2, i + 1)
 
@@ -252,10 +262,10 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 		ax.text(0.5,0.88,str(wav) + r'$\mathrm{~\mu m}$',fontsize=16,color='white', transform=ax.transAxes)
 	# Adjust the spaces between the subplots 
 	plt.tight_layout()
-	fig.savefig(outdir+'simple_cube_plot.pdf', format='pdf', dpi=300, bbox_inches='tight') 
+	fig.savefig(outdir+print_name+'_cube_plot.pdf', format='pdf', dpi=300, bbox_inches='tight') 
 
 indir = '/Users/yaolun/bhr71/'
 outdir = '/Users/yaolun/bhr71/hyperion/'
 # extract_hyperion('/hyperion/best_model.rtout',indir=indir)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
-extract_hyperion('/hyperion/best_model.rtout',indir=indir,outdir=outdir+'bettyjo/newton_')
+extract_hyperion('/hyperion/bhr71_init_mono.rtout',indir=indir,outdir=outdir)

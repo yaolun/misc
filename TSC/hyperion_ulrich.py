@@ -1,6 +1,7 @@
 # Test script for calculating Ulrich envelope using hyperion build-in function
 import numpy as np
 import astropy.constants as const
+import hyperion as hp
 from hyperion.model import Model
 from hyperion.model import AnalyticalYSOModel
 
@@ -77,6 +78,7 @@ thetac       = 0.5*( thetai[0:ny] + thetai[1:ny+1] )
 phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
 
 m.set_spherical_polar_grid(ri, thetai, phii)
+grid = hp.grid.SphericalPolarGrid(ri, thetai, phii)
 
 # dust
 # Hyperion needs nu, albedo, chi, g, p_lin_max
