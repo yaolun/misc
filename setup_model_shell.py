@@ -355,4 +355,4 @@ def setup_model_shell(indir,outdir,outname,rin_shell=None,denser_wall=False,tsc=
 
 indir = '/Users/yaolun/bhr71/radmc3d_params'
 outdir = '/Users/yaolun/bhr71/hyperion/'
-setup_model_shell(indir,outdir,'tsc_shell',low_res=True,scale=1)
+setup_model_shell(indir,outdir,'tsc_shell',low_res=True,scale=1,idl=True)
