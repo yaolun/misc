@@ -29,4 +29,19 @@ def ch_plus(J_low, J_hi):
  	for i in range(len(J)):
  		print 'CH+ J=%2d-%2d: Wave= %.8f um, Eu = %.8f K, A = %.8e s-1, g = %2d' % (J[i], J[i]-1, c/v[i]*1e4, E_u[i], A[i], 2*J[i]+1)
 
-ch_plus(1,9)
+# ch_plus(1,9)
+
+def count_ch_plus(filepath):
+	import numpy as np
+	import astropy.io.ascii as ascii
+	chline = ['CH+1-0','CH+2-1','CH+3-2','CH+4-3','CH+5-4','CH+6-5']
+	line = 0
+	for path in filepath:
+		data = ascii.read(path)
+		for ch in chline:
+			print ch, len(data[(data['Validity'] == 1) & (data['SNR'] >= 5) & (data['Line'] == ch) & (data['Str(W/cm2)'] > 0)])
+			print data[(data['Validity'] == 1) & (data['SNR'] >= 5) & (data['Line'] == ch) & (data['Str(W/cm2)'] > 0)]
+			line += len(data[(data['Validity'] == 1) & (data['SNR'] >= 5) & (data['Line'] == ch) & (data['Str(W/cm2)'] > 0)])
+	print line
+filepath = ['/Users/yaolun/test/CDF_archive_pacs_cube_lines.txt','/Users/yaolun/test/CDF_archive_spire_cube_lines.txt']
+count_ch_plus(filepath)
