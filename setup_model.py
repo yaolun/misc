@@ -1,4 +1,4 @@
-def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=False,low_res=False,flat=True,scale=1.0,radmc=False):
+def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1.0,radmc=False):
     import numpy as np
     import astropy.constants as const
     import scipy as sci
@@ -135,6 +135,10 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
         t = R_inf / cs / yr   # in year
         mstar = M_env_dot * t * yr
         omega = (R_cen * 16*cs**8 / (G**3 * mstar**3))**0.5
+
+        # print the variables for radmc3d
+        print 'Dust sublimation radius', d_sub/AU
+        print 'M_star', mstar/MS
 
     # Make the Coordinates
     #
@@ -594,7 +598,7 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
 
 
 
-indir = '/Users/yaolun/bhr71/radmc3d_params'
-outdir = '/Users/yaolun/bhr71/hyperion/'
-setup_model(indir,outdir,'bhr71_init_lowmdot',low_res=True,scale=1,radmc=True,plot=True,idl=True)
+# indir = '/Users/yaolun/bhr71/radmc3d_params'
+# outdir = '/Users/yaolun/bhr71/hyperion/'
+# setup_model(indir,outdir,'bhr71_init_lowmdot')
 
