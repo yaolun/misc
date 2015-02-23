@@ -151,6 +151,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	# arrays, and indicate the position from the end. So to get the SED in the
 	# largest aperture, we set aperture=-1.
 	sed = m.get_sed(inclination=0, aperture=-1, distance=dstar * pc)
+
 	l_bol_sim = l_bol(sed.wav, sed.val/(c/sed.wav*1e4)*1e23)
 	# print sed.wav, sed.val
 	print 'Bolometric luminosity of simulated spectrum: %5.2f' % l_bol_sim
@@ -204,9 +205,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	# Extract the image for the first inclination, and scale to 300pc. We
 	# have to specify group=1 as there is no image in group 0.
 	image = m.get_image(inclination=0, distance=dstar * pc, units='MJy/sr')
-	print np.shape(image.val)
-	print image.nu
-
 	# Open figure and create axes
 	fig = plt.figure(figsize=(8, 8))
 
@@ -216,14 +214,14 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	# VMAX[24] = 100.
 	# VMAX[160] = 2000.
 	# VMAX[500] = 2000.
-	VMAX[70] = 10.
-	VMAX[100] = 100.
-	VMAX[250] = 2000.
+	VMAX[100] = 10.
+	VMAX[250] = 100.
 	VMAX[500] = 2000.
+	VMAX[1000] = 2000.
 
 	# We will now show four sub-plots, each one for a different wavelength
 	# for i, wav in enumerate([3.6, 24, 160, 500]):
-	for i, wav in enumerate([70, 100, 250, 500]):
+	for i, wav in enumerate([100, 250, 500, 1000]):
 
 		ax = fig.add_subplot(2, 2, i + 1)
 
@@ -241,7 +239,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 
 		# This is the command to show the image. The parameters vmin and vmax are
 		# the min and max levels for the colorscale (remove for default values).
-		im = ax.imshow(np.log10(image.val[:, :, iwav]).T, vmin= -22, vmax= -12,
+		im = ax.imshow(np.log10(image.val[:, :, iwav]), vmin= -22, vmax= -12,
 				  cmap=plt.cm.jet, origin='lower', extent=[-w, w, -w, w])
 
 		# Colorbar setting
@@ -269,4 +267,4 @@ indir = '/Users/yaolun/bhr71/'
 outdir = '/Users/yaolun/bhr71/hyperion/'
 # extract_hyperion('/hyperion/best_model.rtout',indir=indir)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
-extract_hyperion('/hyperion/tsc_shell.rtout',indir=indir,outdir=outdir)
+extract_hyperion('/hyperion/bhr71_init_regwave.rtout',indir=indir,outdir=outdir)

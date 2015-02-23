@@ -39,9 +39,9 @@ def count_ch_plus(filepath):
 	for path in filepath:
 		data = ascii.read(path)
 		for ch in chline:
-			print ch, len(data[(data['Validity'] == 1) & (data['SNR'] >= 5) & (data['Line'] == ch) & (data['Str(W/cm2)'] > 0)])
-			print data[(data['Validity'] == 1) & (data['SNR'] >= 5) & (data['Line'] == ch) & (data['Str(W/cm2)'] > 0)]
-			line += len(data[(data['Validity'] == 1) & (data['SNR'] >= 5) & (data['Line'] == ch) & (data['Str(W/cm2)'] > 0)])
+			print ch, len(data[(data['Validity'] == 1) & (data['SNR'] >= 3) & (data['Line'] == ch) & (data['Str(W/cm2)'] > 0)])
+			print data[(data['Validity'] == 1) & (data['SNR'] >= 3) & (data['Line'] == ch) & (data['Str(W/cm2)'] > 0)]
+			line += len(data[(data['Validity'] == 1) & (data['SNR'] >= 3) & (data['Line'] == ch) & (data['Str(W/cm2)'] > 0)])
 	print line
-filepath = ['/Users/yaolun/test/CDF_archive_pacs_cube_lines.txt','/Users/yaolun/test/CDF_archive_spire_cube_lines.txt']
+filepath = ['/Users/yaolun/test/CDF_archive_pacs_1d_lines.txt','/Users/yaolun/test/CDF_archive_spire_1d_lines.txt']
 count_ch_plus(filepath)
