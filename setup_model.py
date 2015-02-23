@@ -595,5 +595,5 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
 
 indir = '/Users/yaolun/bhr71/radmc3d_params'
 outdir = '/Users/yaolun/bhr71/hyperion/'
-setup_model(indir,outdir,'bhr71_init_lowmdot',low_res=True,scale=1,radmc=True,plot=True)
+setup_model(indir,outdir,'bhr71_init_lowmdot',low_res=True,scale=1,radmc=True,plot=True,idl=True)
 
