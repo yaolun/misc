@@ -331,6 +331,7 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
         rho      = rho      + 1e-40
 
     if plot == True:
+        mat.rcParams['text.usetex'] = True
         fig = plt.figure(figsize=(8,6))
         ax_env  = fig.add_subplot(111,projection='polar')
         # take the weighted average
@@ -594,5 +595,5 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
 
 indir = '/Users/yaolun/bhr71/radmc3d_params'
 outdir = '/Users/yaolun/bhr71/hyperion/'
-setup_model(indir,outdir,'bhr71_init_lowmdot',low_res=True,scale=1,radmc=True,plot=True,idl=True)
+setup_model(indir,outdir,'bhr71_init_lowmdot',low_res=True,scale=1,radmc=True,plot=True)
 
