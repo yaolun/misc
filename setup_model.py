@@ -23,6 +23,7 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
     yr        = 60*60*24*365   # Years in seconds
     PI        = np.pi          # PI constant
     sigma     = const.sigma_sb.cgs.value  # Stefan-Boltzmann constant 
+    mh        = const.m_p.cgs.value + const.m_e.cgs.value
 
 
     m = Model()
@@ -335,12 +336,12 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
         fig = plt.figure(figsize=(8,6))
         ax_env  = fig.add_subplot(111,projection='polar')
         # take the weighted average
-        rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
+        rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)/mh
 
-        zmin = 1e-22
+        zmin = 1e-22/mh
         cmap = 'jet'
-        img_env = ax_env.pcolormesh(thetai[0:-1],rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
-        ax_env.pcolormesh(thetai[0:-1]-PI,rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
+        img_env = ax_env.pcolormesh(thetac,rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
+        ax_env.pcolormesh(thetac-PI,rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
 
         ax_env.set_xlabel(r'$\mathrm{Polar~angle~(Degree)}$',fontsize=20)
         ax_env.set_ylabel(r'$\mathrm{Radius~(AU)}$',fontsize=20)
@@ -351,7 +352,7 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
                                 r'$\mathrm{-90^{\circ}}$',r'$\mathrm{-135^{\circ}}$',r'$\mathrm{180^{\circ}}$',r'$\mathrm{135^{\circ}}$'])
         ax_env.grid(True)
         cb = fig.colorbar(img_env, pad=0.1)
-        cb.ax.set_ylabel(r'$\mathrm{Surface~Density~(g/cm^{2})}$',fontsize=20)
+        cb.ax.set_ylabel(r'$\mathrm{Averaged~Density~(cm^{-3})}$',fontsize=20)
         cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
         plt.setp(cb_obj,fontsize=20)
         fig.savefig(outdir+'dust_density.png', format='png', dpi=300, bbox_inches='tight')
