@@ -1,4 +1,4 @@
-def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1.0,radmc=False):
+def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1,radmc=False):
     import numpy as np
     import astropy.constants as const
     import scipy as sci
@@ -166,6 +166,7 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
     # Make the dust density model
     # Make the density profile of the envelope
     #
+    total_mass = 0
     if tsc == False:
         print 'Calculating the dust density profile with infall solution...'
         if theta_cav != 0:
@@ -241,6 +242,10 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
                         rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
                     else:
                         rho[ir,itheta,iphi] = 1e-30
+                    # add the dust mass into the total count
+                    cell_mass = rho[ir, itheta, iphi] * (1/3.)*(ri[ir+1]**3 - ri[ir]**3) * (phii[iphi+1]-phii[iphi]) * -(np.cos(thetai[itheta+1])-np.cos(thetai[itheta]))
+                    total_mass = total_mass + cell_mass
+
         rho_env  = rho_env  + 1e-40
         rho_disk = rho_disk + 1e-40
         rho      = rho      + 1e-40
@@ -331,10 +336,14 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
                         rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
                     else:
                         rho[ir,itheta,iphi] = 1e-30
+                    # add the dust mass into the total count
+                    cell_mass = rho[ir, itheta, iphi] * (1/3.)*(ri[ir+1]**3 - ri[ir]**3) * (phii[iphi+1]-phii[iphi]) * -(np.cos(thetai[itheta+1])-np.cos(thetai[itheta]))
+                    total_mass = total_mass + cell_mass
         rho_env  = rho_env  + 1e-40
         rho_disk = rho_disk + 1e-40
         rho      = rho      + 1e-40
-
+    total_mass = total_mass/MS
+    print 'Total dust mass = %f Solar mass' % total_mass
     if plot == True:
         mat.rcParams['text.usetex'] = True
         fig = plt.figure(figsize=(8,6))
@@ -344,8 +353,11 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
 
         zmin = 1e-22/mh
         cmap = 'jet'
-        img_env = ax_env.pcolormesh(thetac,rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
-        ax_env.pcolormesh(thetac-PI,rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
+        rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
+        thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
+        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d_exp)))
+        # img_env = ax_env.pcolormesh(thetac-PI/2,rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
+        # ax_env.pcolormesh(thetac+PI/2,rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
 
         ax_env.set_xlabel(r'$\mathrm{Polar~angle~(Degree)}$',fontsize=20)
         ax_env.set_ylabel(r'$\mathrm{Radius~(AU)}$',fontsize=20)
@@ -359,7 +371,7 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
         cb.ax.set_ylabel(r'$\mathrm{Averaged~Density~(cm^{-3})}$',fontsize=20)
         cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
         plt.setp(cb_obj,fontsize=20)
-        fig.savefig(outdir+'dust_density.png', format='png', dpi=300, bbox_inches='tight')
+        fig.savefig(outdir+outname+'_dust_density.png', format='png', dpi=300, bbox_inches='tight')
         fig.clf()
 
     # Insert the calculated grid and dust density profile into hyperion
@@ -429,26 +441,9 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
     lam_cam = np.concatenate([lam12,lam23,lam34,lam45,lam56])
     n_lam_cam = len(lam_cam)
 
-    # Radiative transfer setting
-
-    # number of photons for temp and image
-    # [3.6, 4.5, 5.8, 8.0, 24, 70, 100, 160, 250, 350, 500, 1000]
-    lam_list = lam.tolist()
-    print lam_list
-    m.set_raytracing(True)
-    # Monechromatic radiative transfer setting
-    m.set_monochromatic(True, wavelengths=lam_list)
-    m.set_n_photons(initial=1000000, imaging_sources=1000000, imaging_dust=1000000,raytracing_sources=1000000, raytracing_dust=1000000)
-    # regular wavelength grid setting
-    # m.set_n_photons(initial=1000000, imaging=1000000,raytracing_sources=1000000, raytracing_dust=1000000)    
-    # number of iteration to compute dust specific energy (temperature)
-    m.set_n_initial_iterations(5)
-    m.set_convergence(True, percentile=99., absolute=1.5, relative=1.02)
-    m.set_mrw(True)   # Gamma = 1 by default
-    # m.set_forced_first_scattering(forced_first_scattering=True)
     # Setting up images and SEDs
     image = m.add_peeled_images()
-    # image.set_wavelength_range(300, 2.0, 1000.0)
+    image.set_wavelength_range(1000, 2.0, 1000.0)
     # use the index of wavelength array used by the monochromatic radiative transfer
     # image.set_wavelength_index_range(0,13)
     # pixel number
@@ -458,6 +453,25 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
     image.set_uncertainties(True)
     # output as 64-bit
     image.set_output_bytes(8)
+
+    # Radiative transfer setting
+
+    # number of photons for temp and image
+    # [3.6, 4.5, 5.8, 8.0, 24, 70, 100, 160, 250, 350, 500, 1000]
+    lam_list = lam.tolist()
+    # print lam_list
+    m.set_raytracing(True)
+    # Monechromatic radiative transfer setting
+    # m.set_monochromatic(True, wavelengths=lam_list)
+    # m.set_n_photons(initial=1000000, imaging_sources=1000000, imaging_dust=1000000,raytracing_sources=1000000, raytracing_dust=1000000)
+    # regular wavelength grid setting
+    m.set_n_photons(initial=1000000, imaging=1000000,raytracing_sources=1000000, raytracing_dust=1000000)    
+    # number of iteration to compute dust specific energy (temperature)
+    m.set_n_initial_iterations(5)
+    m.set_convergence(True, percentile=99., absolute=1.5, relative=1.02)
+    m.set_mrw(True)   # Gamma = 1 by default
+    # m.set_forced_first_scattering(forced_first_scattering=True)
+
 
     # Output setting
     # Density
@@ -598,7 +612,7 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
 
 
 
-# indir = '/Users/yaolun/bhr71/radmc3d_params'
-# outdir = '/Users/yaolun/bhr71/hyperion/'
-# setup_model(indir,outdir,'bhr71_init_lowmdot')
+indir = '/Users/yaolun/bhr71/radmc3d_params'
+outdir = '/Users/yaolun/bhr71/hyperion/'
+setup_model(indir,outdir,'bhr71_init_test',plot=True)
 
