@@ -441,19 +441,6 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
     lam_cam = np.concatenate([lam12,lam23,lam34,lam45,lam56])
     n_lam_cam = len(lam_cam)
 
-    # Setting up images and SEDs
-    image = m.add_peeled_images()
-    image.set_wavelength_range(1000, 2.0, 1000.0)
-    # use the index of wavelength array used by the monochromatic radiative transfer
-    # image.set_wavelength_index_range(0,13)
-    # pixel number
-    image.set_image_size(300, 300)
-    image.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
-    image.set_viewing_angles([82.0], [0.0])
-    image.set_uncertainties(True)
-    # output as 64-bit
-    image.set_output_bytes(8)
-
     # Radiative transfer setting
 
     # number of photons for temp and image
@@ -467,11 +454,23 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
     # regular wavelength grid setting
     m.set_n_photons(initial=1000000, imaging=1000000,raytracing_sources=1000000, raytracing_dust=1000000)    
     # number of iteration to compute dust specific energy (temperature)
-    m.set_n_initial_iterations(5)
+    m.set_n_initial_iterations(20)
     m.set_convergence(True, percentile=99., absolute=1.5, relative=1.02)
     m.set_mrw(True)   # Gamma = 1 by default
     # m.set_forced_first_scattering(forced_first_scattering=True)
 
+    # Setting up images and SEDs
+    image = m.add_peeled_images()
+    image.set_wavelength_range(1000, 2.0, 1000.0)
+    # use the index of wavelength array used by the monochromatic radiative transfer
+    # image.set_wavelength_index_range(0,13)
+    # pixel number
+    image.set_image_size(300, 300)
+    image.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
+    image.set_viewing_angles([82.0], [0.0])
+    image.set_uncertainties(True)
+    # output as 64-bit
+    image.set_output_bytes(8)
 
     # Output setting
     # Density
@@ -612,7 +611,7 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
 
 
 
-indir = '/Users/yaolun/bhr71/radmc3d_params'
-outdir = '/Users/yaolun/bhr71/hyperion/'
-setup_model(indir,outdir,'bhr71_init_test',plot=True)
+# indir = '/Users/yaolun/bhr71/radmc3d_params'
+# outdir = '/Users/yaolun/bhr71/hyperion/'
+# setup_model(indir,outdir,'bhr71_init_test',plot=True)
 
