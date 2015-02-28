@@ -58,6 +58,9 @@ def input_reader_table(filename,default=True):
 	model = np.genfromtxt(filename, dtype=None, skip_header=1)
 	header = open(filename,'r').readlines()[0].split()
 	# output is the tuple that consist all dictionaries of model parameters.
+	if type(model) == np.ndarray:
+		model = (model,)
+
 	output = ()
 	for i in range(0,len(model)):
 		dict_dum = {}
@@ -75,6 +78,6 @@ def input_reader_table(filename,default=True):
 	return output
 
 # filename = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
-# print input_reader_table(filename)
+filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
+print input_reader_table(filename)
 # input_reader(filename)
