@@ -1,5 +1,6 @@
 import numpy as np
 import os
+from subprocess import Popen
 from pprint import pprint
 from setup_model import setup_model
 from input_reader import input_reader_table
@@ -38,8 +39,10 @@ for i in range(0, len(params)):
 	m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True)
 	# Run hyperion
 	print 'Running with Hyperion'
-	m.run(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', mpi=True, n_processes=222)
+	# m.run(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', mpi=True, n_processes=22)
 
+    run = Popen('mpirun -n 22 hyperion_sph_mpi -f '+outdir_dum+'model'+str(int(model_num)+i)+'.rtin '+outdir_dum+'model'+str(int(model_num)+i)+'.rtout')
+    run.communicate()
 	# Extract the results
 	# the indir here is the dir that contains the observed spectra.
 	print 'Seems finish, lets check out the results'
