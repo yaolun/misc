@@ -6,10 +6,10 @@ from input_reader import input_reader_table
 
 # path setting
 home = os.path.expanduser('~')
-outdir = home + '/bhr71/hyperion/'
+outdir = home + '/hyperion/bhr71/'
 dust_file = home + '/programs/misc/dustkappa_oh5_extended.inp'
 params_table = home + '/programs/misc/hyperion/input_table.txt'
-obs_dir = '/path/to/observed_spectra/'
+obs_dir = home + '/radmc_simulation/bhr71/observations/'
 
 params = input_reader_table(params_table)
 
@@ -37,7 +37,7 @@ for i in range(0, len(params)):
 	m = setup_model(outdir_dum,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,tsc=False)
 	# Run hyperion
 	print 'Running with Hyperion'
-	m.run(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', mpi=True, n_processes=1)
+	m.run(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', mpi=True, n_processes=222)
 
 	# Extract the results
 	# the indir here is the dir that contains the observed spectra.

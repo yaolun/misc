@@ -54,23 +54,23 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	# assign the file name from the input file
 	print_name = os.path.splitext(os.path.basename(filename))[0]
 	#
-	[wl_pacs,flux_pacs,unc_pacs] = np.genfromtxt(indir+'obs_for_radmc/BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',\
+	[wl_pacs,flux_pacs,unc_pacs] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',\
 										dtype='float',skip_header=1).T
 	# Convert the unit from Jy to erg cm-2 Hz-1
 	flux_pacs = flux_pacs*1e-23
-	[wl_spire,flux_spire] = np.genfromtxt(indir+'obs_for_radmc/BHR71_spire_corrected_continuum.txt',dtype='float',skip_header=1).T
+	[wl_spire,flux_spire] = np.genfromtxt(indir+'BHR71_spire_corrected_continuum.txt',dtype='float',skip_header=1).T
 	flux_spire = flux_spire*1e-23 
 	wl_obs = np.hstack((wl_pacs,wl_spire))
 	flux_obs = np.hstack((flux_pacs,flux_spire))
 
-	[wl_pacs_data,flux_pacs_data,unc_pacs_data] = np.genfromtxt(indir+'obs_for_radmc/BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim.txt',\
+	[wl_pacs_data,flux_pacs_data,unc_pacs_data] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim.txt',\
 												  dtype='float').T
-	[wl_spire_data,flux_spire_data] = np.genfromtxt(indir+'obs_for_radmc/BHR71_spire_corrected.txt',\
+	[wl_spire_data,flux_spire_data] = np.genfromtxt(indir+'BHR71_spire_corrected.txt',\
 													dtype='float').T
 
-	[wl_pacs_flat,flux_pacs_flat,unc_pacs_flat] = np.genfromtxt(indir+'obs_for_radmc/BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_flat_spectrum.txt',\
+	[wl_pacs_flat,flux_pacs_flat,unc_pacs_flat] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_flat_spectrum.txt',\
 										dtype='float',skip_header=1).T
-	[wl_spire_flat,flux_spire_flat] = np.genfromtxt(indir+'obs_for_radmc/BHR71_spire_corrected_flat_spectrum.txt',dtype='float',skip_header=1).T
+	[wl_spire_flat,flux_spire_flat] = np.genfromtxt(indir+'BHR71_spire_corrected_flat_spectrum.txt',dtype='float',skip_header=1).T
 
 	# Convert the unit from Jy to erg cm-2 Hz-1
 	flux_pacs_flat = flux_pacs_flat*1e-23 
@@ -85,7 +85,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	flux_spire_noise = flux_spire_data-flux_spire-flux_spire_flat
 
 	# Read in the Spitzer IRS spectrum
-	[wl_irs, flux_irs]= (np.genfromtxt(indir+'obs_for_radmc/bhr71_spitzer_irs.txt',skip_header=2,dtype='float').T)[0:2]
+	[wl_irs, flux_irs]= (np.genfromtxt(indir+'bhr71_spitzer_irs.txt',skip_header=2,dtype='float').T)[0:2]
 	# Convert the unit from Jy to erg cm-2 Hz-1
 	flux_irs = flux_irs*1e-23
 	# Remove points with zero or negative flux 
@@ -115,7 +115,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	sigma_noise = np.array(sigma_noise)
 
 	# Read in the photometry data
-	phot = np.genfromtxt(indir+'obs_for_radmc/bhr71.txt',dtype=None,skip_header=1,comments='%')
+	phot = np.genfromtxt(indir+'bhr71.txt',dtype=None,skip_header=1,comments='%')
 	wl_phot = []
 	flux_phot = []
 	flux_sig_phot = []
@@ -171,15 +171,17 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	sim, = ax_sed.plot(np.log10(sed.wav), np.log10(sed.val), '-', color='GoldenRod', linewidth=1.5*mag)
 
 	# Read in and plot the simulated SED produced by RADMC-3D using the same parameters
-	[wl,fit] = np.genfromtxt(indir+'hyperion/radmc_comparison/spectrum.out',dtype='float',skip_header=3).T
-	l_bol_radmc = l_bol(wl,fit*1e23/dstar**2)
-	radmc, = ax_sed.plot(np.log10(wl),np.log10(c/(wl*1e-4)*fit/dstar**2),'-',color='DimGray', linewidth=1.5*mag, alpha=0.5)
+	# [wl,fit] = np.genfromtxt(indir+'hyperion/radmc_comparison/spectrum.out',dtype='float',skip_header=3).T
+	# l_bol_radmc = l_bol(wl,fit*1e23/dstar**2)
+	# radmc, = ax_sed.plot(np.log10(wl),np.log10(c/(wl*1e-4)*fit/dstar**2),'-',color='DimGray', linewidth=1.5*mag, alpha=0.5)
 
 	# print the L bol of the simulated SED (both Hyperion and RADMC-3D)
-	lg_sim = ax_sed.legend([sim,radmc],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_sim, \
-		r'$\mathrm{L_{bol,radmc3d}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_radmc],\
-		loc='lower right',fontsize=mag*16)
+	# lg_sim = ax_sed.legend([sim,radmc],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_sim, \
+	# 	r'$\mathrm{L_{bol,radmc3d}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_radmc],\
+	# 	loc='lower right',fontsize=mag*16)
 
+	lg_sim = ax_sed.legend([sim],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_sim] \
+        loc='lower right',fontsize=mag*16)
 	# plot setting
 	ax_sed.set_xlabel(r'$\mathrm{log~\lambda~({\mu}m)}$',fontsize=mag*20)
 	ax_sed.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg/cm^{2}/s)}$',fontsize=mag*20)
@@ -263,8 +265,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	plt.tight_layout()
 	fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight') 
 
-indir = '/Users/yaolun/bhr71/'
-outdir = '/Users/yaolun/bhr71/hyperion/'
+# indir = '/Users/yaolun/bhr71/'
+# outdir = '/Users/yaolun/bhr71/hyperion/'
 # extract_hyperion('/hyperion/best_model.rtout',indir=indir)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
-extract_hyperion('/hyperion/old_setup2.rtout',indir=indir,outdir=outdir)
+# extract_hyperion('/hyperion/old_setup2.rtout',indir=indir,outdir=outdir)
