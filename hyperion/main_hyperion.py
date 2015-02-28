@@ -14,16 +14,17 @@ obs_dir = home + '/radmc_simulation/bhr71/observations/'
 params = input_reader_table(params_table)
 
 # Get current model number
-foo = open(outdir+'model_list.txt','r')
-for line in foo.readlines():
-	pass
-last = line
-foo.close()
-last_model_num = (last.split('M_env_dot')[0]).split('Model')[1].split()[0]
-if last_model_num == '#':
-	model_num = '1'
+if not os.path.exists(outdir+'model_list.txt'):
+    last_model_num = '0'
 else:
-	model_num = str(int(last_model_num)+1)
+    foo = open(outdir+'model_list.txt','r')
+    for line in foo.readlines():
+	    pass
+    last = line
+    foo.close()
+    last_model_num = (last.split('M_env_dot')[0]).split('Model')[1].split()[0]
+
+model_num = str(int(last_model_num)+1)
 
 for i in range(0, len(params)):
 	params_dict = params[i]
@@ -34,7 +35,7 @@ for i in range(0, len(params)):
 	print 'Model'+str(int(model_num)+i)
 	pprint(params_dict)
 	# calculate the initial dust profile
-	m = setup_model(outdir_dum,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,tsc=False)
+	m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True)
 	# Run hyperion
 	print 'Running with Hyperion'
 	m.run(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', mpi=True, n_processes=222)

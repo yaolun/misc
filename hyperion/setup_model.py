@@ -1,4 +1,4 @@
-def setup_model(outdir,outname,params,dust_file,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True):
+def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True):
     """
     params = dictionary of the model parameters
     """
@@ -105,7 +105,7 @@ def setup_model(outdir,outname,params,dust_file,tsc=True,idl=False,plot=False,lo
         # Record the input and calculated parameters
         params = dict_params.copy()
         params.update({'d_sub': d_sub/AU, 'age': t, 'Cs':cs/1e5, 'Omega0':omega})
-        record_hyperion(params,outdir)
+        record_hyperion(params,outdir_global)
     # print the variables for radmc3d
     print 'Dust sublimation radius', d_sub/AU
     print 'M_star', mstar/MS
@@ -231,7 +231,8 @@ def setup_model(outdir,outname,params,dust_file,tsc=True,idl=False,plot=False,lo
         if idl == True:
             print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
-            idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
+            # idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
+            idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
             idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
         else:
