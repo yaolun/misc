@@ -1,4 +1,7 @@
-def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1,radmc=False,mono=False):
+def setup_model(outdir,outname,params,dust_file,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True):
+    """
+    params = dictionary of the model parameters
+    """
     import numpy as np
     import astropy.constants as const
     import scipy as sci
@@ -6,11 +9,11 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
     import matplotlib as mat
     import os
     from matplotlib.colors import LogNorm
-    from scipy.optimize import fsolve
-    from scipy.optimize import newton
     from scipy.integrate import nquad
-    from envelope_func import func
     from hyperion.model import Model
+    from input_reader import input_reader
+    from record_hyperion import record_hyperion
+    from pprint import pprint
 
     # Constants setup
     c         = const.c.cgs.value
@@ -34,7 +37,7 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
     from hyperion.dust import HenyeyGreensteinDust
     # Read in the dust opacity table used by RADMC-3D
     dust_radmc = dict()
-    [dust_radmc['wl'], dust_radmc['abs'], dust_radmc['scat'], dust_radmc['g']] = np.genfromtxt('dustkappa_oh5_extended.inp',skip_header=2).T
+    [dust_radmc['wl'], dust_radmc['abs'], dust_radmc['scat'], dust_radmc['g']] = np.genfromtxt(dust_file,skip_header=2).T
     # opacity per mass of dust?
     dust_hy = dict()
     dust_hy['nu'] = c/dust_radmc['wl']*1e4
@@ -62,83 +65,50 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
     nz        = 50L
     [nx, ny, nz] = [int(scale*nx), int(scale*ny), int(scale*nz)]
 
-    if tsc == False:
-        # Parameters setup
-        # Import the model parameters from another file 
-        #
-        params     = np.genfromtxt(indir+'/params.dat',dtype=None)
-        tstar      = params[0][1]
-        mstar      = params[1][1]*MS
-        rstar      = params[2][1]*RS
-        M_env_dot  = params[3][1]*MS/yr
-        M_disk_dot = params[4][1]*MS/yr
-        R_env_max  = params[5][1]*AU
-        R_env_min  = params[6][1]*AU
-        theta_cav  = params[7][1]
-        R_disk_max = params[8][1]*AU
-        R_disk_min = params[9][1]*AU
-        R_cen      = R_disk_max
-        M_disk     = params[10][1]*MS
-        beta       = params[11][1]
-        h100       = params[12][1]*AU
-        rho_cav    = params[13][1]
-        if denser_wall == True:
-            wall       = params[14][1]*AU
-            rho_wall   = params[15][1]
-        rho_cav_center = params[16][1]
-        rho_cav_edge   = params[17][1]*AU
+    # TSC model input setting
+    # params    = np.genfromtxt(indir+'/tsc_params.dat', dtype=None)
+    dict_params = params # input_reader(params_file)
+    # TSC model parameter
+    M_env_dot = dict_params['M_env_dot']*MS/yr
+    R_cen     = dict_params['R_cen']*AU
+    R_inf     = dict_params['R_inf']*AU
+    # protostar parameter
+    tstar     = dict_params['tstar']
+    R_env_max = dict_params['R_env_max']*AU
+    theta_cav = dict_params['theta_cav']
+    rho_cav_center = dict_params['rho_cav_center']
+    rho_cav_edge   = dict_params['rho_cav_edge']*AU
+    rstar     = dict_params['rstar']*RS
+    # Mostly fixed parameter
+    M_disk    = dict_params['M_disk']*MS
+    beta      = dict_params['beta']
+    h100      = dict_params['h100']*AU
+    rho_cav   = dict_params['rho_cav']
+    # Calculate the dust sublimation radius
+    T_sub = 2000
+    a     = 1   #in micron
+    d_sub = (306.86*(a/0.1)**-0.4 * (4*np.pi*rstar**2*sigma*tstar**4/LS) / T_sub)**0.5 *AU
+    # use the dust sublimation radius as the inner radius of disk and envelope
+    R_disk_min = d_sub
+    R_env_min  = d_sub
+    rin        = rstar
+    rout       = R_env_max
+    R_disk_max = R_cen
 
-        # Model Parameters
-        #
-        rin       = rstar
-        rout      = R_env_max
-        rcen      = R_cen
+    # Do the variable conversion
+    cs = (G * M_env_dot / 0.975)**(1/3.)  # cm/s
+    t = R_inf / cs / yr   # in year
+    mstar = M_env_dot * t * yr
+    omega = (R_cen * 16*cs**8 / (G**3 * mstar**3))**0.5
 
-        # Star Parameters
-        #
-        mstar    = mstar
-        rstar    = rstar*0.9999
-        tstar    = tstar
-        pstar    = [0.,0.,0.]
-    else:
-        # TSC model input setting
-        params    = np.genfromtxt(indir+'/tsc_params.dat', dtype=None)
-        # TSC model parameter
-        M_env_dot = params[0][1]*MS/yr
-        R_cen     = params[1][1]*AU
-        R_inf     = params[2][1]*AU
-        # protostar parameter
-        tstar     = params[3][1]
-        R_env_max = params[4][1]*AU
-        theta_cav = params[5][1]
-        rho_cav_center = params[6][1]
-        rho_cav_edge   = params[7][1]*AU
-        rstar     = params[8][1]*RS
-        # Calculate the dust sublimation radius
-        T_sub = 2000
-        a     = 1   #in micron
-        d_sub = (306.86*(a/0.1)**-0.4 * (4*np.pi*rstar**2*sigma*tstar**4/LS) / T_sub)**0.5 *AU
-        # use the dust sublimation radius as the inner radius of disk and envelope
-        R_disk_min = d_sub
-        R_env_min  = d_sub
-        rin        = rstar
-        rout       = R_env_max
-        R_disk_max = R_cen
-        # mostly fixed parameter
-        M_disk    = 0.5*MS
-        beta      = 1.093
-        h100      = 8.123*AU
-        rho_cav   = 1e-21
-
-        # Do the variable conversion
-        cs = (G * M_env_dot / 0.975)**(1/3.)  # cm/s
-        t = R_inf / cs / yr   # in year
-        mstar = M_env_dot * t * yr
-        omega = (R_cen * 16*cs**8 / (G**3 * mstar**3))**0.5
-
-        # print the variables for radmc3d
-        print 'Dust sublimation radius', d_sub/AU
-        print 'M_star', mstar/MS
+    if record == True:
+        # Record the input and calculated parameters
+        params = dict_params.copy()
+        params.update({'d_sub': d_sub/AU, 'age': t, 'Cs':cs/1e5, 'Omega0':omega})
+        record_hyperion(params,outdir)
+    # print the variables for radmc3d
+    print 'Dust sublimation radius', d_sub/AU
+    print 'M_star', mstar/MS
 
     # Make the Coordinates
     #
@@ -147,7 +117,7 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
     thetai       = PI*np.arange(ny+1).astype(dtype='float')/float(ny)
     phii         = PI*2.0*np.arange(nz+1).astype(dtype='float')/float(nz)
     
-    # Keep the constant cell size in r-direction
+    # Keep the constant cell size in r-direction at large radii
     #
     if flat == True:
         ri_cellsize = ri[1:-1]-ri[0:-2]
@@ -176,11 +146,11 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
         rho_env  = np.zeros([len(rc),len(thetac),len(phic)])
         rho_disk = np.zeros([len(rc),len(thetac),len(phic)])
         rho      = np.zeros([len(rc),len(thetac),len(phic)])
+
+        # Normalization for the total disk mass
         def f(w,z,beta,rstar,h100):
             f = 2*PI*w*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/(w**beta*h100/100**beta))**2)
             return f
-        def fprime(x, r, rcen, mu):
-            return 3*float(x)**2 + float(r)/float(rcen)-1
 
         rho_0 = M_disk/(nquad(f,[[R_disk_min,R_disk_max],[-R_env_max,R_env_max]], args=(beta,rstar,h100)))[0]
         i = 0
@@ -214,14 +184,14 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
                             j += 1
                             mu = abs(np.cos(thetac[itheta]))
                             # Implement new root finding algorithm
-                            roots = np.roots(np.array([1.0, 0.0, rc[ir]/rcen-1.0, -mu*rc[ir]/rcen]))
+                            roots = np.roots(np.array([1.0, 0.0, rc[ir]/R_cen-1.0, -mu*rc[ir]/R_cen]))
                             if len(roots[roots.imag == 0]) == 1:
                                 if (abs(roots[roots.imag == 0]) - 1.0) <= 0.0:
                                     mu_o_dum = roots[roots.imag == 0]
                                 else:
                                     mu_o_dum = -0.5
                                     print 'Problem with cubic solving, cos(theta) = ', mu_o_dum
-                                    print 'parameters are ', np.array([1.0, 0.0, rc[ir]/rcen-1.0, -mu*rc[ir]/rcen])
+                                    print 'parameters are ', np.array([1.0, 0.0, rc[ir]/R_cen-1.0, -mu*rc[ir]/R_cen])
                             else:
                                 mu_o_dum = -0.5
                                 for imu in range(0, len(roots)):
@@ -233,7 +203,7 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
                                 if mu_o_dum == -0.5:
                                     print 'Problem with cubic solving, roots are: ', roots
                             mu_o = mu_o_dum.real
-                            rho_env[ir,itheta,iphi] = M_env_dot/(4*PI*(G*mstar*rcen**3)**0.5)*(rc[ir]/rcen)**(-3./2)*(1+mu/mu_o)**(-0.5)*(mu/mu_o+2*mu_o**2*rcen/rc[ir])**(-1)
+                            rho_env[ir,itheta,iphi] = M_env_dot/(4*PI*(G*mstar*R_cen**3)**0.5)*(rc[ir]/R_cen)**(-3./2)*(1+mu/mu_o)**(-0.5)*(mu/mu_o+2*mu_o**2*R_cen/rc[ir])**(-1)
                         # Disk profile
                         if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
                             h = ((w/(100*AU))**beta)*h100
@@ -345,11 +315,13 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
     total_mass = total_mass/MS
     print 'Total dust mass = %f Solar mass' % total_mass
     if plot == True:
+        # rc setting
         mat.rcParams['text.usetex'] = True
         mat.rcParams['font.family'] = 'serif'
         mat.rcParams['font.serif'] = 'Times'
         mat.rcParams['font.sans-serif'] = 'Computer Modern Sans serif'
 
+        # Plot the azimuthal averaged density
         fig = plt.figure(figsize=(8,6))
         ax_env  = fig.add_subplot(111,projection='polar')
         # take the weighted average
@@ -376,6 +348,39 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
         cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
         plt.setp(cb_obj,fontsize=20)
         fig.savefig(outdir+outname+'_dust_density.png', format='png', dpi=300, bbox_inches='tight')
+        fig.clf()
+
+        # Plot the radial density profile
+        fig = plt.figure(figsize=(12,9))
+        ax = fig.add_subplot(111)
+
+        plot_grid = [0,39,79,119,159,199]
+        for i in plot_grid:
+            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'o-',color='b',linewidth=2, markersize=3)
+        rinf = ax.axvline(np.log10(dict_params['R_inf']), linestyle='--', color='r', linewidth=1.5)
+        cen_r = ax.axvline(np.log10(dict_params['R_cen']), linestyle='--', color='r', linewidth=1.5)
+        # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
+        # gt_R_cen_slope, = ax.plot(np.log10(rc/AU), -1.5*np.log10(rc/AU)+B-(-1.5)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
+        # lt_R_cen_slope, = ax.plot(np.log10(rc/AU), -0.5*np.log10(rc/AU)+A-(-0.5)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
+
+        lg = plt.legend([rho_rad, rinf, cen_r,],\
+                        [r'$\mathrm{\rho_{dust}}$',r'$\mathrm{infall~radius}$',r'$\mathrm{centrifugal~radius}$'],\
+                        fontsize=20, numpoints=1)
+        ax.set_xlabel(r'$\mathrm{log(Radius)~(AU)}$',fontsize=20)
+        ax.set_ylabel(r'$\mathrm{log(Density)~(cm^{-3})}$',fontsize=20)
+        [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+        ax.minorticks_on()
+        ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+        ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+        # ax.set_ylim([0,10])
+        ax.set_xlim([np.log10(0.8),np.log10(10000)])
+
+        # subplot shows the radial density profile along the midplane
+        ax_mid = plt.axes([0.2,0.2,0.2,0.2], frameon=True)
+        ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/mh),'o-',color='b',linewidth=1, markersize=2)
+        # ax_mid.set_ylim([0,10])
+        ax_mid.set_xlim([np.log10(0.8),np.log10(10000)])
+        fig.savefig(outdir+outname+'_dust_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
         fig.clf()
 
     # Insert the calculated grid and dust density profile into hyperion
@@ -616,9 +621,12 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
     return m
 
 
+# from input_reader import input_reader_table
+# filename = '/Users/yaolun/programs/misc/hyperion/model_list.txt'
+# params = input_reader_table(filename)
 
-
-indir = '/Users/yaolun/bhr71/radmc3d_params'
-outdir = '/Users/yaolun/bhr71/hyperion/'
-setup_model(indir,outdir,'bhr71_init_regwave',plot=True)
+# outdir = '/Users/yaolun/bhr71/hyperion/'
+# # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
+# dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
+# setup_model(outdir,'bhr71_init_regwave',params[0],dust_file,plot=True)
 
