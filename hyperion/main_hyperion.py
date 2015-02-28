@@ -16,14 +16,14 @@ params = input_reader_table(params_table)
 
 # Get current model number
 if not os.path.exists(outdir+'model_list.txt'):
-    last_model_num = '0'
+	last_model_num = '0'
 else:
-    foo = open(outdir+'model_list.txt','r')
-    for line in foo.readlines():
-	    pass
-    last = line
-    foo.close()
-    last_model_num = (last.split('M_env_dot')[0]).split('Model')[1].split()[0]
+	foo = open(outdir+'model_list.txt','r')
+	for line in foo.readlines():
+		pass
+	last = line
+	foo.close()
+	last_model_num = (last.split('M_env_dot')[0]).split('Model')[1].split()[0]
 
 model_num = str(int(last_model_num)+1)
 
@@ -40,9 +40,8 @@ for i in range(0, len(params)):
 	# Run hyperion
 	print 'Running with Hyperion'
 	# m.run(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', mpi=True, n_processes=22)
-
-    run = Popen('mpirun -n 22 hyperion_sph_mpi -f '+outdir_dum+'model'+str(int(model_num)+i)+'.rtin '+outdir_dum+'model'+str(int(model_num)+i)+'.rtout')
-    run.communicate()
+	run = Popen('mpirun -n 22 hyperion_sph_mpi -f '+outdir_dum+'model'+str(int(model_num)+i)+'.rtin '+outdir_dum+'model'+str(int(model_num)+i)+'.rtout')
+	run.communicate()
 	# Extract the results
 	# the indir here is the dir that contains the observed spectra.
 	print 'Seems finish, lets check out the results'
