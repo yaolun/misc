@@ -63,7 +63,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		rho_tsc = rhoenv
 		rho_tsc3d = np.empty_like(rho)
 		for i in range(0, len(rho[0,0,:])):
-		    rho_tsc3d[:,:,i] = rhoenv_tsc
+		    rho_tsc3d[:,:,i] = rho_tsc
 		rho_tsc2d = np.sum(rho_tsc3d**2,axis=2)/np.sum(rho_tsc3d,axis=2)
 
 		rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
