@@ -1,6 +1,7 @@
 def inspect_output(rtout,plotdir,quantities=None):
 	import numpy as np
 	import hyperion as hp
+	import os
 	import matplotlib.pyplot as plt
 	from hyperion.model import *
 	import astropy.constants as const
@@ -21,6 +22,9 @@ def inspect_output(rtout,plotdir,quantities=None):
 	sigma     = const.sigma_sb.cgs.value                   # Stefan-Boltzmann constant 
 	mh        = const.m_p.cgs.value + const.m_e.cgs.value  # Mass of Hydrogen atom   [g]
 
+	# Get the dir path of rtout file
+	indir = os.path.dirname(rtout)
+
 	m = ModelOutput(rtout)
 	grid = m.get_quantities()
 	rc     = 0.5*(grid.r_wall[0:-1]+grid.r_wall[1:])
@@ -33,6 +37,34 @@ def inspect_output(rtout,plotdir,quantities=None):
 	elif quantities == 'density':
 		rho = grid[quantities][0].array.T
 		rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
+
+		# Read in TSC-only envelope
+		rho_tsc = np.genfromtxt(indir+'rhoenv.dat').T
+		# extrapolate
+		def poly(x, y, x0, deg=1):
+		    import numpy as np
+		    p = np.polyfit(x, y, deg)
+		    y0 = 0
+		    for i in range(0, len(p)):
+		        y0 = y0 + p[i]*x0**(len(p)-i-1)
+		    return y0
+
+		print 'Warning: hard coded infall radius (3500 AU) is used for extrapolating TSC envelope'
+		r_inf = 3500 * AU
+		rhoenv = rho_tsc.copy()
+		for ithetac in range(0, len(thetac)):
+		    rho_dum = np.log10(rhoenv[(rc > 1.1*r_inf) & (np.isnan(rhoenv[:,ithetac]) == False),ithetac])
+		    rc_dum = np.log10(rc[(rc > 1.1*r_inf) & (np.isnan(rhoenv[:,ithetac]) == False)])
+		#     rho_dum_nan = np.log10(rhoenv[(rc > 1.1*r_inf) & (np.isnan(rhoenv[:,ithetac]) == True),ithetac])
+		    rc_dum_nan = np.log10(rc[(rc > 1.1*r_inf) & (np.isnan(rhoenv[:,ithetac]) == True)])
+		    for i in range(0, len(rc_dum_nan)):
+		        rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
+		        rhoenv[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
+		rho_tsc = rhoenv
+		rho_tsc3d = np.empty((nx,ny,nz))
+		for i in range(0, nz):
+		    rho_tsc3d[:,:,i] = rhoenv_tsc
+		rho_tsc2d = np.sum(rho_tsc3d**2,axis=2)/np.sum(rho_tsc3d,axis=2)
 
 		rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
 		thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
@@ -67,14 +99,19 @@ def inspect_output(rtout,plotdir,quantities=None):
 
 		plot_grid = [0,19,39,59,79,99,119,139,159,179,199]
 		c_range = range(len(plot_grid))
-		cm = plt.get_cmap('Blues') 
 		cNorm  = mat.colors.Normalize(vmin=0, vmax=c_range[-1])
-		scalarMap = mat.cm.ScalarMappable(norm=cNorm, cmap=cm)
+		# color map 1
+		cm1 = plt.get_cmap('Blues') 
+		scalarMap1 = mat.cm.ScalarMappable(norm=cNorm, cmap=cm1)
+		# color map 2
+		cm2 = plt.get_cmap('Reds') 
+		scalarMap2 = mat.cm.ScalarMappable(norm=cNorm, cmap=cm2)
 
 		for i in plot_grid:
-			colorVal = scalarMap.to_rgba(c_range[plot_grid.index(i)])
-			rho_plot,  = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]),'o-',color=colorVal,linewidth=1.5, markersize=3)
-
+			colorVal1 = scalarMap1.to_rgba(c_range[plot_grid.index(i)])
+			colorVal2 = scalarMap2.to_rgba(c_range[plot_grid.index(i)])			
+			rho_plot, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]),'o-',color=colorVal1,linewidth=1.5, markersize=3)
+			tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_tsc2d[:,i]),'o-',color=colorVal2,linewidth=1.5, markersize=3)
 		# lg = plt.legend([wrong, wrong2, wrong_mid, wrong2_mid],\
 		#                 [r'$\mathrm{Before~fixing~\theta~(pole)}$',r'$\mathrm{After~fixing~\theta~(pole)}$',r'$\mathrm{Before~fixing~\theta~(midplane)}$',r'$\mathrm{After~fixing~\theta~(midplane)}$'],\
 		#                 fontsize=20, numpoints=1)
