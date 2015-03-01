@@ -65,10 +65,15 @@ def inspect_output(rtout,plotdir,quantities=None):
 		fig = plt.figure(figsize=(12,9))
 		ax = fig.add_subplot(111)
 
-		plot_grid = [0,39,79,119,159,199]
+		plot_grid = [0,19,39,59,79,99,119,139,159,179,199]
+		c_range = range(len(plot_grid))
+		cm = plt.get_cmap('Blues') 
+		cNorm  = mat.colors.Normalize(vmin=0, vmax=c_range[-1])
+		scalarMap = mat.cm.ScalarMappable(norm=cNorm, cmap=cm)
 
 		for i in plot_grid:
-			rho_plot,  = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]),'-',color='b',linewidth=1.5, markersize=3)
+			colorVal = scalarMap.to_rgba(c_range[i])
+			rho_plot,  = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]),'o-',color=colorVal,linewidth=1.5, markersize=3)
 
 		# lg = plt.legend([wrong, wrong2, wrong_mid, wrong2_mid],\
 		#                 [r'$\mathrm{Before~fixing~\theta~(pole)}$',r'$\mathrm{After~fixing~\theta~(pole)}$',r'$\mathrm{Before~fixing~\theta~(midplane)}$',r'$\mathrm{After~fixing~\theta~(midplane)}$'],\
