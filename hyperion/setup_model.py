@@ -357,7 +357,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
         plot_grid = [0,39,79,119,159,199]
         for i in plot_grid:
-            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'o-',color='b',linewidth=2, markersize=3)
+            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]),'o-',color='b',linewidth=2, markersize=3)
         rinf = ax.axvline(np.log10(dict_params['R_inf']), linestyle='--', color='r', linewidth=1.5)
         cen_r = ax.axvline(np.log10(dict_params['R_cen']), linestyle='--', color='r', linewidth=1.5)
         # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
