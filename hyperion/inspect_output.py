@@ -1,5 +1,6 @@
 def inspect_output(rtout,plotdir,quantities=None):
-	import hyperion as hp
+    import numpy as np
+    import hyperion as hp
 	from hyperion.model import *
 	import astropy.constants as const
 
@@ -60,7 +61,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		plot_grid = [0,39,79,119,159,199]
 
 		for i in plot_grid:
-		rho_plot,  = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,0]),'-',color='b',linewidth=1.5, markersize=3)
+		    rho_plot,  = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,0]),'-',color='b',linewidth=1.5, markersize=3)
 
 		# lg = plt.legend([wrong, wrong2, wrong_mid, wrong2_mid],\
 		#                 [r'$\mathrm{Before~fixing~\theta~(pole)}$',r'$\mathrm{After~fixing~\theta~(pole)}$',r'$\mathrm{Before~fixing~\theta~(midplane)}$',r'$\mathrm{After~fixing~\theta~(midplane)}$'],\
