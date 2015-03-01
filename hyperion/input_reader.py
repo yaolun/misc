@@ -58,13 +58,12 @@ def input_reader_table(filename,default=True):
 	model = np.genfromtxt(filename, dtype=None, skip_header=1)
 	header = open(filename,'r').readlines()[0].split()
 	# output is the tuple that consist all dictionaries of model parameters.
-	if type(model) == np.ndarray:
-		model = (model,)
-
+	# if type(model) == np.ndarray:
+	# 	model = (model,)
 	output = ()
 	for i in range(0,len(model)):
 		dict_dum = {}
-		for name, val in zip(header,model[i].tolist()):
+		for name, val in zip(header,model[i]):
 			dict_dum[name] = val
 		# Use the default parameters for mostly fixed parameter (e.g. disk)
 		if default == True:
