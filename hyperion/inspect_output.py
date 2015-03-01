@@ -34,8 +34,8 @@ def inspect_output(rtout,plotdir,quantities=None):
 		rho = grid[quantities][0].array.T
 		rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
 
-        rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
-        thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
+		rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
+		thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
 
 		# Make the plot
 		fig = plt.figure(figsize=(8,6))
