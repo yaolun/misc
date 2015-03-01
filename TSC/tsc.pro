@@ -155,7 +155,7 @@ for i=0,nr-1 do begin
         ;if not, write out 0 to a data file
         u_r[i,j]=c_s*(V_0_tsc[i,j]+((tau_tsc[i,j]^2.0)*(V_M_tsc[i,j]+(V_Q_tsc[i,j]*p2))))
         if(alog10(y_tsc[nr-1,nt-1]) gt 0.0) then begin
-            openw,lun,'velocity.dat',/get_lun, /append
+            openw,lun,outdir+'velocity.dat',/get_lun, /append
             ; openw,2,'RESULTS/velocity.dat.'+strcompress(string(long(timestep)),/remove_all)
             printf,lun,0.0
             ; printf,2,0.0
@@ -164,7 +164,7 @@ for i=0,nr-1 do begin
             ; close,2
         endif
         if(alog10(y_tsc[nr-1,nt-1]) le 0.0) then begin
-            openw,lun,'velocity.dat',/get_lun, /append
+            openw,lun,outdir+'velocity.dat',/get_lun, /append
             ; openw,2,'RESULTS/velocity.dat.'+strcompress(string(long(timestep)),/remove_all)
             printf,lun,(-1.0)*u_r[nr-1,nt-1]
             ; printf,2,(-1.0)*u_r[nr-1,nt-1]

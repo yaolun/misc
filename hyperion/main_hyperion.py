@@ -41,7 +41,7 @@ for i in range(0, len(params)):
 	# Run hyperion
 	print 'Running with Hyperion'
 	# m.run(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', mpi=True, n_processes=22)
-	run = Popen(['mpirun','-n','22','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'])
+	run = Popen(['mpirun','-n','22','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout','>',outdir_dum+'hyperion.log'])
 	run.communicate()
 	# Extract the results
 	# the indir here is the dir that contains the observed spectra.
