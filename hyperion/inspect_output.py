@@ -72,7 +72,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		scalarMap = mat.cm.ScalarMappable(norm=cNorm, cmap=cm)
 
 		for i in plot_grid:
-			colorVal = scalarMap.to_rgba(c_range.index(i))
+			colorVal = scalarMap.to_rgba(c_range[plot_grid.index(i)])
 			rho_plot,  = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]),'o-',color=colorVal,linewidth=1.5, markersize=3)
 
 		# lg = plt.legend([wrong, wrong2, wrong_mid, wrong2_mid],\
