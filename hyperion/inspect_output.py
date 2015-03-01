@@ -39,7 +39,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
 
 		# Read in TSC-only envelope
-		rho_tsc = np.genfromtxt(indir+'rhoenv.dat').T
+		rho_tsc = np.genfromtxt(indir+'/rhoenv.dat').T
 		# extrapolate
 		def poly(x, y, x0, deg=1):
 		    import numpy as np
