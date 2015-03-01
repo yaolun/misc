@@ -1,4 +1,4 @@
-def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1,radmc=False):
+def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1,radmc=False,mono=False):
     import numpy as np
     import astropy.constants as const
     import scipy as sci
@@ -60,7 +60,7 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
         nx    = 100L
     ny        = 400L
     nz        = 50L
-    [nx, ny, nz] = [scale*nx, scale*ny, scale*nz]
+    [nx, ny, nz] = [int(scale*nx), int(scale*ny), int(scale*nz)]
 
     if tsc == False:
         # Parameters setup
@@ -346,6 +346,10 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
     print 'Total dust mass = %f Solar mass' % total_mass
     if plot == True:
         mat.rcParams['text.usetex'] = True
+        mat.rcParams['font.family'] = 'serif'
+        mat.rcParams['font.serif'] = 'Times'
+        mat.rcParams['font.sans-serif'] = 'Computer Modern Sans serif'
+
         fig = plt.figure(figsize=(8,6))
         ax_env  = fig.add_subplot(111,projection='polar')
         # take the weighted average
@@ -448,20 +452,23 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
     lam_list = lam.tolist()
     # print lam_list
     m.set_raytracing(True)
-    # Monechromatic radiative transfer setting
-    # m.set_monochromatic(True, wavelengths=lam_list)
-    # m.set_n_photons(initial=1000000, imaging_sources=1000000, imaging_dust=1000000,raytracing_sources=1000000, raytracing_dust=1000000)
-    # regular wavelength grid setting
-    m.set_n_photons(initial=1000000, imaging=1000000,raytracing_sources=1000000, raytracing_dust=1000000)    
+    if mono == True:
+        # Monechromatic radiative transfer setting
+        m.set_monochromatic(True, wavelengths=lam_list)
+        m.set_n_photons(initial=1000000, imaging_sources=1000000, imaging_dust=1000000,raytracing_sources=1000000, raytracing_dust=1000000)
+    else:
+        # regular wavelength grid setting
+        m.set_n_photons(initial=1000000, imaging=1000000,raytracing_sources=1000000, raytracing_dust=1000000)    
     # number of iteration to compute dust specific energy (temperature)
     m.set_n_initial_iterations(20)
-    m.set_convergence(True, percentile=99., absolute=1.5, relative=1.02)
+    m.set_convergence(True, percentile=95., absolute=1.5, relative=1.02)
     m.set_mrw(True)   # Gamma = 1 by default
     # m.set_forced_first_scattering(forced_first_scattering=True)
 
     # Setting up images and SEDs
     image = m.add_peeled_images()
-    image.set_wavelength_range(1000, 2.0, 1000.0)
+    if mono == False:
+        image.set_wavelength_range(1000, 2.0, 1000.0)
     # use the index of wavelength array used by the monochromatic radiative transfer
     # image.set_wavelength_index_range(0,13)
     # pixel number
@@ -611,7 +618,7 @@ def setup_model(indir,outdir,outname,denser_wall=False,tsc=True,idl=False,plot=F
 
 
 
-# indir = '/Users/yaolun/bhr71/radmc3d_params'
-# outdir = '/Users/yaolun/bhr71/hyperion/'
-# setup_model(indir,outdir,'bhr71_init_test',plot=True)
+indir = '/Users/yaolun/bhr71/radmc3d_params'
+outdir = '/Users/yaolun/bhr71/hyperion/'
+setup_model(indir,outdir,'bhr71_init_regwave',plot=True)
 

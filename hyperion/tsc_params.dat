@@ -1,0 +1,20 @@
+# Parameters Setup 
+# 
+M_env_dot 	 	3.000000e-05 	 	# Envelope accretion rate     		[Solar mass/yr]
+R_cen 	 	 	1.500000e+01 		# centrifugal radius          		[AU]
+R_inf			3.500000e+03 		# Envelope infall radius 			[AU]
+#
+tstar 	 	 	4.500000e+03 	 	# Stellar temperature         		[K]
+R_env_max 	 	1.000000e+04 	 	# Envelope outer radius       		[AU]
+theta_cav 	 	15.520000 	 	 	# Outflow cavity opening angle		[deg]
+rho_cav_center	5.27e-18			# Density of Cavity center 			[g/cm3]
+rho_cav_edge 	40				 	# Size of the inner cavity region 	[AU]
+rstar 	 	 	5.000000e+00 	 	# Stellar radius              		[Solar radius]
+# rin should be determined by the dust sublimation radius. rdisk_in = renv_in = rin > rstar.  But r-coord. starts from rstar.
+# Mostly fixed parameter
+# M_disk_dot 	6.500000e-07 	 	# Disk accretion rate         		[Solar mass/yr]
+# M_disk 	 	5.000000e-01 	 	# Disk mass                   		[Solar mass]
+# beta 	 	 	1.093000 	 	 	# Disk flare factor           		[]
+# h100 	 	 	8.123000 	 	 	# Disk scale height at 100 AU 		[AU]
+# rho_cav 	 	1.000000e-21 	 	# Outflow cavity density      		[g/cm3]
+

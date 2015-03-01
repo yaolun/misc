@@ -115,6 +115,7 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
         ri_cellsize = ri[1:-1]-ri[0:-2]
         ind = np.where(ri_cellsize/AU > 100.0)[0][0]       # The largest cell size is 100 AU
         ri = np.hstack((ri[0:ind],ri[ind]+np.arange(np.ceil((rout-ri[ind])/100/AU))*100*AU))
+        nxx = nx
         nx = len(ri)-1    
 
     # Assign the coordinates of the center of cell as its coordinates.
@@ -129,9 +130,9 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
     #
     print 'Calculating the dust density profile...'
     if theta_cav != 0:
-        c = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
+        c0 = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
     else:
-        c = 0
+        c0 = 0
     rho_env  = np.zeros([len(rc),len(thetac),len(phic)])
     rho_disk = np.zeros([len(rc),len(thetac),len(phic)])
     rho      = np.zeros([len(rc),len(thetac),len(phic)])
@@ -154,9 +155,9 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
                 for iphi in range(0,len(phic)):
                     if rc[ir] > R_env_min:
                         # Envelope profile
-                        w = abs(rc[ir]*np.cos(thetac[itheta]))
-                        z = rc[ir]*np.sin(thetac[itheta])
-                        z_cav = c*abs(w)**1.5
+                        w = abs(rc[ir]*np.cos(np.pi/2-thetac[itheta]))
+                        z = rc[ir]*np.sin(np.pi/2-thetac[itheta])
+                        z_cav = c0*abs(w)**1.5
                         if z_cav == 0:
                             z_cav = R_env_max
                         if abs(z) > abs(z_cav):
@@ -178,6 +179,52 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
                             rho_disk[ir,itheta,iphi] = rho_0*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/h)**2)
                         # Combine envelope and disk
                         rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
+
+                        # # testing the effect of new solver
+                        # # Envelope profile
+                        # w = abs(rc[ir]*np.cos(np.pi/2 - thetac[itheta]))
+                        # z = rc[ir]*np.sin(np.pi/2 - thetac[itheta])
+                        # z_cav = c0*abs(w)**1.5
+                        # if z_cav == 0:
+                        #     z_cav = R_env_max
+                        # if abs(z) > abs(z_cav):
+                        #     # rho_env[ir,itheta,iphi] = rho_cav
+                        #     # Modification for using density gradient in the cavity
+                        #     if rc[ir] <= rho_cav_edge:
+                        #         rho_env[ir,itheta,iphi] = rho_cav_center#*((rc[ir]/AU)**2)
+                        #     else:
+                        #         rho_env[ir,itheta,iphi] = rho_cav_center*discont*(rho_cav_edge/rc[ir])**2
+                        #     i += 1
+                        # else:
+                        #     j += 1
+                        #     mu = abs(np.cos(thetac[itheta]))
+                        #     # Implement new root finding algorithm
+                        #     roots = np.roots(np.array([1.0, 0.0, rc[ir]/rcen-1.0, -mu*rc[ir]/rcen]))
+                        #     if len(roots[roots.imag == 0]) == 1:
+                        #         if (abs(roots[roots.imag == 0]) - 1.0) <= 0.0:
+                        #             mu_o_dum = roots[roots.imag == 0]
+                        #         else:
+                        #             mu_o_dum = -0.5
+                        #             print 'Problem with cubic solving, cos(theta) = ', mu_o_dum
+                        #             print 'parameters are ', np.array([1.0, 0.0, rc[ir]/rcen-1.0, -mu*rc[ir]/rcen])
+                        #     else:
+                        #         mu_o_dum = -0.5
+                        #         for imu in range(0, len(roots)):
+                        #             if roots[imu]*mu >= 0.0:
+                        #                 if (abs((abs(roots[imu]) - 1.0)) <= 1e-5):
+                        #                     mu_o_dum = 1.0 * np.sign(mu)
+                        #                 else:
+                        #                     mu_o_dum = roots[imu]
+                        #         if mu_o_dum == -0.5:
+                        #             print 'Problem with cubic solving, roots are: ', roots
+                        #     mu_o = mu_o_dum.real
+                        #     rho_env[ir,itheta,iphi] = M_env_dot/(4*PI*(G*mstar*rcen**3)**0.5)*(rc[ir]/rcen)**(-3./2)*(1+mu/mu_o)**(-0.5)*(mu/mu_o+2*mu_o**2*rcen/rc[ir])**(-1)
+                        # # Disk profile
+                        # if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
+                        #     h = ((w/(100*AU))**beta)*h100
+                        #     rho_disk[ir,itheta,iphi] = rho_0*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/h)**2)
+                        # # Combine envelope and disk
+                        # rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
                     else:
                         rho[ir,itheta,iphi] = 1e-30
         rho_env  = rho_env  + 1e-40
@@ -248,7 +295,7 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
     m.set_raytracing(True)
     m.set_n_photons(initial=1000000, imaging=1000000, raytracing_sources=1000000, raytracing_dust=1000000)
     # number of iteration to compute dust specific energy (temperature)
-    m.set_n_initial_iterations(20)
+    m.set_n_initial_iterations(5)
     m.set_convergence(True, percentile=99., absolute=1.5, relative=1.02)
     m.set_mrw(True)   # Gamma = 1 by default
 
@@ -265,7 +312,7 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
     # Number of unique photons that passed through the cell
     m.conf.output.output_n_photons = 'last'
 
-    m.write(outdir+'old_setup.rtin')
+    m.write(outdir+'old_setup2.rtin')
 
 
 
@@ -274,4 +321,4 @@ def setup_model(indir,outdir,model=False,denser_wall=False,plot=False,low_res=Fa
 
 indir = '/Users/yaolun/bhr71/radmc3d_params'
 outdir = '/Users/yaolun/bhr71/hyperion/'
-setup_model(indir,outdir,low_res=True,scale=1.0)
+setup_model(indir,outdir,low_res=True,scale=1)

@@ -261,10 +261,10 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 		ax.text(0.5,0.88,str(wav) + r'$\mathrm{~\mu m}$',fontsize=16,color='white', transform=ax.transAxes)
 	# Adjust the spaces between the subplots 
 	plt.tight_layout()
-	fig.savefig(outdir+print_name+'_cube_plot.pdf', format='pdf', dpi=300, bbox_inches='tight') 
+	fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight') 
 
 indir = '/Users/yaolun/bhr71/'
 outdir = '/Users/yaolun/bhr71/hyperion/'
 # extract_hyperion('/hyperion/best_model.rtout',indir=indir)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
-extract_hyperion('/hyperion/bhr71_init_test.rtout',indir=indir,outdir=outdir)
+extract_hyperion('/hyperion/old_setup2.rtout',indir=indir,outdir=outdir)
