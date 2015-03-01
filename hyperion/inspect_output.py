@@ -100,7 +100,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		plot_grid = [0,19,39,59,79,99,119,139,159,179,199]
 		plot_grid = [0,139,159,179,199]
 		c_range = range(len(plot_grid))
-		cNorm  = mat.colors.Normalize(vmin=0, vmax=c_range[-1])
+		cNorm  = mat.colors.Normalize(vmin=0.1*c_range[-1], vmax=c_range[-1])
 		# color map 1
 		cm1 = plt.get_cmap('Blues') 
 		scalarMap1 = mat.cm.ScalarMappable(norm=cNorm, cmap=cm1)
