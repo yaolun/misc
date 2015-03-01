@@ -1,6 +1,6 @@
 def inspect_output(rtout,plotdir,quantities=None):
-    import numpy as np
-    import hyperion as hp
+	import numpy as np
+	import hyperion as hp
 	from hyperion.model import *
 	import astropy.constants as const
 
@@ -44,7 +44,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		ax_env.tick_params(labelsize=20)
 		# ax_env.set_yticks(np.arange(0,R_env_max/AU,R_env_max/AU/5))
 		ax_env.set_xticklabels([r'$\mathrm{90^{\circ}}$',r'$\mathrm{45^{\circ}}$',r'$\mathrm{0^{\circ}}$',r'$\mathrm{-45^{\circ}}$',\
-		                        r'$\mathrm{-90^{\circ}}$',r'$\mathrm{-135^{\circ}}$',r'$\mathrm{180^{\circ}}$',r'$\mathrm{135^{\circ}}$'])
+								r'$\mathrm{-90^{\circ}}$',r'$\mathrm{-135^{\circ}}$',r'$\mathrm{180^{\circ}}$',r'$\mathrm{135^{\circ}}$'])
 		ax_env.set_ylim([0,100])
 		ax_env.grid(True)
 		cb = fig.colorbar(img_env, pad=0.1)
@@ -61,7 +61,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		plot_grid = [0,39,79,119,159,199]
 
 		for i in plot_grid:
-		    rho_plot,  = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,0]),'-',color='b',linewidth=1.5, markersize=3)
+			rho_plot,  = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,0]),'-',color='b',linewidth=1.5, markersize=3)
 
 		# lg = plt.legend([wrong, wrong2, wrong_mid, wrong2_mid],\
 		#                 [r'$\mathrm{Before~fixing~\theta~(pole)}$',r'$\mathrm{After~fixing~\theta~(pole)}$',r'$\mathrm{Before~fixing~\theta~(midplane)}$',r'$\mathrm{After~fixing~\theta~(midplane)}$'],\
