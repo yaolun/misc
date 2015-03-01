@@ -384,6 +384,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         ax_mid.plot(np.log10(rc/AU), np.log10(rho_env2d[:,199]/mh),'-',color='r',linewidth=1, markersize=2)
         # ax_mid.set_ylim([0,10])
         ax_mid.set_xlim([np.log10(0.8),np.log10(10000)])
+        ax_mid.set_ylim([0,15])
         fig.savefig(outdir+outname+'_dust_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
         fig.clf()
 
