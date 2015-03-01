@@ -7,19 +7,18 @@ from setup_model import setup_model
 from input_reader import input_reader_table
 from extract_model import extract_hyperion
 
+# Default setting
+run = True
+record = True
+mono = False
+
 # Get command-line arguments
-if len(sys.argv) == 1:
-	# no specific argument provided
-	run = True
-	record = True
-	mono = False
-else:
-	if 'norun' in sys.argv:
-		run = False
-	if 'norecord' in sys.argv:
-		record = False
-	if 'mono' in sys.argv:
-		mono = True
+if 'norun' in sys.argv:
+	run = False
+if 'norecord' in sys.argv:
+	record = False
+if 'mono' in sys.argv:
+	mono = True
 
 # path setting
 home = os.path.expanduser('~')
