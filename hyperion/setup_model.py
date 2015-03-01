@@ -358,10 +358,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         plot_grid = [0,39,79,119,159,199]
         alpha = np.linspace(0.3,1.0,len(plot_grid))
         for i in plot_grid:
-            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'o',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
-            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env2d[:,i]/mh),'-',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
         rinf = ax.axvline(np.log10(dict_params['R_inf']), linestyle='--', color='k', linewidth=1.5)
-        cen_r = ax.axvline(np.log10(dict_params['R_cen']), linestyle='..', color='k', linewidth=1.5)
+        cen_r = ax.axvline(np.log10(dict_params['R_cen']), linestyle=':', color='k', linewidth=1.5)
         # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
         # gt_R_cen_slope, = ax.plot(np.log10(rc/AU), -1.5*np.log10(rc/AU)+B-(-1.5)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
         # lt_R_cen_slope, = ax.plot(np.log10(rc/AU), -0.5*np.log10(rc/AU)+A-(-0.5)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
@@ -375,7 +375,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         ax.minorticks_on()
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
         ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
-        # ax.set_ylim([0,10])
+        ax.set_ylim([0,15])
         ax.set_xlim([np.log10(0.8),np.log10(10000)])
 
         # subplot shows the radial density profile along the midplane
