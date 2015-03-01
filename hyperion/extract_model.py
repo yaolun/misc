@@ -139,7 +139,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 
 
 	# Open the model
-	m = ModelOutput(indir+filename)
+	m = ModelOutput(filename)
 
 	# Create the plot
 	mag = 1.5
@@ -180,7 +180,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	# 	r'$\mathrm{L_{bol,radmc3d}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_radmc],\
 	# 	loc='lower right',fontsize=mag*16)
 
-	lg_sim = ax_sed.legend([sim],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_sim] \
+	lg_sim = ax_sed.legend([sim],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_sim], \
         loc='lower right',fontsize=mag*16)
 	# plot setting
 	ax_sed.set_xlabel(r'$\mathrm{log~\lambda~({\mu}m)}$',fontsize=mag*20)
