@@ -3,7 +3,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 	import hyperion as hp
 	import os
 	import matplotlib.pyplot as plt
-	from hyperion.model import *
+	from hyperion.model import ModelOutput
 	import astropy.constants as const
 	import matplotlib as mat
 	from matplotlib.colors import LogNorm
