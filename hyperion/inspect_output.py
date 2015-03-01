@@ -61,7 +61,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		        rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
 		        rhoenv[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
 		rho_tsc = rhoenv
-		rho_tsc3d = np.empty((nx,ny,nz))
+		rho_tsc3d = np.empty_like(rho)
 		for i in range(0, nz):
 		    rho_tsc3d[:,:,i] = rhoenv_tsc
 		rho_tsc2d = np.sum(rho_tsc3d**2,axis=2)/np.sum(rho_tsc3d,axis=2)
