@@ -34,14 +34,17 @@ def inspect_output(rtout,plotdir,quantities=None):
 		rho = grid[quantities][0].array.T
 		rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
 
+        rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
+        thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
+
 		# Make the plot
 		fig = plt.figure(figsize=(8,6))
 		ax_env  = fig.add_subplot(111,projection='polar')
 
 		zmin = 1e-22/mh
 		cmap = 'jet'
-		img_env = ax_env.pcolormesh(thetac,rc/AU,rho2d/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d/mh)))
-		ax_env.pcolormesh(thetac-PI,rc/AU,rho2d/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d/mh)))
+		img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d_exp/mh)))
+		ax_env.pcolormesh(thetac_exp-PI,rc/AU,rho2d_exp/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d_exp/mh)))
 
 		ax_env.set_xlabel(r'$\mathrm{Polar~angle~(Degree)}$',fontsize=20)
 		ax_env.set_ylabel(r'$\mathrm{Radius~(AU)}$',fontsize=20)
@@ -49,7 +52,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		# ax_env.set_yticks(np.arange(0,R_env_max/AU,R_env_max/AU/5))
 		ax_env.set_xticklabels([r'$\mathrm{90^{\circ}}$',r'$\mathrm{45^{\circ}}$',r'$\mathrm{0^{\circ}}$',r'$\mathrm{-45^{\circ}}$',\
 								r'$\mathrm{-90^{\circ}}$',r'$\mathrm{-135^{\circ}}$',r'$\mathrm{180^{\circ}}$',r'$\mathrm{135^{\circ}}$'])
-		ax_env.set_ylim([0,100])
+		ax_env.set_ylim([0,10000])
 		ax_env.grid(True)
 		cb = fig.colorbar(img_env, pad=0.1)
 		cb.ax.set_ylabel(r'$\mathrm{Averaged~Density~(cm^{-3})}$',fontsize=20)
@@ -65,7 +68,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		plot_grid = [0,39,79,119,159,199]
 
 		for i in plot_grid:
-			rho_plot,  = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,0]),'-',color='b',linewidth=1.5, markersize=3)
+			rho_plot,  = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]),'-',color='b',linewidth=1.5, markersize=3)
 
 		# lg = plt.legend([wrong, wrong2, wrong_mid, wrong2_mid],\
 		#                 [r'$\mathrm{Before~fixing~\theta~(pole)}$',r'$\mathrm{After~fixing~\theta~(pole)}$',r'$\mathrm{Before~fixing~\theta~(midplane)}$',r'$\mathrm{After~fixing~\theta~(midplane)}$'],\
