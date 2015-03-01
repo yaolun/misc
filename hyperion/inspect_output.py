@@ -1,6 +1,7 @@
 def inspect_output(rtout,plotdir,quantities=None):
 	import numpy as np
 	import hyperion as hp
+	import matplotlib.pyplot as plt
 	from hyperion.model import *
 	import astropy.constants as const
 
