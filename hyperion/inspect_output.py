@@ -4,6 +4,9 @@ def inspect_output(rtout,plotdir,quantities=None):
 	import matplotlib.pyplot as plt
 	from hyperion.model import *
 	import astropy.constants as const
+	import matplotlib as mat
+	from matplotlib.colors import LogNorm
+
 
 	# Constants setup
 	c         = const.c.cgs.value
