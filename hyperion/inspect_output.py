@@ -52,7 +52,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		# ax_env.set_yticks(np.arange(0,R_env_max/AU,R_env_max/AU/5))
 		ax_env.set_xticklabels([r'$\mathrm{90^{\circ}}$',r'$\mathrm{45^{\circ}}$',r'$\mathrm{0^{\circ}}$',r'$\mathrm{-45^{\circ}}$',\
 								r'$\mathrm{-90^{\circ}}$',r'$\mathrm{-135^{\circ}}$',r'$\mathrm{180^{\circ}}$',r'$\mathrm{135^{\circ}}$'])
-		ax_env.set_ylim([0,10000])
+		ax_env.set_ylim([0,100])
 		ax_env.grid(True)
 		cb = fig.colorbar(img_env, pad=0.1)
 		cb.ax.set_ylabel(r'$\mathrm{Averaged~Density~(cm^{-3})}$',fontsize=20)
