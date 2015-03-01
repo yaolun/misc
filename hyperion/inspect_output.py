@@ -29,7 +29,7 @@ def inspect_output(rtout,plotdir,quantities=None):
 		quantities = input('What quantity you want to take a look at? ')
 	elif quantities == 'density':
 		rho = grid[quantities][0].array.T
-		rho_2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
+		rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
 
 		# Make the plot
 		fig = plt.figure(figsize=(8,6))
