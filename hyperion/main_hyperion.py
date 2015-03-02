@@ -20,6 +20,8 @@ if 'norecord' in sys.argv:
 if 'mono' in sys.argv:
 	mono = True
 
+print run, record, mono
+
 # path setting
 home = os.path.expanduser('~')
 outdir = home + '/hyperion/bhr71/'
@@ -52,15 +54,15 @@ for i in range(0, len(params)):
 	pprint(params_dict)
 	# calculate the initial dust profile
 	m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono)
-	if run == True:
+    if run == False:
+        print 'Hyperion run is skipped. Make sure you have run this model before'
+    else:
 		# Run hyperion
 		print 'Running with Hyperion'
 		hyp_foo = open(outdir_dum+'hyperion.log','w')
 		hyp_err = open(outdir_dum+'hyperion.err','w')
 		run = Popen(['mpirun','-n','22','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
 		run.communicate()
-	else:
-		print 'Hyperion run is skipped. Make sure you have run this model before.'
 	# Extract the results
 	# the indir here is the dir that contains the observed spectra.
 	print 'Seems finish, lets check out the results'
