@@ -55,9 +55,8 @@ for i in range(0, len(params)):
 	if run == True:
 		# Run hyperion
 		print 'Running with Hyperion'
-        hyp_foo = open(outdir_dum+'hyperion.log','w')
-        hyp_err = open(outdir_dum+'hyperion.err','w')
-		# m.run(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', mpi=True, n_processes=22)
+		hyp_foo = open(outdir_dum+'hyperion.log','w')
+		hyp_err = open(outdir_dum+'hyperion.err','w')
 		run = Popen(['mpirun','-n','22','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
 		run.communicate()
 	else:
