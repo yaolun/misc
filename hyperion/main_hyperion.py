@@ -1,10 +1,24 @@
 import numpy as np
 import os
+import sys
 from subprocess import Popen
 from pprint import pprint
 from setup_model import setup_model
 from input_reader import input_reader_table
 from extract_model import extract_hyperion
+
+# Default setting
+run = True
+record = True
+mono = False
+
+# Get command-line arguments
+if 'norun' in sys.argv:
+	run = False
+if 'norecord' in sys.argv:
+	record = False
+if 'mono' in sys.argv:
+	mono = True
 
 # path setting
 home = os.path.expanduser('~')
@@ -37,12 +51,16 @@ for i in range(0, len(params)):
 	print 'Model'+str(int(model_num)+i)
 	pprint(params_dict)
 	# calculate the initial dust profile
-	m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True)
-	# Run hyperion
-	print 'Running with Hyperion'
-	# m.run(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', mpi=True, n_processes=22)
-	run = Popen(['mpirun','-n','22','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout','>',outdir_dum+'hyperion.log'])
-	run.communicate()
+	m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono)
+	if run == True:
+		# Run hyperion
+		print 'Running with Hyperion'
+		hyp_foo = open(outdir_dum+'hyperion.log','w')
+		hyp_err = open(outdir_dum+'hyperion.err','w')
+		run = Popen(['mpirun','-n','22','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
+		run.communicate()
+	else:
+		print 'Hyperion run is skipped. Make sure you have run this model before.'
 	# Extract the results
 	# the indir here is the dir that contains the observed spectra.
 	print 'Seems finish, lets check out the results'

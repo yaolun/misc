@@ -326,13 +326,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         fig = plt.figure(figsize=(8,6))
         ax_env  = fig.add_subplot(111,projection='polar')
         # take the weighted average
-        rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)/mh
+        rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
 
         zmin = 1e-22/mh
         cmap = 'jet'
         rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
         thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
-        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d_exp)))
+        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d_exp/mh)))
         # img_env = ax_env.pcolormesh(thetac-PI/2,rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
         # ax_env.pcolormesh(thetac+PI/2,rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
 
@@ -356,16 +356,18 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         ax = fig.add_subplot(111)
 
         plot_grid = [0,39,79,119,159,199]
+        alpha = np.linspace(0.3,1.0,len(plot_grid))
         for i in plot_grid:
-            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]),'o-',color='b',linewidth=2, markersize=3)
-        rinf = ax.axvline(np.log10(dict_params['R_inf']), linestyle='--', color='r', linewidth=1.5)
-        cen_r = ax.axvline(np.log10(dict_params['R_cen']), linestyle='--', color='r', linewidth=1.5)
+            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+        rinf = ax.axvline(np.log10(dict_params['R_inf']), linestyle='--', color='k', linewidth=1.5)
+        cen_r = ax.axvline(np.log10(dict_params['R_cen']), linestyle=':', color='k', linewidth=1.5)
         # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
         # gt_R_cen_slope, = ax.plot(np.log10(rc/AU), -1.5*np.log10(rc/AU)+B-(-1.5)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
         # lt_R_cen_slope, = ax.plot(np.log10(rc/AU), -0.5*np.log10(rc/AU)+A-(-0.5)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
 
-        lg = plt.legend([rho_rad, rinf, cen_r,],\
-                        [r'$\mathrm{\rho_{dust}}$',r'$\mathrm{infall~radius}$',r'$\mathrm{centrifugal~radius}$'],\
+        lg = plt.legend([rho_rad, tsc_only, rinf, cen_r,],\
+                        [r'$\mathrm{\rho_{dust}}$',r'$\mathrm{\rho_{tsc}}$',r'$\mathrm{infall~radius}$',r'$\mathrm{centrifugal~radius}$'],\
                         fontsize=20, numpoints=1)
         ax.set_xlabel(r'$\mathrm{log(Radius)~(AU)}$',fontsize=20)
         ax.set_ylabel(r'$\mathrm{log(Density)~(cm^{-3})}$',fontsize=20)
@@ -373,14 +375,16 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         ax.minorticks_on()
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
         ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
-        # ax.set_ylim([0,10])
+        ax.set_ylim([0,15])
         ax.set_xlim([np.log10(0.8),np.log10(10000)])
 
         # subplot shows the radial density profile along the midplane
         ax_mid = plt.axes([0.2,0.2,0.2,0.2], frameon=True)
-        ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/mh),'o-',color='b',linewidth=1, markersize=2)
+        ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/mh),'o',color='b',linewidth=1, markersize=2)
+        ax_mid.plot(np.log10(rc/AU), np.log10(rho_env2d[:,199]/mh),'-',color='r',linewidth=1, markersize=2)
         # ax_mid.set_ylim([0,10])
         ax_mid.set_xlim([np.log10(0.8),np.log10(10000)])
+        ax_mid.set_ylim([0,15])
         fig.savefig(outdir+outname+'_dust_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
         fig.clf()
 
