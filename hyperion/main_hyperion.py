@@ -14,13 +14,13 @@ mono = False
 
 # Get command-line arguments
 if 'norun' in sys.argv:
-	run = False
+    run = False
 if 'norecord' in sys.argv:
-	record = False
+    record = False
 if 'mono' in sys.argv:
-	mono = True
+    mono = True
 
-print run, record, mono
+print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
 # path setting
 home = os.path.expanduser('~')
@@ -33,37 +33,37 @@ params = input_reader_table(params_table)
 
 # Get current model number
 if not os.path.exists(outdir+'model_list.txt'):
-	last_model_num = '0'
+    last_model_num = '0'
 else:
-	foo = open(outdir+'model_list.txt','r')
-	for line in foo.readlines():
-		pass
-	last = line
-	foo.close()
-	last_model_num = (last.split('M_env_dot')[0]).split('Model')[1].split()[0]
+    foo = open(outdir+'model_list.txt','r')
+    for line in foo.readlines():
+        pass
+    last = line
+    foo.close()
+    last_model_num = (last.split('M_env_dot')[0]).split('Model')[1].split()[0]
 
 model_num = str(int(last_model_num)+1)
 
 for i in range(0, len(params)):
-	params_dict = params[i]
-	if not os.path.exists(outdir+'model'+str(int(model_num)+i)+'/'):
-		os.makedirs(outdir+'model'+str(int(model_num)+i)+'/')
-	outdir_dum = outdir+'model'+str(int(model_num)+i)+'/'
-	# print out some information about the current calculating model
-	print 'Model'+str(int(model_num)+i)
-	pprint(params_dict)
-	# calculate the initial dust profile
-	m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono)
+    params_dict = params[i]
+    if not os.path.exists(outdir+'model'+str(int(model_num)+i)+'/'):
+        os.makedirs(outdir+'model'+str(int(model_num)+i)+'/')
+    outdir_dum = outdir+'model'+str(int(model_num)+i)+'/'
+    # print out some information about the current calculating model
+    print 'Model'+str(int(model_num)+i)
+    pprint(params_dict)
+    # calculate the initial dust profile
+    m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono)
     if run == False:
         print 'Hyperion run is skipped. Make sure you have run this model before'
     else:
-		# Run hyperion
-		print 'Running with Hyperion'
-		hyp_foo = open(outdir_dum+'hyperion.log','w')
-		hyp_err = open(outdir_dum+'hyperion.err','w')
-		run = Popen(['mpirun','-n','22','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
-		run.communicate()
-	# Extract the results
-	# the indir here is the dir that contains the observed spectra.
-	print 'Seems finish, lets check out the results'
-	extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum)
+        # Run hyperion
+        print 'Running with Hyperion'
+        hyp_foo = open(outdir_dum+'hyperion.log','w')
+        hyp_err = open(outdir_dum+'hyperion.err','w')
+        run = Popen(['mpirun','-n','22','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
+        run.communicate()
+    # Extract the results
+    # the indir here is the dir that contains the observed spectra.
+    print 'Seems finish, lets check out the results'
+    extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum)
