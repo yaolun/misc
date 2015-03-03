@@ -1,0 +1,97 @@
+WARNING: Planck function for lowest temperature not completely covered by opacity function [hyperion.dust.emissivities]
+WARNING: Planck function for highest temperature not completely covered by opacity function [hyperion.dust.emissivities]
+Setting - run: True, record: True, mono: False
+Model9
+{'M_disk': 0.5,
+ 'M_disk_dot': 6.5e-07,
+ 'M_env_dot': 3.0000000000000001e-05,
+ 'R_cen': 50.0,
+ 'R_env_max': 10000.0,
+ 'R_inf': 3500.0,
+ 'beta': 1.093,
+ 'h100': 8.123,
+ 'rho_cav': 1e-21,
+ 'rho_cav_center': 5.2699999999999997e-18,
+ 'rho_cav_edge': 40.0,
+ 'rstar': 5.0,
+ 'theta_cav': 15.52,
+ 'tstar': 4500.0}
+INFO: Computing emissivities assuming LTE [hyperion.dust.dust_type]
+Traceback (most recent call last):
+  File "main_hyperion.py", line 56, in <module>
+    m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono)
+  File "/home/bettyjo/yaolun/programs/misc/hyperion/setup_model.py", line 55, in setup_model
+    d.plot(outdir+'oh5.png')
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/hyperion/dust/dust_type.py", line 153, in plot
+    fig.savefig(filename, bbox_inches='tight')
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/figure.py", line 1470, in savefig
+    self.canvas.print_figure(*args, **kwargs)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/backend_bases.py", line 2139, in print_figure
+    **kwargs)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/backends/backend_agg.py", line 513, in print_png
+    FigureCanvasAgg.draw(self)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/backends/backend_agg.py", line 461, in draw
+    self.figure.draw(self.renderer)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/artist.py", line 59, in draw_wrapper
+    draw(artist, renderer, *args, **kwargs)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/figure.py", line 1079, in draw
+    func(*args)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/artist.py", line 59, in draw_wrapper
+    draw(artist, renderer, *args, **kwargs)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/axes/_base.py", line 2092, in draw
+    a.draw(renderer)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/artist.py", line 59, in draw_wrapper
+    draw(artist, renderer, *args, **kwargs)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/axis.py", line 1105, in draw
+    renderer)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/axis.py", line 1054, in _get_tick_bboxes
+    extent = tick.label1.get_window_extent(renderer)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/text.py", line 741, in get_window_extent
+    bbox, info, descent = self._get_layout(self._renderer)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/text.py", line 320, in _get_layout
+    ismath=ismath)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/backends/backend_agg.py", line 220, in get_text_width_height_descent
+    self.mathtext_parser.parse(s, self.dpi, prop)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/mathtext.py", line 2992, in parse
+    font_output = fontset_class(prop, backend)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/mathtext.py", line 688, in __init__
+    fullpath = findfont(val)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/font_manager.py", line 1418, in findfont
+    font = fontManager.findfont(prop, **kw)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/font_manager.py", line 1237, in findfont
+    prop = FontProperties(prop)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/font_manager.py", line 686, in __init__
+    self.set_fontconfig_pattern(family)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/font_manager.py", line 920, in set_fontconfig_pattern
+    for key, val in six.iteritems(self._parse_fontconfig_pattern(pattern)):
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/font_manager.py", line 698, in _parse_fontconfig_pattern
+    return parse_fontconfig_pattern(pattern)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/matplotlib/fontconfig_pattern.py", line 130, in parse
+    self._parser.parseString(pattern)
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 1031, in parseString
+    loc, tokens = self._parse( instring, 0 )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 962, in _parseCache
+    value = self._parseNoCache( instring, loc, doActions, callPreParse )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 905, in _parseNoCache
+    loc,tokens = self.parseImpl( instring, preloc, doActions )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 2288, in parseImpl
+    loc, exprtokens = e._parse( instring, loc, doActions )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 962, in _parseCache
+    value = self._parseNoCache( instring, loc, doActions, callPreParse )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 905, in _parseNoCache
+    loc,tokens = self.parseImpl( instring, preloc, doActions )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 2651, in parseImpl
+    loc, tokens = self.expr._parse( instring, loc, doActions, callPreParse=False )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 962, in _parseCache
+    value = self._parseNoCache( instring, loc, doActions, callPreParse )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 905, in _parseNoCache
+    loc,tokens = self.parseImpl( instring, preloc, doActions )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 2271, in parseImpl
+    loc, resultlist = self.exprs[0]._parse( instring, loc, doActions, callPreParse=False )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 962, in _parseCache
+    value = self._parseNoCache( instring, loc, doActions, callPreParse )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 907, in _parseNoCache
+    raise ParseException( instring, len(instring), self.errmsg, self )
+  File "/home/bettyjo/yaolun/anaconda/lib/python2.7/site-packages/pyparsing.py", line 176, in __init__
+    self.pstr = pstr
+KeyboardInterrupt

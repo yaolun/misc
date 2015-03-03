@@ -1,10 +1,15 @@
 pro newpdrmodels, object, molecule, indir=indir, outdir=outdir, plotdir=plotdir, moddir=moddir
 
 ;  if not keyword_set(pixels) then pixels = slw
-  if not keyword_set(indir) then indir = '~/' + object + '/lines/'
-  if not keyword_set(outdir) then outdir = '~/' + object + '/lines/'
-  if not keyword_set(plotdir) then plotdir = '~/' + object + '/plots/'
-  if not keyword_set(moddir) then moddir = '~/models/'
+;  if not keyword_set(indir) then indir = '~/' + object + '/lines/'
+;  if not keyword_set(outdir) then outdir = '~/' + object + '/lines/'
+;  if not keyword_set(plotdir) then plotdir = '~/' + object + '/plots/'
+;  if not keyword_set(moddir) then moddir = '~/models/'
+  
+  if not keyword_set(indir) then indir = '~/programs/misc/'
+  if not keyword_set(outdir) then outdir = '~/test/'
+  if not keyword_set(plotdir) then plotdir = '~/test/'
+  if not keyword_set(moddir) then moddir = '~/programs/misc/'
 
   line_name_co = ['CO15-14','CO14-13','CO13-12','CO12-11','CO11-10','CO10-9','CO9-8','CO8-7','CO7-6','CO6-5','CO5-4','CO4-3','CO3-2','CO2-1','CO1-0']
   line_center_co = [173.6314272,185.9992957,200.27751475,216.93275100,236.61923625,260.24634206,289.12760810,325.23334516,371.65973939,433.56713410,520.24411585,650.26787364,866.96,1300.40,2600.76]
@@ -21,21 +26,40 @@ readcol, moddir + 'pdrintensitieskkms_new.txt', format='A,A,D,D,D,D,D,D,D,D,D,D,
   
 ;convert from K km/s to erg/s/cm^2/arcsec^2 to compare to data
   ;(((7.6373435*1e5)*2*k)/((2600.76/1e4)^3))/4.25e10
-  co10 = (((co10*1e5)*2*k)/((line_center_co[0]/1e4)^3))/4.25e10
-  co21 = (((co21*1e5)*2*k)/((line_center_co[1]/1e4)^3))/4.25e10
-  co32 = (((co32*1e5)*2*k)/((line_center_co[2]/1e4)^3))/4.25e10
-  co43 = (((co43*1e5)*2*k)/((line_center_co[3]/1e4)^3))/4.25e10
-  co54 = (((co54*1e5)*2*k)/((line_center_co[4]/1e4)^3))/4.25e10
-  co65 = (((co65*1e5)*2*k)/((line_center_co[5]/1e4)^3))/4.25e10
-  co76 = (((co76*1e5)*2*k)/((line_center_co[6]/1e4)^3))/4.25e10
+
+;  co10 = (((co10*1e5)*2*k)/((line_center_co[0]/1e4)^3))/4.25e10
+;  co21 = (((co21*1e5)*2*k)/((line_center_co[1]/1e4)^3))/4.25e10
+;  co32 = (((co32*1e5)*2*k)/((line_center_co[2]/1e4)^3))/4.25e10
+;  co43 = (((co43*1e5)*2*k)/((line_center_co[3]/1e4)^3))/4.25e10
+;  co54 = (((co54*1e5)*2*k)/((line_center_co[4]/1e4)^3))/4.25e10
+;  co65 = (((co65*1e5)*2*k)/((line_center_co[5]/1e4)^3))/4.25e10
+;  co76 = (((co76*1e5)*2*k)/((line_center_co[6]/1e4)^3))/4.25e10
+;  co87 = (((co87*1e5)*2*k)/((line_center_co[7]/1e4)^3))/4.25e10
+;  co98 = (((co98*1e5)*2*k)/((line_center_co[8]/1e4)^3))/4.25e10
+;  co109 = (((co109*1e5)*2*k)/((line_center_co[9]/1e4)^3))/4.25e10
+;  co1110 = (((co1110*1e5)*2*k)/((line_center_co[10]/1e4)^3))/4.25e10
+;  co1211 = (((co1211*1e5)*2*k)/((line_center_co[11]/1e4)^3))/4.25e10
+;  co1312 = (((co1312*1e5)*2*k)/((line_center_co[12]/1e4)^3))/4.25e10
+;  co1413 = (((co1413*1e5)*2*k)/((line_center_co[13]/1e4)^3))/4.25e10
+;  co1514 = (((co1514*1e5)*2*k)/((line_center_co[14]/1e4)^3))/4.25e10
+  
+  co10 = (((co10*1e5)*2*k)/((line_center_co[14]/1e4)^3))/4.25e10
+  co21 = (((co21*1e5)*2*k)/((line_center_co[13]/1e4)^3))/4.25e10
+  co32 = (((co32*1e5)*2*k)/((line_center_co[12]/1e4)^3))/4.25e10
+  co43 = (((co43*1e5)*2*k)/((line_center_co[11]/1e4)^3))/4.25e10
+  co54 = (((co54*1e5)*2*k)/((line_center_co[10]/1e4)^3))/4.25e10
+  co65 = (((co65*1e5)*2*k)/((line_center_co[9]/1e4)^3))/4.25e10
+  co76 = (((co76*1e5)*2*k)/((line_center_co[8]/1e4)^3))/4.25e10
   co87 = (((co87*1e5)*2*k)/((line_center_co[7]/1e4)^3))/4.25e10
-  co98 = (((co98*1e5)*2*k)/((line_center_co[8]/1e4)^3))/4.25e10
-  co109 = (((co109*1e5)*2*k)/((line_center_co[9]/1e4)^3))/4.25e10
-  co1110 = (((co1110*1e5)*2*k)/((line_center_co[10]/1e4)^3))/4.25e10
-  co1211 = (((co1211*1e5)*2*k)/((line_center_co[11]/1e4)^3))/4.25e10
-  co1312 = (((co1312*1e5)*2*k)/((line_center_co[12]/1e4)^3))/4.25e10
-  co1413 = (((co1413*1e5)*2*k)/((line_center_co[13]/1e4)^3))/4.25e10
-  co1514 = (((co1514*1e5)*2*k)/((line_center_co[14]/1e4)^3))/4.25e10
+  co98 = (((co98*1e5)*2*k)/((line_center_co[6]/1e4)^3))/4.25e10
+  co109 = (((co109*1e5)*2*k)/((line_center_co[5]/1e4)^3))/4.25e10
+  co1110 = (((co1110*1e5)*2*k)/((line_center_co[4]/1e4)^3))/4.25e10
+  co1211 = (((co1211*1e5)*2*k)/((line_center_co[3]/1e4)^3))/4.25e10
+  co1312 = (((co1312*1e5)*2*k)/((line_center_co[2]/1e4)^3))/4.25e10
+  co1413 = (((co1413*1e5)*2*k)/((line_center_co[1]/1e4)^3))/4.25e10
+  co1514 = (((co1514*1e5)*2*k)/((line_center_co[0]/1e4)^3))/4.25e10
+  
+  
  ; co1615 = (((co1615*1e5)*2*k)/((line_center_co[15]/1e4)^3))/4.25e10
  ; co1716 = (((co1716*1e5)*2*k)/((line_center_co[16]/1e4)^3))/4.25e10
 
@@ -70,32 +94,46 @@ leg_model6 = 'PDR: '+ strcompress(model[5]) +' ' +  strcompress(g0[5])
            [co1211], [co1312], [co1413], [co1514] ] ;, [co1615], [co1716] ]
 
 ; make array of each model   
+;  model1 = set[0,*]
+;    model1 = reverse(model1)
+;  model2 = set[1,*]
+;    model2 = reverse(model2)
+;  model3 = set[2,*]
+;    model2 = reverse(model2)  
+;  model4 = set[3,*]
+;    model2 = reverse(model2)
+;  model5 = set[4,*]
+;    model2 = reverse(model2)
+;  model6 = set[5,*] 
+;    model2 = reverse(model2)
+
   model1 = set[0,*]
     model1 = reverse(model1)
   model2 = set[1,*]
     model2 = reverse(model2)
   model3 = set[2,*]
-    model2 = reverse(model2)  
+    model3 = reverse(model3)  
   model4 = set[3,*]
-    model2 = reverse(model2)
+    model4 = reverse(model4)
   model5 = set[4,*]
-    model2 = reverse(model2)
+    model5 = reverse(model5)
   model6 = set[5,*] 
-    model2 = reverse(model2)
+    model6 = reverse(model6)
 
-;get shock model information
-  readcol, '~/models/intensitiesergscmarcsec.txt', format = 'D,D,D,D,D,D,D,D,D', $
-    n25v2b1, n25v3b1, n25v3b3, n30v2b1, n30v3b1, n30v3b3, n35v2b1, n35v3b1, n35v3b3
-     
-      n25v2b1 = reverse(n25v2b1) ;reverse so that the line_center_co and line_name_co are in right order
-      n25v3b1 = reverse(n25v3b1) ;goes from CO15-14 to CO1-0
-      n25v3b3 = reverse(n25v3b3)
-      n30v2b1 = reverse(n30v2b1)
-      n30v3b1 = reverse(n30v3b1)
-      n30v3b3 = reverse(n30v3b3)
-      n35v2b1 = reverse(n35v2b1)
-      n35v3b1 = reverse(n35v3b1)
-      n35v3b3 = reverse(n35v3b3)
+;
+;;get shock model information
+;  readcol, '~/models/intensitiesergscmarcsec.txt', format = 'D,D,D,D,D,D,D,D,D', $
+;    n25v2b1, n25v3b1, n25v3b3, n30v2b1, n30v3b1, n30v3b3, n35v2b1, n35v3b1, n35v3b3
+;     
+;      n25v2b1 = reverse(n25v2b1) ;reverse so that the line_center_co and line_name_co are in right order
+;      n25v3b1 = reverse(n25v3b1) ;goes from CO15-14 to CO1-0
+;      n25v3b3 = reverse(n25v3b3)
+;      n30v2b1 = reverse(n30v2b1)
+;      n30v3b1 = reverse(n30v3b1)
+;      n30v3b3 = reverse(n30v3b3)
+;      n35v2b1 = reverse(n35v2b1)
+;      n35v3b1 = reverse(n35v3b1)
+;      n35v3b3 = reverse(n35v3b3)
   
 ;; read in L1527 to plot against new pdrmodels
     readcol, indir + object + '_continuumsubtracted_'+ molecule + '_lines.txt', format = 'A, F, D, D, D, D, D, D, D, D, D, D, D, F, D, D, A, A, A', $
@@ -124,15 +162,15 @@ leg_model6 = 'PDR: '+ strcompress(model[5]) +' ' +  strcompress(g0[5])
     set_plot, 'ps'
     loadct,12,/silent
     device, filename= plotdir + object + '_pdrcompare_n30v3b1.eps', encapsulated=eps, $
-      /helvetica, /isolatin1, /landscape, /color, font_size=10, decomposed=0 ;sizing to match model plots
+      /helvetica, /isolatin1, /portrait, /color, font_size=10, decomposed=0 ;sizing to match model plots
     ;Make plot symbols circles
       plotsym,0,1, /fill ;circle
       x = alog10(wl_non[1:3])
       y = str_non
     ;plotmodels
       plot, x, y,xrange=[2.2,3.5], yrange=[1e-22,1e-16], xthick=4, ythick=4, thick=4, charsize=1.1, charthick=4, XTITLE =xlabel, YTITLE = ylabel, /ylog, ystyle=1, xstyle=1, /nodata
-      oplot, alog10(line_center_co), n30v3b1, psym=8, color=colors[1] ;points
-      oplot, alog10(line_center_co), n30v3b1, color=colors[1], thick=4 ;line
+;      oplot, alog10(line_center_co), n30v3b1, psym=8, color=colors[1] ;points
+;      oplot, alog10(line_center_co), n30v3b1, color=colors[1], thick=4 ;line
       oplot, reverse(alog10(line_center_co)), model4, psym=8, color=colors[2] ;points
       oplot, reverse(alog10(line_center_co)), model4, color=colors[2], thick=4 ;line
       oplot, x, y, PSYM=8, symsize=1, color=colors[0] ;green
