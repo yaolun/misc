@@ -472,7 +472,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # number of iteration to compute dust specific energy (temperature)
     m.set_n_initial_iterations(20)
     # m.set_convergence(True, percentile=95., absolute=1.5, relative=1.02)
-    m.set_convergence(True, percentile=dict_params['percentile'], absolute=dict_params['aboslute'], relative=dict_params['relative'])
+    m.set_convergence(True, percentile=dict_params['percentile'], absolute=dict_params['absolute'], relative=dict_params['relative'])
     m.set_mrw(True)   # Gamma = 1 by default
     # m.set_forced_first_scattering(forced_first_scattering=True)
 
