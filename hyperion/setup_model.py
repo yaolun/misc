@@ -107,8 +107,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         params.update({'d_sub': d_sub/AU, 'age': t, 'Cs':cs/1e5, 'Omega0':omega})
         record_hyperion(params,outdir_global)
     # print the variables for radmc3d
-    print 'Dust sublimation radius', d_sub/AU
-    print 'M_star', mstar/MS
+    print 'Dust sublimation radius %6f AU' % (d_sub/AU)
+    print 'M_star %4f Solar mass' % (mstar/MS)
 
     # Make the Coordinates
     #
@@ -471,7 +471,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         m.set_n_photons(initial=1000000, imaging=1000000,raytracing_sources=1000000, raytracing_dust=1000000)    
     # number of iteration to compute dust specific energy (temperature)
     m.set_n_initial_iterations(20)
-    m.set_convergence(True, percentile=95., absolute=1.5, relative=1.02)
+    # m.set_convergence(True, percentile=95., absolute=1.5, relative=1.02)
+    m.set_convergence(True, percentile=dict_params['percentile'], absolute=dict_params['aboslute'], relative=dict_params['relative'])
     m.set_mrw(True)   # Gamma = 1 by default
     # m.set_forced_first_scattering(forced_first_scattering=True)
 

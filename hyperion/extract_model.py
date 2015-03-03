@@ -154,7 +154,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 
 	l_bol_sim = l_bol(sed.wav, sed.val/(c/sed.wav*1e4)*1e23)
 	# print sed.wav, sed.val
-	print 'Bolometric luminosity of simulated spectrum: %5.2f' % l_bol_sim
+	print 'Bolometric luminosity of simulated spectrum: %5.2f L_sun' % l_bol_sim
 
 	# Plot the observed SED
 	# plot the observed spectra
