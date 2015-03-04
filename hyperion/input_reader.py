@@ -46,7 +46,7 @@ def input_reader(filename, dict_params=None, default=True,verbose=True):
 
 	return dict_params
 
-def input_reader_table(filename,default=True):
+def input_reader_table(filename,default=False):
 	"""
 	Read in a table with each model as a row.
 	output as a tuple containing dictionary of model parameters
