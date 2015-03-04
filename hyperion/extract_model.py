@@ -263,7 +263,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 		ax.text(0.5,0.88,str(wav) + r'$\mathrm{~\mu m}$',fontsize=16,color='white', transform=ax.transAxes)
 	# Adjust the spaces between the subplots 
 	plt.tight_layout()
-	fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight') 
+	fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight')
+	fig.clf()
 
 # indir = '/Users/yaolun/bhr71/'
 # outdir = '/Users/yaolun/bhr71/hyperion/'
