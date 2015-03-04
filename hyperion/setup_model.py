@@ -241,7 +241,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         rho_env_tsc = np.genfromtxt(outdir+'rhoenv.dat').T
         # extrapolate for the NaN values at the outer radius, usually at radius beyond the infall radius
         # map the 2d strcuture onto 3d grid
-        def poly(x, y, x0, deg=1):
+        def poly(x, y, x0, deg=2):
             import numpy as np
             p = np.polyfit(x, y, deg)
             y0 = 0
@@ -250,9 +250,9 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             return y0
         rho_env_copy = np.array(rho_env_tsc)
         for ithetac in range(0, len(thetac)):
-            rho_dum = np.log10(rho_env_copy[(rc > 1.1*R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
-            rc_dum = np.log10(rc[(rc > 1.1*R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
-            rc_dum_nan = np.log10(rc[(rc > 1.1*R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
+            rho_dum = np.log10(rho_env_copy[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
+            rc_dum = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
+            rc_dum_nan = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
             for i in range(0, len(rc_dum_nan)):
                 rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
                 rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
