@@ -485,7 +485,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # pixel number
     image.set_image_size(300, 300)
     image.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
-    image.set_viewing_angles([82.0], [0.0])
+    image.set_viewing_angles([dict_params['view_angle']], [0.0])
     image.set_uncertainties(True)
     # output as 64-bit
     image.set_output_bytes(8)
