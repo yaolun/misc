@@ -222,8 +222,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 
 	# Extract the image for the first inclination, and scale to 300pc. We
 	# have to specify group=1 as there is no image in group 0.
-	# image = m.get_image(group=len(wl_aper)+1, inclination=0, distance=dstar * pc, units='MJy/sr')
-	image = m.get_image(group=14, inclination=0, distance=dstar * pc, units='MJy/sr')
+	image = m.get_image(group=len(wl_aper)+1, inclination=0, distance=dstar * pc, units='MJy/sr')
+	# image = m.get_image(group=14, inclination=0, distance=dstar * pc, units='MJy/sr')
 	# Open figure and create axes
 	fig = plt.figure(figsize=(8, 8))
 
