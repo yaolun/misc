@@ -1,4 +1,4 @@
-def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True):
+def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,wl_aper=None):
     """
     params = dictionary of the model parameters
     """
@@ -69,9 +69,17 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # params    = np.genfromtxt(indir+'/tsc_params.dat', dtype=None)
     dict_params = params # input_reader(params_file)
     # TSC model parameter
-    M_env_dot = dict_params['M_env_dot']*MS/yr
-    R_cen     = dict_params['R_cen']*AU
-    R_inf     = dict_params['R_inf']*AU
+    cs        = dict_params['Cs']*1e5
+    t         = dict_params['age']  # year
+    omega     = dict_params['Omega0']
+    # calculate related parameters
+    M_env_dot = 0.975*cs**3/G
+    mstar     = M_env_dot * t * yr
+    R_cen     = omega**2 * G**3 * mstar**3 /(16*cs**8)
+    R_inf     = cs * t * yr
+    # M_env_dot = dict_params['M_env_dot']*MS/yr
+    # R_cen     = dict_params['R_cen']*AU
+    # R_inf     = dict_params['R_inf']*AU
     # protostar parameter
     tstar     = dict_params['tstar']
     R_env_max = dict_params['R_env_max']*AU
@@ -96,10 +104,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     R_disk_max = R_cen
 
     # Do the variable conversion
-    cs = (G * M_env_dot / 0.975)**(1/3.)  # cm/s
-    t = R_inf / cs / yr   # in year
-    mstar = M_env_dot * t * yr
-    omega = (R_cen * 16*cs**8 / (G**3 * mstar**3))**0.5
+    # cs = (G * M_env_dot / 0.975)**(1/3.)  # cm/s
+    # t = R_inf / cs / yr   # in year
+    # mstar = M_env_dot * t * yr
+    # omega = (R_cen * 16*cs**8 / (G**3 * mstar**3))**0.5
 
     if record == True:
         # Record the input and calculated parameters
@@ -332,9 +340,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         cmap = 'jet'
         rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
         thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
-        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d_exp/mh)))
-        # img_env = ax_env.pcolormesh(thetac-PI/2,rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
-        # ax_env.pcolormesh(thetac+PI/2,rc/AU,rho2d,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=np.nanmax(rho2d)))
+        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mh)
 
         ax_env.set_xlabel(r'$\mathrm{Polar~angle~(Degree)}$',fontsize=20)
         ax_env.set_ylabel(r'$\mathrm{Radius~(AU)}$',fontsize=20)
@@ -346,6 +352,9 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         ax_env.grid(True)
         cb = fig.colorbar(img_env, pad=0.1)
         cb.ax.set_ylabel(r'$\mathrm{Averaged~Density~(cm^{-3})}$',fontsize=20)
+        cb.set_ticks([1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9])
+        cb.set_ticklabels([r'$\mathrm{10^{2}}$',r'$\mathrm{10^{3}}$',r'$\mathrm{10^{4}}$',r'$\mathrm{10^{5}}$',r'$\mathrm{10^{6}}$',\
+                           r'$\mathrm{10^{7}}$',r'$\mathrm{10^{8}}$',r'$\mathrm{\geq 10^{9}}$'])
         cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
         plt.setp(cb_obj,fontsize=20)
         fig.savefig(outdir+outname+'_dust_density.png', format='png', dpi=300, bbox_inches='tight')
@@ -360,13 +369,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         for i in plot_grid:
             rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
             tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
-        rinf = ax.axvline(np.log10(dict_params['R_inf']), linestyle='--', color='k', linewidth=1.5)
-        cen_r = ax.axvline(np.log10(dict_params['R_cen']), linestyle=':', color='k', linewidth=1.5)
+        rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
+        cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
         # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
         # gt_R_cen_slope, = ax.plot(np.log10(rc/AU), -1.5*np.log10(rc/AU)+B-(-1.5)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
         # lt_R_cen_slope, = ax.plot(np.log10(rc/AU), -0.5*np.log10(rc/AU)+A-(-0.5)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
 
-        lg = plt.legend([rho_rad, tsc_only, rinf, cen_r,],\
+        lg = plt.legend([rho_rad, tsc_only, rinf, cen_r],\
                         [r'$\mathrm{\rho_{dust}}$',r'$\mathrm{\rho_{tsc}}$',r'$\mathrm{infall~radius}$',r'$\mathrm{centrifugal~radius}$'],\
                         fontsize=20, numpoints=1)
         ax.set_xlabel(r'$\mathrm{log(Radius)~(AU)}$',fontsize=20)
@@ -477,18 +486,58 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # m.set_forced_first_scattering(forced_first_scattering=True)
 
     # Setting up images and SEDs
-    image = m.add_peeled_images()
-    if mono == False:
-        image.set_wavelength_range(1000, 2.0, 1000.0)
+    # SED setting
+
+    # Infinite aperture
+    syn_inf = m.add_peeled_images(image=False)
     # use the index of wavelength array used by the monochromatic radiative transfer
-    # image.set_wavelength_index_range(0,13)
+    if mono == False:
+        syn_inf.set_wavelength_range(1000, 2.0, 1000.0)
+    syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
+    syn_inf.set_uncertainties(True)
+    syn_inf.set_output_bytes(8)
+
+    # aperture
+    # 7.2 in 10 um scaled by lambda / 10
+    # flatten beyond 20 um
+    # default aperture
+    if wl_aper == None:    
+        wl_aper = [3.6, 4.5, 5.8, 8.0, 24, 70, 160, 250, 350, 500, 850]
+    name = np.arange(1,len(wl_aper)+1)
+    aper = np.empty_like(wl_aper)
+    for i in range(0, len(wl_aper)):
+        if wl_aper[i] <= 20:
+            aper[i] = 7.2 * wl_aper[i]/10.
+        elif (wl_aper[i] > 20) & (wl_aper[i] <=50):
+            aper[i] = 7.2 * 2
+        else:
+            aper[i] = 24.5
+
+    dict_peel_sed = {}
+    for i in range(0, len(wl_aper)):
+        aper_dum = aper[i] * (1/3600.*np.pi/180.)*dstar*pc
+        dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
+        # use the index of wavelength array used by the monochromatic radiative transfer
+        if mono == False:
+            dict_peel_sed[str(name[i])].set_wavelength_range(1000, 2.0, 1000.0)
+        dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
+        # aperture should be given in cm
+        dict_peel_sed[str(name[i])].set_aperture_range(1, aper_dum, aper_dum)
+        dict_peel_sed[str(name[i])].set_uncertainties(True)
+        dict_peel_sed[str(name[i])].set_output_bytes(8)
+
+    # image setting
+    syn_im = m.add_peeled_images(sed=False)
+    # use the index of wavelength array used by the monochromatic radiative transfer
+    if mono == False:
+        syn_im.set_wavelength_range(1000, 2.0, 1000.0)
     # pixel number
-    image.set_image_size(300, 300)
-    image.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
-    image.set_viewing_angles([dict_params['view_angle']], [0.0])
-    image.set_uncertainties(True)
+    syn_im.set_image_size(300, 300)
+    syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
+    syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
+    syn_im.set_uncertainties(True)
     # output as 64-bit
-    image.set_output_bytes(8)
+    syn_im.set_output_bytes(8)
 
     # Output setting
     # Density
@@ -585,7 +634,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         #
         f_dust = open(outdir+'dust_density.inp','w')
         f_dust.write('1 \n')                      # format number
-        f_dust.write('%d \n' % int((nx-1)*ny*nz))         # Nr of cells
+        f_dust.write('%d \n' % int((nx-1)*ny*nz)) # Nr of cells
         f_dust.write('1 \n')                      # Nr of dust species
         for iphi in range(0,len(phic)):
             for itheta in range(0,len(thetac)):
@@ -628,11 +677,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
 
 # from input_reader import input_reader_table
-# filename = '/Users/yaolun/programs/misc/hyperion/model_list.txt'
+# from pprint import pprint
+# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
 # params = input_reader_table(filename)
-
-# outdir = '/Users/yaolun/bhr71/hyperion/'
-# # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
+# pprint(params[0])
+# # outdir = '/Users/yaolun/bhr71/hyperion/'
+# outdir = '/Users/yaolun/test/'
+# # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
 # dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
-# setup_model(outdir,'bhr71_init_regwave',params[0],dust_file,plot=True)
+# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True)
 
