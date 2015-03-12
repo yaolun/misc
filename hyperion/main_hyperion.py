@@ -53,6 +53,7 @@ for i in range(0, len(params)):
     print 'Model'+str(int(model_num)+i)
     pprint(params_dict)
     # calculate the initial dust profile
+    wl_aper = [3.6, 4.5, 5.8, 8.0, 24, 70, 160, 250, 350, 500, 850]
     m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono)
     if run == False:
         print 'Hyperion run is skipped. Make sure you have run this model before'
@@ -66,4 +67,4 @@ for i in range(0, len(params)):
     # Extract the results
     # the indir here is the dir that contains the observed spectra.
     print 'Seems finish, lets check out the results'
-    extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum)
+    extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper)
