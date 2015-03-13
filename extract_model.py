@@ -1,5 +1,5 @@
 # this one is the local version of extract_model.  Should not confuse with the version optimize and compatiable with hyperion run
-def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
+def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	def l_bol(wl,fv,dist=178.0):
 		import numpy as np
 		import astropy.constants as const
@@ -44,6 +44,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	import numpy as np
 	import os
 	from hyperion.model import ModelOutput
+	from scipy.interpolate import interp1d
 	from hyperion.util.constants import pc, c
 
 	# Read in the observation data and calculate the noise & variance
@@ -142,20 +143,13 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	# Open the model
 	m = ModelOutput(filename)
 
+	if wl_aper == None:
+		wl_aper = [3.6, 4.5, 5.8, 8.0, 24, 70, 160, 250, 350, 500, 850]
+
 	# Create the plot
 	mag = 1.5
 	fig = plt.figure(figsize=(8*mag,6*mag))
 	ax_sed = fig.add_subplot(1, 1, 1)
-
-	# Extract the SED for the smallest inclination and largest aperture, and
-	# scale to 300pc. In Python, negative indices can be used for lists and
-	# arrays, and indicate the position from the end. So to get the SED in the
-	# largest aperture, we set aperture=-1.
-	sed = m.get_sed(inclination=0, aperture=-1, distance=dstar * pc, uncertainties=True)
-
-	l_bol_sim = l_bol(sed.wav, sed.val/(c/sed.wav*1e4)*1e23)
-	# print sed.wav, sed.val
-	print 'Bolometric luminosity of simulated spectrum: %5.2f L_sun' % l_bol_sim
 
 	# Plot the observed SED
 	# plot the observed spectra
@@ -168,9 +162,33 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 	photometry, = ax_sed.plot(np.log10(wl_phot),np.log10(c/(wl_phot*1e-4)*flux_phot),'s',mfc='DimGray',mec='k',markersize=8)
 	ax_sed.errorbar(np.log10(wl_phot),np.log10(c/(wl_phot*1e-4)*flux_phot),yerr=flux_sig_phot,fmt='s',mfc='DimGray',mec='k',markersize=8)
 
+	# Extract the SED for the smallest inclination and largest aperture, and
+	# scale to 300pc. In Python, negative indices can be used for lists and
+	# arrays, and indicate the position from the end. So to get the SED in the
+	# largest aperture, we set aperture=-1.
+	# aperture group is aranged from smallest to infinite
+	sed_inf = m.get_sed(group=0, inclination=0, aperture=-1, distance=dstar * pc)
+
+	l_bol_sim = l_bol(sed_inf.wav, sed_inf.val/(c/sed_inf.wav*1e4)*1e23)
+	# print sed.wav, sed.val
+	print 'Bolometric luminosity of simulated spectrum: %5.2f L_sun' % l_bol_sim
+
+
 	# plot the simulated SED
-	sim, = ax_sed.plot(np.log10(sed.wav), np.log10(sed.val), '-', color='GoldenRod', linewidth=1.5*mag)
-	ax_sed.fill_between(np.log10(sed.wav), np.log10(sed.val+sed.unc), np.log10(sed.val-sed.unc), color='GoldenRod', alpha=0.5)
+	sim, = ax_sed.plot(np.log10(sed_inf.wav), np.log10(sed_inf.val), '-', color='GoldenRod', linewidth=1.5*mag)
+	# print sed_inf.unc
+	# ax_sed.fill_between(np.log10(sed_inf.wav), np.log10(sed_inf.val+sed_inf.unc), np.log10(sed.val_inf-sed_inf.unc), color='GoldenRod', alpha=0.5)
+
+	# get flux at different apertures
+	flux_aper = np.empty_like(wl_aper)
+	for i in range(0, len(wl_aper)):
+		sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
+		f = interp1d(sed_dum.wav, sed_dum.val)
+		flux_aper[i] = f(wl_aper[i])
+		# ax_sed.plot(np.log10(sed_dum.wav), np.log10(sed_dum.val), '-', linewidth=1.5*mag, color='g',alpha=np.linspace(0.5,1,len(wl_aper))[i])
+		# ax_sed.plot(np.log10(wl_aper[i]),np.log10(flux_aper[i]),'o',mfc='None',mec='g',markersize=12,markeredgewidth=3)
+		# print l_bol(sed_dum.wav, sed_dum.val/(c/sed_dum.wav*1e4)*1e23)
+	aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o',mfc='None',mec='k',markersize=12,markeredgewidth=3)
 
 	# Read in and plot the simulated SED produced by RADMC-3D using the same parameters
 	# [wl,fit] = np.genfromtxt(indir+'hyperion/radmc_comparison/spectrum.out',dtype='float',skip_header=3).T
@@ -208,7 +226,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0):
 
 	# Extract the image for the first inclination, and scale to 300pc. We
 	# have to specify group=1 as there is no image in group 0.
-	image = m.get_image(inclination=0, distance=dstar * pc, units='MJy/sr')
+	image = m.get_image(group=len(wl_aper)+1,inclination=0, distance=dstar * pc, units='MJy/sr')
 	# Open figure and create axes
 	fig = plt.figure(figsize=(8, 8))
 
@@ -271,4 +289,4 @@ indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 outdir = '/Users/yaolun/test/'
 # extract_hyperion('/hyperion/best_model.rtout',indir=indir)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
-extract_hyperion('/Users/yaolun/test/bhr71/model1/model1.rtout',indir=indir,outdir=outdir)
+extract_hyperion('/Users/yaolun/test/model32/model32.rtout',indir=indir,outdir=outdir)

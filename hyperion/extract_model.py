@@ -166,7 +166,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	# arrays, and indicate the position from the end. So to get the SED in the
 	# largest aperture, we set aperture=-1.
 	# aperture group is aranged from smallest to infinite
-	sed_inf = m.get_sed(group=len(wl_aper), inclination=0, aperture=-1, distance=dstar * pc)
+	sed_inf = m.get_sed(group=0, inclination=0, aperture=-1, distance=dstar * pc)
 
 	l_bol_sim = l_bol(sed_inf.wav, sed_inf.val/(c/sed_inf.wav*1e4)*1e23)
 	# print sed.wav, sed.val
@@ -178,7 +178,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	# get flux at different apertures
 	flux_aper = np.empty_like(wl_aper)
 	for i in range(0, len(wl_aper)):
-		sed_dum = m.get_sed(group=i, inclination=0, aperture=-1, distance=dstar * pc)
+		sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
 		f = interp1d(sed_dum.wav, sed_dum.val)
 		flux_aper[i] = f(wl_aper[i])
 		# ax_sed.plot(np.log10(sed_dum.wav), np.log10(sed_dum.val), '-', linewidth=1.5*mag)
