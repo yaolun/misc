@@ -80,7 +80,7 @@ def input_reader_table(filename,default=False):
 	return output
 
 # filename = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
-input_reader_table(filename)
+# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
+# input_reader_table(filename)
 # input_reader(filename)
 
