@@ -109,11 +109,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # mstar = M_env_dot * t * yr
     # omega = (R_cen * 16*cs**8 / (G**3 * mstar**3))**0.5
 
-    if record == True:
-        # Record the input and calculated parameters
-        params = dict_params.copy()
-        params.update({'d_sub': d_sub/AU, 'M_env_dot': M_env_dot/MS*yr, 'R_inf': R_inf/AU, 'R_cen': R_cen/AU, 'mstar': mstar/MS})
-        record_hyperion(params,outdir_global)
     # print the variables for radmc3d
     print 'Dust sublimation radius %6f AU' % (d_sub/AU)
     print 'M_star %4f Solar mass' % (mstar/MS)
@@ -323,6 +318,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         rho      = rho      + 1e-40
     total_mass = total_mass/MS
     print 'Total dust mass = %f Solar mass' % total_mass
+
+    if record == True:
+    # Record the input and calculated parameters
+    params = dict_params.copy()
+    params.update({'d_sub': d_sub/AU, 'M_env_dot': M_env_dot/MS*yr, 'R_inf': R_inf/AU, 'R_cen': R_cen/AU, 'mstar': mstar/MS, 'total_mass': total_mass})
+    record_hyperion(params,outdir_global)
+
     if plot == True:
         # rc setting
         mat.rcParams['text.usetex'] = True
