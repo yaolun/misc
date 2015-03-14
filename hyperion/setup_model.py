@@ -112,7 +112,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     if record == True:
         # Record the input and calculated parameters
         params = dict_params.copy()
-        params.update({'d_sub': d_sub/AU, 'age': t, 'Cs':cs/1e5, 'Omega0':omega})
+        params.update({'d_sub': d_sub/AU, 'M_env_dot': M_env_dot/MS*yr, 'R_inf': R_inf/AU, 'R_cen': R_cen/AU, 'mstar': mstar/MS})
         record_hyperion(params,outdir_global)
     # print the variables for radmc3d
     print 'Dust sublimation radius %6f AU' % (d_sub/AU)
