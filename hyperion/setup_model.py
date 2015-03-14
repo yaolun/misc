@@ -320,10 +320,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     print 'Total dust mass = %f Solar mass' % total_mass
 
     if record == True:
-    # Record the input and calculated parameters
-    params = dict_params.copy()
-    params.update({'d_sub': d_sub/AU, 'M_env_dot': M_env_dot/MS*yr, 'R_inf': R_inf/AU, 'R_cen': R_cen/AU, 'mstar': mstar/MS, 'total_mass': total_mass})
-    record_hyperion(params,outdir_global)
+        # Record the input and calculated parameters
+        params = dict_params.copy()
+        params.update({'d_sub': d_sub/AU, 'M_env_dot': M_env_dot/MS*yr, 'R_inf': R_inf/AU, 'R_cen': R_cen/AU, 'mstar': mstar/MS, 'total_mass': total_mass})
+        record_hyperion(params,outdir_global)
 
     if plot == True:
         # rc setting
