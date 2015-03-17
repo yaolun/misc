@@ -1,4 +1,5 @@
-def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,wl_aper=None):
+def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,\
+                low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,wl_aper=None,dyn_cav=False):
     """
     params = dictionary of the model parameters
     """
@@ -13,6 +14,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     from hyperion.model import Model
     from input_reader import input_reader
     from record_hyperion import record_hyperion
+    from outflow_inner_edge import outflow_inner_edge
     from pprint import pprint
 
     # Constants setup
@@ -150,6 +152,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         rho_disk = np.zeros([len(rc),len(thetac),len(phic)])
         rho      = np.zeros([len(rc),len(thetac),len(phic)])
 
+        if dyn_cav == True:
+            print 'WARNING: Calculation of interdependent cavity property has not implemented in infall-only solution!'
         # Normalization for the total disk mass
         def f(w,z,beta,rstar,h100):
             f = 2*PI*w*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/(w**beta*h100/100**beta))**2)
@@ -263,6 +267,18 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         rho_env = np.empty((nx,ny,nz))
         for i in range(0, nz):
             rho_env[:,:,i] = rho_env2d
+
+        if dyn_cav == True:
+            print 'Calculate the cavity properties using the criteria that swept-up mass = outflowed mass'
+            # using swept-up mass = flow mass to derive the edge of the extended flat density region
+            v_outflow = 1e2 * 1e5
+            rho_cav_edge = outflow_inner_edge(np.copy(rho_env), (ri,thetai,phii),M_env_dot,v_outflow,theta_cav, R_env_min)
+            dict_params['rho_cav_edge'] = rho_cav_edge
+            # assume gas-to-dust ratio = 100
+            rho_cav_center = 0.01 * 0.1*M_env_dot*rho_cav_edge/v_outflow/2 / (2*np.pi/3*rho_cav_edge**3*(1-np.cos(np.radians(theta_cav))))
+            dict_params['rho_cav_center'] = rho_cav_center
+            print 'inner edge is %5f AU and density is %e g/cm3' % (rho_cav_edge/AU, rho_cav_center)
+
         # create the array of density of disk and the whole structure
         #
         rho_disk = np.zeros([len(rc),len(thetac),len(phic)])
@@ -484,7 +500,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     m.set_n_initial_iterations(20)
     # m.set_convergence(True, percentile=95., absolute=1.5, relative=1.02)
     m.set_convergence(True, percentile=dict_params['percentile'], absolute=dict_params['absolute'], relative=dict_params['relative'])
-    m.set_mrw(True)   # Gamma = 1 by default
+    m.set_mrw(True, gamma=0.5)   # Gamma = 1 by default
     # m.set_forced_first_scattering(forced_first_scattering=True)
 
     # Setting up images and SEDs
@@ -678,14 +694,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
+params = input_reader_table(filename)
+pprint(params[0])
 # # outdir = '/Users/yaolun/bhr71/hyperion/'
-# outdir = '/Users/yaolun/test/'
+outdir = '/Users/yaolun/test/'
 # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-# dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True)
+dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
+setup_model(outdir,outdir,'test_gamma0.2',params[0],dust_file,plot=True,record=False,dyn_cav=True)
 
