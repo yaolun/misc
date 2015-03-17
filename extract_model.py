@@ -289,4 +289,4 @@ indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 outdir = '/Users/yaolun/test/'
 # extract_hyperion('/hyperion/best_model.rtout',indir=indir)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
-extract_hyperion('/Users/yaolun/test/model32/model32.rtout',indir=indir,outdir=outdir)
+extract_hyperion('/Users/yaolun/test/test_gamma0.2.rtout',indir=indir,outdir=outdir)
