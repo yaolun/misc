@@ -6,6 +6,7 @@ from pprint import pprint
 from setup_model import setup_model
 from input_reader import input_reader_table
 from extract_model import extract_hyperion
+from temp_hyperion import temp_hyperion
 
 # Default setting
 run = True
@@ -68,3 +69,4 @@ for i in range(0, len(params)):
     # the indir here is the dir that contains the observed spectra.
     print 'Seems finish, lets check out the results'
     extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper)
+    temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)

@@ -55,6 +55,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # d.set_sublimation_temperature(None)
     d.write(outdir+'oh5.hdf5')
     d.plot(outdir+'oh5.png')
+    plt.clf()
 
     # Grids and Density
     # Calculation inherited from the script used for RADMC-3D
