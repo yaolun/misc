@@ -24,7 +24,7 @@ pro tsc, modeltime, c_s, Omega_0, r, theta, rhoenv, rhofloor, renv_in, indir=ind
 ;
 ; Modified by YLY
 ; INPUTS
-; indir           - The input directory of the grid data from Susan. If not 
+; indir           - The input directory of the grid data from Susan Terebey. If not 
 ;                   assigned, the code will take its directory instead.
 ; outdir          - Output directory path
 ; modeltime       - The age of the protostellar system in years. 
