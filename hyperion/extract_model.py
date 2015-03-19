@@ -159,7 +159,10 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 
 	# plot the observed photometry data
 	photometry, = ax_sed.plot(np.log10(wl_phot),np.log10(c/(wl_phot*1e-4)*flux_phot),'s',mfc='DimGray',mec='k',markersize=8)
-	ax_sed.errorbar(np.log10(wl_phot),np.log10(c/(wl_phot*1e-4)*flux_phot),yerr=flux_sig_phot,fmt='s',mfc='DimGray',mec='k',markersize=8)
+	ax_sed.errorbar(np.log10(wl_phot),np.log10(c/(wl_phot*1e-4)*flux_phot),\
+		yerr=[np.log10(c/(wl_phot*1e-4)*flux_phot)-np.log10(c/(wl_phot*1e-4)*(flux_phot-flux_sig_phot)),\
+			  np.log10(c/(wl_phot*1e-4)*(flux_phot+flux_sig_phot))-np.log10(c/(wl_phot*1e-4)*flux_phot)],\
+		fmt='s',mfc='DimGray',mec='k',markersize=8)
 
 	# Extract the SED for the smallest inclination and largest aperture, and
 	# scale to 300pc. In Python, negative indices can be used for lists and
