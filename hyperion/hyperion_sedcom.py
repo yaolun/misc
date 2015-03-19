@@ -1,5 +1,5 @@
 def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, lbol=False, legend=True, mag=1.5,\
-					obs_preset='sh', dstar=1, aper=None):
+					obs_preset='sh', dstar=1, aper=[3.6, 4.5, 5.8, 8.0, 24, 70, 160, 250, 350, 500, 850]):
 	"""
 	obs_data: dictionary which obs_data['spec'] is spectrum and obs_data['phot'] is photometry
 			  obs_data['label'] = (wave, Fv, err) in um and Jy by default
@@ -62,7 +62,7 @@ def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, 
 			ax.errorbar(np.log10(wave_p),np.log10(vfv_p),yerr=[np.log10(vfv_p)-np.log10(vfv_p-vfv_p_err), np.log10(vfv_p+vfv_p_err)-np.log10(vfv_p)],\
 						fmt='s',mfc='DimGray',mec='k',markersize=8)
 
-	cm = seaborn_color('hls',len(modellist))
+	cm = seaborn_color('colorblind',len(modellist))
 	modplot = dict()
 	for imod in range(0, len(modellist)):
 		m = ModelOutput(modellist[imod])
@@ -99,20 +99,15 @@ def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, 
 
 
 
-import numpy as np
-from get_bhr71_obs import get_bhr71_obs
-indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+# import numpy as np
+# from get_bhr71_obs import get_bhr71_obs
 
-(wl_spec,flux_spec, sigma_noise, wl_phot, flux_phot, flux_sig_phot) = get_bhr71_obs(indir)
-
-aper = [3.6, 4.5, 5.8, 8.0, 24, 70, 160, 250, 350, 500, 850]   # wavelength in micron
-
-obs_data = {'spec': (wl_spec,flux_spec, sigma_noise), 'phot':(wl_phot, flux_phot, flux_sig_phot)}
-mod_num = [32,56]
-modellist = []
-modir = '/Users/yaolun/test/model'
-for mod in mod_num:
-	modellist.append(modir+str(mod)+'/model'+str(mod)+'.rtout')
-outdir = '/Users/yaolun/test/'
-hyperion_sedcom(modellist, outdir, 'test', obs_data=obs_data, lbol=True, dstar=178, aper=aper)
+# obs_data = get_bhr71_obs('/Users/yaolun/bhr71/obs_for_radmc/')
+# mod_num = [32,56]
+# modellist = []
+# modir = '/Users/yaolun/test/model'
+# for mod in mod_num:
+# 	modellist.append(modir+str(mod)+'/model'+str(mod)+'.rtout')
+# outdir = '/Users/yaolun/test/'
+# hyperion_sedcom(modellist, outdir, 'test', obs_data=obs_data, lbol=True, dstar=178)
 

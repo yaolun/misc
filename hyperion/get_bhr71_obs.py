@@ -59,4 +59,4 @@ def get_bhr71_obs(indir):
 	flux_spec = flux_spec[np.argsort(wl_spec)]
 	wl_spec = wl_spec[np.argsort(wl_spec)]
 
-	return (wl_spec, flux_spec, sigma_noise, wl_phot, flux_phot, flux_sig_phot)
+	return {'spec': (wl_spec, flux_spec, sigma_noise), 'phot': (wl_phot, flux_phot, flux_sig_phot)}
