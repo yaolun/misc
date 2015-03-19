@@ -99,20 +99,20 @@ def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, 
 
 
 
-import numpy as np
-from get_bhr71_obs import get_bhr71_obs
-indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+# import numpy as np
+# from get_bhr71_obs import get_bhr71_obs
+# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 
-(wl_spec,flux_spec, sigma_noise, wl_phot, flux_phot, flux_sig_phot) = get_bhr71_obs(indir)
+# (wl_spec,flux_spec, sigma_noise, wl_phot, flux_phot, flux_sig_phot) = get_bhr71_obs(indir)
 
-aper = [3.6, 4.5, 5.8, 8.0, 24, 70, 160, 250, 350, 500, 850]   # wavelength in micron
+# aper = [3.6, 4.5, 5.8, 8.0, 24, 70, 160, 250, 350, 500, 850]   # wavelength in micron
 
-obs_data = {'spec': (wl_spec,flux_spec, sigma_noise), 'phot':(wl_phot, flux_phot, flux_sig_phot)}
-mod_num = [32,56]
-modellist = []
-modir = '/Users/yaolun/test/model'
-for mod in mod_num:
-	modellist.append(modir+str(mod)+'/model'+str(mod)+'.rtout')
-outdir = '/Users/yaolun/test/'
-hyperion_sedcom(modellist, outdir, 'test', obs_data=obs_data, lbol=True, dstar=178, aper=aper)
+# obs_data = {'spec': (wl_spec,flux_spec, sigma_noise), 'phot':(wl_phot, flux_phot, flux_sig_phot)}
+# mod_num = [32,56]
+# modellist = []
+# modir = '/Users/yaolun/test/model'
+# for mod in mod_num:
+# 	modellist.append(modir+str(mod)+'/model'+str(mod)+'.rtout')
+# outdir = '/Users/yaolun/test/'
+# hyperion_sedcom(modellist, outdir, 'test', obs_data=obs_data, lbol=True, dstar=178, aper=aper)
 
