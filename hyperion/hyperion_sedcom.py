@@ -25,6 +25,8 @@ def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, 
 		for i in range(0, len(modellist)):
 			labellist.append(r'$\mathrm{'+os.path.splitext(os.path.basename(modellist[i]))[0]+'}$')
 
+	cm = seaborn_color('colorblind',len(modellist))
+
 	# create figure object
 	fig = plt.figure(figsize=(8*mag,6*mag))
 	ax = fig.add_subplot(111)
@@ -62,7 +64,6 @@ def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, 
 			ax.errorbar(np.log10(wave_p),np.log10(vfv_p),yerr=[np.log10(vfv_p)-np.log10(vfv_p-vfv_p_err), np.log10(vfv_p+vfv_p_err)-np.log10(vfv_p)],\
 						fmt='s',mfc='DimGray',mec='k',markersize=8)
 
-	cm = seaborn_color('colorblind',len(modellist))
 	modplot = dict()
 	for imod in range(0, len(modellist)):
 		m = ModelOutput(modellist[imod])
