@@ -29,7 +29,7 @@ def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, 
 
 	# cm = seaborn_color('colorblind',len(modellist))
 	sb.set(style="white")
-	cm = sb.color_palette('colorblind', len(modellist))
+	cm = sb.color_palette('husl', len(modellist))
 
 	# create figure object
 	fig = plt.figure(figsize=(8*mag,6*mag))
