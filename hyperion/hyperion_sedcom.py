@@ -12,7 +12,9 @@ def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, 
 	from hyperion.model import ModelOutput
 	from scipy.interpolate import interp1d
 	from l_bol import l_bol
-	from seaborn_color import seaborn_color
+	import seaborn as sb
+	# from seaborn import color_palette
+	# from seaborn_color import seaborn_color
 
 	# constant setup
 	c = const.c.cgs.value
@@ -25,7 +27,9 @@ def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, 
 		for i in range(0, len(modellist)):
 			labellist.append(r'$\mathrm{'+os.path.splitext(os.path.basename(modellist[i]))[0]+'}$')
 
-	cm = seaborn_color('colorblind',len(modellist))
+	# cm = seaborn_color('colorblind',len(modellist))
+	sb.set(style="white")
+	cm = sb.color_palette('colorblind', len(modellist))
 
 	# create figure object
 	fig = plt.figure(figsize=(8*mag,6*mag))
@@ -77,7 +81,8 @@ def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, 
 				sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
 				f = interp1d(sed_dum.wav, sed_dum.val)
 				vfv_aper[i] = f(aper[i])
-			modplot['mod'+str(imod+1)], = ax.plot(np.log10(aper),np.log10(vfv_aper),'o',mfc='None',mec=cm[imod],markersize=12,markeredgewidth=3, label=labellist[imod])
+			modplot['mod'+str(imod+1)], = ax.plot(np.log10(aper),np.log10(vfv_aper),'o',mfc='None',mec=cm[imod],markersize=12,\
+													markeredgewidth=3, label=labellist[imod], linestyle='-',color=cm[imod],linewidth=1.5*mag)
 
 	# plot fine tune
 	ax.set_xlabel(r'$\mathrm{log~\lambda~({\mu}m)}$',fontsize=mag*20)
