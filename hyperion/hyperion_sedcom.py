@@ -1,5 +1,5 @@
 def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, lbol=False, legend=True, mag=1.5,\
-					obs_preset='sh', dstar=1, aper=[3.6, 4.5, 5.8, 8.0, 24, 70, 160, 250, 350, 500, 850]):
+					obs_preset='sh', dstar=1, aper=[3.6, 4.5, 5.8, 8.0, 10, 20, 24, 70, 160, 250, 350, 500, 850]):
 	"""
 	obs_data: dictionary which obs_data['spec'] is spectrum and obs_data['phot'] is photometry
 			  obs_data['label'] = (wave, Fv, err) in um and Jy by default
@@ -35,6 +35,8 @@ def hyperion_sedcom(modellist, outdir, plotname, obs_data=None, labellist=None, 
 	fig = plt.figure(figsize=(8*mag,6*mag))
 	ax = fig.add_subplot(111)
 	# sb.set_style('ticks')
+
+	print 'plotting with aperture at ', aper, 'um'
 
 	# if the obs_data is provided than plot the observation first.  In this way, models won't be blocked by data
 	if obs_data != None:

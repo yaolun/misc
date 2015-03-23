@@ -43,8 +43,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	import numpy as np
 	import os
 	from hyperion.model import ModelOutput
+	from hyperion.model import Model
 	from scipy.interpolate import interp1d
-	from hyperion.util.constants import pc, c
+	from hyperion.util.constants import pc, c, L_sun
 
 	# Read in the observation data and calculate the noise & variance
 	if indir == None:
@@ -143,7 +144,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	m = ModelOutput(filename)
 
 	if wl_aper == None:
-		wl_aper = [3.6, 4.5, 5.8, 8.0, 24, 70, 160, 250, 350, 500, 850]
+		wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 24, 70, 160, 250, 350, 500, 850]
 
 	# Create the plot
 	mag = 1.5
@@ -199,7 +200,12 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	# 	r'$\mathrm{L_{bol,radmc3d}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_radmc],\
 	# 	loc='lower right',fontsize=mag*16)
 
-	lg_sim = ax_sed.legend([sim],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_sim], \
+	# read the input central luminosity by reading in the source information from output file
+	dum = Model()
+	dum.use_sources(filename)
+	L_cen = dum.sources[0].luminosity/L_sun
+
+	lg_sim = ax_sed.legend([sim],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=%5.2f~L_{\odot}}$' % (l_bol_sim, L_cen)], \
         loc='lower right',fontsize=mag*16)
 	# plot setting
 	ax_sed.set_xlabel(r'$\mathrm{log~\lambda~({\mu}m)}$',fontsize=mag*20)

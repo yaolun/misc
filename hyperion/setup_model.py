@@ -521,7 +521,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # flatten beyond 20 um
     # default aperture
     if wl_aper == None:    
-        wl_aper = [3.6, 4.5, 5.8, 8.0, 24, 70, 160, 250, 350, 500, 850]
+        wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 20, 24, 70, 160, 250, 350, 500, 850]
     name = np.arange(1,len(wl_aper)+1)
     aper = np.empty_like(wl_aper)
     for i in range(0, len(wl_aper)):
