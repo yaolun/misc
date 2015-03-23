@@ -45,7 +45,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	from hyperion.model import ModelOutput
 	from hyperion.model import Model
 	from scipy.interpolate import interp1d
-	from hyperion.util.constants import pc, c, L_sun
+	from hyperion.util.constants import pc, c, lsun
 
 	# Read in the observation data and calculate the noise & variance
 	if indir == None:
@@ -174,7 +174,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 
 	l_bol_sim = l_bol(sed_inf.wav, sed_inf.val/(c/sed_inf.wav*1e4)*1e23)
 	# print sed.wav, sed.val
-	print 'Bolometric luminosity of simulated spectrum: %5.2f L_sun' % l_bol_sim
+	print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
 
 
 	# plot the simulated SED
@@ -203,7 +203,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	# read the input central luminosity by reading in the source information from output file
 	dum = Model()
 	dum.use_sources(filename)
-	L_cen = dum.sources[0].luminosity/L_sun
+	L_cen = dum.sources[0].luminosity/lsun
 
 	lg_sim = ax_sed.legend([sim],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=%5.2f~L_{\odot}}$' % (l_bol_sim, L_cen)], \
         loc='lower right',fontsize=mag*16)
