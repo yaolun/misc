@@ -36,6 +36,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 
 		fv = fv[np.argsort(freq)]
 		freq = freq[np.argsort(freq)]
+
 		return (np.trapz(fv,freq)*4.*PI*(dist*pc)**2)/SL
 
 
@@ -144,7 +145,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	m = ModelOutput(filename)
 
 	if wl_aper == None:
-		wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 24, 70, 160, 250, 350, 500, 850]
+		wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
 
 	# Create the plot
 	mag = 1.5
@@ -172,9 +173,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	# aperture group is aranged from smallest to infinite
 	sed_inf = m.get_sed(group=0, inclination=0, aperture=-1, distance=dstar * pc)
 
-	l_bol_sim = l_bol(sed_inf.wav, sed_inf.val/(c/sed_inf.wav*1e4)*1e23)
+	# l_bol_sim = l_bol(sed_inf.wav, sed_inf.val/(c/sed_inf.wav*1e4)*1e23)
 	# print sed.wav, sed.val
-	print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
+	# print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
 
 
 	# plot the simulated SED
@@ -188,6 +189,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 		# ax_sed.plot(np.log10(sed_dum.wav), np.log10(sed_dum.val), '-', linewidth=1.5*mag)
 		# print l_bol(sed_dum.wav, sed_dum.val/(c/sed_dum.wav*1e4)*1e23)
 	aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o',mfc='None',mec='k',markersize=12,markeredgewidth=3)
+	# calculate the bolometric luminosity of the aperture 
+	l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23)
+	print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
 
 
 	# Read in and plot the simulated SED produced by RADMC-3D using the same parameters
@@ -294,6 +298,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 
 # indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 # outdir = '/Users/yaolun/bhr71/hyperion/'
-# extract_hyperion('/Users/yaolun/test/test.rtout',indir=indir,outdir='/Users/yaolun/test/')
+# extract_hyperion('/Users/yaolun/test/model140/model140.rtout',indir=indir,outdir='/Users/yaolun/test/')
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
 # extract_hyperion('/hyperion/old_setup2.rtout',indir=indir,outdir=outdir)

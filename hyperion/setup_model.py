@@ -98,7 +98,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # Calculate the dust sublimation radius
     T_sub = 2000
     a     = 1   #in micron
-    d_sub = (306.86*(a/0.1)**-0.4 * (4*np.pi*rstar**2*sigma*tstar**4/LS) / T_sub)**0.5 *AU
+    d_sub = 2.9388e7*(a/0.1)**-0.2 * (4*np.pi*rstar**2*sigma*tstar**4/LS)**0.5 / T_sub**3 *AU
     # use the dust sublimation radius as the inner radius of disk and envelope
     R_disk_min = d_sub
     R_env_min  = d_sub

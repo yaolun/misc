@@ -54,7 +54,7 @@ for i in range(0, len(params)):
     print 'Model'+str(int(model_num)+i)
     pprint(params_dict)
     # calculate the initial dust profile
-    wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 20, 24, 70, 160, 250, 350, 500, 850]
+    wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
     m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono)
     if run == False:
         print 'Hyperion run is skipped. Make sure you have run this model before'
