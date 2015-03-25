@@ -52,7 +52,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
     d = HenyeyGreensteinDust(dust_hy['nu'], dust_hy['albedo'], dust_hy['chi'], dust_hy['g'], dust_hy['p_lin_max'])
     # dust sublimation option
-    d.set_sublimation_temperature('slow', temperature=1600.0)
+    d.set_sublimation_temperature('fast', temperature=1600.0)
     #
     d.write(outdir+'oh5.hdf5')
     d.plot(outdir+'oh5.png')
@@ -408,7 +408,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
         ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
         ax.set_ylim([0,15])
-        ax.set_xlim([np.log10(0.8),np.log10(10000)])
+        fig.gca().set_xlim(left=np.log10(0.05))
+        # ax.set_xlim([np.log10(0.8),np.log10(10000)])
 
         # subplot shows the radial density profile along the midplane
         ax_mid = plt.axes([0.2,0.2,0.2,0.2], frameon=True)
