@@ -57,6 +57,6 @@ def temp_hyperion(rtout,outdir):
     # fig.savefig(outdir+print_name+'_temperature.png', format='png', dpi=300, bbox_inches='tight')
     # fig.clf()
 
-rtout = '/Users/yaolun/bhr71/hyperion/cycle3/model9/model9.rtout'
-outdir = '/Users/yaolun/test/'
-temp_hyperion(rtout, outdir)
+# rtout = '/Users/yaolun/bhr71/hyperion/cycle3/model9/model9.rtout'
+# outdir = '/Users/yaolun/test/'
+# temp_hyperion(rtout, outdir)
