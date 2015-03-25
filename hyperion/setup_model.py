@@ -52,7 +52,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
     d = HenyeyGreensteinDust(dust_hy['nu'], dust_hy['albedo'], dust_hy['chi'], dust_hy['g'], dust_hy['p_lin_max'])
     # dust sublimation option
-    d.set_sublimation_temperature('cap', temperature=1600.0)
+    d.set_sublimation_temperature('slow', temperature=1600.0)
     d.set_lte_emissivities(n_temp=1000,
                        temp_min=0.1,
                        temp_max=2000.)
