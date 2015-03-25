@@ -138,7 +138,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         ri = np.hstack((ri[0:ind],ri[ind]+np.arange(np.ceil((rout-ri[ind])/100/AU))*100*AU))
         nxx = nx
         nx = len(ri)-1    
-    print nxx
     # Assign the coordinates of the center of cell as its coordinates.
     #
     rc           = 0.5*( ri[0:nx]     + ri[1:nx+1] )
@@ -274,7 +273,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                     rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
         rho_env2d = rho_env_copy
         rho_env = np.empty((nx,ny,nz))
-        print np.shape(rho_env2d)
         for i in range(0, nz):
             rho_env[:,:,i] = rho_env2d
 
@@ -706,14 +704,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# # outdir = '/Users/yaolun/bhr71/hyperion/'
-# outdir = '/Users/yaolun/test/'
-# # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-# dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False,dyn_cav=True)
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+# outdir = '/Users/yaolun/bhr71/hyperion/'
+outdir = '/Users/yaolun/test/'
+# # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
+dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
+setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False)
 
