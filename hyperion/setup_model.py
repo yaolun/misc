@@ -50,12 +50,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     dust_hy['g'] = dust_radmc['g'][ind]
     dust_hy['p_lin_max'] = 0*dust_radmc['wl'][ind]     # assume no polarization
 
+    d = HenyeyGreensteinDust(dust_hy['nu'], dust_hy['albedo'], dust_hy['chi'], dust_hy['g'], dust_hy['p_lin_max'])
     # dust sublimation option
     d.set_sublimation_temperature('slow', temperature=1600.0)
-
-    d = HenyeyGreensteinDust(dust_hy['nu'], dust_hy['albedo'], dust_hy['chi'], dust_hy['g'], dust_hy['p_lin_max'])
-    # dust sublimation does not occur
-    # d.set_sublimation_temperature(None)
+    #
     d.write(outdir+'oh5.hdf5')
     d.plot(outdir+'oh5.png')
     plt.clf()
