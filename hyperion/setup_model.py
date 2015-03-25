@@ -52,7 +52,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
     d = HenyeyGreensteinDust(dust_hy['nu'], dust_hy['albedo'], dust_hy['chi'], dust_hy['g'], dust_hy['p_lin_max'])
     # dust sublimation option
-    d.set_sublimation_temperature('fast', temperature=1600.0)
+    d.set_sublimation_temperature('cap', temperature=1600.0)
     #
     d.write(outdir+'oh5.hdf5')
     d.plot(outdir+'oh5.png')
