@@ -263,11 +263,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                 y0 = y0 + p[i]*x0**(len(p)-i-1)
             return y0
         rho_env_copy = np.array(rho_env_tsc)
+        print rho_env_copy[(rc > R_inf),0]
         if max(rc) > R_inf:
             for ithetac in range(0, len(thetac)):
                 rho_dum = np.log10(rho_env_copy[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
                 rc_dum = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
                 rc_dum_nan = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
+                print rc_dum
                 for i in range(0, len(rc_dum_nan)):
                     rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
                     rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
@@ -704,14 +706,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# # outdir = '/Users/yaolun/bhr71/hyperion/'
-# outdir = '/Users/yaolun/test/'
-# # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-# dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False)
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+# outdir = '/Users/yaolun/bhr71/hyperion/'
+outdir = '/Users/yaolun/test/'
+# # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
+dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
+setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False)
 
