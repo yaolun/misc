@@ -245,8 +245,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         if idl == True:
             print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
-            idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
-            # idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
+            # idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
+            idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
             idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
         else:
