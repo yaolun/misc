@@ -291,7 +291,7 @@ for i=0,nr-1 do begin
         ;     stop
         ;    rhoenv[i,j]=0.0
         ;    nan='nan'
-        endif
+        ; endif
 
         ;rhoenv[i,j]=0.0 ;switch off the envelope
 
