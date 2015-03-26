@@ -245,8 +245,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         if idl == True:
             print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
-            # idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
-            idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
+            idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
+            # idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
             idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
         else:
@@ -706,14 +706,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# # outdir = '/Users/yaolun/bhr71/hyperion/'
-# outdir = '/Users/yaolun/test/'
-# # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-# dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False)
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+# outdir = '/Users/yaolun/bhr71/hyperion/'
+outdir = '/Users/yaolun/test/'
+# # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
+dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
+setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False,idl=True)
 
