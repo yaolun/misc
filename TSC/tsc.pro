@@ -124,7 +124,7 @@ for i=0,sz_y_tsc_1d-1 do begin
         if(V_Q_tsc_1d[i-1] gt 0) then begin
             V_Q_tsc_1d[i]=loglin_interp2pt(y_tsc_1d[winterp],V_Q_tsc_1d[winterp],y_tsc_1d[i-1],V_Q_tsc_1d[i-1],y_tsc_1d[i])
         endif
-       ; if finite(alpha_M_tsc_1d[i]) eq 0 then stop
+       if finite(alpha_M_tsc_1d[i]) eq 0 then stop
     endif
 endfor
 
@@ -287,8 +287,8 @@ for i=0,nr-1 do begin
         step=step+1
 
         ; if (rhoend[i,j] lt rhofloor) then rhoenv[i,j] = rhofloor
-        ; if(finite(rhoenv[i,j]) eq 0) then begin
-        ;     stop
+        if(finite(rhoenv[i,j]) eq 0) then begin
+            stop
         ;    rhoenv[i,j]=0.0
         ;    nan='nan'
         endif
