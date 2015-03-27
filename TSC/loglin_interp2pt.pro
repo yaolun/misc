@@ -4,6 +4,12 @@ m=((y1-y2)/(x1-x2))
 b=(y1-(m*x1))
 y=((m*x)+b)
 
+; make sure it won't yield NaN
+if x1 eq 0 then x1 = 1e-40
+if y1 eq 0 then y1 = 1e-40
+if x2 eq 0 then x2 = 1e-40
+if y2 eq 0 then y2 = 1e-40
+
 x1l=alog10(x1)
 y1l=alog10(y1)
 x2l=alog10(x2)

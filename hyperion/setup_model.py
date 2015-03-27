@@ -1,5 +1,5 @@
 def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,\
-                low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,wl_aper=None,dyn_cav=False):
+                low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,wl_aper=None,dyn_cav=False,fix_params=None):
     """
     params = dictionary of the model parameters
     """
@@ -100,7 +100,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     h100      = dict_params['h100']*AU
     rho_cav   = dict_params['rho_cav']
     # Calculate the dust sublimation radius
-    T_sub = 2000
+    T_sub = 1600
     a     = 1   #in micron
     # realistic dust
     # d_sub = 2.9388e7*(a/0.1)**-0.2 * (4*np.pi*rstar**2*sigma*tstar**4/LS)**0.5 / T_sub**3 *AU
@@ -122,6 +122,12 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # print the variables for radmc3d
     print 'Dust sublimation radius %6f AU' % (d_sub/AU)
     print 'M_star %4f Solar mass' % (mstar/MS)
+
+    # if there is any parameter found in fix_params, then fix them
+    if fix_params != None:
+        if 'R_min' in fix_params.keys:
+            R_disk_min = R_min*AU
+            R_env_min  = R_min*AU
 
     # Make the Coordinates
     #
