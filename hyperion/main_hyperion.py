@@ -63,7 +63,7 @@ for i in range(0, len(params)):
         print 'Running with Hyperion'
         hyp_foo = open(outdir_dum+'hyperion.log','w')
         hyp_err = open(outdir_dum+'hyperion.err','w')
-        run = Popen(['mpirun','-n','22','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
+        run = Popen(['mpirun','-n','20','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
         run.communicate()
     # Extract the results
     # the indir here is the dir that contains the observed spectra.
