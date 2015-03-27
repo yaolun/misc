@@ -126,8 +126,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # if there is any parameter found in fix_params, then fix them
     if fix_params != None:
         if 'R_min' in fix_params.keys():
-            R_disk_min = R_min*AU
-            R_env_min  = R_min*AU
+            R_disk_min = fix_params['R_min']*AU
+            R_env_min  = fix_params['R_min']*AU
 
     # Make the Coordinates
     #
