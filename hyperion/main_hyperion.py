@@ -30,8 +30,8 @@ dust_file = home + '/programs/misc/dustkappa_oh5_extended.inp'
 params_table = home + '/programs/misc/hyperion/input_table.txt'
 obs_dir = home + '/radmc_simulation/bhr71/observations/'
 # temp fix for the broken /opt/local/ of bettyjo
-outdir = home+'/test/hyperion/'
-obs_dir = home+'/bhr71/obs_for_radmc/'
+# outdir = home+'/test/hyperion/'
+# obs_dir = home+'/bhr71/obs_for_radmc/'
 
 params = input_reader_table(params_table)
 
