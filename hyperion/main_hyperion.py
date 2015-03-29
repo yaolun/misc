@@ -50,15 +50,15 @@ model_num = str(int(last_model_num)+1)
 # 
 model_num = 47
 #
-# for i in range(0, len(params)):
-for i in range(0,9):
-    # params_dict = params[i]
+for i in range(0, len(params)):
+# for i in range(0,9):
+    params_dict = params[i]
     if not os.path.exists(outdir+'model'+str(int(model_num)+i)+'/'):
         os.makedirs(outdir+'model'+str(int(model_num)+i)+'/')
     outdir_dum = outdir+'model'+str(int(model_num)+i)+'/'
     # print out some information about the current calculating model
     print 'Model'+str(int(model_num)+i)
-    # pprint(params_dict)
+    pprint(params_dict)
     # calculate the initial dust profile
     wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
     # option to fix some parameter
