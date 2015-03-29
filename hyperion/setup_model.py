@@ -295,11 +295,11 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             ind_infall = np.where(rc <= R_inf)[0][-1]
             for i in range(0, len(rc)):
                 if i <= ind_infall:
-                    rho_env_tsc2d[i, ithetac] = rho_env_tsc[i, ithetac]
+                    rho_env_tsc2d[i,:] = rho_env_tsc[i,:]
                 else:
-                    rho_env_tsc2d[i, ithetac] =  10**(np.log10(rho_env_tsc[ind_infall, ithetac]) - 2*(np.log10(rc[i]/rc[ind_infall])))
+                    rho_env_tsc2d[i,:] =  10**(np.log10(rho_env_tsc[ind_infall,:]) - 2*(np.log10(rc[i]/rc[ind_infall])))
         else:
-            rho_env_tsc2d[i, ithetac] = rho_env_tsc[i, ithetac]
+            rho_env_tsc2d[i,:] = rho_env_tsc[i,:]
         # map it to 3-D grid
         rho_env = np.empty((nx,ny,nz))
         for i in range(0, nz):
