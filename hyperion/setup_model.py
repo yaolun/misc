@@ -254,13 +254,15 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             # idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
             idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
-            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
+            # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
+            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_inf)
         else:
             print 'Read the pre-computed TSC model.'
         # read in the exist file
         rho_env_tsc = np.genfromtxt(outdir+'rhoenv.dat').T
         # extrapolate for the NaN values at the outer radius, usually at radius beyond the infall radius
-        # map the 2d strcuture onto 3d grid
+        # using r^-2 profile at radius greater than infall radius
+        # and map the 2d strcuture onto 3d grid
         def poly(x, y, x0, deg=2):
             import numpy as np
             p = np.polyfit(x, y, deg)
@@ -269,16 +271,19 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                 y0 = y0 + p[i]*x0**(len(p)-i-1)
             return y0
         rho_env_copy = np.array(rho_env_tsc)
-        # print rho_env_copy[(rc > R_inf),0]
         if max(rc) > R_inf:
+            ind_infall = np.where(rc <= R_inf)[0][-1]
             for ithetac in range(0, len(thetac)):
-                rho_dum = np.log10(rho_env_copy[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
-                rc_dum = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
-                rc_dum_nan = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
-                # print rc_dum
-                for i in range(0, len(rc_dum_nan)):
-                    rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
-                    rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
+                # rho_dum = np.log10(rho_env_copy[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
+                # rc_dum = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
+                # rc_dum_nan = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
+                # # print rc_dum
+                # for i in range(0, len(rc_dum_nan)):
+                #     rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
+                #     rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
+                #
+                for i in range(ind_infall, len(rc)):
+                    rho_env_copy[i, ithetac] =  10**(np.log10(rho_env_copy[ind_infall, ithetac]) - 2*(np.log10(rc[i]/rc[ind_infall])))
         rho_env2d = rho_env_copy
         rho_env = np.empty((nx,ny,nz))
         for i in range(0, nz):
