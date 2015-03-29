@@ -424,7 +424,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         alpha = np.linspace(0.3,1.0,len(plot_grid))
         for i in plot_grid:
             rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
-            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
         rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
         cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
         # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
@@ -447,7 +447,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # subplot shows the radial density profile along the midplane
         ax_mid = plt.axes([0.2,0.2,0.2,0.2], frameon=True)
         ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/mh),'o',color='b',linewidth=1, markersize=2)
-        ax_mid.plot(np.log10(rc/AU), np.log10(rho_env2d[:,199]/mh),'-',color='r',linewidth=1, markersize=2)
+        ax_mid.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,199]/mh),'-',color='r',linewidth=1, markersize=2)
         # ax_mid.set_ylim([0,10])
         ax_mid.set_xlim([np.log10(0.8),np.log10(10000)])
         ax_mid.set_ylim([0,15])
