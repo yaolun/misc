@@ -270,24 +270,41 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             for i in range(0, len(p)):
                 y0 = y0 + p[i]*x0**(len(p)-i-1)
             return y0
-        rho_env_copy = np.array(rho_env_tsc)
+        # rho_env_copy = np.array(rho_env_tsc)
+        # if max(rc) > R_inf:
+        #     ind_infall = np.where(rc <= R_inf)[0][-1]
+        #     print ind_infall
+        #     for ithetac in range(0, len(thetac)):
+        #         # rho_dum = np.log10(rho_env_copy[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
+        #         # rc_dum = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
+        #         # rc_dum_nan = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
+        #         # # print rc_dum
+        #         # for i in range(0, len(rc_dum_nan)):
+        #         #     rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
+        #         #     rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
+        #         #
+        #         for i in range(ind_infall, len(rc)):
+        #             rho_env_copy[i, ithetac] =  10**(np.log10(rho_env_copy[ind_infall, ithetac]) - 2*(np.log10(rc[i]/rc[ind_infall])))
+        # rho_env2d = rho_env_copy
+        # rho_env = np.empty((nx,ny,nz))
+        # for i in range(0, nz):
+        #     rho_env[:,:,i] = rho_env2d
+        # map TSC solution from IDL to actual 2-D grid
+        rho_env_tsc2d = np.empty((nx,ny)) 
         if max(rc) > R_inf:
             ind_infall = np.where(rc <= R_inf)[0][-1]
-            for ithetac in range(0, len(thetac)):
-                # rho_dum = np.log10(rho_env_copy[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
-                # rc_dum = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
-                # rc_dum_nan = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
-                # # print rc_dum
-                # for i in range(0, len(rc_dum_nan)):
-                #     rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
-                #     rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
-                #
-                for i in range(ind_infall, len(rc)):
-                    rho_env_copy[i, ithetac] =  10**(np.log10(rho_env_copy[ind_infall, ithetac]) - 2*(np.log10(rc[i]/rc[ind_infall])))
-        rho_env2d = rho_env_copy
+            for i in range(0, len(rc)):
+                if i <= ind_infall:
+                    rho_env_tsc2d[i, ithetac] = rho_env_tsc[i, ithetac]
+                else:
+                    rho_env_tsc2d[i, ithetac] =  10**(np.log10(rho_env_tsc[ind_infall, ithetac]) - 2*(np.log10(rc[i]/rc[ind_infall])))
+        else:
+            rho_env_tsc2d[i, ithetac] = rho_env_tsc[i, ithetac]
+        # map it to 3-D grid
         rho_env = np.empty((nx,ny,nz))
         for i in range(0, nz):
-            rho_env[:,:,i] = rho_env2d
+            rho_env[:,:,i] = rho_env_tsc2d
+       
 
         if dyn_cav == True:
             print 'Calculate the cavity properties using the criteria that swept-up mass = outflowed mass'
