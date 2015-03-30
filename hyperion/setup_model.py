@@ -255,7 +255,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
             # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
-            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(rc)]))
+            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)]))
         else:
             print 'Read the pre-computed TSC model.'
         # read in the exist file
@@ -291,7 +291,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         #     rho_env[:,:,i] = rho_env2d
         # map TSC solution from IDL to actual 2-D grid
         rho_env_tsc2d = np.empty((nx,ny)) 
-        if max(rc) > R_inf:
+        if max(ri) > R_inf:
             ind_infall = np.where(rc <= R_inf)[0][-1]
             for i in range(0, len(rc)):
                 if i <= ind_infall:
@@ -734,14 +734,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+params = input_reader_table(filename)
+pprint(params[0])
 # # outdir = '/Users/yaolun/bhr71/hyperion/'
-# outdir = '/Users/yaolun/test/'
+outdir = '/Users/yaolun/test/'
 # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-# dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False,idl=True)
+dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
+setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False)
 
