@@ -255,7 +255,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
             # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
-            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_inf)
+            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(rc)]))
         else:
             print 'Read the pre-computed TSC model.'
         # read in the exist file
@@ -299,7 +299,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                 else:
                     rho_env_tsc2d[i,:] =  10**(np.log10(rho_env_tsc[ind_infall,:]) - 2*(np.log10(rc[i]/rc[ind_infall])))
         else:
-            rho_env_tsc2d[i,:] = rho_env_tsc[i,:]
+            rho_env_tsc2d = rho_env_tsc
         # map it to 3-D grid
         rho_env = np.empty((nx,ny,nz))
         for i in range(0, nz):
