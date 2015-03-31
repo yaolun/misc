@@ -52,9 +52,10 @@ pro tsc_run, outdir=outdir, grid=grid, time=time, c_s=c_s, omega=omega, rstar=rs
 	;
 	ri_cellsize = ri[1:-1]-ri[0:-2]
 	ind = (where(ri_cellsize/AU gt 100.0))[0]      ; The largest cell size is 100 AU
-	ri = [ri[0:ind-1], ri[ind]+dindgen(ceil((rout-ri[ind])/100/AU))*100*AU]
-	nx = n_elements(ri)-1
-
+	if ind ne -1 then begin
+		ri = [ri[0:ind-1], ri[ind]+dindgen(ceil((rout-ri[ind])/100/AU))*100*AU]
+		nx = n_elements(ri)-1
+	endif
 	; Assign the coordinates of the center of cell as its coordinates.
 	;
 	rc           = 0.5*( ri[0:nx-1]     + ri[1:nx] )
