@@ -370,7 +370,9 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         rho_env  = rho_env  + 1e-40
         rho_disk = rho_disk + 1e-40
         rho      = rho      + 1e-40
-    total_mass = total_mass/MS
+    # apply gas-to-dust ratio of 100
+    rho = rho/100.
+    total_mass = total_mass/MS/100
     print 'Total dust mass = %f Solar mass' % total_mass
 
     if record == True:
@@ -456,7 +458,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
     # Insert the calculated grid and dust density profile into hyperion
     m.set_spherical_polar_grid(ri, thetai, phii)
-    m.add_density_grid(0.1*rho.T, d)
+    m.add_density_grid(rho.T, d)
     # m.add_density_grid(rho.T, outdir+'oh5.hdf5')    # numpy read the array in reverse order
 
     # Define the luminsoity source
