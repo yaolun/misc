@@ -251,16 +251,18 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         if idl == True:
             print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
-            idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
-            # idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
+            # idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
+            idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
-            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
+            # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
+            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)]))
         else:
             print 'Read the pre-computed TSC model.'
         # read in the exist file
         rho_env_tsc = np.genfromtxt(outdir+'rhoenv.dat').T
         # extrapolate for the NaN values at the outer radius, usually at radius beyond the infall radius
-        # map the 2d strcuture onto 3d grid
+        # using r^-2 profile at radius greater than infall radius
+        # and map the 2d strcuture onto 3d grid
         def poly(x, y, x0, deg=2):
             import numpy as np
             p = np.polyfit(x, y, deg)
@@ -268,21 +270,41 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             for i in range(0, len(p)):
                 y0 = y0 + p[i]*x0**(len(p)-i-1)
             return y0
-        rho_env_copy = np.array(rho_env_tsc)
-        # print rho_env_copy[(rc > R_inf),0]
-        if max(rc) > R_inf:
-            for ithetac in range(0, len(thetac)):
-                rho_dum = np.log10(rho_env_copy[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
-                rc_dum = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
-                rc_dum_nan = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
-                # print rc_dum
-                for i in range(0, len(rc_dum_nan)):
-                    rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
-                    rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
-        rho_env2d = rho_env_copy
+        # rho_env_copy = np.array(rho_env_tsc)
+        # if max(rc) > R_inf:
+        #     ind_infall = np.where(rc <= R_inf)[0][-1]
+        #     print ind_infall
+        #     for ithetac in range(0, len(thetac)):
+        #         # rho_dum = np.log10(rho_env_copy[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
+        #         # rc_dum = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
+        #         # rc_dum_nan = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
+        #         # # print rc_dum
+        #         # for i in range(0, len(rc_dum_nan)):
+        #         #     rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
+        #         #     rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
+        #         #
+        #         for i in range(ind_infall, len(rc)):
+        #             rho_env_copy[i, ithetac] =  10**(np.log10(rho_env_copy[ind_infall, ithetac]) - 2*(np.log10(rc[i]/rc[ind_infall])))
+        # rho_env2d = rho_env_copy
+        # rho_env = np.empty((nx,ny,nz))
+        # for i in range(0, nz):
+        #     rho_env[:,:,i] = rho_env2d
+        # map TSC solution from IDL to actual 2-D grid
+        rho_env_tsc2d = np.empty((nx,ny)) 
+        if max(ri) > R_inf:
+            ind_infall = np.where(rc <= R_inf)[0][-1]
+            for i in range(0, len(rc)):
+                if i <= ind_infall:
+                    rho_env_tsc2d[i,:] = rho_env_tsc[i,:]
+                else:
+                    rho_env_tsc2d[i,:] =  10**(np.log10(rho_env_tsc[ind_infall,:]) - 2*(np.log10(rc[i]/rc[ind_infall])))
+        else:
+            rho_env_tsc2d = rho_env_tsc
+        # map it to 3-D grid
         rho_env = np.empty((nx,ny,nz))
         for i in range(0, nz):
-            rho_env[:,:,i] = rho_env2d
+            rho_env[:,:,i] = rho_env_tsc2d
+       
 
         if dyn_cav == True:
             print 'Calculate the cavity properties using the criteria that swept-up mass = outflowed mass'
@@ -348,7 +370,9 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         rho_env  = rho_env  + 1e-40
         rho_disk = rho_disk + 1e-40
         rho      = rho      + 1e-40
-    total_mass = total_mass/MS
+    # apply gas-to-dust ratio of 100
+    rho = rho/100.
+    total_mass = total_mass/MS/100
     print 'Total dust mass = %f Solar mass' % total_mass
 
     if record == True:
@@ -402,7 +426,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         alpha = np.linspace(0.3,1.0,len(plot_grid))
         for i in plot_grid:
             rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
-            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
         rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
         cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
         # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
@@ -425,7 +449,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # subplot shows the radial density profile along the midplane
         ax_mid = plt.axes([0.2,0.2,0.2,0.2], frameon=True)
         ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/mh),'o',color='b',linewidth=1, markersize=2)
-        ax_mid.plot(np.log10(rc/AU), np.log10(rho_env2d[:,199]/mh),'-',color='r',linewidth=1, markersize=2)
+        ax_mid.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,199]/mh),'-',color='r',linewidth=1, markersize=2)
         # ax_mid.set_ylim([0,10])
         ax_mid.set_xlim([np.log10(0.8),np.log10(10000)])
         ax_mid.set_ylim([0,15])
@@ -717,9 +741,9 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 # filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
 # params = input_reader_table(filename)
 # pprint(params[0])
-# # outdir = '/Users/yaolun/bhr71/hyperion/'
+# # # outdir = '/Users/yaolun/bhr71/hyperion/'
 # outdir = '/Users/yaolun/test/'
-# # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
+# # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
 # dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False,idl=True)
+# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False)
 

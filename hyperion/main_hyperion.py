@@ -30,8 +30,8 @@ dust_file = home + '/programs/misc/dustkappa_oh5_extended.inp'
 params_table = home + '/programs/misc/hyperion/input_table.txt'
 obs_dir = home + '/radmc_simulation/bhr71/observations/'
 # temp fix for the broken /opt/local/ of bettyjo
-outdir = home+'/test/hyperion/'
-obs_dir = home+'/bhr71/obs_for_radmc/'
+# outdir = home+'/test/hyperion/'
+# obs_dir = home+'/bhr71/obs_for_radmc/'
 
 params = input_reader_table(params_table)
 
@@ -47,8 +47,11 @@ else:
     last_model_num = (last.split('M_env_dot')[0]).split('Model')[1].split()[0]
 
 model_num = str(int(last_model_num)+1)
-
+# 
+# model_num = 47
+#
 for i in range(0, len(params)):
+# for i in range(0,9):
     params_dict = params[i]
     if not os.path.exists(outdir+'model'+str(int(model_num)+i)+'/'):
         os.makedirs(outdir+'model'+str(int(model_num)+i)+'/')
@@ -61,17 +64,17 @@ for i in range(0, len(params)):
     # option to fix some parameter
     fix_params = {'R_min': 0.14}
     m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono,wl_aper=wl_aper,fix_params=fix_params)
-    # if run == False:
-    #     print 'Hyperion run is skipped. Make sure you have run this model before'
-    # else:
-    #     # Run hyperion
-    #     print 'Running with Hyperion'
-    #     hyp_foo = open(outdir_dum+'hyperion.log','w')
-    #     hyp_err = open(outdir_dum+'hyperion.err','w')
-    #     run = Popen(['mpirun','-n','20','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
-    #     run.communicate()
-    # # Extract the results
-    # # the indir here is the dir that contains the observed spectra.
-    # print 'Seems finish, lets check out the results'
-    # extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper)
-    # temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
+    if run == False:
+        print 'Hyperion run is skipped. Make sure you have run this model before'
+    else:
+        # Run hyperion
+        print 'Running with Hyperion'
+        hyp_foo = open(outdir_dum+'hyperion.log','w')
+        hyp_err = open(outdir_dum+'hyperion.err','w')
+        run = Popen(['mpirun','-n','20','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
+        run.communicate()
+    # Extract the results
+    # the indir here is the dir that contains the observed spectra.
+    print 'Seems finish, lets check out the results'
+    extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper)
+    temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
