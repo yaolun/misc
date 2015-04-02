@@ -34,7 +34,7 @@ def temp_hyperion(rtout,outdir):
     ax = fig.add_subplot(111, projection='polar')
 
     cmap = 'jet'
-    im = ax.pcolormesh(thetac_exp, rc/AU, temp2d_exp, cmap=cmap, norm=LogNorm(vmin=temp2d.min(), vmax=100))
+    im = ax.pcolormesh(thetac_exp, rc/AU, temp2d_exp, cmap=cmap, norm=LogNorm(vmin=5, vmax=100))
     im.set_edgecolor('face')
 
     ax.set_xlabel(r'$\mathrm{Polar~angle~(Degree)}$',fontsize=20)
