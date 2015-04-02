@@ -38,19 +38,21 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # Hyperion needs nu, albedo, chi, g, p_lin_max
     from hyperion.dust import HenyeyGreensteinDust
     # Read in the dust opacity table used by RADMC-3D
-    dust_radmc = dict()
-    [dust_radmc['wl'], dust_radmc['abs'], dust_radmc['scat'], dust_radmc['g']] = np.genfromtxt(dust_file,skip_header=2).T
+    dust = dict()
+    # [dust_radmc['wl'], dust_radmc['abs'], dust_radmc['scat'], dust_radmc['g']] = np.genfromtxt(dust_file,skip_header=2).T
+    [dust['nu'], dust['albedo'], dust['chi'], dust['g']] = np.genfromtxt(dust_file,skip_header=2).T
     # opacity per mass of dust?
-    dust_hy = dict()
-    dust_hy['nu'] = c/dust_radmc['wl']*1e4
-    ind = np.argsort(dust_hy['nu'])
-    dust_hy['nu'] = dust_hy['nu'][ind]
-    dust_hy['albedo'] = (dust_radmc['scat']/(dust_radmc['abs']+dust_radmc['scat']))[ind]
-    dust_hy['chi'] = (dust_radmc['abs']+dust_radmc['scat'])[ind]
-    dust_hy['g'] = dust_radmc['g'][ind]
-    dust_hy['p_lin_max'] = 0*dust_radmc['wl'][ind]     # assume no polarization
+    # dust_hy = dict()
+    # dust_hy['nu'] = c/dust_radmc['wl']*1e4
+    # ind = np.argsort(dust_hy['nu'])
+    # dust_hy['nu'] = dust_hy['nu'][ind]
+    # dust_hy['albedo'] = (dust_radmc['scat']/(dust_radmc['abs']+dust_radmc['scat']))[ind]
+    # dust_hy['chi'] = (dust_radmc['abs']+dust_radmc['scat'])[ind]
+    # dust_hy['g'] = dust_radmc['g'][ind]
+    # dust_hy['p_lin_max'] = 0*dust_radmc['wl'][ind]     # assume no polarization
 
-    d = HenyeyGreensteinDust(dust_hy['nu'], dust_hy['albedo'], dust_hy['chi'], dust_hy['g'], dust_hy['p_lin_max'])
+    # d = HenyeyGreensteinDust(dust_hy['nu'], dust_hy['albedo'], dust_hy['chi'], dust_hy['g'], dust_hy['p_lin_max'])
+    d = HenyeyGreensteinDust(dust['nu'], dust['albedo'], dust['chi'], dust['g'], dust['g']*0)
     # dust sublimation option
     d.set_sublimation_temperature('slow', temperature=1600.0)
     d.set_lte_emissivities(n_temp=1000,

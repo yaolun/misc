@@ -26,7 +26,8 @@ print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 # path setting
 home = os.path.expanduser('~')
 outdir = home + '/hyperion/bhr71/'
-dust_file = home + '/programs/misc/dustkappa_oh5_extended.inp'
+# dust_file = home + '/programs/misc/dustkappa_oh5_extended.inp'
+dust_file = home + '/programs/misc/oh5_hyperion.txt'
 params_table = home + '/programs/misc/hyperion/input_table.txt'
 obs_dir = home + '/radmc_simulation/bhr71/observations/'
 # temp fix for the broken /opt/local/ of bettyjo
