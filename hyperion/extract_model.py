@@ -1,18 +1,16 @@
-def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
+def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,save=True):
 	def l_bol(wl,fv,dist=178.0):
 		import numpy as np
 		import astropy.constants as const
-		import astropy.units as uni
-		import matplotlib.pyplot as plt
 		# wavelength unit: um
 		# Flux density unit: Jy
 		#
 		# constants setup
 		#
 		c = const.c.cgs.value
-		pc = 3.086e+18
+		pc = const.pc.cgs.value
 		PI = np.pi
-		SL = 3.846e+33
+		SL = const.L_sun.cgs.value
 		# Convert the unit from Jy to erg s-1 cm-2 Hz-1
 		fv = np.array(fv)*1e-23
 		freq = c/(1e-4*np.array(wl))
@@ -182,10 +180,15 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	sim, = ax_sed.plot(np.log10(sed_inf.wav), np.log10(sed_inf.val), '-', color='GoldenRod', linewidth=1.5*mag)
 	# get flux at different apertures
 	flux_aper = np.empty_like(wl_aper)
+	unc_aper = np.empty_like(wl_aper)
 	for i in range(0, len(wl_aper)):
 		sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
 		f = interp1d(sed_dum.wav, sed_dum.val)
 		flux_aper[i] = f(wl_aper[i])
+		# # interpolate the uncertainty (maybe not the best way to do this)
+		# print sed_dum.unc
+		# f = interp1d(sed_dum.wav, sed_dum.unc)
+		# unc_aper[i] = f(wl_aper[i])
 		# ax_sed.plot(np.log10(sed_dum.wav), np.log10(sed_dum.val), '-', linewidth=1.5*mag)
 		# print l_bol(sed_dum.wav, sed_dum.val/(c/sed_dum.wav*1e4)*1e23)
 	aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o',mfc='None',mec='k',markersize=12,markeredgewidth=3)
@@ -193,6 +196,20 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23)
 	print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
 
+	# print out the sed into ascii file for reading in later
+	if save == True:
+		# unapertured SED
+		foo = open(outdir+print_name+'_sed_inf.txt','w')
+		foo.write('%12s \t %12s \n' % ('wave','vSv'))
+		for i in range(0, len(sed_inf.wav)):
+			foo.write('%12g \t %12g \n' % (sed_inf.wav[i], sed_inf.val[i]))
+		foo.close()
+		# SED with convolution of aperture sizes
+		foo = open(outdir+print_name+'_sed_w_aperture.txt','w')
+		foo.write('%12s \t %12s \n' % ('wave','vSv'))
+		for i in range(0, len(wl_aper)):
+			foo.write('%12g \t %12g \n' % (wl_aper[i], flux_aper[i]))
+		foo.close()
 
 	# Read in and plot the simulated SED produced by RADMC-3D using the same parameters
 	# [wl,fit] = np.genfromtxt(indir+'hyperion/radmc_comparison/spectrum.out',dtype='float',skip_header=3).T
@@ -238,7 +255,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 	image = m.get_image(group=len(wl_aper)+1, inclination=0, distance=dstar * pc, units='MJy/sr')
 	# image = m.get_image(group=14, inclination=0, distance=dstar * pc, units='MJy/sr')
 	# Open figure and create axes
-	fig = plt.figure(figsize=(8, 8))
+	# fig = plt.figure(figsize=(8, 8))
+	fig, axarr = plt.subplots(3, 3, sharex='col', sharey='row',figsize=(13.5,12))
 
 	# Pre-set maximum for colorscales
 	VMAX = {}
@@ -253,9 +271,13 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 
 	# We will now show four sub-plots, each one for a different wavelength
 	# for i, wav in enumerate([3.6, 24, 160, 500]):
-	for i, wav in enumerate([100, 250, 500, 1000]):
+	# for i, wav in enumerate([100, 250, 500, 1000]):
+	# for i, wav in enumerate([4.5, 9.7, 24, 40, 70, 100, 250, 500, 1000]):
+	for i, wav in enumerate([250, 500, 1000, 250, 500, 1000, 250, 500, 1000]):
 
-		ax = fig.add_subplot(2, 2, i + 1)
+
+		# ax = fig.add_subplot(3, 3, i + 1)
+		ax = axarr[i/3, i%3]
 
 		# Find the closest wavelength
 		iwav = np.argmin(np.abs(wav - image.wav))
@@ -267,37 +289,44 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None):
 		# Change it into erg/s/cm2/Hz/sr
 		factor = 1e-23*1e6
 		# avoid zero in log
-		image.val[:, :, iwav] = image.val[:, :, iwav] * factor + 1e-30
+		val = image.val[:, :, iwav] * factor + 1e-30
 
 		# This is the command to show the image. The parameters vmin and vmax are
 		# the min and max levels for the colorscale (remove for default values).
-		im = ax.imshow(np.log10(image.val[:, :, iwav]), vmin= -22, vmax= -12,
-				  cmap=plt.cm.jet, origin='lower', extent=[-w, w, -w, w])
+		im = ax.imshow(np.log10(val), vmin= -22, vmax= -12,
+				  cmap=plt.cm.jet, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
 		# Colorbar setting
 		# create an axes on the right side of ax. The width of cax will be 5%
 		# of ax and the padding between cax and ax will be fixed at 0.05 inch.
-		divider = make_axes_locatable(ax)
-		cax = divider.append_axes("right", size="5%", pad=0.05)
-		cb = fig.colorbar(im, cax=cax)
-		cb.solids.set_edgecolor("face")
-		cb.ax.minorticks_on()
-		cb.ax.set_ylabel(r'$\mathrm{log(I_{\nu})~[erg/s/cm^{2}/Hz/sr]}$',fontsize=12)
-		cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
-		plt.setp(cb_obj,fontsize=12)
-		
-		# Finalize the plot
-		ax.tick_params(axis='both', which='major', labelsize=10)
-		ax.set_xlabel('x (arcsec)')
-		ax.set_ylabel('y (arcsec)')
-		ax.text(0.5,0.88,str(wav) + r'$\mathrm{~\mu m}$',fontsize=16,color='white', transform=ax.transAxes)
+		if (i+1) % 3 == 0:
+			divider = make_axes_locatable(ax)
+			cax = divider.append_axes("right", size="5%", pad=0.05)
+			cb = fig.colorbar(im, cax=cax)
+			cb.solids.set_edgecolor("face")
+			cb.ax.minorticks_on()
+			cb.ax.set_ylabel(r'$\mathrm{log(I_{\nu})~[erg/s/cm^{2}/Hz/sr]}$',fontsize=12)
+			cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
+			plt.setp(cb_obj,fontsize=12)
+
+		if (i+1) == 7:
+			# Finalize the plot
+			ax.set_xlabel('RA Offset (arcsec)')
+			ax.set_ylabel('Dec Offset (arcsec)')
+
+		ax.tick_params(axis='both', which='major', labelsize=16)
+		ax.set_adjustable('box-forced')
+		ax.text(0.7,0.88,str(wav) + r'$\mathrm{~\mu m}$',fontsize=16,color='white', transform=ax.transAxes)
+
+	fig.subplots_adjust(hspace=0,wspace=-0.2)
+
 	# Adjust the spaces between the subplots 
-	plt.tight_layout()
+	# plt.tight_layout()
 	fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight')
 	fig.clf()
 
-# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
-# outdir = '/Users/yaolun/bhr71/hyperion/'
-# extract_hyperion('/Users/yaolun/test/model140/model140.rtout',indir=indir,outdir='/Users/yaolun/test/')
+indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+outdir = '/Users/yaolun/bhr71/hyperion/'
+extract_hyperion('/Users/yaolun/test/model125/model125.rtout',indir=indir,outdir='/Users/yaolun/test/')
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
 # extract_hyperion('/hyperion/old_setup2.rtout',indir=indir,outdir=outdir)

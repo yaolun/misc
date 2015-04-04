@@ -12,6 +12,7 @@ from temp_hyperion import temp_hyperion
 run = True
 record = True
 mono = False
+control = False
 
 # Get command-line arguments
 if 'norun' in sys.argv:
@@ -20,6 +21,8 @@ if 'norecord' in sys.argv:
     record = False
 if 'mono' in sys.argv:
     mono = True
+if 'control' in sys.argv:
+    control = True
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
@@ -30,6 +33,11 @@ outdir = home + '/hyperion/bhr71/'
 dust_file = home + '/programs/misc/oh5_hyperion.txt'
 params_table = home + '/programs/misc/hyperion/input_table.txt'
 obs_dir = home + '/radmc_simulation/bhr71/observations/'
+if control == True:
+    print 'Running the controlled grids for paper...'
+    params_table = home + '/programs/misc/hyperion/input_table_control.txt'
+    outdir = home + '/hyperion/bhr71/controlled/'
+
 # temp fix for the broken /opt/local/ of bettyjo
 # outdir = home+'/test/hyperion/'
 # obs_dir = home+'/bhr71/obs_for_radmc/'
@@ -61,7 +69,7 @@ for i in range(0, len(params)):
     print 'Model'+str(int(model_num)+i)
     pprint(params_dict)
     # calculate the initial dust profile
-    wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+    wl_aper = [3.6, 4.5, 5.8, 8.0, 9, 9.7, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
     # option to fix some parameter
     fix_params = {'R_min': 0.14}
     m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono,wl_aper=wl_aper,fix_params=fix_params)
