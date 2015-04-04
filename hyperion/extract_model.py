@@ -325,8 +325,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 	fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight')
 	fig.clf()
 
-indir = '/Users/yaolun/bhr71/obs_for_radmc/'
-outdir = '/Users/yaolun/bhr71/hyperion/'
-extract_hyperion('/Users/yaolun/test/model125/model125.rtout',indir=indir,outdir='/Users/yaolun/test/')
+# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+# outdir = '/Users/yaolun/bhr71/hyperion/'
+# extract_hyperion('/Users/yaolun/test/model125/model125.rtout',indir=indir,outdir='/Users/yaolun/test/')
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
 # extract_hyperion('/hyperion/old_setup2.rtout',indir=indir,outdir=outdir)
