@@ -273,7 +273,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 	# for i, wav in enumerate([3.6, 24, 160, 500]):
 	# for i, wav in enumerate([100, 250, 500, 1000]):
 	# for i, wav in enumerate([4.5, 9.7, 24, 40, 70, 100, 250, 500, 1000]):
-	for i, wav in enumerate([250, 500, 1000, 250, 500, 1000, 250, 500, 1000]):
+	for i, wav in enumerate([3.6, 8.0, 9.7, 24, 40, 100, 250, 500, 1000]):
 
 
 		# ax = fig.add_subplot(3, 3, i + 1)
