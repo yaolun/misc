@@ -183,6 +183,56 @@ def sed_omega(indir, array, outdir):
     fig.savefig(outdir+'sed_omega0.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
+def sed_disk(indir, array, outdir, xlabel, plotname):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import MaxNLocator
+    from hyperion.model import ModelOutput
+    import astropy.constants as const
+    # constants setup
+    AU = const.au.cgs.value
+
+    col, = np.shape(array)
+    row = 1
+
+    fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(12,4))
+
+    for cc in range(0, col):
+        ax = axarr[cc]
+        # sed part
+        # if rr+1 != row:
+        # infinite aperture
+        (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_inf.txt', skip_header=1).T
+        # sed with apertures
+        (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
+
+        ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1)
+        ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='None',mec='b',markersize=6,markeredgewidth=2)
+
+        ax.set_ylim([-14,-8])
+
+        [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+        ax.minorticks_on() 
+        ax.tick_params('both',labelsize=12,width=1.5,which='major',pad=15,length=5)
+        ax.tick_params('both',labelsize=12,width=1.5,which='minor',pad=15,length=2.5)
+
+        if cc == 0:
+            ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
+            ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
+
+        # fix the overlap tick labels
+        x_nbins = len(ax.get_xticklabels())
+        y_nbins = len(ax.get_yticklabels())
+        if (cc != 0):
+            ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
+            ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
+
+    fig.text(0.5, -0.13 , xlabel, fontsize=14, ha='center')
+
+    fig.subplots_adjust(hspace=0,wspace=0)
+    fig.savefig(outdir+'sed_disk_'+plotname+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
+
 
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
@@ -196,5 +246,17 @@ outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
 # sed_grid_cs_age(indir, array, outdir, cslist, agelist)
 
 # grid of Omega0
-array = np.array([16,17,18])
-sed_omega(indir, array, outdir)
+# array = np.array([16,17,18])
+# sed_omega(indir, array, outdir)
+
+# grid of disk parameters
+# disk mass
+array = np.array([19,20,21,22,23])
+xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.1,~0.3,~0.5,~0.7,~1.0)}$'
+plotname = 'mdisk'
+sed_disk(indir, array, outdir, xlabel, plotname)
+# flare power
+array = np.array([29,30,31,32,33])
+xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
+plotname = 'beta'
+sed_disk(indir, array, outdir, xlabel, plotname)
