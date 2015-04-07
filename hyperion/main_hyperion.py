@@ -57,26 +57,26 @@ else:
 
 model_num = str(int(last_model_num)+1)
 # 
-model_num = 1
+# model_num = 1
 #
-# for i in range(0, len(params)):
-for i in range(0,150):
-    # params_dict = params[i]
+for i in range(0, len(params)):
+# for i in range(0,150):
+    params_dict = params[i]
     if not os.path.exists(outdir+'model'+str(int(model_num)+i)+'/'):
         os.makedirs(outdir+'model'+str(int(model_num)+i)+'/')
     outdir_dum = outdir+'model'+str(int(model_num)+i)+'/'
     # print out some information about the current calculating model
     print 'Model'+str(int(model_num)+i)
-    # pprint(params_dict)
+    pprint(params_dict)
     # calculate the initial dust profile
     wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-    # old version of aperture list
-    wl_aper = [3.6, 4.5, 5.8, 8.0, 9, 9.7, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-    # older varsion
-    wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+    # # old version of aperture list
+    # wl_aper = [3.6, 4.5, 5.8, 8.0, 9, 9.7, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+    # # older varsion
+    # wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
     # option to fix some parameter
     fix_params = {'R_min': 0.14}
-    # m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono,wl_aper=wl_aper,fix_params=fix_params)
+    m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono,wl_aper=wl_aper,fix_params=fix_params)
     if run == False:
         print 'Hyperion run is skipped. Make sure you have run this model before'
     else:
@@ -90,4 +90,4 @@ for i in range(0,150):
     # the indir here is the dir that contains the observed spectra.
     print 'Seems finish, lets check out the results'
     extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper)
-    # temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
+    temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
