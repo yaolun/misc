@@ -185,8 +185,10 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 		sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
 		# use a rectangle function the average the simulated SED
 		# apply the spectral resolution
-		if wl_aper[i] < 50.:
+		if (wl_aper[i] < 50.) & (wl_aper[i] >= 5):
 			res = 60.
+		elif wl_aper[i] < 5:
+			res = 10.
 		else:
 			res = 1000.
 		ind = np.where((sed_dum.wav < wl_aper[i]*(1+1./res)) & (sed_dum.wav > wl_aper[i]*(1-1./res)))
