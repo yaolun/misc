@@ -185,6 +185,11 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 		sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
 		f = interp1d(sed_dum.wav, sed_dum.val)
 		flux_aper[i] = f(wl_aper[i])
+		# use a rectangle function the average the simulated SED
+		# say +/- 20%
+		ind = np.where((sed_dum.wav < wl_aper[i]*1.2) & (sed_dum.wav > wl_aper[i]*0.8))
+		flux_aper[i] = np.mean(sed_dum.val[ind])
+
 		# # interpolate the uncertainty (maybe not the best way to do this)
 		# print sed_dum.unc
 		# f = interp1d(sed_dum.wav, sed_dum.unc)
@@ -325,8 +330,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 	fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight')
 	fig.clf()
 
-# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
-# outdir = '/Users/yaolun/bhr71/hyperion/'
-# extract_hyperion('/Users/yaolun/test/model125/model125.rtout',indir=indir,outdir='/Users/yaolun/test/')
+indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+outdir = '/Users/yaolun/bhr71/hyperion/'
+wl_aper = [3.6, 4.5, 5.8, 8.0, 9, 9.7, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+extract_hyperion('/Users/yaolun/bhr71/hyperion/controlled/model12.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
 # extract_hyperion('/hyperion/old_setup2.rtout',indir=indir,outdir=outdir)
