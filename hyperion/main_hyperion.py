@@ -99,8 +99,8 @@ else:
     print 'You are entering the extract-only mode...'
     num_min = raw_input('What is the number of the first model?')
     num_max = raw_input('What is the number of the last model?')
-    num_min = float(num_min)
-    num_max = float(num_max)
+    num_min = int(num_min)
+    num_max = int(num_max)
     for i in range(num_min, num_max+1):
         params_dict = params[i]
         if not os.path.exists(outdir+'model'+str(i)+'/'):
