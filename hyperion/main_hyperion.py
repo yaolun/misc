@@ -102,7 +102,6 @@ else:
     num_min = int(num_min)
     num_max = int(num_max)
     for i in range(num_min, num_max+1):
-        params_dict = params[i]
         if not os.path.exists(outdir+'model'+str(i)+'/'):
             os.makedirs(outdir+'model'+str(i)+'/')
         outdir_dum = outdir+'model'+str(i)+'/'
