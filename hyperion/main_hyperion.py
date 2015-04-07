@@ -60,7 +60,7 @@ model_num = str(int(last_model_num)+1)
 model_num = 1
 #
 # for i in range(0, len(params)):
-for i in range(0,61):
+for i in range(0,117):
     # params_dict = params[i]
     if not os.path.exists(outdir+'model'+str(int(model_num)+i)+'/'):
         os.makedirs(outdir+'model'+str(int(model_num)+i)+'/')
