@@ -220,17 +220,6 @@ def sed_disk(indir, array, outdir, xlabel, plotname, obs=None):
     fig.savefig(outdir+'sed_disk_'+plotname+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-def sed_disk_exist_com(indir, array, outdir,obs=None):
-    import numpy as np
-    import matplotlib.pyplot as plt
-    from hyperion.model import ModelOutput
-    import astropy.constants as const
-    # constant setup
-    AU = const.cgs.value
-
-    # disk part - model
-
-    fig = plt.figure(figsize=(8,6))
 
 def sed_grid_theta_cav_incl(indir, array, outdir, obs=None):
     import numpy as np
@@ -359,6 +348,55 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None):
     fig.savefig(outdir+'sed_rho_cav_centeredge.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
+def disk_exist_com(indir, array, outdir, obs=None):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from hyperion.model import ModelOutput
+    import astropy.constants as const
+    # constants setup
+    AU = const.au.cgs.value
+
+    fig = plt.figure(figsize=(8,6))
+    ax = fig.add_subplot(111)
+
+    # get data
+    # disk part
+    (d_wave_inf, d_sed_inf) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
+    (d_wave, d_sed) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
+
+    # no disk part
+    (nd_wave_inf, nd_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
+    (nd_wave, nd_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
+
+    disk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='k',mec='k',markersize=5,markeredgewidth=1,color='k', linewidth=1.5)
+    nodisk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='b',mec='b',markersize=5,markeredgewidth=1,color='b', linewidth=1.5)
+
+    if obs != None:  
+        import sys
+        sys.path.append('/Users/yaolun/programs/misc/hyperion')
+        from get_bhr71_obs import get_bhr71_obs
+        c = const.c.cgs.value
+
+        bhr71 = get_bhr71_obs(obs)  # in um and Jy
+        wave_obs, flux_obs, noise_obs = bhr71['spec']
+        ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
+        ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
+        ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='r', alpha=0.7, linewidth=1)
+
+
+    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    ax.minorticks_on() 
+    ax.tick_params('both',labelsize=14,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=14,width=1.5,which='minor',pad=15,length=2.5)
+
+    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
+    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
+
+    plt.legend([disk, nodisk], [r'$\mathrm{w/~disk}$', r'$\mathrm{w/o~disk}$'], numpoints=1, loc='top right', fontsize=16)
+
+    fig.savefig(outdir+'sed_disk_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
+
 
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
@@ -395,3 +433,7 @@ sed_grid_theta_cav_incl(indir, array, outdir, obs=obs)
 # grid of rho_cav_center and sed_rho_cav_edge
 array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
 sed_grid_rho_cav_centeredge(indir, array, outdir, obs=obs)
+
+# disk & no dis comparison
+array = np.array([16,61])
+disk_exist_com(indir, array, outdir, obs=obs)
