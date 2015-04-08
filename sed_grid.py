@@ -295,6 +295,69 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None):
     fig.subplots_adjust(hspace=0,wspace=0)
     fig.savefig(outdir+'sed_theta_cav_incl.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
+def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import MaxNLocator
+    from hyperion.model import ModelOutput
+    import astropy.constants as const
+    # constants setup
+    AU = const.au.cgs.value
+
+    row, col = np.shape(array)
+
+    fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(9.6,7.1))
+
+    for rr in range(0, row):
+        for cc in range(0, col):
+            ax = axarr[rr,cc]
+            # sed part
+            # if rr+1 != row:
+            # infinite aperture
+            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
+            # sed with apertures
+            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
+
+            ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
+            if obs != None:  
+                import sys
+                sys.path.append('/Users/yaolun/programs/misc/hyperion')
+                from get_bhr71_obs import get_bhr71_obs
+                c = const.c.cgs.value
+
+                bhr71 = get_bhr71_obs(obs)  # in um and Jy
+                wave_obs, flux_obs, noise_obs = bhr71['spec']
+                ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
+                ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
+                ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='r', alpha=0.7, linewidth=1)
+
+            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=4,markeredgewidth=1,linewidth=1.2)
+
+            ax.set_ylim([-15,-8])
+
+            [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+            ax.minorticks_on() 
+            ax.tick_params('both',labelsize=14,width=1,which='major',pad=15,length=5)
+            ax.tick_params('both',labelsize=14,width=1,which='minor',pad=15,length=2.5)
+
+            if rr+1 == row:
+                if cc == 0:
+                    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
+                    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
+        
+            # fix the overlap tick labels
+            x_nbins = len(ax.get_xticklabels())
+            y_nbins = len(ax.get_yticklabels())
+            if (rr != 0) & (cc != 0):
+                ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
+                ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
+
+    fig.text(0.5, -0.05 , r'$\mathrm{\rho_{cav,\circ}~[g~cm^{-3}]~(1\times 10^{-18},~5\times 10^{-18},~1\times 10^{-17},~5\times 10^{-17})}$', fontsize=20, ha='center')
+    fig.text(0, 0.5, r'$\mathrm{R_{cav,\circ}~[AU]~(40,~30,~20)}$', fontsize=20, va='center', rotation='vertical')
+
+    fig.subplots_adjust(hspace=0,wspace=0)
+    fig.savefig(outdir+'sed_rho_cav_centeredge.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
 
 
 import numpy as np
@@ -328,3 +391,7 @@ sed_disk(indir, array, outdir, xlabel, plotname, obs=obs)
 # grid of theta_cav and incl.
 array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
 sed_grid_theta_cav_incl(indir, array, outdir, obs=obs)
+
+# grid of rho_cav_center and sed_rho_cav_edge
+array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
+sed_grid_rho_cav_centeredge(indir, array, outdir, obs=obs)
