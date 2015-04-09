@@ -353,10 +353,15 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         if abs(z) > abs(z_cav):
                             # rho_env[ir,itheta,iphi] = rho_cav
                             # Modification for using density gradient in the cavity
-                            if rc[ir] <= rho_cav_edge:
-                                rho_env[ir,itheta,iphi] = rho_cav_center#*((rc[ir]/AU)**2)
+                            # option for using a power law profile without constant region
+                            if rho_cav_center == 0:
+                                rho_cav_center = R_env_min
+                            # the rho_cav_center is the dust density calculated from mass loss rate
+                            # gas-to-dust ratio of 100 is applied after the whole calculation, therefore need to time 100 now
+                            if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
+                                rho_env[ir,itheta,iphi] = 100 * rho_cav_center#*((rc[ir]/AU)**2)
                             else:
-                                rho_env[ir,itheta,iphi] = rho_cav_center*discont*(rho_cav_edge/rc[ir])**2
+                                rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**2
                             i += 1
                         # Disk profile
                         if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
@@ -365,13 +370,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         # Combine envelope and disk
                         rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
                     else:
-                        rho[ir,itheta,iphi] = 1e-30
+                        rho[ir,itheta,iphi] = 1e-40
                     # add the dust mass into the total count
                     cell_mass = rho[ir, itheta, iphi] * (1/3.)*(ri[ir+1]**3 - ri[ir]**3) * (phii[iphi+1]-phii[iphi]) * -(np.cos(thetai[itheta+1])-np.cos(thetai[itheta]))
                     total_mass = total_mass + cell_mass
-        rho_env  = rho_env  + 1e-40
-        rho_disk = rho_disk + 1e-40
-        rho      = rho      + 1e-40
+        # rho_env  = rho_env  + 1e-40
+        # rho_disk = rho_disk + 1e-40
+        # rho      = rho      + 1e-40
     # apply gas-to-dust ratio of 100
     rho = rho/100.
     total_mass = total_mass/MS/100

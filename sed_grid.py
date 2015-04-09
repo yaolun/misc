@@ -158,7 +158,7 @@ def sed_omega(indir, array, outdir, obs=None):
     fig.savefig(outdir+'sed_omega0.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-def sed_disk(indir, array, outdir, xlabel, plotname, obs=None):
+def sed_five(indir, array, outdir, xlabel, plotname, obs=None):
     import numpy as np
     import matplotlib.pyplot as plt
     from matplotlib.ticker import MaxNLocator
@@ -217,7 +217,7 @@ def sed_disk(indir, array, outdir, xlabel, plotname, obs=None):
     fig.text(0.5, -0.13 , xlabel, fontsize=14, ha='center')
 
     fig.subplots_adjust(hspace=0,wspace=0)
-    fig.savefig(outdir+'sed_disk_'+plotname+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.savefig(outdir+'sed_'+plotname+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
 
@@ -368,8 +368,8 @@ def disk_exist_com(indir, array, outdir, obs=None):
     (nd_wave_inf, nd_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
     (nd_wave, nd_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
 
-    disk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='k',mec='k',markersize=5,markeredgewidth=1,color='k', linewidth=1.5)
-    nodisk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='b',mec='b',markersize=5,markeredgewidth=1,color='b', linewidth=1.5)
+    disk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='b',mec='b',markersize=5,markeredgewidth=1,color='b', linewidth=1.5)
+    nodisk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='k',mec='k',markersize=5,markeredgewidth=1,color='k', linewidth=1.5)
 
     if obs != None:  
         import sys
@@ -398,42 +398,169 @@ def disk_exist_com(indir, array, outdir, obs=None):
     fig.clf()
 
 
+def sed_tstar(indir, array, outdir, obs=None):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from hyperion.model import ModelOutput
+    import astropy.constants as const
+    # constants setup
+    AU = const.au.cgs.value
+
+    fig = plt.figure(figsize=(8,6))
+    ax = fig.add_subplot(111)
+
+    # get data
+    # tstar = 4500 K
+    (t1_wave_inf, t1_sed_inf) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
+    (t1_wave, t1_sed) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
+
+    # tstar = 5000 K
+    (t2_wave_inf, t2_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
+    (t2_wave, t2_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
+
+    # tstar = 5500 K
+    (t3_wave_inf, t3_sed_inf) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
+    (t3_wave, t3_sed) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
+
+    t1, = ax.plot(np.log10(t1_wave), np.log10(t1_sed), 'o-',mfc='Magenta',mec='Magenta',markersize=5,markeredgewidth=1,color='Magenta', linewidth=1.5)
+    t2, = ax.plot(np.log10(t2_wave), np.log10(t2_sed), 'o-',mfc='r',mec='r',markersize=5,markeredgewidth=1,color='r', linewidth=1.5)
+    t3, = ax.plot(np.log10(t3_wave), np.log10(t3_sed), 'o-',mfc='b',mec='b',markersize=5,markeredgewidth=1,color='b', linewidth=1.5)
+
+    if obs != None:  
+        import sys
+        sys.path.append('/Users/yaolun/programs/misc/hyperion')
+        from get_bhr71_obs import get_bhr71_obs
+        c = const.c.cgs.value
+
+        bhr71 = get_bhr71_obs(obs)  # in um and Jy
+        wave_obs, flux_obs, noise_obs = bhr71['spec']
+        obs_data, = ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='k', alpha=0.7, linewidth=1)
+        ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='k', alpha=0.7, linewidth=1)
+        ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='k', alpha=0.7, linewidth=1)
+
+
+    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    ax.minorticks_on() 
+    ax.tick_params('both',labelsize=14,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=14,width=1.5,which='minor',pad=15,length=2.5)
+
+    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
+    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
+    ax.set_ylim([-13,-7])
+
+    plt.legend([t1, t2, t3, obs_data], [r'$\mathrm{T_{\star}=4500~K}$', r'$\mathrm{T_{\star}=5000~K}$',r'$\mathrm{T_{\star}=5500~K}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
+
+    fig.savefig(outdir+'sed_tstar.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
+
+def sed_rstar(indir, array, outdir, obs=None):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from hyperion.model import ModelOutput
+    import astropy.constants as const
+    # constants setup
+    AU = const.au.cgs.value
+
+    fig = plt.figure(figsize=(8,6))
+    ax = fig.add_subplot(111)
+
+    # get data
+    # tstar = 4500 K
+    (r1_wave_inf, r1_sed_inf) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
+    (r1_wave, r1_sed) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
+
+    # tstar = 5000 K
+    (r2_wave_inf, r2_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
+    (r2_wave, r2_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
+
+    # tstar = 5500 K
+    (r3_wave_inf, r3_sed_inf) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
+    (r3_wave, r3_sed) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
+
+    r1, = ax.plot(np.log10(r1_wave), np.log10(r1_sed), 'o-',mfc='Magenta',mec='Magenta',markersize=5,markeredgewidth=1,color='Magenta', linewidth=1.5)
+    r2, = ax.plot(np.log10(r2_wave), np.log10(r2_sed), 'o-',mfc='r',mec='r',markersize=5,markeredgewidth=1,color='r', linewidth=1.5)
+    r3, = ax.plot(np.log10(r3_wave), np.log10(r3_sed), 'o-',mfc='b',mec='b',markersize=5,markeredgewidth=1,color='b', linewidth=1.5)
+
+    if obs != None:  
+        import sys
+        sys.path.append('/Users/yaolun/programs/misc/hyperion')
+        from get_bhr71_obs import get_bhr71_obs
+        c = const.c.cgs.value
+
+        bhr71 = get_bhr71_obs(obs)  # in um and Jy
+        wave_obs, flux_obs, noise_obs = bhr71['spec']
+        obs_data, = ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='k', alpha=0.7, linewidth=1)
+        ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='k', alpha=0.7, linewidth=1)
+        ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='k', alpha=0.7, linewidth=1)
+
+
+    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    ax.minorticks_on() 
+    ax.tick_params('both',labelsize=14,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=14,width=1.5,which='minor',pad=15,length=2.5)
+
+    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
+    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
+    ax.set_ylim([-13,-7])
+
+    plt.legend([r1, r2, r3, obs_data], [r'$\mathrm{R_{\star}=0.3~R_{\odot}}$', r'$\mathrm{R_{\star}=0.5~R_{\odot}}$',r'$\mathrm{R_{\star}=0.7~R_{\odot}}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
+
+    fig.savefig(outdir+'sed_rstar.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
+
+
+
+
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
 outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
 obs='/Users/yaolun/bhr71/obs_for_radmc/'
 
-# grid of cs and age
-array = np.array([[1,6,11],[2,7,12],[3,8,13],[4,9,14],[5,10,15]])
-array = np.array([[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15]])
-cslist = [0.1,0.2,0.3]
-agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
-sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=obs)
+# # grid of cs and age
+# array = np.array([[1,6,11],[2,7,12],[3,8,13],[4,9,14],[5,10,15]])
+# array = np.array([[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15]])
+# cslist = [0.1,0.2,0.3]
+# agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
+# sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=obs)
 
-# grid of Omega0
-array = np.array([16,17,18])
-sed_omega(indir, array, outdir, obs=obs)
+# # grid of Omega0
+# array = np.array([16,17,18])
+# sed_omega(indir, array, outdir, obs=obs)
 
-# grid of disk parameters
-# disk mass
-array = np.array([19,20,21,22,23])
-xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.1,~0.3,~0.5,~0.7,~1.0)}$'
-plotname = 'mdisk'
-sed_disk(indir, array, outdir, xlabel, plotname, obs=obs)
-# flare power
-array = np.array([29,30,31,32,33])
-xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
-plotname = 'beta'
-sed_disk(indir, array, outdir, xlabel, plotname, obs=obs)
+# # grid of disk parameters
+# # disk mass
+# array = np.array([19,20,21,22,23])
+# xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.1,~0.3,~0.5,~0.7,~1.0)}$'
+# plotname = 'disk_mdisk'
+# sed_five(indir, array, outdir, xlabel, plotname, obs=obs)
+# # flare power
+# array = np.array([29,30,31,32,33])
+# xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
+# plotname = 'disk_beta'
+# sed_five(indir, array, outdir, xlabel, plotname, obs=obs)
 
-# grid of theta_cav and incl.
-array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
-sed_grid_theta_cav_incl(indir, array, outdir, obs=obs)
+# # grid of theta_cav and incl.
+# array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
+# sed_grid_theta_cav_incl(indir, array, outdir, obs=obs)
 
-# grid of rho_cav_center and sed_rho_cav_edge
-array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
-sed_grid_rho_cav_centeredge(indir, array, outdir, obs=obs)
+# # grid of rho_cav_center and sed_rho_cav_edge
+# array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
+# sed_grid_rho_cav_centeredge(indir, array, outdir, obs=obs)
 
-# disk & no dis comparison
+# # disk & no dis comparison
 array = np.array([16,61])
 disk_exist_com(indir, array, outdir, obs=obs)
+
+# grid of tstar
+array = np.array([69,70,71])
+sed_tstar(indir, array, outdir, obs=obs)
+
+# grid of rstar
+array = np.array([72,73,74])
+sed_rstar(indir, array, outdir, obs=obs)
+
+# grid of R_env_max
+array = np.array([63,64,65,66,67])
+xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
+plotname = 'r_max'
+sed_five(indir, array, outdir, xlabel, plotname, obs=obs)
