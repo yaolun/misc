@@ -379,7 +379,7 @@ def disk_exist_com(indir, array, outdir, obs=None):
 
         bhr71 = get_bhr71_obs(obs)  # in um and Jy
         wave_obs, flux_obs, noise_obs = bhr71['spec']
-        ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
+        obs_data, = ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
         ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
         ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='r', alpha=0.7, linewidth=1)
 
@@ -392,7 +392,7 @@ def disk_exist_com(indir, array, outdir, obs=None):
     ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
     ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
 
-    plt.legend([disk, nodisk], [r'$\mathrm{w/~disk}$', r'$\mathrm{w/o~disk}$'], numpoints=1, loc='top right', fontsize=16)
+    plt.legend([disk, nodisk, obs_data], [r'$\mathrm{w/~disk}$', r'$\mathrm{w/o~disk}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
 
     fig.savefig(outdir+'sed_disk_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
