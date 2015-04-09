@@ -197,6 +197,27 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 		else:
 			f = interp1d(sed_dum.wav, sed_dum.val)
 			flux_aper[i] = f(wl_aper[i])
+	# perform the same procedure of flux extraction of aperture flux with observed spectra
+	wl_aper = np.array(wl_aper)
+	obs_aper_wl = wl_aper[(wl_aper >= min(wl_irs)) & (wl_aper <= max(wl_spire))]
+	obs_aper_sed = np.empty_like(obs_aper_wl)
+	sed_tot = c/(wl_tot*1e-4)*flux_tot
+	# wl_tot and flux_tot are already hstacked and sorted by wavelength
+	for i in range(0, len(obs_aper_wl)):
+		if (obs_aper_wl[i] < 50.) & (obs_aper_wl[i] >= 5):
+			res = 60.
+		elif obs_aper_wl[i] < 5:
+			res = 10.
+		else:
+			res = 1000.
+		ind = np.where((wl_tot < obs_aper_wl[i]*(1+1./res)) & (wl_tot > obs_aper_wl[i]*(1-1./res)))
+		if len(ind[0]) != 0:
+			obs_aper_sed[i] = np.mean(sed_tot[ind])
+		else:
+			f = interp1d(wl_tot, sed_tot)
+			obs_aper_sed[i] = f(wl_aper[i])
+	# aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's', mfc='Magenta',markersize=10)
+
 
 		# # interpolate the uncertainty (maybe not the best way to do this)
 		# print sed_dum.unc
@@ -342,6 +363,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 # indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 # outdir = '/Users/yaolun/bhr71/hyperion/'
 # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-# extract_hyperion('/Users/yaolun/test/model11.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
+# extract_hyperion('/Users/yaolun/test/model24.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
 # extract_hyperion('/hyperion/old_setup2.rtout',indir=indir,outdir=outdir)
