@@ -523,29 +523,29 @@ obs='/Users/yaolun/bhr71/obs_for_radmc/'
 # agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
 # sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=obs)
 
-# # grid of Omega0
-# array = np.array([16,17,18])
-# sed_omega(indir, array, outdir, obs=obs)
+# grid of Omega0
+array = np.array([16,17,18])
+sed_omega(indir, array, outdir, obs=obs)
 
-# # grid of disk parameters
-# # disk mass
-# array = np.array([19,20,21,22,23])
-# xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.1,~0.3,~0.5,~0.7,~1.0)}$'
-# plotname = 'disk_mdisk'
-# sed_five(indir, array, outdir, xlabel, plotname, obs=obs)
-# # flare power
-# array = np.array([29,30,31,32,33])
-# xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
-# plotname = 'disk_beta'
-# sed_five(indir, array, outdir, xlabel, plotname, obs=obs)
+# grid of disk parameters
+# disk mass
+array = np.array([19,20,21,22,23])
+xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.1,~0.3,~0.5,~0.7,~1.0)}$'
+plotname = 'disk_mdisk'
+sed_five(indir, array, outdir, xlabel, plotname, obs=obs)
+# flare power
+array = np.array([29,30,31,32,33])
+xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
+plotname = 'disk_beta'
+sed_five(indir, array, outdir, xlabel, plotname, obs=obs)
 
-# # grid of theta_cav and incl.
-# array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
-# sed_grid_theta_cav_incl(indir, array, outdir, obs=obs)
+# grid of theta_cav and incl.
+array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
+sed_grid_theta_cav_incl(indir, array, outdir, obs=obs)
 
-# # grid of rho_cav_center and sed_rho_cav_edge
-# array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
-# sed_grid_rho_cav_centeredge(indir, array, outdir, obs=obs)
+# grid of rho_cav_center and sed_rho_cav_edge
+array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
+sed_grid_rho_cav_centeredge(indir, array, outdir, obs=obs)
 
 # # disk & no dis comparison
 array = np.array([16,61])

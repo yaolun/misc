@@ -216,7 +216,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 		else:
 			f = interp1d(wl_tot, sed_tot)
 			obs_aper_sed[i] = f(wl_aper[i])
-	# aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's', mfc='Magenta',markersize=10)
+	aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's', mfc='Magenta',markersize=10)
 
 
 		# # interpolate the uncertainty (maybe not the best way to do this)
