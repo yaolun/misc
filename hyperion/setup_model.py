@@ -353,10 +353,15 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         if abs(z) > abs(z_cav):
                             # rho_env[ir,itheta,iphi] = rho_cav
                             # Modification for using density gradient in the cavity
-                            if rc[ir] <= rho_cav_edge:
-                                rho_env[ir,itheta,iphi] = rho_cav_center#*((rc[ir]/AU)**2)
+                            # option for using a power law profile without constant region
+                            if rho_cav_center == 0:
+                                rho_cav_center = R_env_min
+                            # the rho_cav_center is the dust density calculated from mass loss rate
+                            # gas-to-dust ratio of 100 is applied after the whole calculation, therefore need to time 100 now
+                            if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
+                                rho_env[ir,itheta,iphi] = 100 * rho_cav_center#*((rc[ir]/AU)**2)
                             else:
-                                rho_env[ir,itheta,iphi] = rho_cav_center*discont*(rho_cav_edge/rc[ir])**2
+                                rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**2
                             i += 1
                         # Disk profile
                         if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
@@ -365,13 +370,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         # Combine envelope and disk
                         rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
                     else:
-                        rho[ir,itheta,iphi] = 1e-30
+                        rho[ir,itheta,iphi] = 1e-40
                     # add the dust mass into the total count
                     cell_mass = rho[ir, itheta, iphi] * (1/3.)*(ri[ir+1]**3 - ri[ir]**3) * (phii[iphi+1]-phii[iphi]) * -(np.cos(thetai[itheta+1])-np.cos(thetai[itheta]))
                     total_mass = total_mass + cell_mass
-        rho_env  = rho_env  + 1e-40
-        rho_disk = rho_disk + 1e-40
-        rho      = rho      + 1e-40
+        # rho_env  = rho_env  + 1e-40
+        # rho_disk = rho_disk + 1e-40
+        # rho      = rho      + 1e-40
     # apply gas-to-dust ratio of 100
     rho = rho/100.
     total_mass = total_mass/MS/100
@@ -400,7 +405,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         cmap = 'jet'
         rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
         thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
-        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mh)
+        # plot the gas density
+        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,100*rho2d_exp/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mh)
 
         ax_env.set_xlabel(r'$\mathrm{Polar~angle~(Degree)}$',fontsize=20)
         ax_env.set_ylabel(r'$\mathrm{Radius~(AU)}$',fontsize=20)
@@ -411,20 +417,20 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                                 r'$\mathrm{-90^{\circ}}$',r'$\mathrm{-135^{\circ}}$',r'$\mathrm{180^{\circ}}$',r'$\mathrm{135^{\circ}}$'])
         ax_env.grid(True)
         cb = fig.colorbar(img_env, pad=0.1)
-        cb.ax.set_ylabel(r'$\mathrm{Averaged~Density~(cm^{-3})}$',fontsize=20)
+        cb.ax.set_ylabel(r'$\mathrm{Averaged~Gas~Density~(cm^{-3})}$',fontsize=20)
         cb.set_ticks([1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9])
         cb.set_ticklabels([r'$\mathrm{10^{2}}$',r'$\mathrm{10^{3}}$',r'$\mathrm{10^{4}}$',r'$\mathrm{10^{5}}$',r'$\mathrm{10^{6}}$',\
                            r'$\mathrm{10^{7}}$',r'$\mathrm{10^{8}}$',r'$\mathrm{\geq 10^{9}}$'])
         cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
         plt.setp(cb_obj,fontsize=20)
-        fig.savefig(outdir+outname+'_dust_density.png', format='png', dpi=300, bbox_inches='tight')
+        fig.savefig(outdir+outname+'_gas_density.png', format='png', dpi=300, bbox_inches='tight')
         fig.clf()
 
         # Plot the radial density profile
         fig = plt.figure(figsize=(12,9))
         ax = fig.add_subplot(111)
 
-        plot_grid = [0,39,79,119,159,199]
+        plot_grid = [0,49,99,149,199]
         alpha = np.linspace(0.3,1.0,len(plot_grid))
         for i in plot_grid:
             rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
@@ -439,7 +445,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         [r'$\mathrm{\rho_{dust}}$',r'$\mathrm{\rho_{tsc}}$',r'$\mathrm{infall~radius}$',r'$\mathrm{centrifugal~radius}$'],\
                         fontsize=20, numpoints=1)
         ax.set_xlabel(r'$\mathrm{log(Radius)~(AU)}$',fontsize=20)
-        ax.set_ylabel(r'$\mathrm{log(Density)~(cm^{-3})}$',fontsize=20)
+        ax.set_ylabel(r'$\mathrm{log(Gas~Density)~(cm^{-3})}$',fontsize=20)
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on()
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
@@ -455,7 +461,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # ax_mid.set_ylim([0,10])
         ax_mid.set_xlim([np.log10(0.8),np.log10(10000)])
         ax_mid.set_ylim([0,15])
-        fig.savefig(outdir+outname+'_dust_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
+        fig.savefig(outdir+outname+'_gas_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
         fig.clf()
 
     # Insert the calculated grid and dust density profile into hyperion

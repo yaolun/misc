@@ -12,6 +12,9 @@ from temp_hyperion import temp_hyperion
 run = True
 record = True
 mono = False
+control = False
+extract_only = False
+temp = True
 
 # Get command-line arguments
 if 'norun' in sys.argv:
@@ -20,6 +23,12 @@ if 'norecord' in sys.argv:
     record = False
 if 'mono' in sys.argv:
     mono = True
+if 'control' in sys.argv:
+    control = True
+if 'extract_only' in sys.argv:
+    extract_only = True
+if 'no_temp' in sys.argv:
+    temp = False
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
@@ -30,6 +39,11 @@ outdir = home + '/hyperion/bhr71/'
 dust_file = home + '/programs/misc/oh5_hyperion.txt'
 params_table = home + '/programs/misc/hyperion/input_table.txt'
 obs_dir = home + '/radmc_simulation/bhr71/observations/'
+if control == True:
+    print 'Running the controlled grids for paper...'
+    params_table = home + '/programs/misc/hyperion/input_table_control.txt'
+    outdir = home + '/hyperion/bhr71/controlled/'
+
 # temp fix for the broken /opt/local/ of bettyjo
 # outdir = home+'/test/hyperion/'
 # obs_dir = home+'/bhr71/obs_for_radmc/'
@@ -47,35 +61,61 @@ else:
     foo.close()
     last_model_num = (last.split('M_env_dot')[0]).split('Model')[1].split()[0]
 
-model_num = str(int(last_model_num)+1)
-# 
-# model_num = 47
-#
-for i in range(0, len(params)):
-# for i in range(0,9):
-    params_dict = params[i]
-    if not os.path.exists(outdir+'model'+str(int(model_num)+i)+'/'):
-        os.makedirs(outdir+'model'+str(int(model_num)+i)+'/')
-    outdir_dum = outdir+'model'+str(int(model_num)+i)+'/'
-    # print out some information about the current calculating model
-    print 'Model'+str(int(model_num)+i)
-    pprint(params_dict)
-    # calculate the initial dust profile
-    wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-    # option to fix some parameter
-    fix_params = {'R_min': 0.14}
-    m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono,wl_aper=wl_aper,fix_params=fix_params)
-    if run == False:
-        print 'Hyperion run is skipped. Make sure you have run this model before'
-    else:
-        # Run hyperion
-        print 'Running with Hyperion'
-        hyp_foo = open(outdir_dum+'hyperion.log','w')
-        hyp_err = open(outdir_dum+'hyperion.err','w')
-        run = Popen(['mpirun','-n','20','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
-        run.communicate()
-    # Extract the results
-    # the indir here is the dir that contains the observed spectra.
-    print 'Seems finish, lets check out the results'
-    extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper)
-    temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
+if extract_only == False:
+    model_num = str(int(last_model_num)+1)
+    #
+    for i in range(0, len(params)):
+        params_dict = params[i]
+        if not os.path.exists(outdir+'model'+str(int(model_num)+i)+'/'):
+            os.makedirs(outdir+'model'+str(int(model_num)+i)+'/')
+        outdir_dum = outdir+'model'+str(int(model_num)+i)+'/'
+        # print out some information about the current calculating model
+        print 'Model'+str(int(model_num)+i)
+        pprint(params_dict)
+        # calculate the initial dust profile
+        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        # # old version of aperture list
+        # wl_aper = [3.6, 4.5, 5.8, 8.0, 9, 9.7, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        # # older varsion
+        # wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        # option to fix some parameter
+        fix_params = {'R_min': 0.14}
+        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono,wl_aper=wl_aper,fix_params=fix_params)
+        if run == False:
+            print 'Hyperion run is skipped. Make sure you have run this model before'
+        else:
+            # Run hyperion
+            print 'Running with Hyperion'
+            hyp_foo = open(outdir_dum+'hyperion.log','w')
+            hyp_err = open(outdir_dum+'hyperion.err','w')
+            run = Popen(['mpirun','-n','20','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
+            run.communicate()
+        # Extract the results
+        # the indir here is the dir that contains the observed spectra.
+        print 'Seems finish, lets check out the results'
+        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper)
+        temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
+else:
+    print 'You are entering the extract-only mode...'
+    num_min = raw_input('What is the number of the first model?')
+    num_max = raw_input('What is the number of the last model?')
+    num_min = int(num_min)
+    num_max = int(num_max)
+    for i in range(num_min, num_max+1):
+        if not os.path.exists(outdir+'model'+str(i)+'/'):
+            os.makedirs(outdir+'model'+str(i)+'/')
+        outdir_dum = outdir+'model'+str(i)+'/'
+        # print out some information about the current calculating model
+        print 'Extracting Model'+str(i)
+        # calculate the initial dust profile
+        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        # # old version of aperture list
+        wl_aper = [3.6, 4.5, 5.8, 8.0, 9, 9.7, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        # # older varsion
+        # wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        # option to fix some parameter
+        # Extract the results
+        # the indir here is the dir that contains the observed spectra.
+        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper)
+        if temp == True:
+            temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
