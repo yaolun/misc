@@ -24,7 +24,7 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
             # sed with apertures
             (wave, sed) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
-            ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
+            # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
             if obs != None:  
                 import sys
                 sys.path.append('/Users/yaolun/programs/misc/hyperion')
@@ -119,7 +119,7 @@ def sed_omega(indir, array, outdir, obs=None):
         # sed with apertures
         (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
 
-        ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1, alpha=0.7)
+        # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1, alpha=0.7)
         if obs != None:  
             import sys
             sys.path.append('/Users/yaolun/programs/misc/hyperion')
@@ -135,6 +135,7 @@ def sed_omega(indir, array, outdir, obs=None):
         ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=4,markeredgewidth=1,linewidth=1.2)
 
         ax.set_ylim([-14,-8])
+        ax.set_xlim([0.4,2])
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on() 
@@ -158,7 +159,7 @@ def sed_omega(indir, array, outdir, obs=None):
     fig.savefig(outdir+'sed_omega0.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-def sed_five(indir, array, outdir, xlabel, plotname, obs=None):
+def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False):
     import numpy as np
     import matplotlib.pyplot as plt
     from matplotlib.ticker import MaxNLocator
@@ -181,7 +182,7 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None):
         # sed with apertures
         (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
 
-        ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1)
+        # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1)
         if obs != None:  
             import sys
             sys.path.append('/Users/yaolun/programs/misc/hyperion')
@@ -197,11 +198,13 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None):
         ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=4,markeredgewidth=1,linewidth=1.2)
 
         ax.set_ylim([-14,-8])
+        if zoom == True:
+            ax.set_xlim([0.4,2])
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on() 
-        ax.tick_params('both',labelsize=12,width=1.2,which='major',pad=15,length=5)
-        ax.tick_params('both',labelsize=12,width=1.2,which='minor',pad=15,length=2.5)
+        ax.tick_params('both',labelsize=10,width=1.2,which='major',pad=15,length=5)
+        ax.tick_params('both',labelsize=10,width=1.2,which='minor',pad=15,length=2.5)
 
         if cc == 0:
             ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
@@ -244,7 +247,7 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None):
             # sed with apertures
             (wave, sed) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
-            ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
+            # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
             if obs != None:  
                 import sys
                 sys.path.append('/Users/yaolun/programs/misc/hyperion')
@@ -260,11 +263,12 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None):
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=4,markeredgewidth=1,linewidth=1.2)
 
             ax.set_ylim([-15,-8])
+            ax.set_xlim([0.4,2])
 
             [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
             ax.minorticks_on() 
-            ax.tick_params('both',labelsize=14,width=1,which='major',pad=15,length=5)
-            ax.tick_params('both',labelsize=14,width=1,which='minor',pad=15,length=2.5)
+            ax.tick_params('both',labelsize=10,width=1,which='major',pad=15,length=5)
+            ax.tick_params('both',labelsize=10,width=1,which='minor',pad=15,length=2.5)
 
             if rr+1 == row:
                 if cc == 0:
@@ -307,7 +311,7 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None):
             # sed with apertures
             (wave, sed) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
-            ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
+            # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
             if obs != None:  
                 import sys
                 sys.path.append('/Users/yaolun/programs/misc/hyperion')
@@ -323,11 +327,12 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None):
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=4,markeredgewidth=1,linewidth=1.2)
 
             ax.set_ylim([-15,-8])
+            ax.set_xlim([0.4,2])
 
             [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
             ax.minorticks_on() 
-            ax.tick_params('both',labelsize=14,width=1,which='major',pad=15,length=5)
-            ax.tick_params('both',labelsize=14,width=1,which='minor',pad=15,length=2.5)
+            ax.tick_params('both',labelsize=10,width=1,which='major',pad=15,length=5)
+            ax.tick_params('both',labelsize=10,width=1,which='minor',pad=15,length=2.5)
 
             if rr+1 == row:
                 if cc == 0:
@@ -514,38 +519,39 @@ def sed_rstar(indir, array, outdir, obs=None):
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
 outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
-obs='/Users/yaolun/bhr71/obs_for_radmc/'
+obs = '/Users/yaolun/bhr71/obs_for_radmc/'
+# obs = None
 
-# # grid of cs and age
-# array = np.array([[1,6,11],[2,7,12],[3,8,13],[4,9,14],[5,10,15]])
-# array = np.array([[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15]])
-# cslist = [0.1,0.2,0.3]
-# agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
-# sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=obs)
+# grid of cs and age
+array = np.array([[1,6,11],[2,7,12],[3,8,13],[4,9,14],[5,10,15]])
+array = np.array([[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15]])
+cslist = [0.1,0.2,0.3]
+agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
+sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
 # grid of Omega0
 array = np.array([16,17,18])
-sed_omega(indir, array, outdir, obs=obs)
+sed_omega(indir, array, outdir, obs= None)
 
 # grid of disk parameters
 # disk mass
 array = np.array([19,20,21,22,23])
 xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.1,~0.3,~0.5,~0.7,~1.0)}$'
 plotname = 'disk_mdisk'
-sed_five(indir, array, outdir, xlabel, plotname, obs=obs)
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True)
 # flare power
 array = np.array([29,30,31,32,33])
 xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
 plotname = 'disk_beta'
-sed_five(indir, array, outdir, xlabel, plotname, obs=obs)
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True)
 
 # grid of theta_cav and incl.
 array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
-sed_grid_theta_cav_incl(indir, array, outdir, obs=obs)
+sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
 
 # grid of rho_cav_center and sed_rho_cav_edge
 array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
-sed_grid_rho_cav_centeredge(indir, array, outdir, obs=obs)
+sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
 
 # # disk & no dis comparison
 array = np.array([16,61])
@@ -563,4 +569,4 @@ sed_rstar(indir, array, outdir, obs=obs)
 array = np.array([63,64,65,66,67])
 xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
 plotname = 'r_max'
-sed_five(indir, array, outdir, xlabel, plotname, obs=obs)
+sed_five(indir, array, outdir, xlabel, plotname, obs= None)
