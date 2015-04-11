@@ -354,8 +354,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                             # rho_env[ir,itheta,iphi] = rho_cav
                             # Modification for using density gradient in the cavity
                             # option for using a power law profile without constant region
-                            if rho_cav_center == 0:
-                                rho_cav_center = R_env_min
+                            if rho_cav_edge == 0:
+                                rho_cav_edge = R_env_min
                             # the rho_cav_center is the dust density calculated from mass loss rate
                             # gas-to-dust ratio of 100 is applied after the whole calculation, therefore need to time 100 now
                             if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
