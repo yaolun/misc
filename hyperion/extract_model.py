@@ -275,7 +275,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 	ax_sed.set_xlim([0,3])
 
 	lg_data = ax_sed.legend([irs, pacs, spire,photometry],[r'$\mathrm{{\it Spitzer}-IRS}$',r'$\mathrm{{\it Herschel}-PACS}$',r'$\mathrm{{\it Herschel}-SPIRE}$',r'$\mathrm{Photometry}$'],\
-							loc='best',fontsize=14*mag,numpoints=1,framealpha=0.3)
+							loc='upper left',fontsize=14*mag,numpoints=1,framealpha=0.3)
 	plt.gca().add_artist(lg_sim)
 
 	# Write out the plot
