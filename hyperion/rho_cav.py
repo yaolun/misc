@@ -17,8 +17,9 @@ def rho_cav(t):
 	theta_cav = np.radians(30)
 	v = 1e7
 	t = 3600.*24*365 * t
+	g2d = 100
 
-	M_dot_o = rstar * L_bol / (10.*G*mstar)
+	M_dot_o = rstar * L_bol / (10.*G*mstar) / g2d
 
 	c0 = (v*t)**-0.5 * np.cos(theta_cav)/np.sin(theta_cav)**1.5
 

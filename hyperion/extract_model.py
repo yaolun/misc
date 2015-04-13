@@ -346,8 +346,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
 		if (i+1) == 7:
 			# Finalize the plot
-			ax.set_xlabel('RA Offset (arcsec)')
-			ax.set_ylabel('Dec Offset (arcsec)')
+			ax.set_xlabel('RA Offset (arcsec)', fontsize=14)
+			ax.set_ylabel('Dec Offset (arcsec)', fontsize=14)
 
 		ax.tick_params(axis='both', which='major', labelsize=16)
 		ax.set_adjustable('box-forced')

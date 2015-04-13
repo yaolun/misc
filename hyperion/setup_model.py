@@ -361,7 +361,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                             if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
                                 rho_env[ir,itheta,iphi] = 100 * rho_cav_center#*((rc[ir]/AU)**2)
                             else:
-                                rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**2
+                                rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**1.5
                             i += 1
                         # Disk profile
                         if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
