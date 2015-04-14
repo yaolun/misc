@@ -560,7 +560,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     syn_inf = m.add_peeled_images(image=False)
     # use the index of wavelength array used by the monochromatic radiative transfer
     if mono == False:
-        syn_inf.set_wavelength_range(1000, 2.0, 1000.0)
+        syn_inf.set_wavelength_range(1300, 2.0, 1300.0)
     syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
     syn_inf.set_uncertainties(True)
     syn_inf.set_output_bytes(8)

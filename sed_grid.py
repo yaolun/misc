@@ -163,7 +163,7 @@ def sed_omega(indir, array, outdir, obs=None):
     fig.savefig(outdir+'sed_omega0.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=False):
+def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=False, compact=None, yrange=None):
     import numpy as np
     import matplotlib.pyplot as plt
     from matplotlib.ticker import MaxNLocator
@@ -177,61 +177,102 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
     AU = const.au.cgs.value
     c = const.c.cgs.value
 
-    col, = np.shape(array)
-    row = 1
+    if compact == None:
+        col, = np.shape(array)
+        row = 1
 
-    fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(12,2.7))
+        fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(12,2.7))
 
-    for cc in range(0, col):
-        ax = axarr[cc]
-        # sed part
-        # if rr+1 != row:
-        # infinite aperture
-        (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_inf.txt', skip_header=1).T
-        # sed with apertures
-        (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
+        for cc in range(0, col):
+            ax = axarr[cc]
+            # sed part
+            # if rr+1 != row:
+            # infinite aperture
+            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_inf.txt', skip_header=1).T
+            # sed with apertures
+            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
 
-        # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1)
+            # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1)
+            if obs != None:  
+                
+                from get_bhr71_obs import get_bhr71_obs
+
+                bhr71 = get_bhr71_obs(obs)  # in um and Jy
+                wave_obs, flux_obs, noise_obs = bhr71['spec']
+                ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
+                ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
+                ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='r', alpha=0.7, linewidth=1)
+
+            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=4,markeredgewidth=1,linewidth=1.2)
+
+            if tbol == True:
+                 ax.text(0.4, 0.1, r'$\mathrm{T_{bol}= %4.1f~K}$' % t_bol(wave, sed*wave*1e-4/c), fontsize=12, transform=ax.transAxes)
+
+            if zoom == True:
+                ax.set_xlim([0.4,2])
+
+            [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+            ax.minorticks_on() 
+            ax.tick_params('both',labelsize=10,width=1.2,which='major',pad=15,length=5)
+            ax.tick_params('both',labelsize=10,width=1.2,which='minor',pad=15,length=2.5)
+
+            if cc == 0:
+                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
+                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
+
+            # fix the overlap tick labels
+            x_nbins = len(ax.get_xticklabels())
+            y_nbins = len(ax.get_yticklabels())
+            if (cc != 0):
+                ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
+                ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
+
+        fig.text(0.5, -0.13 , xlabel, fontsize=14, ha='center')
+
+        fig.subplots_adjust(hspace=0,wspace=0)
+        fig.savefig(outdir+'sed_'+plotname+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
+        fig.clf()
+    else:
+        fig = plt.figure(figsize=(8,6))
+        ax = fig.add_subplot(111)
+
+        # color map setting
+        # color_list = plt.cm.Set1(np.linspace(0, 1, len(array)+1))
+        color_list = ['#fed976','#feb24c','#fd8d3c','#f03b20','#bd0026' ]
+        # color_list = ['#feebe2','#fbb4b9','#f768a1','#c51b8a','#7a0177']
+
         if obs != None:  
-            
             from get_bhr71_obs import get_bhr71_obs
-
             bhr71 = get_bhr71_obs(obs)  # in um and Jy
             wave_obs, flux_obs, noise_obs = bhr71['spec']
             ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
             ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
             ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='r', alpha=0.7, linewidth=1)
 
-        ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=4,markeredgewidth=1,linewidth=1.2)
+        for i in range(0, len(array)):
+            # infinite aperture
+            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_inf.txt', skip_header=1).T
+            # sed with apertures
+            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
-        if tbol == True:
-             ax.text(0.4, 0.1, r'$\mathrm{T_{bol}= %4.1f~K}$' % t_bol(wave, sed*wave*1e-4/c), fontsize=12, transform=ax.transAxes)
-
+            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=4,markeredgewidth=1,linewidth=1.2,label=compact[i])
+            ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=12)
+        ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
+        ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
         ax.set_ylim([-14,-8])
         if zoom == True:
             ax.set_xlim([0.4,2])
+        if yrange == None:
+            ax.set_ylim([-14,-8])
+        else:
+            ax.set_ylim(yrange)
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on() 
-        ax.tick_params('both',labelsize=10,width=1.2,which='major',pad=15,length=5)
-        ax.tick_params('both',labelsize=10,width=1.2,which='minor',pad=15,length=2.5)
+        ax.tick_params('both',labelsize=12,width=1.2,which='major',pad=15,length=5)
+        ax.tick_params('both',labelsize=12,width=1.2,which='minor',pad=15,length=2.5)
 
-        if cc == 0:
-            ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
-            ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
-
-        # fix the overlap tick labels
-        x_nbins = len(ax.get_xticklabels())
-        y_nbins = len(ax.get_yticklabels())
-        if (cc != 0):
-            ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
-            ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
-
-    fig.text(0.5, -0.13 , xlabel, fontsize=14, ha='center')
-
-    fig.subplots_adjust(hspace=0,wspace=0)
-    fig.savefig(outdir+'sed_'+plotname+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
-    fig.clf()
+        fig.savefig(outdir+'sed_'+plotname+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
 
 
 def sed_grid_theta_cav_incl(indir, array, outdir, obs=None):
@@ -715,26 +756,28 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # array = np.array([16,17,18])
 # sed_omega(indir, array, outdir, obs= None)
 
-# # grid of disk parameters
-# # disk mass
-# array = np.array([19,20,21,22,23])
-# xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.1,~0.3,~0.5,~0.7,~1.0)}$'
-# plotname = 'disk_mdisk'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True)
-# # flare power
-# array = np.array([29,30,31,32,33])
-# xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
-# plotname = 'disk_beta'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True)
+# grid of disk parameters
+# disk mass
+array = np.array([19,20,21,22,23])
+xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.1,~0.3,~0.5,~0.7,~1.0)}$'
+compact = [r'$\mathrm{M_{disk}=0.1~M_{\odot]}}$',r'$\mathrm{M_{disk}=0.3~M_{\odot]}}$',r'$\mathrm{M_{disk}=0.5~M_{\odot]}}$',r'$\mathrm{M_{disk}=0.7~M_{\odot]}}$',r'$\mathrm{M_{disk}=1.0~M_{\odot]}}$']
+plotname = 'disk_mdisk'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# flare power
+array = np.array([29,30,31,32,33])
+xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
+compact = [r'$\mathrm{\beta=1.0}$',r'$\mathrm{\beta=1.2}$',r'$\mathrm{\beta=1.4}$',r'$\mathrm{\beta=1.6}$',r'$\mathrm{\beta=1.8}$']
+plotname = 'disk_beta'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 
 # # grid of theta_cav and incl.
 # array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
 # sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
 
-# grid of rho_cav_center and sed_rho_cav_edge
-array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
-# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
-sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
+# # grid of rho_cav_center and sed_rho_cav_edge
+# array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
+# # sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
+# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # # # disk & no dis comparison
 # array = np.array([16,61])
@@ -751,13 +794,14 @@ sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 # # grid of R_env_max
 # array = np.array([63,64,65,66,67])
 # xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
+# compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=5.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=7.5\times 10^{4}~AU}$']
 # plotname = 'r_max'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True)
+# sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact)
 
 # # grid of continuous cavity power law
 # array = np.array([13,14,15])
 # sed_cav_powerlaw('/Users/yaolun/bhr71/hyperion/cycle5', array, outdir, obs=obs)
 
-# grid of cavity structure comparison
-array = np.array([14,17,1])
-sed_cav_struc_com('/Users/yaolun/bhr71/hyperion/cycle5', array, outdir, obs=obs)
+# # grid of cavity structure comparison
+# array = np.array([14,17,1])
+# sed_cav_struc_com('/Users/yaolun/bhr71/hyperion/cycle5', array, outdir, obs=obs)
