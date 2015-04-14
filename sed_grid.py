@@ -256,9 +256,9 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=4,markeredgewidth=1,linewidth=1.2,label=compact[i])
-            ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=12)
-        ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
-        ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
+            ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
+        ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
+        ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
         ax.set_ylim([-14,-8])
         if zoom == True:
             ax.set_xlim([0.4,2])
@@ -438,19 +438,19 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
 
                 ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i], color=color_list[i], markersize=4,markeredgewidth=1,linewidth=1.2, label=label[i])
                 if cc == col-1:
-                    ax.legend(loc='lower right', numpoints=1,framealpha=0.3,fontsize=10)
+                    ax.legend(loc='lower right', numpoints=1,framealpha=0.3,fontsize=12)
 
             ax.set_ylim([-14,-8])
             ax.set_xlim([0.4,2])
 
             [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
             ax.minorticks_on() 
-            ax.tick_params('both',labelsize=10,width=1.2,which='major',pad=10,length=5)
-            ax.tick_params('both',labelsize=10,width=1.2,which='minor',pad=10,length=2.5)
+            ax.tick_params('both',labelsize=12,width=1.2,which='major',pad=10,length=5)
+            ax.tick_params('both',labelsize=12,width=1.2,which='minor',pad=10,length=2.5)
 
             if cc == 0:
-                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
-                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
+                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
+                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
 
             # fix the overlap tick labels
             x_nbins = len(ax.get_xticklabels())
@@ -791,12 +791,12 @@ sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=c
 # array = np.array([72,73,74])
 # sed_rstar(indir, array, outdir, obs=obs)
 
-# # grid of R_env_max
-# array = np.array([63,64,65,66,67])
-# xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
-# compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=5.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=7.5\times 10^{4}~AU}$']
-# plotname = 'r_max'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact)
+# grid of R_env_max
+array = np.array([63,64,65,66,67])
+xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
+compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=5.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=7.5\times 10^{4}~AU}$']
+plotname = 'r_max'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact)
 
 # # grid of continuous cavity power law
 # array = np.array([13,14,15])
