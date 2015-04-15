@@ -15,6 +15,7 @@ mono = False
 control = False
 extract_only = False
 temp = True
+alma=False
 
 # Get command-line arguments
 if 'norun' in sys.argv:
@@ -29,6 +30,8 @@ if 'extract_only' in sys.argv:
     extract_only = True
 if 'no_temp' in sys.argv:
     temp = False
+if 'alma' in sys.argv:
+    alma = True
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
@@ -43,6 +46,10 @@ if control == True:
     print 'Running the controlled grids for paper...'
     params_table = home + '/programs/misc/hyperion/input_table_control.txt'
     outdir = home + '/hyperion/bhr71/controlled/'
+if alma == True:
+    print 'Running for ALMA proposal...'
+    params_table = home + '/programs/misc/hyperion/input_table_alma.txt'
+    outdir = home + '/hyperion/bhr71/alma/'
 
 # temp fix for the broken /opt/local/ of bettyjo
 # outdir = home+'/test/hyperion/'
@@ -66,6 +73,10 @@ if extract_only == False:
     #
     for i in range(0, len(params)):
         params_dict = params[i]
+        if 'cav_power' in params_dict.keys():
+            power = params_dict['cav_power']
+        else:
+            power = 2.0
         if not os.path.exists(outdir+'model'+str(int(model_num)+i)+'/'):
             os.makedirs(outdir+'model'+str(int(model_num)+i)+'/')
         outdir_dum = outdir+'model'+str(int(model_num)+i)+'/'
@@ -80,7 +91,7 @@ if extract_only == False:
         # wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
         # option to fix some parameter
         fix_params = {'R_min': 0.14}
-        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono,wl_aper=wl_aper,fix_params=fix_params)
+        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono,wl_aper=wl_aper,fix_params=fix_params,alma=alma,power=power)
         if run == False:
             print 'Hyperion run is skipped. Make sure you have run this model before'
         else:
@@ -93,8 +104,9 @@ if extract_only == False:
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
         print 'Seems finish, lets check out the results'
-        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper)
-        temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
+        if alma == False:
+            extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper)
+            temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
     print 'You are entering the extract-only mode...'
     num_min = raw_input('What is the number of the first model?')
