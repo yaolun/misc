@@ -641,7 +641,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
             # use the index of wavelength array used by the monochromatic radiative transfer
             if mono == False:
-                dict_peel_sed[str(name[i])].set_wavelength_range(3000, 2.0, 3100.0)
+                dict_peel_sed[str(name[i])].set_wavelength_range(1000, 2.0, 1300.0)
             dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
             # aperture should be given in cm
             dict_peel_sed[str(name[i])].set_aperture_range(1, aper_dum, aper_dum)
@@ -652,7 +652,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         syn_im = m.add_peeled_images(sed=False)
         # use the index of wavelength array used by the monochromatic radiative transfer
         if mono == False:
-            syn_im.set_wavelength_range(3000, 2.0, 3100.0)
+            syn_im.set_wavelength_range(1000, 2.0, 1300.0)
         # pixel number
         syn_im.set_image_size(1000, 1000)
         syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
