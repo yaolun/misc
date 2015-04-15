@@ -161,7 +161,9 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     if tsc == False:
         print 'Calculating the dust density profile with infall solution...'
         if theta_cav != 0:
-            c0 = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
+            # c0 = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
+            # using R = 10000 AU as the reference point
+            c0 = (10000.*AU)**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
         else:
             c0 = 0
         rho_env  = np.zeros([len(rc),len(thetac),len(phic)])
