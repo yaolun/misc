@@ -655,7 +655,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             syn_im.set_wavelength_range(1300, 2.0, 1300.0)
         # pixel number
         # pixel number seems cannot greater than number of grid points
-        syn_im.set_image_size(2*len(rc), 2*len(rc))
+        syn_im.set_image_size(300, 300)
         syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
         syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
         syn_im.set_uncertainties(True)
