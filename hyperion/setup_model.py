@@ -610,43 +610,43 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # output as 64-bit
         syn_im.set_output_bytes(8)
     else:
-        # # Infinite aperture
-        # syn_inf = m.add_peeled_images(image=False)
-        # # use the index of wavelength array used by the monochromatic radiative transfer
-        # if mono == False:
-        #     syn_inf.set_wavelength_range(1300, 2.0, 1300.0)
-        # syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
-        # syn_inf.set_uncertainties(True)
-        # syn_inf.set_output_bytes(8)
+        # Infinite aperture
+        syn_inf = m.add_peeled_images(image=False)
+        # use the index of wavelength array used by the monochromatic radiative transfer
+        if mono == False:
+            syn_inf.set_wavelength_range(1300, 2.0, 1300.0)
+        syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
+        syn_inf.set_uncertainties(True)
+        syn_inf.set_output_bytes(8)
 
-        # # aperture
-        # # 7.2 in 10 um scaled by lambda / 10
-        # # flatten beyond 20 um
-        # # default aperture
-        # if wl_aper == None:    
-        #     wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 20, 24, 70, 160, 250, 350, 500, 850]
-        # name = np.arange(1,len(wl_aper)+1)
-        # aper = np.empty_like(wl_aper)
-        # for i in range(0, len(wl_aper)):
-        #     if wl_aper[i] <= 20:
-        #         aper[i] = 7.2 * wl_aper[i]/10.
-        #     elif (wl_aper[i] > 20) & (wl_aper[i] <=50):
-        #         aper[i] = 7.2 * 2
-        #     else:
-        #         aper[i] = 24.5
+        # aperture
+        # 7.2 in 10 um scaled by lambda / 10
+        # flatten beyond 20 um
+        # default aperture
+        if wl_aper == None:    
+            wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 20, 24, 70, 160, 250, 350, 500, 850]
+        name = np.arange(1,len(wl_aper)+1)
+        aper = np.empty_like(wl_aper)
+        for i in range(0, len(wl_aper)):
+            if wl_aper[i] <= 20:
+                aper[i] = 7.2 * wl_aper[i]/10.
+            elif (wl_aper[i] > 20) & (wl_aper[i] <=50):
+                aper[i] = 7.2 * 2
+            else:
+                aper[i] = 24.5
 
-        # dict_peel_sed = {}
-        # for i in range(0, len(wl_aper)):
-        #     aper_dum = aper[i] * (1/3600.*np.pi/180.)*dstar*pc
-        #     dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
-        #     # use the index of wavelength array used by the monochromatic radiative transfer
-        #     if mono == False:
-        #         dict_peel_sed[str(name[i])].set_wavelength_range(1300, 2.0, 1300.0)
-        #     dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
-        #     # aperture should be given in cm
-        #     dict_peel_sed[str(name[i])].set_aperture_range(1, aper_dum, aper_dum)
-        #     dict_peel_sed[str(name[i])].set_uncertainties(True)
-        #     dict_peel_sed[str(name[i])].set_output_bytes(8)
+        dict_peel_sed = {}
+        for i in range(0, len(wl_aper)):
+            aper_dum = aper[i] * (1/3600.*np.pi/180.)*dstar*pc
+            dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
+            # use the index of wavelength array used by the monochromatic radiative transfer
+            if mono == False:
+                dict_peel_sed[str(name[i])].set_wavelength_range(1300, 2.0, 1300.0)
+            dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
+            # aperture should be given in cm
+            dict_peel_sed[str(name[i])].set_aperture_range(1, aper_dum, aper_dum)
+            dict_peel_sed[str(name[i])].set_uncertainties(True)
+            dict_peel_sed[str(name[i])].set_output_bytes(8)
 
         # image setting
         syn_im = m.add_peeled_images(sed=False)
@@ -656,8 +656,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # pixel number
         # pixel number seems cannot greater than number of grid points
         syn_im.set_image_size(300, 300)
-        # syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
-        syn_im.set_image_limits(-2000*AU, 2000*AU, -2000*AU, 2000*AU)
+        syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
+        # syn_im.set_image_limits(-2000*AU, 2000*AU, -2000*AU, 2000*AU)
         syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
         syn_im.set_uncertainties(True)
         # output as 64-bit
