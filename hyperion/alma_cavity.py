@@ -155,8 +155,8 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
 
     fig.savefig(outdir+'cavity_2d_intensity_'+str(freq)+'.png',format='png',dpi=300,bbox_inches='tight')
 
-filename = {'reg': '/Users/yaolun/bhr71/hyperion/alma/model1.rtout', 'r2': '/Users/yaolun/bhr71/hyperion/alma/model10.rtout', 'r15': '/Users/yaolun/bhr71/hyperion/alma/model13.rtout', 'uni': '/Users/yaolun/bhr71/hyperion/alma/model16.rtout'}
-filename = {'reg': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model1/model1.rtout', \
+filename = {'reg': '/Users/yaolun/bhr71/hyperion/alma/model2.rtout', 'r2': '/Users/yaolun/bhr71/hyperion/alma/model10.rtout', 'r15': '/Users/yaolun/bhr71/hyperion/alma/model13.rtout', 'uni': '/Users/yaolun/bhr71/hyperion/alma/model16.rtout'}
+filename = {'reg': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model2/model2.rtout', \
             'r2': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model10/model10.rtout', \
             'r15': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model13/model13.rtout', \
             'uni': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model16/model16.rtout'}
