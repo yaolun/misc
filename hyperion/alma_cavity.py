@@ -155,11 +155,16 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
 
     fig.savefig(outdir+'cavity_2d_intensity_'+str(freq)+'.png',format='png',dpi=300,bbox_inches='tight')
 
-filename = {'reg': '/Users/yaolun/test/model1.rtout', 'r2': '/Users/yaolun/test/model2.rtout', 'r15': '/Users/yaolun/test/model3.rtout', 'uni': '/Users/yaolun/test/model4.rtout'}
+filename = {'reg': '/Users/yaolun/bhr71/hyperion/alma/model1.rtout', 'r2': '/Users/yaolun/bhr71/hyperion/alma/model10.rtout', 'r15': '/Users/yaolun/bhr71/hyperion/alma/model13.rtout', 'uni': '/Users/yaolun/bhr71/hyperion/alma/model16.rtout'}
+filename = {'reg': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model1/model1.rtout', \
+            'r2': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model10/model10.rtout', \
+            'r15': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model13/model13.rtout', \
+            'uni': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model16/model16.rtout'}
 label = {'reg': 'model1', 'r2': 'model2', 'r15': 'model3', 'uni': 'model4'}
 freq = [230,345,460]
-# freq = [230]
+freq = [345]
 vlim = [[400,2000],[600,3200],[1500,9000]]
 outdir = '/Users/yaolun/test/'
+outdir = '/home/bettyjo/yaolun/test/'
 for f in freq:
-    alma_cavity(f,outdir, vlim[freq.index(f)], filename=filename, label=label, pix=1000)
+    alma_cavity(f,outdir, vlim[freq.index(f)], filename=filename, label=label, pix=300)
