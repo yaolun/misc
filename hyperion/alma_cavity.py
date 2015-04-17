@@ -166,6 +166,6 @@ freq = [345]
 vlim = [[400,2000],[600,3200],[1500,9000]]
 vlim = [[600,2600]]
 outdir = '/Users/yaolun/test/'
-outdir = '/home/bettyjo /yaolun/test/'
+outdir = '/home/bettyjo/yaolun/test/'
 for f in freq:
     alma_cavity(f,outdir, vlim[freq.index(f)], filename=filename, label=label, pix=300)
