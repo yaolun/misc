@@ -156,14 +156,14 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
     fig.savefig(outdir+'cavity_2d_intensity_'+str(freq)+'.png',format='png',dpi=300,bbox_inches='tight')
 
 filename = {'reg': '/Users/yaolun/bhr71/hyperion/alma/model2.rtout', 'r2': '/Users/yaolun/bhr71/hyperion/alma/model10.rtout', 'r15': '/Users/yaolun/bhr71/hyperion/alma/model13.rtout', 'uni': '/Users/yaolun/bhr71/hyperion/alma/model16.rtout'}
-filename = {'reg': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model2/model2.rtout', \
+filename = {'reg': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model2 /model2.rtout', \
             'r2': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model10/model10.rtout', \
             'r15': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model13/model13.rtout', \
             'uni': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model16/model16.rtout'}
 label = {'reg': r'$\mathrm{const.+r^{-2}}$', 'r2': r'$\mathrm{r^{-2}}$', 'r15': r'$\mathrm{r^{-1.5}}$', 'uni': r'$\mathrm{uniform}$'}
 freq = [230,345,460]
 # freq = [345]
-vlim = [[400,2000],[600,3200],[1500,9000]]
+vlim = [[1500,800],[600,3200],[1500,9000]]
 # vlim = [[600,2600]]
 outdir = '/Users/yaolun/test/'
 outdir = '/home/bettyjo/yaolun/test/'
