@@ -180,11 +180,11 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on() 
-        ax.tick_params('both',labelsize=14,width=1.5,which='major',pad=15,length=5)
-        ax.tick_params('both',labelsize=14,width=1.5,which='minor',pad=15,length=2.5)
+        ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+        ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-        ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=18)
-        ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=18)
+        ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=20)
+        ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=20)
         ax.set_ylim([-14,-8])
         # ax.set_xlim([0.4,2])
         # ax.locator_params(axis='x', nbins=5)
@@ -413,12 +413,12 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
 
             [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
             ax.minorticks_on() 
-            ax.tick_params('both',labelsize=12,width=1.2,which='major',pad=10,length=5)
-            ax.tick_params('both',labelsize=12,width=1.2,which='minor',pad=10,length=2.5)
+            ax.tick_params('both',labelsize=16,width=1.2,which='major',pad=10,length=5)
+            ax.tick_params('both',labelsize=16,width=1.2,which='minor',pad=10,length=2.5)
 
             if cc == 0:
-                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
-                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
+                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=18)
+                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=18)
 
             # fix the overlap tick labels
             x_nbins = len(ax.get_xticklabels())
@@ -540,12 +540,12 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
 
             [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
             ax.minorticks_on() 
-            ax.tick_params('both',labelsize=12,width=1.2,which='major',pad=10,length=5)
-            ax.tick_params('both',labelsize=12,width=1.2,which='minor',pad=10,length=2.5)
+            ax.tick_params('both',labelsize=16,width=1.2,which='major',pad=10,length=5)
+            ax.tick_params('both',labelsize=16,width=1.2,which='minor',pad=10,length=2.5)
 
             if cc == 0:
-                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
-                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
+                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=18)
+                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=18)
 
             # fix the overlap tick labels
             x_nbins = len(ax.get_xticklabels())
@@ -601,11 +601,11 @@ def disk_exist_com(indir, array, outdir, obs=None):
 
     [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
     ax.minorticks_on() 
-    ax.tick_params('both',labelsize=16,width=1.5,which='major',pad=15,length=5)
-    ax.tick_params('both',labelsize=16,width=1.5,which='minor',pad=15,length=2.5)
+    ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=18)
-    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=18)
+    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=20)
+    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=20)
 
     plt.legend([disk, nodisk, obs_data], [r'$\mathrm{w/~disk}$', r'$\mathrm{w/o~disk}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
 

@@ -357,7 +357,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
 		ax.tick_params(axis='both', which='major', labelsize=16)
 		ax.set_adjustable('box-forced')
-		ax.text(0.7,0.88,str(wav) + r'$\mathrm{~\mu m}$',fontsize=16,color='white', transform=ax.transAxes)
+		ax.text(0.7,0.88,str(wav) + r'$\mathrm{~\mu m}$',fontsize=18,color='white',weight='bold',transform=ax.transAxes)
 
 	fig.subplots_adjust(hspace=0,wspace=-0.2)
 
