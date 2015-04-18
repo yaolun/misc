@@ -3,6 +3,8 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
     import matplotlib.pyplot as plt
     import astropy.constants as const
     from hyperion.model import ModelOutput
+    from matplotlib.ticker import MaxNLocator
+
     # constants setup
     c = const.c.cgs.value
     pc = const.pc.cgs.value
@@ -98,22 +100,22 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
     fig = plt.figure(figsize=(8,6))
     ax = fig.add_subplot(111)
 
-    reg, = ax.plot(np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec, val_reg[:,pix/2-1], color='k', linewidth=1.5)
-    r2,  = ax.plot(np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec, val_r2[:,pix/2-1], color='b', linewidth=1.5)
-    r15, = ax.plot(np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec, val_r15[:,pix/2-1], color='r', linewidth=1.5)
-    uni, = ax.plot(np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec, val_uni[:,pix/2-1], color='g', linewidth=1.5)
+    reg, = ax.plot(np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec, val_reg[:,pix/2-1], color='b', linewidth=2)
+    r2,  = ax.plot(np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec, val_r2[:,pix/2-1], color='r', linewidth=1.5)
+    r15, = ax.plot(np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec, val_r15[:,pix/2-1], '--', color='r', linewidth=1.5)
+    uni, = ax.plot(np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec, val_uni[:,pix/2-1], color='k', linewidth=1.5)
     ax.legend([reg, r2, r15, uni], [label_reg, label_r2, label_r15, label_uni],\
               numpoints=1, loc='lower center', fontsize=16)
 
     ax.set_xlim([-1,1])
-    ax.set_xlabel(r'$\mathrm{angular~distance~(arcsec)}$', fontsize=16)
+    ax.set_xlabel(r'$\mathrm{offset~(arcsec)}$', fontsize=16)
     # ax.set_ylabel(r'$\mathrm{I_{\nu}~(erg~s^{-1}~cm^{-2}~Hz^{-1}~sr^{-1})}$', fontsize=16)
     ax.set_ylabel(cb_label, fontsize=16)
 
     [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
     ax.minorticks_on()
-    ax.tick_params('both',labelsize=16,width=1.5,which='major',pad=15,length=5)
-    ax.tick_params('both',labelsize=16,width=1.5,which='minor',pad=15,length=2.5)
+    ax.tick_params('both',labelsize=16,width=1.5,which='major',pad=10,length=5)
+    ax.tick_params('both',labelsize=16,width=1.5,which='minor',pad=10,length=2.5)
 
     fig.savefig(outdir+'cavity_intensity_'+str(freq)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
 
@@ -124,7 +126,7 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
     fig = plt.figure(figsize=(30,30))
     grid = AxesGrid(fig, 142, # similar to subplot(142)
                         nrows_ncols = (2, 2),
-                        axes_pad = 0.15,
+                        axes_pad = 0,
                         share_all=True,
                         label_mode = "L",
                         cbar_location = "right",
@@ -141,7 +143,19 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
         grid[i].set_ylabel(r'$\mathrm{Dec~offset~(arcsec)}$', fontsize=12)
         grid[i].tick_params('both',labelsize=10,which='major')
         grid[i].tick_params('both',labelsize=10,which='minor')
-        grid[i].text(0.5,0.8, label_grid[i], color='w', fontsize=14, transform=grid[i].transAxes)
+        # lg = grid[i].legend([label_grid[i]], loc='upper center', numpoints=1, fontsize=16)
+        # for text in lg.get_texts():
+        #     text.set_color('w')
+        grid[i].text(0.5,0.8, label_grid[i], weight='bold', color='w', fontsize=14, transform=grid[i].transAxes, ha='center')
+        grid[i].locator_params(axis='x', nbins=5)
+        grid[i].locator_params(axis='y', nbins=5)
+        # fix the overlap tick labels
+        if i != 0:
+            x_nbins = len(grid[i].get_xticklabels())
+            y_nbins = len(grid[i].get_yticklabels())
+            grid[i].xaxis.set_major_locator(MaxNLocator(nbins=5, prune='lower'))
+            grid[i].yaxis.set_major_locator(MaxNLocator(nbins=5, prune='upper'))
+
     #     ax.set_aspect('equal')
     cb = grid.cbar_axes[0].colorbar(im)
     cb.solids.set_edgecolor("face")
@@ -155,17 +169,22 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
 
     fig.savefig(outdir+'cavity_2d_intensity_'+str(freq)+'.png',format='png',dpi=300,bbox_inches='tight')
 
-filename = {'reg': '/Users/yaolun/bhr71/hyperion/alma/model2.rtout', 'r2': '/Users/yaolun/bhr71/hyperion/alma/model10.rtout', 'r15': '/Users/yaolun/bhr71/hyperion/alma/model13.rtout', 'uni': '/Users/yaolun/bhr71/hyperion/alma/model16.rtout'}
-filename = {'reg': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model2/model2.rtout', \
-            'r2': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model10/model10.rtout', \
-            'r15': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model13/model13.rtout', \
-            'uni': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model16/model16.rtout'}
+filename = {'reg': '/Users/yaolun/bhr71/hyperion/alma/model2.rtout', \
+            'r2': '/Users/yaolun/bhr71/hyperion/alma/model10.rtout', \
+            'r15': '/Users/yaolun/bhr71/hyperion/alma/model13.rtout', \
+            'uni': '/Users/yaolun/bhr71/hyperion/alma/model16.rtout'}
+# filename = {'reg': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model2/model2.rtout', \
+#             'r2': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model10/model10.rtout', \
+#             'r15': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model13/model13.rtout', \
+#             'uni': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model16/model16.rtout'}
 label = {'reg': r'$\mathrm{const.+r^{-2}}$', 'r2': r'$\mathrm{r^{-2}}$', 'r15': r'$\mathrm{r^{-1.5}}$', 'uni': r'$\mathrm{uniform}$'}
 freq = [230,345,460]
 # freq = [345]
-vlim = [[1500,800],[600,3200],[1500,9000]]
+vlim = [[150,800],[600,3200],[1500,9000]]
 # vlim = [[600,2600]]
 outdir = '/Users/yaolun/test/'
-outdir = '/home/bettyjo/yaolun/test/'
+# outdir = '/home/bettyjo/yaolun/test/'
 for f in freq:
-    alma_cavity(f,outdir, vlim[freq.index(f)], filename=filename, label=label, pix=300)
+    print f
+    if f == 345:
+        alma_cavity(f,outdir, vlim[freq.index(f)], filename=filename, label=label, pix=300)
