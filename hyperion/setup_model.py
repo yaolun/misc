@@ -248,7 +248,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     else:
         print 'Calculating the dust density profile with TSC solution...'
         if theta_cav != 0:
-            c0 = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
+            # c0 = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
+            c0 = (1e4*AU)**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
         else:
             c0 = 0
         # If needed, calculate the TSC model via IDL
