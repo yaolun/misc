@@ -164,7 +164,8 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
         fig.savefig(outdir+'sed_omega0.pdf', format='pdf', dpi=300, bbox_inches='tight')
         fig.clf()
     else:
-        color_list = ['#ffeda0','#feb24c','#f03b20']
+        # color_list = ['#ffeda0','#feb24c','#f03b20']
+        color_list = ['#fd8d3c','#f03b20','#bd0026']
         label = [r'$\mathrm{\Omega_{\circ}=1\times 10^{-14}~s^{-1}}$',r'$\mathrm{\Omega_{\circ}=5\times 10^{-14}~s^{-1}}$',r'$\mathrm{\Omega_{\circ}=1\times 10^{-13}~s^{-1}}$']
         fig = plt.figure(figsize=(8,6))
         ax = fig.add_subplot(111)
@@ -175,7 +176,7 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
             # sed with apertures
             (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
-            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=4,markeredgewidth=1,linewidth=1.2,label=label[i])
+            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=label[i])
         ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
@@ -232,7 +233,7 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
                 ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
                 ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='r', alpha=0.7, linewidth=1)
 
-            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=4,markeredgewidth=1,linewidth=1.2)
+            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=3,markeredgewidth=1,linewidth=1.2)
 
             if tbol == True:
                  ax.text(0.4, 0.1, r'$\mathrm{T_{bol}= %4.1f~K}$' % t_bol(wave, sed*wave*1e-4/c), fontsize=12, transform=ax.transAxes)
@@ -269,6 +270,12 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
         # color_list = plt.cm.Set1(np.linspace(0, 1, len(array)+1))
         color_list = ['#fed976','#feb24c','#fd8d3c','#f03b20','#bd0026' ]
         # color_list = ['#feebe2','#fbb4b9','#f768a1','#c51b8a','#7a0177']
+        color_list = ['#ecd078','#d95b43','#c02942','#542437','#53777a']
+        color_list = [[0.8507598215729224, 0.6322174528970308, 0.6702243543099417],\
+                     [0.7357826498167007, 0.4722583075098643, 0.5939898816486836],\
+                     [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
+                     [0.37315740206144277, 0.21948554297767336, 0.40755444345087455],\
+                     [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
 
         if obs != None:  
             from get_bhr71_obs import get_bhr71_obs
@@ -284,7 +291,7 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             # sed with apertures
             (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
-            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=4,markeredgewidth=1,linewidth=1.2,label=compact[i])
+            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i])
             ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
         ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=18)
         ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=18)
@@ -377,7 +384,8 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
 
         # set up the color map
         # color_list = ['#f03b20','#feb24c','#ffeda0']
-        color_list = ['#ffeda0','#feb24c','#f03b20']
+        # color_list = ['#ffeda0','#feb24c','#f03b20']
+        color_list = ['#fd8d3c','#f03b20','#bd0026']
         # label setup
         label = [ r'$\mathrm{\theta_{incl.}=80^{\circ}}$', r'$\mathrm{\theta_{incl.}=70^{\circ}}$',\
                   r'$\mathrm{\theta_{incl.}=60^{\circ}}$']
@@ -403,7 +411,7 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                 # sed with apertures
                 (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
-                ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i], color=color_list[i], markersize=4,markeredgewidth=1,linewidth=1.2, label=label[i])
+                ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i], color=color_list[i], markersize=3,markeredgewidth=1,linewidth=1.2, label=label[i])
                 if cc == 0:
                     ax.legend(loc='upper left', numpoints=1,framealpha=0.3,fontsize=10)
 
@@ -413,12 +421,12 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
 
             [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
             ax.minorticks_on() 
-            ax.tick_params('both',labelsize=16,width=1.2,which='major',pad=10,length=5)
-            ax.tick_params('both',labelsize=16,width=1.2,which='minor',pad=10,length=2.5)
+            ax.tick_params('both',labelsize=14,width=1.2,which='major',pad=10,length=5)
+            ax.tick_params('both',labelsize=14,width=1.2,which='minor',pad=10,length=2.5)
 
             if cc == 0:
-                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=18)
-                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=18)
+                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
+                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
 
             # fix the overlap tick labels
             x_nbins = len(ax.get_xticklabels())
@@ -530,7 +538,7 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
                 # sed with apertures
                 (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc,i])+'_sed_w_aperture.txt', skip_header=1).T
 
-                ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i], color=color_list[i], markersize=4,markeredgewidth=1,linewidth=1.2, label=label[i])
+                ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i], color=color_list[i], markersize=4,markeredgewidth=1,linewidth=1.5, label=label[i])
                 if cc == col-1:
                     ax.legend(loc='lower right', numpoints=1,framealpha=0.3,fontsize=12)
 
@@ -583,8 +591,8 @@ def disk_exist_com(indir, array, outdir, obs=None):
     (nd_wave_inf, nd_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
     (nd_wave, nd_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
 
-    disk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='b',mec='b',markersize=5,markeredgewidth=1,color='b', linewidth=1.5)
-    nodisk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='k',mec='k',markersize=5,markeredgewidth=1,color='k', linewidth=1.5)
+    disk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='b',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=2)
+    nodisk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='k',mec='k',markersize=7,markeredgewidth=1,color='k', linewidth=2)
 
     if obs != None:  
         import sys
@@ -747,9 +755,9 @@ def sed_cav_powerlaw(indir, array, outdir, obs=None):
     (r3_wave_inf, r3_sed_inf) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
     (r3_wave, r3_sed) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
 
-    r1, = ax.plot(np.log10(r1_wave), np.log10(r1_sed), 'o-',mfc='Magenta',mec='Magenta',markersize=5,markeredgewidth=1,color='Magenta', linewidth=1.5)
-    r2, = ax.plot(np.log10(r2_wave), np.log10(r2_sed), 'o-',mfc='r',mec='r',markersize=5,markeredgewidth=1,color='r', linewidth=1.5)
-    r3, = ax.plot(np.log10(r3_wave), np.log10(r3_sed), 'o-',mfc='b',mec='b',markersize=5,markeredgewidth=1,color='b', linewidth=1.5)
+    r1, = ax.plot(np.log10(r1_wave), np.log10(r1_sed), 'o-',mfc='Magenta',mec='Magenta',markersize=7,markeredgewidth=1,color='Magenta', linewidth=2)
+    r2, = ax.plot(np.log10(r2_wave), np.log10(r2_sed), 'o-',mfc='r',mec='r',markersize=7,markeredgewidth=1,color='r', linewidth=2)
+    r3, = ax.plot(np.log10(r3_wave), np.log10(r3_sed), 'o-',mfc='b',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=2)
 
     if obs != None:  
         import sys
@@ -766,11 +774,11 @@ def sed_cav_powerlaw(indir, array, outdir, obs=None):
 
     [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
     ax.minorticks_on() 
-    ax.tick_params('both',labelsize=14,width=1.5,which='major',pad=15,length=5)
-    ax.tick_params('both',labelsize=14,width=1.5,which='minor',pad=15,length=2.5)
+    ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
-    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
+    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=20)
+    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=20)
     ax.set_ylim([-13,-7])
 
     plt.legend([r1, r2, r3, obs_data], [r'$\mathrm{\rho_{cav,\circ}=5\times 10^{-15}~g~cm^{-3}}$', r'$\mathrm{\rho_{cav,\circ}=5\times 10^{-16}~g~cm^{-3}}$',r'$\mathrm{\rho_{cav,\circ}=5\times 10^{-17}~g~cm^{-3}}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
@@ -779,6 +787,61 @@ def sed_cav_powerlaw(indir, array, outdir, obs=None):
     fig.clf()
 
 def sed_cav_struc_com(indir, array, outdir, obs=None):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from hyperion.model import ModelOutput
+    import astropy.constants as const
+    # constants setup
+    AU = const.au.cgs.value
+
+    fig = plt.figure(figsize=(8,6))
+    ax = fig.add_subplot(111)
+
+    # get data
+    # tstar = 4500 K
+    (r1_wave_inf, r1_sed_inf) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
+    (r1_wave, r1_sed) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
+
+    # tstar = 5000 K
+    (r2_wave_inf, r2_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
+    (r2_wave, r2_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
+
+    # tstar = 5500 K
+    (r3_wave_inf, r3_sed_inf) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
+    (r3_wave, r3_sed) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
+
+    r1, = ax.plot(np.log10(r1_wave), np.log10(r1_sed), 'o-',mfc='Magenta',mec='Magenta',markersize=7,markeredgewidth=1,color='Magenta', linewidth=2)
+    r2, = ax.plot(np.log10(r2_wave), np.log10(r2_sed), 'o-',mfc='r',mec='r',markersize=7,markeredgewidth=1,color='r', linewidth=2)
+    r3, = ax.plot(np.log10(r3_wave), np.log10(r3_sed), 'o-',mfc='b',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=2)
+
+    if obs != None:  
+        import sys
+        sys.path.append('/Users/yaolun/programs/misc/hyperion')
+        from get_bhr71_obs import get_bhr71_obs
+        c = const.c.cgs.value
+
+        bhr71 = get_bhr71_obs(obs)  # in um and Jy
+        wave_obs, flux_obs, noise_obs = bhr71['spec']
+        obs_data, = ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='k', alpha=0.7, linewidth=1)
+        ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='k', alpha=0.7, linewidth=1)
+        ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='k', alpha=0.7, linewidth=1)
+
+
+    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    ax.minorticks_on() 
+    ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+
+    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=20)
+    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=20)
+    ax.set_ylim([-13,-7])
+
+    plt.legend([r1, r2, r3, obs_data], [r'$\mathrm{\rho(r)\propto r^{-2}}$', r'$\mathrm{\rho(r)\propto r^{-1.5}}$',r'$\mathrm{const.+r^{-2}}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
+
+    fig.savefig(outdir+'sed_cav_struc_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
+
+def sed_lum(indir, array, outdir, obs=None):
     import numpy as np
     import matplotlib.pyplot as plt
     from hyperion.model import ModelOutput
@@ -828,9 +891,9 @@ def sed_cav_struc_com(indir, array, outdir, obs=None):
     ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
     ax.set_ylim([-13,-7])
 
-    plt.legend([r1, r2, r3, obs_data], [r'$\mathrm{\rho(r)\propto r^{-2}}$', r'$\mathrm{\rho(r)\propto r^{-1.5}}$',r'$\mathrm{const.+r^{-2}}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
+    plt.legend([r1, r2, r3], [r'$\mathrm{4500~K}$', r'$\mathrm{5000~K}$',r'$\mathrm{5500~K}$'], numpoints=1, loc='lower right', fontsize=16)
 
-    fig.savefig(outdir+'sed_cav_struc_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.savefig(outdir+'sed_lstar.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
 
@@ -847,9 +910,9 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
 # sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
-# grid of Omega0
-array = np.array([18,17,16])
-sed_omega(indir, array, outdir, obs= None, compact=True)
+# # grid of Omega0
+# array = np.array([18,17,16])
+# sed_omega(indir, array, outdir, obs= None, compact=True)
 
 # # grid of disk parameters
 # # disk mass
@@ -887,12 +950,12 @@ sed_omega(indir, array, outdir, obs= None, compact=True)
 # array = np.array([72,73,74])
 # sed_rstar(indir, array, outdir, obs=obs)
 
-# grid of R_env_max
-array = np.array([63,64,65,66,67])
-xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
-compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=5.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=7.5\times 10^{4}~AU}$']
-plotname = 'r_max'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact)
+# # grid of R_env_max
+# array = np.array([63,64,65,66,67])
+# xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
+# compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=5.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=7.5\times 10^{4}~AU}$']
+# plotname = 'r_max'
+# sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact)
 
 # # grid of continuous cavity power law
 # array = np.array([13,14,15])
@@ -901,3 +964,7 @@ sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=c
 # # grid of cavity structure comparison
 # array = np.array([14,17,1])
 # sed_cav_struc_com('/Users/yaolun/bhr71/hyperion/cycle5', array, outdir, obs=obs)
+
+# grid of tstar with the same lstar
+array = np.array([1,2,3])
+sed_lum('/Users/yaolun/test/controlled/', array, outdir)

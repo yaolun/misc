@@ -29,7 +29,7 @@ def temp_hyperion(rtout,outdir):
     temp2d_exp = np.hstack((temp2d,temp2d,temp2d[:,0:1]))
     thetac_exp = np.hstack((thetac-np.pi/2, thetac+np.pi/2, thetac[0]-np.pi/2))
 
-    mag = 1.5
+    mag = 1
     fig = plt.figure(figsize=(mag*8,mag*6))
     ax = fig.add_subplot(111, projection='polar')
 
@@ -76,6 +76,6 @@ def temp_hyperion(rtout,outdir):
     fig.savefig(outdir+print_name+'_temp_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/cycle3/model10/model10.rtout'
-# outdir = '/Users/yaolun/test/'
-# temp_hyperion(rtout, outdir)
+rtout = '/Users/yaolun/bhr71/hyperion/alma/model2.rtout'
+outdir = '/Users/yaolun/test/'
+temp_hyperion(rtout, outdir)
