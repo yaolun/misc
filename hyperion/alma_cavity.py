@@ -146,7 +146,7 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
         # lg = grid[i].legend([label_grid[i]], loc='upper center', numpoints=1, fontsize=16)
         # for text in lg.get_texts():
         #     text.set_color('w')
-        grid[i].text(0.5,0.8, label_grid[i], weight='bold', color='w', fontsize=14, transform=grid[i].transAxes, ha='center')
+        grid[i].text(0.5,0.8, label_grid[i], color='w', weight='heavy', fontsize=14, transform=grid[i].transAxes, ha='center')
         grid[i].locator_params(axis='x', nbins=5)
         grid[i].locator_params(axis='y', nbins=5)
         # fix the overlap tick labels
@@ -154,7 +154,7 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
             x_nbins = len(grid[i].get_xticklabels())
             y_nbins = len(grid[i].get_yticklabels())
             grid[i].xaxis.set_major_locator(MaxNLocator(nbins=5, prune='lower'))
-            grid[i].yaxis.set_major_locator(MaxNLocator(nbins=5, prune='upper'))
+            grid[i].yaxis.set_major_locator(MaxNLocator(nbins=5, prune='lower'))
 
     #     ax.set_aspect('equal')
     cb = grid.cbar_axes[0].colorbar(im)
