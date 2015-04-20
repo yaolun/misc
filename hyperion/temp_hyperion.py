@@ -76,6 +76,6 @@ def temp_hyperion(rtout,outdir):
     fig.savefig(outdir+print_name+'_temp_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-rtout = '/Users/yaolun/bhr71/hyperion/alma/model2.rtout'
-outdir = '/Users/yaolun/test/'
-temp_hyperion(rtout, outdir)
+# rtout = '/Users/yaolun/bhr71/hyperion/alma/model2.rtout'
+# outdir = '/Users/yaolun/test/'
+# temp_hyperion(rtout, outdir)
