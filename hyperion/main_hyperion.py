@@ -33,7 +33,7 @@ if 'no_temp' in sys.argv:
     temp = False
 if 'alma' in sys.argv:
     alma = True
-if '18' in sys.agrv:
+if '18' in sys.argv:
     core_num = 18
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
