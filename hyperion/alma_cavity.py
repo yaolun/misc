@@ -105,17 +105,17 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
     r15, = ax.plot(np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec, val_r15[:,pix/2-1], '--', color='r', linewidth=1.5)
     uni, = ax.plot(np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec, val_uni[:,pix/2-1], color='k', linewidth=1.5)
     ax.legend([reg, r2, r15, uni], [label_reg, label_r2, label_r15, label_uni],\
-              numpoints=1, loc='lower center', fontsize=16)
+              numpoints=1, loc='lower center', fontsize=18)
 
     ax.set_xlim([-1,1])
-    ax.set_xlabel(r'$\mathrm{offset~(arcsec)}$', fontsize=16)
+    ax.set_xlabel(r'$\mathrm{offset~(arcsec)}$', fontsize=24)
     # ax.set_ylabel(r'$\mathrm{I_{\nu}~(erg~s^{-1}~cm^{-2}~Hz^{-1}~sr^{-1})}$', fontsize=16)
-    ax.set_ylabel(cb_label, fontsize=16)
+    ax.set_ylabel(cb_label, fontsize=24)
 
-    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    [ax.spines[axis].set_linewidth(2) for axis in ['top','bottom','left','right']]
     ax.minorticks_on()
-    ax.tick_params('both',labelsize=16,width=1.5,which='major',pad=10,length=5)
-    ax.tick_params('both',labelsize=16,width=1.5,which='minor',pad=10,length=2.5)
+    ax.tick_params('both',labelsize=16,width=2,which='major',pad=10,length=5)
+    ax.tick_params('both',labelsize=16,width=2,which='minor',pad=10,length=2.5)
 
     fig.savefig(outdir+'cavity_intensity_'+str(freq)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
 
@@ -139,22 +139,30 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
             image_grid[i], cmap=plt.cm.jet, vmin=vlim[0], vmax=vlim[1])#vmin=(image_grid[i][trim,trim]).min(), vmax=(image_grid[i][trim,trim]).max())
         grid[i].set_xlim([-2,2])
         grid[i].set_ylim([-2,2])
-        grid[i].set_xlabel(r'$\mathrm{RA~offset~(arcsec)}$', fontsize=12)
-        grid[i].set_ylabel(r'$\mathrm{Dec~offset~(arcsec)}$', fontsize=12)
-        grid[i].tick_params('both',labelsize=10,which='major')
-        grid[i].tick_params('both',labelsize=10,which='minor')
+        grid[i].set_xlabel(r'$\mathrm{RA~offset~(arcsec)}$', fontsize=14)
+        grid[i].set_ylabel(r'$\mathrm{Dec~offset~(arcsec)}$', fontsize=14)
         # lg = grid[i].legend([label_grid[i]], loc='upper center', numpoints=1, fontsize=16)
         # for text in lg.get_texts():
         #     text.set_color('w')
-        grid[i].text(0.5,0.8, label_grid[i], color='w', weight='heavy', fontsize=14, transform=grid[i].transAxes, ha='center')
+        grid[i].text(0.5,0.8, label_grid[i], color='w', weight='heavy', fontsize=18, transform=grid[i].transAxes, ha='center')
         grid[i].locator_params(axis='x', nbins=5)
         grid[i].locator_params(axis='y', nbins=5)
+        [grid[i].spines[axis].set_linewidth(1.2) for axis in ['top','bottom','left','right']]
+        grid[i].tick_params('both',labelsize=12,width=1.2,which='major',pad=10,color='white',length=5)
+        grid[i].tick_params('both',labelsize=12,width=1.2,which='minor',pad=10,color='white',length=2.5)
+
         # fix the overlap tick labels
         if i != 0:
             x_nbins = len(grid[i].get_xticklabels())
             y_nbins = len(grid[i].get_yticklabels())
-            grid[i].xaxis.set_major_locator(MaxNLocator(nbins=5, prune='lower'))
-            grid[i].yaxis.set_major_locator(MaxNLocator(nbins=5, prune='lower'))
+            grid[i].yaxis.set_major_locator(MaxNLocator(nbins=5, prune='upper'))
+            if i != 2:
+                grid[i].xaxis.set_major_locator(MaxNLocator(nbins=5, prune='lower'))
+
+    [grid[0].spines[axis].set_color('white') for axis in ['bottom','right']]
+    [grid[1].spines[axis].set_color('white') for axis in ['bottom','left']]
+    [grid[2].spines[axis].set_color('white') for axis in ['top','right']]
+    [grid[3].spines[axis].set_color('white') for axis in ['top','left']]
 
     #     ax.set_aspect('equal')
     cb = grid.cbar_axes[0].colorbar(im)
@@ -177,7 +185,7 @@ filename = {'reg': '/Users/yaolun/bhr71/hyperion/alma/model2.rtout', \
 #             'r2': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model10/model10.rtout', \
 #             'r15': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model13/model13.rtout', \
 #             'uni': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model16/model16.rtout'}
-label = {'reg': r'$\mathrm{const.+r^{-2}}$', 'r2': r'$\mathrm{r^{-2}}$', 'r15': r'$\mathrm{r^{-1.5}}$', 'uni': r'$\mathrm{uniform}$'}
+label = {'reg': r'$\mathrm{\mathsf{const.+r^{-2}}}$', 'r2': r'$\mathrm{\mathsf{r^{-2}}}$', 'r15': r'$\mathrm{\mathsf{r^{-1.5}}}$', 'uni': r'$\mathrm{\mathsf{uniform}}$'}
 freq = [230,345,460]
 # freq = [345]
 vlim = [[150,800],[600,3200],[1500,9000]]

@@ -165,7 +165,11 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
         fig.clf()
     else:
         # color_list = ['#ffeda0','#feb24c','#f03b20']
-        color_list = ['#fd8d3c','#f03b20','#bd0026']
+        # color_list = ['#fd8d3c','#f03b20','#bd0026']
+        color_list = [[0.8507598215729224, 0.6322174528970308, 0.6702243543099417],\
+                     [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
+                     [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
+
         label = [r'$\mathrm{\Omega_{\circ}=1\times 10^{-14}~s^{-1}}$',r'$\mathrm{\Omega_{\circ}=5\times 10^{-14}~s^{-1}}$',r'$\mathrm{\Omega_{\circ}=1\times 10^{-13}~s^{-1}}$']
         fig = plt.figure(figsize=(8,6))
         ax = fig.add_subplot(111)
@@ -276,6 +280,8 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
                      [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
                      [0.37315740206144277, 0.21948554297767336, 0.40755444345087455],\
                      [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
+        if len(array) == 3:
+            color_list = [color_list[0],color_list[2],color_list[4]]
 
         if obs != None:  
             from get_bhr71_obs import get_bhr71_obs
@@ -386,6 +392,10 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
         # color_list = ['#f03b20','#feb24c','#ffeda0']
         # color_list = ['#ffeda0','#feb24c','#f03b20']
         color_list = ['#fd8d3c','#f03b20','#bd0026']
+        color_list = [[0.8507598215729224, 0.6322174528970308, 0.6702243543099417],\
+                     [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
+                     [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
+
         # label setup
         label = [ r'$\mathrm{\theta_{incl.}=80^{\circ}}$', r'$\mathrm{\theta_{incl.}=70^{\circ}}$',\
                   r'$\mathrm{\theta_{incl.}=60^{\circ}}$']
@@ -513,6 +523,13 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
 
         # set up the color map
         color_list = plt.cm.gnuplot2(np.linspace(0, 1, num+1))
+        color_list = [[0.8507598215729224, 0.6322174528970308, 0.6702243543099417],\
+                     [0.7357826498167007, 0.4722583075098643, 0.5939898816486836],\
+                     [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
+                     [0.37315740206144277, 0.21948554297767336, 0.40755444345087455],\
+                     [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
+        color_list = color_list[len(color_list)-num:]
+
         # label setup
         label = [ r'$\mathrm{1\times 10^{-20}}$', r'$\mathrm{5\times 10^{-20}}$',\
                   r'$\mathrm{1\times 10^{-19}}$', r'$\mathrm{5\times 10^{-19}}$']
@@ -898,7 +915,7 @@ def sed_lum(indir, array, outdir, obs=None):
 
 
 import numpy as np
-indir = '/Users/yaolun/bhr71/hyperion/controlled/'
+indir = '/Users/yaolun/bhr71/hyperion/controlled/cycle1'
 outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # obs = None
@@ -910,9 +927,9 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
 # sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
-# # grid of Omega0
-# array = np.array([18,17,16])
-# sed_omega(indir, array, outdir, obs= None, compact=True)
+# grid of Omega0
+array = np.array([18,17,16])
+sed_omega(indir, array, outdir, obs= None, compact=True)
 
 # # grid of disk parameters
 # # disk mass
@@ -928,15 +945,15 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # plotname = 'disk_beta'
 # sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 
-# # grid of theta_cav and incl.
-# array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
-# # sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
-# sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
+# grid of theta_cav and incl.
+array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
+# sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
+sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 
-# # grid of rho_cav_center and sed_rho_cav_edge
-# array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
-# # sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
-# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
+# grid of rho_cav_center and sed_rho_cav_edge
+array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
+# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
+sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # # # disk & no dis comparison
 # array = np.array([16,61])
@@ -951,9 +968,12 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # sed_rstar(indir, array, outdir, obs=obs)
 
 # # grid of R_env_max
-# array = np.array([63,64,65,66,67])
-# xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
-# compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=5.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=7.5\times 10^{4}~AU}$']
+# # array = np.array([63,64,65,66,67])
+# # xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
+# # compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=5.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=7.5\times 10^{4}~AU}$']
+# array = np.array([4,5,6])
+# xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4})}$'
+# compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$']
 # plotname = 'r_max'
 # sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact)
 
@@ -965,6 +985,6 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # array = np.array([14,17,1])
 # sed_cav_struc_com('/Users/yaolun/bhr71/hyperion/cycle5', array, outdir, obs=obs)
 
-# grid of tstar with the same lstar
-array = np.array([1,2,3])
-sed_lum('/Users/yaolun/test/controlled/', array, outdir)
+# # grid of tstar with the same lstar
+# array = np.array([1,2,3])
+# sed_lum('/Users/yaolun/test/controlled/', array, outdir)
