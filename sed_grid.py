@@ -190,7 +190,7 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
 
         ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=20)
         ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=20)
-        ax.set_ylim([-14,-8])
+        ax.set_ylim([-13,-8])
         # ax.set_xlim([0.4,2])
         # ax.locator_params(axis='x', nbins=5)
 
@@ -915,20 +915,20 @@ def sed_lum(indir, array, outdir, obs=None):
 
 
 import numpy as np
-indir = '/Users/yaolun/bhr71/hyperion/controlled/cycle1'
+indir = '/Users/yaolun/bhr71/hyperion/controlled/'
 outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # obs = None
 
-# # grid of cs and age
-# array = np.array([[1,6,11],[2,7,12],[3,8,13],[4,9,14],[5,10,15]])
-# array = np.array([[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15]])
-# cslist = [0.1,0.2,0.3]
-# agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
-# sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
+# grid of cs and age
+array = np.array([[1,6,11],[2,7,12],[3,8,13],[4,9,14],[5,10,15]])
+array = np.array([[7,8,9,10,11],[12,13,14,15,16],[17,18,19,20,21]])
+cslist = [0.1,0.2,0.3]
+agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
+sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
 # grid of Omega0
-array = np.array([18,17,16])
+array = np.array([24,23,22])
 sed_omega(indir, array, outdir, obs= None, compact=True)
 
 # # grid of disk parameters
@@ -945,15 +945,15 @@ sed_omega(indir, array, outdir, obs= None, compact=True)
 # plotname = 'disk_beta'
 # sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 
-# grid of theta_cav and incl.
-array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
-# sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
-sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
+# # grid of theta_cav and incl.
+# array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
+# # sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
+# sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 
-# grid of rho_cav_center and sed_rho_cav_edge
-array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
-# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
-sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
+# # grid of rho_cav_center and sed_rho_cav_edge
+# array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
+# # sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
+# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # # # disk & no dis comparison
 # array = np.array([16,61])

@@ -16,6 +16,7 @@ control = False
 extract_only = False
 temp = True
 alma=False
+core_num = 20
 
 # Get command-line arguments
 if 'norun' in sys.argv:
@@ -32,6 +33,8 @@ if 'no_temp' in sys.argv:
     temp = False
 if 'alma' in sys.argv:
     alma = True
+if '18' in sys.agrv:
+    core_num = 18
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
@@ -99,7 +102,7 @@ if extract_only == False:
             print 'Running with Hyperion'
             hyp_foo = open(outdir_dum+'hyperion.log','w')
             hyp_err = open(outdir_dum+'hyperion.err','w')
-            run = Popen(['mpirun','-n','20','hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
+            run = Popen(['mpirun','-n',str(core_num),'hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
             run.communicate()
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
