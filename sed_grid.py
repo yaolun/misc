@@ -397,8 +397,8 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                      [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
 
         # label setup
-        label = [ r'$\mathrm{\theta_{incl.}=80^{\circ}}$', r'$\mathrm{\theta_{incl.}=70^{\circ}}$',\
-                  r'$\mathrm{\theta_{incl.}=60^{\circ}}$']
+        label = [ r'$\mathrm{\theta_{incl.}=80^{\circ}}$', r'$\mathrm{\theta_{incl.}=65^{\circ}}$',\
+                  r'$\mathrm{\theta_{incl.}=50^{\circ}}$']
 
         fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(12,2.7))
 
@@ -920,35 +920,41 @@ outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # obs = None
 
-# grid of cs and age
-array = np.array([[1,6,11],[2,7,12],[3,8,13],[4,9,14],[5,10,15]])
-array = np.array([[7,8,9,10,11],[12,13,14,15,16],[17,18,19,20,21]])
-cslist = [0.1,0.2,0.3]
-agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
-sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
+# # grid of cs and age
+# array = np.array([[1,6,11],[2,7,12],[3,8,13],[4,9,14],[5,10,15]])
+# array = np.array([[7,8,9,10,11],[12,13,14,15,16],[17,18,19,20,21]])
+# cslist = [0.1,0.2,0.3]
+# agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
+# sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
-# grid of Omega0
-array = np.array([24,23,22])
-sed_omega(indir, array, outdir, obs= None, compact=True)
+# # grid of Omega0
+# array = np.array([24,23,22])
+# sed_omega(indir, array, outdir, obs= None, compact=True)
 
 # # grid of disk parameters
 # # disk mass
-# array = np.array([19,20,21,22,23])
+# array = np.array([26,27,28,29,30])
 # xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.1,~0.3,~0.5,~0.7,~1.0)}$'
 # compact = [r'$\mathrm{M_{disk}=0.1~M_{\odot}}$',r'$\mathrm{M_{disk}=0.3~M_{\odot}}$',r'$\mathrm{M_{disk}=0.5~M_{\odot}}$',r'$\mathrm{M_{disk}=0.7~M_{\odot}}$',r'$\mathrm{M_{disk}=1.0~M_{\odot}}$']
 # plotname = 'disk_mdisk'
 # sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # # flare power
-# array = np.array([29,30,31,32,33])
+# array = np.array([31,32,33,34,35])
 # xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
 # compact = [r'$\mathrm{\beta=1.0}$',r'$\mathrm{\beta=1.2}$',r'$\mathrm{\beta=1.4}$',r'$\mathrm{\beta=1.6}$',r'$\mathrm{\beta=1.8}$']
 # plotname = 'disk_beta'
 # sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# # scale height
+# array = np.array([36,37,38,39,40])
+# xlabel = r'$\mathrm{h_{100}~[AU]~(6,~8,~10~,12,~14)}$'
+# compact = [r'$\mathrm{h_{100}=6~AU}$',r'$\mathrm{h_{100}=8~AU}$',r'$\mathrm{h_{100}=10~AU}$',r'$\mathrm{h_{100}=12~AU}$',r'$\mathrm{h_{100}=14~AU}$']
+# plotname = 'disk_h100'
+# sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
 
-# # grid of theta_cav and incl.
-# array = np.array([[35,36,37,38,39],[40,41,42,43,44],[45,46,47,48,49]])
-# # sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
-# sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
+# grid of theta_cav and incl.
+array = np.array([[42,43,44,45,46],[47,48,49,50,51],[52,52,53,54,55]])
+# sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
+sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 
 # # grid of rho_cav_center and sed_rho_cav_edge
 # array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
