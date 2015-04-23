@@ -175,7 +175,7 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
     # fig.text(0.5, -0.05 , r'$\mathrm{RA~offset~(arcsec)}$', fontsize=12, ha='center')
     # fig.text(0, 0.5, r'$\mathrm{Dec~offset~(arcsec)}$', fontsize=12, va='center', rotation='vertical')
 
-    fig.savefig(outdir+'cavity_2d_intensity_'+str(freq)+'.png',format='png',dpi=300,bbox_inches='tight')
+    fig.savefig(outdir+'cavity_2d_intensity_'+str(freq)+'.pdf',format='pdf',dpi=300,bbox_inches='tight')
 
 filename = {'reg': '/Users/yaolun/bhr71/hyperion/alma/model2.rtout', \
             'r2': '/Users/yaolun/bhr71/hyperion/alma/model10.rtout', \

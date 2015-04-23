@@ -265,7 +265,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         # loc='lower right',fontsize=mag*16)
 	# lg_sim = ax_sed.legend([sim],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{bol,obs}=%5.2f~L_{\odot}}$' % (l_bol_sim, l_bol_obs)], \
     #     loc='lower right',fontsize=mag*16)
-	text = ax_sed.text(0.2 ,0.05 ,r'$\mathrm{L_{bol,simulation}=%5.2f~L_{\odot},~L_{bol,observation}=%5.2f~L_{\odot}}$' % (l_bol_sim, l_bol_obs),fontsize=mag*16,transform=ax_sed.transAxes) 
+	# text = ax_sed.text(0.2 ,0.05 ,r'$\mathrm{L_{bol,simulation}=%5.2f~L_{\odot},~L_{bol,observation}=%5.2f~L_{\odot}}$' % (l_bol_sim, l_bol_obs),fontsize=mag*16,transform=ax_sed.transAxes) 
 	# text.set_bbox(dict( edgecolor='k',facecolor='None',alpha=0.3,pad=10.0))
 	# plot setting
 	ax_sed.set_xlabel(r'$\mathrm{log~\lambda~({\mu}m)}$',fontsize=mag*20)
@@ -275,7 +275,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 	ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
 	ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='minor',pad=15,length=2.5*mag)
 
-	ax_sed.set_ylim([-14,-7])
+	ax_sed.set_ylim([-13,-7.5])
 	ax_sed.set_xlim([0,3])
 
 	lg_data = ax_sed.legend([irs, photometry, aper, aper_obs],\
