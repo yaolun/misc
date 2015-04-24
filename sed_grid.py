@@ -951,15 +951,15 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # plotname = 'disk_h100'
 # sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
 
-# grid of theta_cav and incl.
-array = np.array([[42,43,44,45,46],[47,48,49,50,51],[52,52,53,54,55]])
-# sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
-sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
+# # grid of theta_cav and incl.
+# array = np.array([[42,43,44,45,46],[47,48,49,50,51],[52,52,53,54,55]])
+# # sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
+# sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 
-# # grid of rho_cav_center and sed_rho_cav_edge
-# array = np.array([[49,50,51,52],[53,54,55,56],[57,58,59,60]])
-# # sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
-# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
+# grid of rho_cav_center and sed_rho_cav_edge
+array = np.array([[57,58,59,60],[61,62,63,64],[65,66,67,68]])
+# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
+sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # # # disk & no dis comparison
 # array = np.array([16,61])
