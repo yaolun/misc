@@ -40,6 +40,7 @@ def get_bhr71_obs(indir):
 		sigma_noise = np.hstack((sigma_noise,sigma_dum))
 	sigma_noise = np.array(sigma_noise)
 
+	# print len(wl_spec), len(sigma_noise)
 	# Read in the photometry data
 	phot = np.genfromtxt(indir+'bhr71.txt',dtype=None,skip_header=1,comments='%')
 	wl_phot = []

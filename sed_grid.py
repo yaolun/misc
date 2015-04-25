@@ -608,8 +608,8 @@ def disk_exist_com(indir, array, outdir, obs=None):
     (nd_wave_inf, nd_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
     (nd_wave, nd_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
 
-    disk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='b',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=2)
-    nodisk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='k',mec='k',markersize=7,markeredgewidth=1,color='k', linewidth=2)
+    disk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='b',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=2)
+    nodisk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='k',mec='k',markersize=7,markeredgewidth=1,color='k', linewidth=2)
 
     if obs != None:  
         import sys
@@ -932,12 +932,12 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # sed_omega(indir, array, outdir, obs= None, compact=True)
 
 # # grid of disk parameters
-# # disk mass
-# array = np.array([26,27,28,29,30])
-# xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.1,~0.3,~0.5,~0.7,~1.0)}$'
-# compact = [r'$\mathrm{M_{disk}=0.1~M_{\odot}}$',r'$\mathrm{M_{disk}=0.3~M_{\odot}}$',r'$\mathrm{M_{disk}=0.5~M_{\odot}}$',r'$\mathrm{M_{disk}=0.7~M_{\odot}}$',r'$\mathrm{M_{disk}=1.0~M_{\odot}}$']
-# plotname = 'disk_mdisk'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# disk mass
+array = np.array([69,70,71,72,73])
+xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.01,~0.03,~0.05,~0.07,~0.1)}$'
+compact = [r'$\mathrm{M_{disk}=0.01~M_{\odot}}$',r'$\mathrm{M_{disk}=0.03~M_{\odot}}$',r'$\mathrm{M_{disk}=0.05~M_{\odot}}$',r'$\mathrm{M_{disk}=0.07~M_{\odot}}$',r'$\mathrm{M_{disk}=0.1~M_{\odot}}$']
+plotname = 'disk_mdisk'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # # flare power
 # array = np.array([31,32,33,34,35])
 # xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
@@ -956,14 +956,14 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # # sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
 # sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 
-# grid of rho_cav_center and sed_rho_cav_edge
-array = np.array([[57,58,59,60],[61,62,63,64],[65,66,67,68]])
-# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
-sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
+# # grid of rho_cav_center and sed_rho_cav_edge
+# array = np.array([[57,58,59,60],[61,62,63,64],[65,66,67,68]])
+# # sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
+# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
-# # # disk & no dis comparison
-# array = np.array([16,61])
-# disk_exist_com(indir, array, outdir, obs=obs)
+# # disk & no dis comparison
+array = np.array([69,74])
+disk_exist_com(indir, array, outdir, obs=obs)
 
 # # grid of tstar
 # array = np.array([69,70,71])
