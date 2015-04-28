@@ -1,4 +1,4 @@
-def temp_hyperion(rtout,outdir):
+def temp_hyperion(rtout,outdir, bb_dust=False):
     import numpy as np
     import matplotlib.pyplot as plt
     import os
@@ -40,7 +40,8 @@ def temp_hyperion(rtout,outdir):
     ax.set_xlabel(r'$\mathrm{Polar~angle~(Degree)}$',fontsize=20)
     ax.set_ylabel(r'$\mathrm{Radius~(AU)}$',fontsize=20)
     ax.tick_params(labelsize=20)
-    ax.set_yticks(np.arange(0,max(ri)/AU,max(ri)/AU/5))
+    print np.ceil(max(ri)/AU/1e4)*1e4
+    ax.set_yticks(np.linspace(0,np.ceil(max(ri)/AU/1e4)*1e4,5))
 
     ax.set_xticklabels([r'$\mathrm{90^{\circ}}$',r'$\mathrm{45^{\circ}}$',r'$\mathrm{0^{\circ}}$',r'$\mathrm{-45^{\circ}}$',\
                             r'$\mathrm{-90^{\circ}}$',r'$\mathrm{-135^{\circ}}$',r'$\mathrm{180^{\circ}}$',r'$\mathrm{135^{\circ}}$'])
@@ -59,16 +60,36 @@ def temp_hyperion(rtout,outdir):
     ax = fig.add_subplot(111)
 
     plot_grid = [0,99,199]
+    label_grid = [r'$\mathrm{midplane}$', r'$\mathrm{45^{\circ}}$', r'$\mathrm{outflow}$']
     alpha = np.linspace(0.3,1.0,len(plot_grid))
-    for i in plot_grid:
-        rho_rad, = ax.plot(np.log10(rc/AU), np.log10(temp2d[:,i]),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+    color_list = [[0.8507598215729224, 0.6322174528970308, 0.6702243543099417],\
+             [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
+             [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
 
-    ax.set_xlabel(r'$\mathrm{log~R~(AU)}$',fontsize=20)
-    ax.set_ylabel(r'$\mathrm{log~T~(K)}$',fontsize=20)
-    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    for i in plot_grid:
+        temp_rad, = ax.plot(np.log10(rc/AU), np.log10(temp2d[:,i]),'-',color=color_list[plot_grid.index(i)],\
+                            linewidth=2, markersize=3,label=label_grid[plot_grid.index(i)])
+
+    # plot the theoretical prediction for black body dust without considering the extinction
+    if bb_dust == True:
+        from hyperion.model import Model
+        sigma = const.sigma_sb.cgs.value
+        lsun = const.L_sun.cgs.value
+
+        dum = Model()
+        dum.use_sources(rtout)
+        L_cen = dum.sources[0].luminosity/lsun
+
+        t_bbdust = (L_cen*lsun/(16*np.pi*sigma*rc**2))**(0.25)
+        temp_bbdust, = ax.plot(np.log10(rc/AU), np.log10(t_bbdust), '--', color='r', linewidth=2.5,label=r'$\mathrm{blackbody~dust}$')
+
+    ax.legend(loc='upper right', numpoints=1, fontsize=24)
+    ax.set_xlabel(r'$\mathrm{log~R~(AU)}$',fontsize=24)
+    ax.set_ylabel(r'$\mathrm{log~T~(K)}$',fontsize=24)
+    [ax.spines[axis].set_linewidth(2) for axis in ['top','bottom','left','right']]
     ax.minorticks_on()
-    ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
-    ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+    ax.tick_params('both',labelsize=24,width=2,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=24,width=2,which='minor',pad=15,length=2.5)
     ax.set_ylim([0,4])
     fig.gca().set_xlim(left=np.log10(0.05))
     # ax.set_xlim([np.log10(0.8),np.log10(10000)])
@@ -76,6 +97,6 @@ def temp_hyperion(rtout,outdir):
     fig.savefig(outdir+print_name+'_temp_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/alma/model2.rtout'
-# outdir = '/Users/yaolun/test/'
-# temp_hyperion(rtout, outdir)
+rtout = '/Users/yaolun/bhr71/hyperion/alma/model2.rtout'
+outdir = '/Users/yaolun/test/'
+temp_hyperion(rtout, outdir, bb_dust=True)
