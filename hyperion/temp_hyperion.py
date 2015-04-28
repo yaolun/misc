@@ -60,7 +60,7 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     ax = fig.add_subplot(111)
 
     plot_grid = [0,99,199]
-    label_grid = [r'$\mathrm{midplane}$', r'$\mathrm{45^{\circ}}$', r'$\mathrm{outflow}$']
+    label_grid = [r'$\mathrm{outflow}$', r'$\mathrm{45^{\circ}}$', r'$\mathrm{midplane}$']
     alpha = np.linspace(0.3,1.0,len(plot_grid))
     color_list = [[0.8507598215729224, 0.6322174528970308, 0.6702243543099417],\
              [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
