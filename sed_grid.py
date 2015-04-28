@@ -815,22 +815,27 @@ def sed_cav_struc_com(indir, array, outdir, obs=None):
     ax = fig.add_subplot(111)
 
     # get data
-    # tstar = 4500 K
+    # rho(r) ~ r^-2
     (r1_wave_inf, r1_sed_inf) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
     (r1_wave, r1_sed) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
 
-    # tstar = 5000 K
+    # rho(r) ~ r^-1.5
     (r2_wave_inf, r2_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
     (r2_wave, r2_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
 
-    # tstar = 5500 K
+    # rho(r) ~ cont.s + r^-2
     (r3_wave_inf, r3_sed_inf) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
     (r3_wave, r3_sed) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
+
+    # rho(r) ~ uniform
+    (r4_wave_inf, r4_sed_inf) = np.genfromtxt(indir+'/model'+str(array[3])+'_sed_inf.txt', skip_header=1).T
+    (r4_wave, r4_sed) = np.genfromtxt(indir+'/model'+str(array[3])+'_sed_w_aperture.txt', skip_header=1).T
 
     r1, = ax.plot(np.log10(r1_wave), np.log10(r1_sed), 'o-',mfc='Magenta',mec='Magenta',markersize=7,markeredgewidth=1,color='Magenta', linewidth=2)
     r2, = ax.plot(np.log10(r2_wave), np.log10(r2_sed), 'o-',mfc='r',mec='r',markersize=7,markeredgewidth=1,color='r', linewidth=2)
     r3, = ax.plot(np.log10(r3_wave), np.log10(r3_sed), 'o-',mfc='b',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=2)
-
+    r4, = ax.plot(np.log10(r4_wave), np.log10(r4_sed), 'o-',mfc='k',mec='k',markersize=7,markeredgewidth=1,color='k', linewidth=2)
+ 
     if obs != None:  
         import sys
         sys.path.append('/Users/yaolun/programs/misc/hyperion')
@@ -853,7 +858,12 @@ def sed_cav_struc_com(indir, array, outdir, obs=None):
     ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=20)
     ax.set_ylim([-13,-7])
 
-    plt.legend([r1, r2, r3, obs_data], [r'$\mathrm{\rho(r)\propto r^{-2}}$', r'$\mathrm{\rho(r)\propto r^{-1.5}}$',r'$\mathrm{const.+r^{-2}}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
+    plt.legend([r1, r2, r3, r4, obs_data], [r'$\mathrm{\rho(r)\propto r^{-2}}$', r'$\mathrm{\rho(r)\propto r^{-1.5}}$',\
+                r'$\mathrm{const.+r^{-2}}$',r'$\mathrm{uniform}$',r'$\mathrm{observation}$'],\
+                numpoints=1, loc='lower right', fontsize=16)
+    # plt.legend([r1, r2, r4, obs_data], [r'$\mathrm{\rho(r)\propto r^{-2}}$', r'$\mathrm{\rho(r)\propto r^{-1.5}}$',\
+    #             r'$\mathrm{uniform}$',r'$\mathrm{observation}$'],\
+    #             numpoints=1, loc='lower right', fontsize=16)
 
     fig.savefig(outdir+'sed_cav_struc_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
@@ -931,13 +941,13 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # array = np.array([24,23,22])
 # sed_omega(indir, array, outdir, obs= None, compact=True)
 
-# # grid of disk parameters
-# disk mass
-array = np.array([69,70,71,72,73])
-xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.01,~0.03,~0.05,~0.07,~0.1)}$'
-compact = [r'$\mathrm{M_{disk}=0.01~M_{\odot}}$',r'$\mathrm{M_{disk}=0.03~M_{\odot}}$',r'$\mathrm{M_{disk}=0.05~M_{\odot}}$',r'$\mathrm{M_{disk}=0.07~M_{\odot}}$',r'$\mathrm{M_{disk}=0.1~M_{\odot}}$']
-plotname = 'disk_mdisk'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# # # grid of disk parameters
+# # disk mass
+# array = np.array([69,70,71,72,73])
+# xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.01,~0.03,~0.05,~0.07,~0.1)}$'
+# compact = [r'$\mathrm{M_{disk}=0.01~M_{\odot}}$',r'$\mathrm{M_{disk}=0.03~M_{\odot}}$',r'$\mathrm{M_{disk}=0.05~M_{\odot}}$',r'$\mathrm{M_{disk}=0.07~M_{\odot}}$',r'$\mathrm{M_{disk}=0.1~M_{\odot}}$']
+# plotname = 'disk_mdisk'
+# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # # flare power
 # array = np.array([31,32,33,34,35])
 # xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
@@ -961,9 +971,9 @@ sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=c
 # # sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
 # sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
-# # disk & no dis comparison
-array = np.array([69,74])
-disk_exist_com(indir, array, outdir, obs=obs)
+# # # disk & no dis comparison
+# array = np.array([69,74])
+# disk_exist_com(indir, array, outdir, obs=obs)
 
 # # grid of tstar
 # array = np.array([69,70,71])
@@ -987,9 +997,9 @@ disk_exist_com(indir, array, outdir, obs=obs)
 # array = np.array([13,14,15])
 # sed_cav_powerlaw('/Users/yaolun/bhr71/hyperion/cycle5', array, outdir, obs=obs)
 
-# # grid of cavity structure comparison
-# array = np.array([14,17,1])
-# sed_cav_struc_com('/Users/yaolun/bhr71/hyperion/cycle5', array, outdir, obs=obs)
+# grid of cavity structure comparison
+array = np.array([1,2,25,0])  # r-2, r-1.5, const.+r-2, uniform
+sed_cav_struc_com('/Users/yaolun/bhr71/hyperion/cycle6', array, outdir, obs=obs)
 
 # # grid of tstar with the same lstar
 # array = np.array([1,2,3])

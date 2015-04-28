@@ -177,7 +177,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
 
 	# plot the simulated SED
-	# sim, = ax_sed.plot(np.log10(sed_inf.wav), np.log10(sed_inf.val), '-', color='GoldenRod', linewidth=1.5*mag)
+	# sim, = ax_sed.plot(np.log10(sed_inf.wav), np.log10(sed_inf.val), '-', color='k', linewidth=1.5*mag, alpha=0.7)
 	# get flux at different apertures
 	flux_aper = np.empty_like(wl_aper)
 	unc_aper = np.empty_like(wl_aper)
@@ -277,6 +277,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
 	ax_sed.set_ylim([-13,-7.5])
 	ax_sed.set_xlim([0,3])
+
+	# lg_data = ax_sed.legend([sim, aper], [r'$\mathrm{w/o~aperture}$', r'$\mathrm{w/~aperture}$'], \
+	# 						loc='upper left', fontsize=14*mag, framealpha=0.3, numpoints=1)
 
 	lg_data = ax_sed.legend([irs, photometry, aper, aper_obs],\
 		[r'$\mathrm{observation}$',\
