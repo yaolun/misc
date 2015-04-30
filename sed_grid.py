@@ -961,17 +961,17 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # plotname = 'disk_h100'
 # sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
 
-# grid of theta_cav and incl.
-array = np.array([[42,43,44,45,46],[47,48,49,50,51],[52,53,54,55,56]])
-# sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
-sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
-# only for incl. = 50
-array = np.array([52,53,54,55,56])
-xlabel = r'$\mathrm{\theta_{cav}~[deg.]~(15^{\circ}, 20^{\circ}, 25^{\circ}, 30^{\circ}, 35^{\circ})}$'
-plotname = 'theta_cav_incl50'
-compact = [r'$\mathrm{\theta_{cav}=15^{\circ}}$',r'$\mathrm{\theta_{cav}=20^{\circ}}$',r'$\mathrm{\theta_{cav}=25^{\circ}}$',\
-           r'$\mathrm{\theta_{cav}=30^{\circ}}$',r'$\mathrm{\theta_{cav}=35^{\circ}}$']
-sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
+# # grid of theta_cav and incl.
+# array = np.array([[42,43,44,45,46],[47,48,49,50,51],[52,53,54,55,56]])
+# # sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
+# sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
+# # only for incl. = 50
+# array = np.array([52,53,54,55,56])
+# xlabel = r'$\mathrm{\theta_{cav}~[deg.]~(15^{\circ}, 20^{\circ}, 25^{\circ}, 30^{\circ}, 35^{\circ})}$'
+# plotname = 'theta_cav_incl50'
+# compact = [r'$\mathrm{\theta_{cav}=15^{\circ}}$',r'$\mathrm{\theta_{cav}=20^{\circ}}$',r'$\mathrm{\theta_{cav}=25^{\circ}}$',\
+#            r'$\mathrm{\theta_{cav}=30^{\circ}}$',r'$\mathrm{\theta_{cav}=35^{\circ}}$']
+# sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
 
 # # grid of rho_cav_center and sed_rho_cav_edge
 # array = np.array([[57,58,59,60],[61,62,63,64],[65,66,67,68]])
@@ -990,15 +990,15 @@ sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
 # array = np.array([72,73,74])
 # sed_rstar(indir, array, outdir, obs=obs)
 
-# # grid of R_env_max
-# # array = np.array([63,64,65,66,67])
-# # xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
-# # compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=5.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=7.5\times 10^{4}~AU}$']
-# array = np.array([4,5,6])
-# xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4})}$'
-# compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$']
-# plotname = 'r_max'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact)
+# grid of R_env_max
+# array = np.array([63,64,65,66,67])
+# xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
+# compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=5.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=7.5\times 10^{4}~AU}$']
+array = np.array([4,5,6])
+xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4})}$'
+compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$']
+plotname = 'r_max'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact)
 
 # # grid of continuous cavity power law
 # array = np.array([13,14,15])
