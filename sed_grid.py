@@ -41,7 +41,7 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=4,markeredgewidth=1,linewidth=1.2)
             # print the bolometric temperature
-            ax.text(0.4, 0.1, r'$\mathrm{T_{bol}= %4.1f~K}$' % t_bol(wave,sed*wave*1e-4/c), fontsize=12, transform=ax.transAxes)
+            ax.text(0.4, 0.1, r'$T_{bol}= %4.1f\/K$' % t_bol(wave,sed*wave*1e-4/c), fontsize=12, transform=ax.transAxes)
 
             ax.set_ylim([-15,-8])
 
@@ -52,8 +52,8 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
 
             if rr+1 == row:
                 if cc == 0:
-                    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
-                    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
+                    ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=14)
+                    ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=14)
             # # density part
             # else:
             #     m = ModelOutput(indir+'/model'+str(array[1, cc])+'.rtout')
@@ -82,8 +82,8 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
             #     ax.yaxis.tick_right()
             #     ax.yaxis.set_label_position("right")
             #     if rr+1 == row:
-            #         ax.set_xlabel(r'$\mathrm{radius~[AU]}$', fontsize=14)
-            #         ax.set_ylabel(r'$\mathrm{dust~density~[g~cm^{-3}]}$', fontsize=14)
+            #         ax.set_xlabel(r'$\rm{radius\/[AU]}$', fontsize=14)
+            #         ax.set_ylabel(r'$\rm{dust\/density\/[g\/cm^{-3}]}$', fontsize=14)
 
             # fix the overlap tick labels
             x_nbins = len(ax.get_xticklabels())
@@ -92,8 +92,8 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
                 ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
                 ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
-    fig.text(0.5, -0.05 , r'$\mathrm{age~[yr]~(1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4},~1\times 10^{5})}$', fontsize=20, ha='center')
-    fig.text(0, 0.5, r'$\mathrm{sound~speed~[km~s^{-1}]~(0.3,~0.2,~0.1)}$', fontsize=20, va='center', rotation='vertical')
+    fig.text(0.5, -0.05 , r'$age\/[yr]\/(1\times 10^{4},\/2.5\times 10^{4},\/5\times 10^{4},\/7.5\times 10^{4},\/1\times 10^{5})$', fontsize=20, ha='center')
+    fig.text(0, 0.5, r'$sound\/speed\/[km\/s^{-1}]\/(0.38,\/0.25,\/0.2)$', fontsize=20, va='center', rotation='vertical')
 
     fig.subplots_adjust(hspace=0,wspace=0)
     fig.savefig(outdir+'sed_cs_age.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -148,8 +148,8 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
             ax.tick_params('both',labelsize=12,width=1.2,which='minor',pad=15,length=2.5)
 
             if cc == 0:
-                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
-                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
+                ax.set_xlabel(r'$log(wavelength)\/(\mu m)}$', fontsize=14)
+                ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=14)
 
             # fix the overlap tick labels
             x_nbins = len(ax.get_xticklabels())
@@ -158,7 +158,7 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
                 ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
                 ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
-        fig.text(0.5, -0.13 , r'$\mathrm{\Omega_{\circ}~[s^{-1}]~(1\times 10^{-13},~5\times 10^{-14},~1\times 10^{-14})}$', fontsize=14, ha='center')
+        fig.text(0.5, -0.13 , r'$\Omega_{\circ}\/[s^{-1}]\/(1\times 10^{-13},\/5\times 10^{-14},\/1\times 10^{-14})$', fontsize=14, ha='center')
 
         fig.subplots_adjust(hspace=0,wspace=0)
         fig.savefig(outdir+'sed_omega0.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -170,7 +170,7 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
                      [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
                      [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
 
-        label = [r'$\mathrm{\Omega_{\circ}=1\times 10^{-14}~s^{-1}}$',r'$\mathrm{\Omega_{\circ}=5\times 10^{-14}~s^{-1}}$',r'$\mathrm{\Omega_{\circ}=1\times 10^{-13}~s^{-1}}$']
+        label = [r'$\Omega_{\circ}=1\times 10^{-14}\/s^{-1}$',r'$\Omega_{\circ}=5\times 10^{-14}\/s^{-1}$',r'$\Omega_{\circ}=1\times 10^{-13}\/s^{-1}$']
         fig = plt.figure(figsize=(8,6))
         ax = fig.add_subplot(111)
 
@@ -188,8 +188,8 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
         ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-        ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=20)
-        ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=20)
+        ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=20)
+        ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=20)
         ax.set_ylim([-13,-8])
         # ax.set_xlim([0.4,2])
         # ax.locator_params(axis='x', nbins=5)
@@ -240,7 +240,7 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=3,markeredgewidth=1,linewidth=1.2)
 
             if tbol == True:
-                 ax.text(0.4, 0.1, r'$\mathrm{T_{bol}= %4.1f~K}$' % t_bol(wave, sed*wave*1e-4/c), fontsize=12, transform=ax.transAxes)
+                 ax.text(0.4, 0.1, r'$T_{bol}= %4.1f\/K$' % t_bol(wave, sed*wave*1e-4/c), fontsize=12, transform=ax.transAxes)
 
             if zoom == True:
                 ax.set_xlim([0.4,2])
@@ -251,8 +251,8 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             ax.tick_params('both',labelsize=10,width=1.2,which='minor',pad=15,length=2.5)
 
             if cc == 0:
-                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
-                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
+                ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=14)
+                ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=14)
 
             # fix the overlap tick labels
             x_nbins = len(ax.get_xticklabels())
@@ -299,8 +299,8 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i])
             ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
-        ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=18)
-        ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=18)
+        ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=18)
+        ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=18)
         ax.set_ylim([-14,-8])
         if zoom == True:
             ax.set_xlim([0.4,2])
@@ -367,8 +367,8 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
 
                 if rr+1 == row:
                     if cc == 0:
-                        ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
-                        ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
+                        ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=14)
+                        ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=14)
             
                 # fix the overlap tick labels
                 x_nbins = len(ax.get_xticklabels())
@@ -377,8 +377,8 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                     ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
                     ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
-        fig.text(0.5, -0.05 , r'$\mathrm{\theta_{\rm cav}~[deg.]~(15^{\circ},~20^{\circ},~25^{\circ},~30^{\circ},~35^{\circ})}$', fontsize=20, ha='center')
-        fig.text(0, 0.5, r'$\mathrm{\theta_{\rm incl.}~[deg.]~(60^{\circ},~70^{\circ},~8 0^{\circ})}$', fontsize=20, va='center', rotation='vertical')
+        fig.text(0.5, -0.05 , r'$\theta_{\rm cav}\/[deg.]\/(15^{\circ},\/20^{\circ},\/25^{\circ},\/30^{\circ},\/35^{\circ})$', fontsize=20, ha='center')
+        fig.text(0, 0.5, r'$\theta_{\rm incl.}\/[deg.]\/(60^{\circ},\/70^{\circ},\/8 0^{\circ})$', fontsize=20, va='center', rotation='vertical')
 
         fig.subplots_adjust(hspace=0,wspace=0)
         fig.savefig(outdir+'sed_theta_cav_incl.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -397,8 +397,8 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                      [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
 
         # label setup
-        label = [ r'$\mathrm{\theta_{incl.}=80^{\circ}}$', r'$\mathrm{\theta_{incl.}=65^{\circ}}$',\
-                  r'$\mathrm{\theta_{incl.}=50^{\circ}}$']
+        label = [ r'$\theta_{incl.}=80^{\circ}$', r'$\theta_{incl.}=65^{\circ}$',\
+                  r'$\theta_{incl.}=50^{\circ}$']
 
         fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(12,2.7))
 
@@ -435,8 +435,8 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
             ax.tick_params('both',labelsize=14,width=1.2,which='minor',pad=10,length=2.5)
 
             if cc == 0:
-                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
-                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
+                ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=16)
+                ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=16)
 
             # fix the overlap tick labels
             x_nbins = len(ax.get_xticklabels())
@@ -445,8 +445,8 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                 ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
                 ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
-        # fig.text(0.5, -0.05 , r'$\mathrm{\rho_{cav,\circ}~[g~cm^{-3}]~(1\times 10^{-20},~5\times 10^{-20},~1\times 10^{-19},~5\times 10^{-19})}$', fontsize=20, ha='center')
-        fig.text(0.5, -0.15, r'$\mathrm{\theta_{cav}~[deg.]~(15^{\circ},~20^{\circ},~25^{\circ},~30^{\circ},~35^{\circ})}$', fontsize=20, ha='center' )
+        # fig.text(0.5, -0.05 , r'$\rho_{cav,\circ}\/[g\/cm^{-3}]\/(1\times 10^{-20},\/5\times 10^{-20},\/1\times 10^{-19},\/5\times 10^{-19})$', fontsize=20, ha='center')
+        fig.text(0.5, -0.15, r'$\theta_{cav}\/[deg.]\/(15^{\circ},\/20^{\circ},\/25^{\circ},\/30^{\circ},\/35^{\circ})$', fontsize=20, ha='center' )
 
         fig.subplots_adjust(hspace=0,wspace=0)
         fig.savefig(outdir+'sed_theta_cav_incl.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -500,8 +500,8 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
 
                 if rr+1 == row:
                     if cc == 0:
-                        ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=14)
-                        ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=14)
+                        ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=14)
+                        ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=14)
             
                 # fix the overlap tick labels
                 x_nbins = len(ax.get_xticklabels())
@@ -510,8 +510,8 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
                     ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
                     ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
-        fig.text(0.5, -0.05 , r'$\mathrm{\rho_{cav,\circ}~[g~cm^{-3}]~(1\times 10^{-20},~5\times 10^{-20},~1\times 10^{-19},~5\times 10^{-19})}$', fontsize=20, ha='center')
-        fig.text(0, 0.5, r'$\mathrm{R_{cav,\circ}~[AU]~(40,~30,~20)}$', fontsize=20, va='center', rotation='vertical')
+        fig.text(0.5, -0.05 , r'$\rho_{cav,\circ}\/[g\/cm^{-3}]\/(1\times 10^{-20},\/5\times 10^{-20},\/1\times 10^{-19},\/5\times 10^{-19})$', fontsize=20, ha='center')
+        fig.text(0, 0.5, r'$R_{cav,\circ}\/[AU]\/(40,\/30,\/20)$', fontsize=20, va='center', rotation='vertical')
 
         fig.subplots_adjust(hspace=0,wspace=0)
         fig.savefig(outdir+'sed_rho_cav_centeredge.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -531,8 +531,8 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
         color_list = color_list[len(color_list)-num:]
 
         # label setup
-        label = [ r'$\mathrm{1\times 10^{-20}}$', r'$\mathrm{5\times 10^{-20}}$',\
-                  r'$\mathrm{1\times 10^{-19}}$', r'$\mathrm{5\times 10^{-19}}$']
+        label = [ r'$5\times 10^{-20}$', r'$1\times 10^{-19}$',\
+                  r'$5\times 10^{-19}$', r'$1\times 10^{-18}$']
 
         fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(12,2.7))
 
@@ -569,8 +569,8 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
             ax.tick_params('both',labelsize=16,width=1.2,which='minor',pad=10,length=2.5)
 
             if cc == 0:
-                ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=18)
-                ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=18)
+                ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=18)
+                ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=18)
 
             # fix the overlap tick labels
             x_nbins = len(ax.get_xticklabels())
@@ -579,8 +579,8 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
                 ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
                 ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
-        # fig.text(0.5, -0.05 , r'$\mathrm{\rho_{cav,\circ}~[g~cm^{-3}]~(1\times 10^{-20},~5\times 10^{-20},~1\times 10^{-19},~5\times 10^{-19})}$', fontsize=20, ha='center')
-        fig.text(0.5, -0.15, r'$\mathrm{R_{cav,\circ}~[AU]~(20,~30,~40)}$', fontsize=20, ha='center' )
+        # fig.text(0.5, -0.05 , r'$\rho_{cav,\circ}\/[g\/cm^{-3}]\/(1\times 10^{-20},\/5\times 10^{-20},\/1\times 10^{-19},\/5\times 10^{-19})$', fontsize=20, ha='center')
+        fig.text(0.5, -0.15, r'$R_{cav,\circ}\/[AU]\/(20,\/30,\/40)$', fontsize=20, ha='center' )
 
         fig.subplots_adjust(hspace=0,wspace=0)
         fig.savefig(outdir+'sed_rho_cav_centeredge.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -629,10 +629,10 @@ def disk_exist_com(indir, array, outdir, obs=None):
     ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
     ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=20)
-    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=20)
+    ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=20)
+    ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=20)
 
-    plt.legend([disk, nodisk, obs_data], [r'$\mathrm{w/~disk}$', r'$\mathrm{w/o~disk}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
+    plt.legend([disk, nodisk, obs_data], [r'$w/\/disk$', r'$w/o\/disk$',r'$observation$'], numpoints=1, loc='lower right', fontsize=16)
 
     fig.savefig(outdir+'sed_disk_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
@@ -684,11 +684,11 @@ def sed_tstar(indir, array, outdir, obs=None):
     ax.tick_params('both',labelsize=14,width=1.5,which='major',pad=15,length=5)
     ax.tick_params('both',labelsize=14,width=1.5,which='minor',pad=15,length=2.5)
 
-    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
-    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
+    ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=16)
+    ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=16)
     ax.set_ylim([-13,-7])
 
-    plt.legend([t1, t2, t3, obs_data], [r'$\mathrm{T_{\star}=4500~K}$', r'$\mathrm{T_{\star}=5000~K}$',r'$\mathrm{T_{\star}=5500~K}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
+    plt.legend([t1, t2, t3, obs_data], [r'$T_{\star}=4500\/K$', r'$T_{\star}=5000\/K$',r'$T_{\star}=5500\/K$',r'$observation$'], numpoints=1, loc='lower right', fontsize=16)
 
     fig.savefig(outdir+'sed_tstar.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
@@ -739,11 +739,11 @@ def sed_rstar(indir, array, outdir, obs=None):
     ax.tick_params('both',labelsize=14,width=1.5,which='major',pad=15,length=5)
     ax.tick_params('both',labelsize=14,width=1.5,which='minor',pad=15,length=2.5)
 
-    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
-    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
+    ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=16)
+    ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=16)
     ax.set_ylim([-13,-7])
 
-    plt.legend([r1, r2, r3, obs_data], [r'$\mathrm{R_{\star}=0.3~R_{\odot}}$', r'$\mathrm{R_{\star}=0.5~R_{\odot}}$',r'$\mathrm{R_{\star}=0.7~R_{\odot}}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
+    plt.legend([r1, r2, r3, obs_data], [r'$R_{\star}=0.3\/R_{\odot}$', r'$R_{\star}=0.5\/R_{\odot}$',r'$R_{\star}=0.7\/R_{\odot}$',r'$observation$'], numpoints=1, loc='lower right', fontsize=16)
 
     fig.savefig(outdir+'sed_rstar.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
@@ -794,11 +794,11 @@ def sed_cav_powerlaw(indir, array, outdir, obs=None):
     ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
     ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=20)
-    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=20)
+    ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=20)
+    ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=20)
     ax.set_ylim([-13,-7])
 
-    plt.legend([r1, r2, r3, obs_data], [r'$\mathrm{\rho_{cav,\circ}=5\times 10^{-15}~g~cm^{-3}}$', r'$\mathrm{\rho_{cav,\circ}=5\times 10^{-16}~g~cm^{-3}}$',r'$\mathrm{\rho_{cav,\circ}=5\times 10^{-17}~g~cm^{-3}}$',r'$\mathrm{observation}$'], numpoints=1, loc='lower right', fontsize=16)
+    plt.legend([r1, r2, r3, obs_data], [r'$\rho_{cav,\circ}=5\times 10^{-15}\/g\/cm^{-3}$', r'$\rho_{cav,\circ}=5\times 10^{-16}\/g\/cm^{-3}$',r'$\rho_{cav,\circ}=5\times 10^{-17}\/g\/cm^{-3}$',r'$observation$'], numpoints=1, loc='lower right', fontsize=16)
 
     fig.savefig(outdir+'sed_cav_cont_powerlaw.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
@@ -815,19 +815,19 @@ def sed_cav_struc_com(indir, array, outdir, obs=None):
     ax = fig.add_subplot(111)
 
     # get data
-    # rho(r) ~ r^-2
+    # rho(r) \/ r^-2
     (r1_wave_inf, r1_sed_inf) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
     (r1_wave, r1_sed) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
 
-    # rho(r) ~ r^-1.5
+    # rho(r) \/ r^-1.5
     (r2_wave_inf, r2_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
     (r2_wave, r2_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
 
-    # rho(r) ~ cont.s + r^-2
+    # rho(r) \/ cont.s + r^-2
     (r3_wave_inf, r3_sed_inf) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
     (r3_wave, r3_sed) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
 
-    # rho(r) ~ uniform
+    # rho(r) \/ uniform
     (r4_wave_inf, r4_sed_inf) = np.genfromtxt(indir+'/model'+str(array[3])+'_sed_inf.txt', skip_header=1).T
     (r4_wave, r4_sed) = np.genfromtxt(indir+'/model'+str(array[3])+'_sed_w_aperture.txt', skip_header=1).T
 
@@ -854,15 +854,15 @@ def sed_cav_struc_com(indir, array, outdir, obs=None):
     ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
     ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=20)
-    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=20)
+    ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=20)
+    ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=20)
     ax.set_ylim([-13,-7])
 
-    plt.legend([r1, r2, r3, r4, obs_data], [r'$\mathrm{\rho(r)\propto r^{-2}}$', r'$\mathrm{\rho(r)\propto r^{-1.5}}$',\
-                r'$\mathrm{const.+r^{-2}}$',r'$\mathrm{uniform}$',r'$\mathrm{observation}$'],\
+    plt.legend([r1, r2, r3, r4, obs_data], [r'$\rho(r)\propto r^{-2}$', r'$\rho(r)\propto r^{-1.5}$',\
+                r'$const.+r^{-2}$',r'$uniform$',r'$observation$'],\
                 numpoints=1, loc='lower right', fontsize=16)
-    # plt.legend([r1, r2, r4, obs_data], [r'$\mathrm{\rho(r)\propto r^{-2}}$', r'$\mathrm{\rho(r)\propto r^{-1.5}}$',\
-    #             r'$\mathrm{uniform}$',r'$\mathrm{observation}$'],\
+    # plt.legend([r1, r2, r4, obs_data], [r'$\rho(r)\propto r^{-2}$', r'$\rho(r)\propto r^{-1.5}$',\
+    #             r'$uniform$',r'$observation$'],\
     #             numpoints=1, loc='lower right', fontsize=16)
 
     fig.savefig(outdir+'sed_cav_struc_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -914,11 +914,11 @@ def sed_lum(indir, array, outdir, obs=None):
     ax.tick_params('both',labelsize=14,width=1.5,which='major',pad=15,length=5)
     ax.tick_params('both',labelsize=14,width=1.5,which='minor',pad=15,length=2.5)
 
-    ax.set_xlabel(r'$\mathrm{log(wavelength)~(\mu m)}$', fontsize=16)
-    ax.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg~s^{-1}~cm^{-2})}$', fontsize=16)
+    ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=16)
+    ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=16)
     ax.set_ylim([-13,-7])
 
-    plt.legend([r1, r2, r3], [r'$\mathrm{4500~K}$', r'$\mathrm{5000~K}$',r'$\mathrm{5500~K}$'], numpoints=1, loc='lower right', fontsize=16)
+    plt.legend([r1, r2, r3], [r'$4500\/K$', r'$5000\/K$',r'$5500\/K$'], numpoints=1, loc='lower right', fontsize=16)
 
     fig.savefig(outdir+'sed_lstar.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
@@ -930,57 +930,57 @@ outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # obs = None
 
-# # grid of cs and age
-# array = np.array([[1,6,11],[2,7,12],[3,8,13],[4,9,14],[5,10,15]])
-# array = np.array([[7,8,9,10,11],[12,13,14,15,16],[17,18,19,20,21]])
-# cslist = [0.1,0.2,0.3]
-# agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
-# sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
+# grid of cs and age
+array = np.array([[7,8,9,10,11],[12,13,14,15,16],[17,18,19,20,21]])
+cslist = [0.1,0.2,0.3]
+agelist = [1e4,2.5e4,5e4,7.5e4,1e5]
+sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
-# # grid of Omega0
-# array = np.array([24,23,22])
-# sed_omega(indir, array, outdir, obs= None, compact=True)
+# grid of Omega0
+array = np.array([24,23,22])
+sed_omega(indir, array, outdir, obs= None, compact=True)
 
-# # # grid of disk parameters
-# # disk mass
-# array = np.array([69,70,71,72,73])
-# xlabel = r'$\mathrm{M_{disk}~[M_{\odot}]~(0.01,~0.03,~0.05,~0.07,~0.1)}$'
-# compact = [r'$\mathrm{M_{disk}=0.01~M_{\odot}}$',r'$\mathrm{M_{disk}=0.03~M_{\odot}}$',r'$\mathrm{M_{disk}=0.05~M_{\odot}}$',r'$\mathrm{M_{disk}=0.07~M_{\odot}}$',r'$\mathrm{M_{disk}=0.1~M_{\odot}}$']
-# plotname = 'disk_mdisk'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
-# # flare power
-# array = np.array([31,32,33,34,35])
-# xlabel = r'$\mathrm{\beta~(1.0,~1.2,~1.4,~1.6,~1.8)}$'
-# compact = [r'$\mathrm{\beta=1.0}$',r'$\mathrm{\beta=1.2}$',r'$\mathrm{\beta=1.4}$',r'$\mathrm{\beta=1.6}$',r'$\mathrm{\beta=1.8}$']
-# plotname = 'disk_beta'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
-# # scale height
-# array = np.array([36,37,38,39,40])
-# xlabel = r'$\mathrm{h_{100}~[AU]~(6,~8,~10~,12,~14)}$'
-# compact = [r'$\mathrm{h_{100}=6~AU}$',r'$\mathrm{h_{100}=8~AU}$',r'$\mathrm{h_{100}=10~AU}$',r'$\mathrm{h_{100}=12~AU}$',r'$\mathrm{h_{100}=14~AU}$']
-# plotname = 'disk_h100'
-# sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
+# # grid of disk parameters
+# disk mass
+array = np.array([71,72,73,74,75])
+xlabel = r'$M_{disk}\/[M_{\odot}]\/(0.01,\/0.03,\/0.05,\/0.07,\/0.1)$'
+compact = [r'$M_{disk}=0.01\/M_{\odot}$',r'$M_{disk}=0.03\/M_{\odot}$',r'$M_{disk}=0.05\/M_{\odot}$',r'$M_{disk}=0.07\/M_{\odot}$',r'$M_{disk}=0.1\/M_{\odot}$']
+plotname = 'disk_mdisk'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# flare power
+array = np.array([31,32,33,34,35])
+xlabel = r'$\beta\/(1.0,\/1.2,\/1.4,\/1.6,\/1.8)$'
+compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
+plotname = 'disk_beta'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# scale height
+array = np.array([36,37,38,39,40])
+xlabel = r'$h_{100}\/[AU]\/(6,\/8,\/10\/,12,\/14)$'
+compact = [r'$h_{100}=6\/AU$',r'$h_{100}=8\/AU$',r'$h_{100}=10\/AU$',r'$h_{100}=12\/AU$',r'$h_{100}=14\/AU$']
+plotname = 'disk_h100'
+sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
 
-# # grid of theta_cav and incl.
-# array = np.array([[42,43,44,45,46],[47,48,49,50,51],[52,53,54,55,56]])
-# # sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
-# sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
-# # only for incl. = 50
-# array = np.array([52,53,54,55,56])
-# xlabel = r'$\mathrm{\theta_{cav}~[deg.]~(15^{\circ}, 20^{\circ}, 25^{\circ}, 30^{\circ}, 35^{\circ})}$'
-# plotname = 'theta_cav_incl50'
-# compact = [r'$\mathrm{\theta_{cav}=15^{\circ}}$',r'$\mathrm{\theta_{cav}=20^{\circ}}$',r'$\mathrm{\theta_{cav}=25^{\circ}}$',\
-#            r'$\mathrm{\theta_{cav}=30^{\circ}}$',r'$\mathrm{\theta_{cav}=35^{\circ}}$']
-# sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
+# grid of theta_cav and incl.
+array = np.array([[44,45,46,47,48],[49,50,51,52,53],[54,55,56,57,58]])
+# sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
+sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
+# only for incl. = 50
+array = np.array([54,55,56,57,58])
+xlabel = r'$\theta_{cav}\/[deg.]\/(15^{\circ}, 20^{\circ}, 25^{\circ}, 30^{\circ}, 35^{\circ})$'
+plotname = 'theta_cav_incl50'
+compact = [r'$\theta_{cav}=15^{\circ}$',r'$\theta_{cav}=20^{\circ}$',r'$\theta_{cav}=25^{\circ}$',\
+           r'$\theta_{cav}=30^{\circ}$',r'$\theta_{cav}=35^{\circ}$']
+sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
 
-# # grid of rho_cav_center and sed_rho_cav_edge
-# array = np.array([[57,58,59,60],[61,62,63,64],[65,66,67,68]])
-# # sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
-# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
+# grid of rho_cav_center and sed_rho_cav_edge
+array = np.array([[59,60,61,62],[63,64,65,66],[67,68,69,70]])
+# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
+sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
-# # # disk & no dis comparison
-# array = np.array([69,74])
-# disk_exist_com(indir, array, outdir, obs=obs)
+# # disk & no dis comparison
+# disk & no disk
+array = np.array([71,25])
+disk_exist_com(indir, array, outdir, obs=obs)
 
 # # grid of tstar
 # array = np.array([69,70,71])
@@ -992,22 +992,22 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
 # grid of R_env_max
 # array = np.array([63,64,65,66,67])
-# xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4},~5\times 10^{4},~7.5\times 10^{4})}$'
-# compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=5.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=7.5\times 10^{4}~AU}$']
+# xlabel = r'$R_{env,max}\/[AU]\/(7.5\times 10^{3},\/1\times 10^{4},\/2.5\times 10^{4},\/5\times 10^{4},\/7.5\times 10^{4})}$'
+# compact = [r'$R_{env,max}=7.5\times 10^{3}\/AU}$',r'$R_{env,max}=1.0\times 10^{4}\/AU}$',r'$R_{env,max}=2.5\times 10^{4}\/AU}$',r'$R_{env,max}=5.0\times 10^{4}\/AU}$',r'$R_{env,max}=7.5\times 10^{4}\/AU}$']
 array = np.array([4,5,6])
-xlabel = r'$\mathrm{R_{env,max}~[AU]~(7.5\times 10^{3},~1\times 10^{4},~2.5\times 10^{4})}$'
-compact = [r'$\mathrm{R_{env,max}=7.5\times 10^{3}~AU}$',r'$\mathrm{R_{env,max}=1.0\times 10^{4}~AU}$',r'$\mathrm{R_{env,max}=2.5\times 10^{4}~AU}$']
+xlabel = r'$R_{env,max}\/[AU]\/(7.5\times 10^{3},\/1\times 10^{4},\/2.5\times 10^{4})$'
+compact = [r'$R_{env,max}=7.5\times 10^{3}\/AU$',r'$R_{env,max}=1.0\times 10^{4}\/AU$',r'$R_{env,max}=2.5\times 10^{4}\/AU$']
 plotname = 'r_max'
 sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact)
 
 # # grid of continuous cavity power law
 # array = np.array([13,14,15])
-# sed_cav_powerlaw('/Users/yaolun/bhr71/hyperion/cycle5', array, outdir, obs=obs)
+# sed_cav_powerlaw(indir, array, outdir, obs=obs)
 
-# # grid of cavity structure comparison
-# array = np.array([1,2,25,0])  # r-2, r-1.5, const.+r-2, uniform
-# sed_cav_struc_com('/Users/yaolun/bhr71/hyperion/cycle6', array, outdir, obs=obs)
+# grid of cavity structure comparison
+array = np.array([42,43,71,41])  # r-2, r-1.5, const.+r-2, uniform
+sed_cav_struc_com(indir, array, outdir, obs=obs)
 
-# # grid of tstar with the same lstar
-# array = np.array([1,2,3])
-# sed_lum('/Users/yaolun/test/controlled/', array, outdir)
+# grid of tstar with the same lstar
+array = np.array([1,2,3])
+sed_lum(indir, array, outdir)
