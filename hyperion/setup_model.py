@@ -549,7 +549,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         m.set_n_photons(initial=1000000, imaging_sources=1000000, imaging_dust=1000000,raytracing_sources=1000000, raytracing_dust=1000000)
     else:
         # regular wavelength grid setting
-        m.set_n_photons(initial=1000000, imaging=1000000,raytracing_sources=1000000, raytracing_dust=1000000)    
+        m.set_n_photons(initial=1000000, imaging=10000000,raytracing_sources=1000000, raytracing_dust=1000000)    
     # number of iteration to compute dust specific energy (temperature)
     m.set_n_initial_iterations(20)
     # m.set_convergence(True, percentile=95., absolute=1.5, relative=1.02)
