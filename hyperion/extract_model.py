@@ -1,4 +1,4 @@
-def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,save=True):
+def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,save=True,filter_func=False):
 	def l_bol(wl,fv,dist=178.0):
 		import numpy as np
 		import astropy.constants as const
@@ -45,6 +45,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 	from hyperion.model import Model
 	from scipy.interpolate import interp1d
 	from hyperion.util.constants import pc, c, lsun
+	import sys
+	sys.path.append(os.path.expanduser('~')+'/programs/spectra_analysis/')
+	from herschel_spec_phot import herschel_spec_phot
 
 	# Read in the observation data and calculate the noise & variance
 	if indir == None:
@@ -183,20 +186,53 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 	unc_aper = np.empty_like(wl_aper)
 	for i in range(0, len(wl_aper)):
 		sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
-		# use a rectangle function the average the simulated SED
-		# apply the spectral resolution
-		if (wl_aper[i] < 50.) & (wl_aper[i] >= 5):
-			res = 60.
-		elif wl_aper[i] < 5:
-			res = 10.
+		if filter_func == False:
+			# use a rectangle function the average the simulated SED
+			# apply the spectral resolution
+			if (wl_aper[i] < 50.) & (wl_aper[i] >= 5):
+				res = 60.
+			elif wl_aper[i] < 5:
+				res = 10.
+			else:
+				res = 1000.
+			ind = np.where((sed_dum.wav < wl_aper[i]*(1+1./res)) & (sed_dum.wav > wl_aper[i]*(1-1./res)))
+			if len(ind[0]) != 0:
+				flux_aper[i] = np.mean(sed_dum.val[ind])
+			else:
+				f = interp1d(sed_dum.wav, sed_dum.val)
+				flux_aper[i] = f(wl_aper[i])
 		else:
-			res = 1000.
-		ind = np.where((sed_dum.wav < wl_aper[i]*(1+1./res)) & (sed_dum.wav > wl_aper[i]*(1-1./res)))
-		if len(ind[0]) != 0:
-			flux_aper[i] = np.mean(sed_dum.val[ind])
-		else:
-			f = interp1d(sed_dum.wav, sed_dum.val)
-			flux_aper[i] = f(wl_aper[i])
+			# apply the filter function
+            # decide the filter name
+            if phot_wl[i] == 70:
+                fil_name = 'Herschel PACS 70um'
+            elif phot_wl[i] == 100:
+                fil_name = 'Herschel PACS 100um'
+            elif phot_wl[i] == 160:
+                fil_name = 'Herschel PACS 160um'
+            elif phot_wl[i] == 250:
+                fil_name = 'Herschel SPIRE 250um'
+            elif phot_wl[i] == 350:
+                fil_name = 'Herschel SPIRE 350um'
+            elif phot_wl[i] == 500:
+                fil_name = 'Herschel SPIRE 500um'
+
+            filter_func = phot_filter(fil_name)
+
+            # trim the filter function
+            # if phot_wl[i] in [70,100,160]:
+            filter_func = filter_func[(filter_func['wave']/1e4 >= max(54.8,min(wl)))*\
+                                      ((filter_func['wave']/1e4 <= 95.05)+(filter_func['wave']/1e4 >=103))*\
+                                      ((filter_func['wave']/1e4 <= 190.31)+(filter_func['wave']/1e4 >= 195))]
+            # elif phot_wl[i] in [250,350,500]:
+            #   filter_func = filter_func[(filter_func['wave']/1e4 >= 195)]
+
+            f = interp1d(wl, flux)
+            # print fil_name
+            # print filter_func['wave']/1e4
+            # print min(wl), max(wl)
+            phot_flux[i] = np.trapz(filter_func['wave']/1e4, f(filter_func['wave']/1e4)*filter_func['transmission'])/np.trapz(filter_func['wave']/1e4, filter_func['transmission'])
+
 	# perform the same procedure of flux extraction of aperture flux with observed spectra
 	wl_aper = np.array(wl_aper)
 	obs_aper_wl = wl_aper[(wl_aper >= min(wl_irs)) & (wl_aper <= max(wl_spire))]
