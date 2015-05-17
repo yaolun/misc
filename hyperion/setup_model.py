@@ -1,6 +1,6 @@
 def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,\
                 low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,\
-                wl_aper=None,dyn_cav=False,fix_params=None,alma=False,power=2):
+                wl_aper=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False):
     """
     params = dictionary of the model parameters
     """
@@ -543,13 +543,19 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     lam_list = lam.tolist()
     # print lam_list
     m.set_raytracing(True)
+    # option of using more photons for imaging
+    if better_im == False:
+        im_photon = 1e6
+    else:
+        im_photon = 1e7
+
     if mono == True:
         # Monechromatic radiative transfer setting
         m.set_monochromatic(True, wavelengths=lam_list)
-        m.set_n_photons(initial=1000000, imaging_sources=1000000, imaging_dust=1000000,raytracing_sources=1000000, raytracing_dust=1000000)
+        m.set_n_photons(initial=1000000, imaging_sources=im_photon, imaging_dust=im_photon,raytracing_sources=1000000, raytracing_dust=1000000)
     else:
         # regular wavelength grid setting
-        m.set_n_photons(initial=1000000, imaging=10000000,raytracing_sources=1000000, raytracing_dust=1000000)    
+        m.set_n_photons(initial=1000000, imaging=im_photon,raytracing_sources=1000000, raytracing_dust=1000000)    
     # number of iteration to compute dust specific energy (temperature)
     m.set_n_initial_iterations(20)
     # m.set_convergence(True, percentile=95., absolute=1.5, relative=1.02)
