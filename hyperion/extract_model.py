@@ -1,4 +1,4 @@
-def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,save=True,filter_func=False):
+def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,save=True,filter_func=False,plot_all=False):
     def l_bol(wl,fv,dist=178.0):
         import numpy as np
         import astropy.constants as const
@@ -184,8 +184,11 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     # get flux at different apertures
     flux_aper = np.empty_like(wl_aper)
     unc_aper = np.empty_like(wl_aper)
+    color_list = plt.cm.jet(np.linspace(0, 1, len(wl_aper)+1))
     for i in range(0, len(wl_aper)):
         sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
+        if plot_all == True:
+            ax_sed.plot(np.log10(sed_dum.wav), np.log10(sed_dum.val),'-', color=color_list[i])
         if filter_func == False:
             # use a rectangle function the average the simulated SED
             # apply the spectral resolution
@@ -492,10 +495,12 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 # outdir = '/Users/yaolun/bhr71/hyperion/'
-# wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-# extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle6/model47.rtout',indir=indir,outdir='/Users/yaolun/test/',\
-#                  wl_aper=wl_aper,filter_func=True)
+wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+extract_hyperion('/Users/yaolun/test/model90.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+                 wl_aper=wl_aper,filter_func=True,plot_all=True)
+extract_hyperion('/Users/yaolun/test/model91.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+                 wl_aper=wl_aper,filter_func=True,plot_all=True)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
 # extract_hyperion('/hyperion/old_setup2.rtout',indir=indir,outdir=outdir)
