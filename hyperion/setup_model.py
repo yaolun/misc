@@ -584,10 +584,12 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         name = np.arange(1,len(wl_aper)+1)
         aper = np.empty_like(wl_aper)
         for i in range(0, len(wl_aper)):
-            if wl_aper[i] <= 20:
-                aper[i] = 7.2 * wl_aper[i]/10.
-            elif (wl_aper[i] > 20) & (wl_aper[i] <=50):
-                aper[i] = 7.2 * 2
+            if wl_aper[i] <= 14:
+                # aper[i] = 7.2 * wl_aper[i]/10.
+                aper[i] = 1.8 * 4
+            elif (wl_aper[i] > 14) & (wl_aper[i] <=40):
+                # aper[i] = 7.2 * 2
+                aper[i] = 5.1 * 4
             else:
                 aper[i] = 24.5
 
