@@ -55,7 +55,7 @@ def input_reader_table(filename,default=False):
 	import astropy.constants as const
 	from pprint import pprint
 
-	model = np.genfromtxt(filename, dtype=None, skip_header=1)
+	model = np.genfromtxt(filename, dtype=float, skip_header=1)
 	header = open(filename,'r').readlines()[0].split()
 	# output is the tuple that consist all dictionaries of model parameters.
 	# if type(model) == np.ndarray:
