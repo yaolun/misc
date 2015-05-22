@@ -1,4 +1,4 @@
-def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False):
+def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=None):
     """
     array_list: contains dictionaries, each dictionary represents a location of 'model_list.txt', and the model numbers within.
     """
@@ -10,6 +10,11 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False):
     from scipy.interpolate import interp1d
     from scipy.interpolate import griddata
     from hyperion.model import ModelOutput
+    import copy
+    import collections
+
+    # function for checking duplicate in lists
+    compare = lambda x, y: collections.Counter(x) == collections.Counter(y)
 
     # constant setup
     c = const.c.cgs.value
@@ -53,7 +58,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False):
             f = interp1d(wave_obs, sed_obs)
             obs_aper_sed[i] = f(wl_aper[i])
 
-    print obs_aper_sed
+    # print obs_aper_sed
 
     # calculate Chi2 from simulated SED
     p1 = []
@@ -68,11 +73,39 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False):
 
         model_list = ascii.read(listpath)
 
+        if ref != None:
+            ignore_col = ['d_sub', 'M_env_dot', 'R_inf', 'R_cen', 'mstar', 'total_mass']
+            ref_params = copy.copy(model_list)
+            ref_params.remove_columns(keywords['col'])
+            ref_params.remove_columns(ignore_col)
+            ref_params.remove_column('Model#')
+            ref_params = (ref_params[:][model_list['Model#'] == 'Model'+str(ref)])[0].data
+            # print ref_params
+
         for i in range(0, len(model_num)):
             imod = model_num[i]
-            # read the parameter values
-            p1.append(model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)])
-            p2.append(model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)])
+            # manually exclude much older age
+            if keywords['col'][0] == 'age':
+                if (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data >= 5e5:
+                    continue
+            if keywords['col'][1] == 'age':
+                if (model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data >= 5e5:
+                    continue                    
+            if ref == None:
+                # read the parameter values
+                p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
+                p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
+            else:
+                # get other parameters of model i
+                dum_params = copy.copy(model_list)
+                dum_params.remove_columns(keywords['col'])
+                dum_params.remove_columns(ignore_col)
+                dum_params.remove_column('Model#')
+                dum_params = (dum_params[:][model_list['Model#'] == 'Model'+str(imod)])[0].data
+
+                if compare(ref_params, dum_params) == False:
+                    # print dum_params
+                    continue
 
             # read the simulated SED
             model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
@@ -80,9 +113,21 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False):
             # print imod
             # print model_dum
             # plug them into the chi2 function
-            chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': sed_obs_noise}, {'wave': model_dum['wave'], 'sed': model_dum['vSv']}, wave=wl_aper)
+            chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': sed_obs_noise}, {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data}, wave=wl_aper)
             reduced_chi2_dum = chi2_dum/(n-2-1)
-            chi2.append(reduced_chi2_dum)
+            chi2.extend(reduced_chi2_dum)
+    # convert to array
+    p1 = np.array(p1)
+    p2 = np.array(p2)
+    chi2 = np.array(chi2)
+
+    # if dealing with age convert to better unit for plotting
+    for i in range(len(keywords['col'])):
+        if keywords['col'][i] == 'age':
+            if i == 0:
+                p1 = p1/1e4
+            elif i ==1:
+                p2 = p2/1e4
 
     # plot 1d relation
     if fixed_cs == True:
@@ -97,7 +142,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False):
 
         ax.plot(p1[np.argsort(p1)]/1e4, chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1.5)
         ax.set_xlabel(keywords['label'][0], fontsize=18)
-        ax.set_ylabel(r'$\mathrm{\Sigma(sim.-obs.)^{2}}$', fontsize=18)
+        ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}}$', fontsize=18)
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on() 
@@ -105,6 +150,52 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False):
         ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
         fig.savefig('/Users/yaolun/test/chi2_agscs_1d.pdf', format='pdf', dpi=300, bbox_inches='tight')
+        fig.clf()
+
+    # rebin the data and plot 2D contour
+    from scipy.interpolate import griddata
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+    x = np.linspace(min(p1), max(p1), 50)
+    y = np.linspace(min(p2), max(p2), 50)
+    z = griddata((p1, p2), chi2, (x[None,:], y[:,None]), method='cubic')
+
+    # z = np.log10(z)
+
+    fig = plt.figure(figsize=(8,8))
+    ax = fig.add_subplot(111)
+
+    # plot the contour with color and lines
+    ax.contour((x-min(x))* 50/(max(x)-min(x)),\
+                (y-min(y))* 50/(max(y)-min(y)),z,15,linewidths=0.5,colors='k', vmin=chi2.min())
+    # cs = ax.contourf(x,y,z,15,cmap=plt.cm.jet)
+    im = ax.imshow(z, cmap='Blues_r', origin='lower', vmin=chi2.min())
+    ax.set_xticks(np.linspace(0, 50, 5))
+    ax.set_xticklabels(np.linspace(min(p1), max(p1), 5))
+    ax.set_yticks(np.linspace(0, 50, 5))
+    ax.set_yticklabels(np.linspace(min(p2), max(p2), 5))
+
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
+    cb = fig.colorbar(im, cax=cax)
+    cb.solids.set_edgecolor("face")
+    cb.ax.minorticks_on()
+    cb.ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}}$',fontsize=16)
+    cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
+    plt.setp(cb_obj,fontsize=12)
+    # plot the original data points
+    ori_data = ax.scatter((p1-min(p1))* 50/(max(p1)-min(p1)),\
+                          (p2-min(p2))* 50/(max(p2)-min(p2)), marker='o',c='b',s=5)
+
+    ax.set_xlabel(keywords['label'][0], fontsize=20)
+    ax.set_ylabel(keywords['label'][1], fontsize=20)
+    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    ax.minorticks_on() 
+    ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+
+    fig.savefig('/Users/yaolun/test/chi2_%s_%s.pdf' % (keywords['col'][0], keywords['col'][1]), format='pdf', dpi=300, bbox_inches='tight')
+
+
 
 
     # # plot the contour
@@ -143,14 +234,28 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False):
     return p1, p2, chi2
 
 import numpy as np
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle5/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/cycle5',
-               'model_num': np.arange(38,46)},
-              {'listpath': '/Users/yaolun/bhr71/hyperion/cycle6/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/cycle6',
-               'model_num': np.arange(39,49)}]
-keywords = {'col':['age','Cs'], 'label': [r'$\mathrm{age~[10^{4}~yr]}$', r'$\mathrm{c_{s}~[km~s^{-1}]}$']}
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle5/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/cycle5',
+#                'model_num': np.arange(38,46)},
+#               {'listpath': '/Users/yaolun/bhr71/hyperion/cycle6/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/cycle6',
+#                'model_num': np.arange(39,49)}]
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle6/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/cycle6',
+#                'model_num': np.arange(1,91)}]
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
+               'model_num': np.arange(1,77)}]
+# keywords = {'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{viewing\,angle}$']}
+# keywords = {'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{cav}}$']}
+keywords = {'col':['age','Cs'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{c_{s}\,[km\,s^{-1}]}$']}
+# keywords = {'col':['view_angle','theta_cav'], 'label': [r'$\rm{viewing\,angle}$', r'$\rm{\theta_{cav}}$']}
+
+
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
-p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, fixed_cs=True)
+
+# keywords = {'col':['age','Cs'], 'label': [r'$\mathrm{age~[10^{4}~yr]}$', r'$\mathrm{c_{s}~[km~s^{-1}]}$']}
+# obs = '/Users/yaolun/bhr71/obs_for_radmc/'
+p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=22)
 for i in range(0, len(p2)):
     print p1[i], p2[i], chi2[i]
