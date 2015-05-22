@@ -18,6 +18,7 @@ temp = True
 alma=False
 core_num = 20
 better_im = False
+chi2 = False
 
 # Get command-line arguments
 if 'norun' in sys.argv:
@@ -38,6 +39,8 @@ if '18' in sys.argv:
     core_num = 18
 if 'better_im' in sys.argv:
     better_im = True
+if 'chi2' in sys.argv:
+    chi2 = True
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
@@ -56,6 +59,10 @@ if alma == True:
     print 'Running for ALMA proposal...'
     params_table = home + '/programs/misc/hyperion/input_table_alma.txt'
     outdir = home + '/hyperion/bhr71/alma/'
+if chi2 == True:
+    print 'Running for chi2 grid...'
+    params_table = home + '/programs/misc/hyperion/input_table_chi2.txt'
+    outdir = home + '/hyperion/bhr71/chi2_grid/'
 
 # temp fix for the broken /opt/local/ of bettyjo
 # outdir = home+'/test/hyperion/'
