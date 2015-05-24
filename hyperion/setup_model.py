@@ -595,7 +595,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
         dict_peel_sed = {}
         for i in range(0, len(wl_aper)):
-            aper_dum = aper[i] * (1/3600.*np.pi/180.)*dstar*pc
+            aper_dum = aper[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
             dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
             # use the index of wavelength array used by the monochromatic radiative transfer
             if mono == False:
