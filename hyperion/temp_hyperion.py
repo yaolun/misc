@@ -37,17 +37,17 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     im = ax.pcolormesh(thetac_exp, rc/AU, temp2d_exp, cmap=cmap, norm=LogNorm(vmin=5, vmax=100))
     im.set_edgecolor('face')
 
-    ax.set_xlabel(r'$\mathrm{Polar~angle~(Degree)}$',fontsize=20)
-    ax.set_ylabel(r'$\mathrm{Radius~(AU)}$',fontsize=20)
+    ax.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
+    ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
     ax.tick_params(labelsize=20)
     print np.ceil(max(ri)/AU/1e4)*1e4
     ax.set_yticks(np.linspace(0,np.ceil(max(ri)/AU/1e4)*1e4,5))
 
-    ax.set_xticklabels([r'$\mathrm{90^{\circ}}$',r'$\mathrm{45^{\circ}}$',r'$\mathrm{0^{\circ}}$',r'$\mathrm{-45^{\circ}}$',\
-                            r'$\mathrm{-90^{\circ}}$',r'$\mathrm{-135^{\circ}}$',r'$\mathrm{180^{\circ}}$',r'$\mathrm{135^{\circ}}$'])
+    ax.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
+                            r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
     ax.grid(True)
     cb = fig.colorbar(im, pad=0.1)
-    cb.ax.set_ylabel(r'$\mathrm{Averaged~Temperature~(K)}$',fontsize=20)
+    cb.ax.set_ylabel(r'$\rm{Averaged\,Temperature\,(K)}$',fontsize=20)
     cb.set_ticks([5,10,20,30,40,50,60,70,80,90,100])
     cb.set_ticklabels([5,10,20,30,40,50,60,70,80,90,'$>$100'])
     cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
@@ -60,7 +60,7 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     ax = fig.add_subplot(111)
 
     plot_grid = [0,99,199]
-    label_grid = [r'$\mathrm{outflow}$', r'$\mathrm{45^{\circ}}$', r'$\mathrm{midplane}$']
+    label_grid = [r'$\rm{outflow}$', r'$\rm{45^{\circ}}$', r'$\rm{midplane}$']
     alpha = np.linspace(0.3,1.0,len(plot_grid))
     color_list = [[0.8507598215729224, 0.6322174528970308, 0.6702243543099417],\
              [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
@@ -81,11 +81,11 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
         L_cen = dum.sources[0].luminosity/lsun
 
         t_bbdust = (L_cen*lsun/(16*np.pi*sigma*rc**2))**(0.25)
-        temp_bbdust, = ax.plot(np.log10(rc/AU), np.log10(t_bbdust), '--', color='r', linewidth=2.5,label=r'$\mathrm{blackbody~dust}$')
+        temp_bbdust, = ax.plot(np.log10(rc/AU), np.log10(t_bbdust), '--', color='r', linewidth=2.5,label=r'$\rm{blackbody\,dust}$')
 
     ax.legend(loc='upper right', numpoints=1, fontsize=24)
-    ax.set_xlabel(r'$\mathrm{log~R~(AU)}$',fontsize=24)
-    ax.set_ylabel(r'$\mathrm{log~T~(K)}$',fontsize=24)
+    ax.set_xlabel(r'$\rm{log\,R\,(AU)}$',fontsize=24)
+    ax.set_ylabel(r'$\rm{log\,T\,(K)}$',fontsize=24)
     [ax.spines[axis].set_linewidth(2) for axis in ['top','bottom','left','right']]
     ax.minorticks_on()
     ax.tick_params('both',labelsize=24,width=2,which='major',pad=15,length=5)
