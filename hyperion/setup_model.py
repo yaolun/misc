@@ -41,7 +41,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # Read in the dust opacity table used by RADMC-3D
     dust = dict()
     # [dust_radmc['wl'], dust_radmc['abs'], dust_radmc['scat'], dust_radmc['g']] = np.genfromtxt(dust_file,skip_header=2).T
-    [dust['nu'], dust['albedo'], dust['chi'], dust['g']] = np.genfromtxt(dust_file,skip_header=2).T
+    [dust['nu'], dust['albedo'], dust['chi'], dust['g']] = np.genfromtxt(dust_file).T
     # opacity per mass of dust?
     # dust_hy = dict()
     # dust_hy['nu'] = c/dust_radmc['wl']*1e4
@@ -257,8 +257,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         if idl == True:
             print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
-            # idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
-            idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
+            idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
+            # idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
             # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
             idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)]))
@@ -394,10 +394,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
     if plot == True:
         # rc setting
-        mat.rcParams['text.usetex'] = True
-        mat.rcParams['font.family'] = 'serif'
-        mat.rcParams['font.serif'] = 'Times'
-        mat.rcParams['font.sans-serif'] = 'Computer Modern Sans serif'
+        # mat.rcParams['text.usetex'] = True
+        # mat.rcParams['font.family'] = 'serif'
+        # mat.rcParams['font.serif'] = 'Times'
+        # mat.rcParams['font.sans-serif'] = 'Computer Modern Sans serif'
 
         # Plot the azimuthal averaged density
         fig = plt.figure(figsize=(8,6))
@@ -412,19 +412,19 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # plot the gas density
         img_env = ax_env.pcolormesh(thetac_exp,rc/AU,100*rho2d_exp/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mh)
 
-        ax_env.set_xlabel(r'$\mathrm{Polar~angle~(Degree)}$',fontsize=20)
-        ax_env.set_ylabel(r'$\mathrm{Radius~(AU)}$',fontsize=20)
+        ax_env.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
+        ax_env.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
         ax_env.tick_params(labelsize=20)
         ax_env.set_yticks(np.arange(0,R_env_max/AU,R_env_max/AU/5))
         # ax_env.set_ylim([0,10000])
-        ax_env.set_xticklabels([r'$\mathrm{90^{\circ}}$',r'$\mathrm{45^{\circ}}$',r'$\mathrm{0^{\circ}}$',r'$\mathrm{-45^{\circ}}$',\
-                                r'$\mathrm{-90^{\circ}}$',r'$\mathrm{-135^{\circ}}$',r'$\mathrm{180^{\circ}}$',r'$\mathrm{135^{\circ}}$'])
+        ax_env.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
+                                r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
         ax_env.grid(True)
         cb = fig.colorbar(img_env, pad=0.1)
-        cb.ax.set_ylabel(r'$\mathrm{Averaged~Gas~Density~(cm^{-3})}$',fontsize=20)
+        cb.ax.set_ylabel(r'$\rm{Averaged\,Gas\,Density\,(cm^{-3})}$',fontsize=20)
         cb.set_ticks([1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9])
-        cb.set_ticklabels([r'$\mathrm{10^{2}}$',r'$\mathrm{10^{3}}$',r'$\mathrm{10^{4}}$',r'$\mathrm{10^{5}}$',r'$\mathrm{10^{6}}$',\
-                           r'$\mathrm{10^{7}}$',r'$\mathrm{10^{8}}$',r'$\mathrm{\geq 10^{9}}$'])
+        cb.set_ticklabels([r'$\rm{10^{2}}$',r'$\rm{10^{3}}$',r'$\rm{10^{4}}$',r'$\rm{10^{5}}$',r'$\rm{10^{6}}$',\
+                           r'$\rm{10^{7}}$',r'$\rm{10^{8}}$',r'$\rm{\geq 10^{9}}$'])
         cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
         plt.setp(cb_obj,fontsize=20)
         fig.savefig(outdir+outname+'_gas_density.png', format='png', dpi=300, bbox_inches='tight')
@@ -446,10 +446,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # lt_R_cen_slope, = ax.plot(np.log10(rc/AU), -0.5*np.log10(rc/AU)+A-(-0.5)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
 
         lg = plt.legend([rho_rad, tsc_only, rinf, cen_r],\
-                        [r'$\mathrm{\rho_{dust}}$',r'$\mathrm{\rho_{tsc}}$',r'$\mathrm{infall~radius}$',r'$\mathrm{centrifugal~radius}$'],\
+                        [r'$\rm{\rho_{dust}}$',r'$\rm{\rho_{tsc}}$',r'$\rm{infall\,radius}$',r'$\rm{centrifugal\,radius}$'],\
                         fontsize=20, numpoints=1)
-        ax.set_xlabel(r'$\mathrm{log(Radius)~(AU)}$',fontsize=20)
-        ax.set_ylabel(r'$\mathrm{log(Gas~Density)~(cm^{-3})}$',fontsize=20)
+        ax.set_xlabel(r'$\rm{log(Radius)\,(AU)}$',fontsize=20)
+        ax.set_ylabel(r'$\rm{log(Gas~Density)\,(cm^{-3})}$',fontsize=20)
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on()
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
@@ -728,7 +728,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         f_aper.write('1 \n')
         f_aper.write('%d \n' % int(nlam))
         for iaper in range(0, len(aper)):
-            f_aper.write('%f \t %f \n' % (lam[iaper],aper[iaper]))
+            f_aper.write('%f \t %f \n' % (lam[iaper],aper[iaper]/2))
         f_aper.close()
 
         # Write the stars.inp file
@@ -778,6 +778,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         f_dust.close()
 
 
+        # Write the dust opacity table
+        f_dustkappa = open(outdir+'dustkappa_oh5_extended.inp','w')
+        f_dustkappa.write('3 \n')                       # format index for including g-factor
+        f_dustkappa.write('%d \n' % len(dust['nu']))    # number of wavlength/frequency in the table
+        for i in range(len(dust['nu'])):
+            f_dustkappa.write('%f \t %f \t %f \t %f \n' % (c/dust['nu'][i]*1e4, dust['chi'][i], dust['chi'][i]*dust['albedo'][i]/(1-dust['albedo'][i]), dust['g'][i]))
+        f_dustkappa.close()
+
         # In[111]:
 
         # Write the Dust opacity control file
@@ -789,7 +797,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         f_opac.write('1               Way in which this dust species is read\n')
         f_opac.write('0               0=Thermal grain\n')
         # f_opac.write('klaus           Extension of name of dustkappa_***.inp file\n')
-        f_opac.write('oh5_extended    Extension of name of dustkappe_***.inp file\n')
+        f_opac.write('oh5_extended    Extension of name of dustkappa_***.inp file\n')
         f_opac.write('----------------------------------------------------------------------------\n')
         f_opac.close()
                 
@@ -811,14 +819,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+params = input_reader_table(filename)
+pprint(params[0])
 # # # # outdir = '/Users/yaolun/bhr71/hyperion/'
-# outdir = '/Users/yaolun/test/'
+outdir = '/Users/yaolun/test/radmc3d_apertest/'
 # # # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False)
-
+dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=True,radmc=True)
