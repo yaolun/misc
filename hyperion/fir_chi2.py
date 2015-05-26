@@ -20,12 +20,22 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
     c = const.c.cgs.value
 
     # chi2 function
-    def fir_chi2(obs, sim, wave=[70.,100.,160.,250.,350.,500.]):
+    def fir_chi2(obs, sim, wave=[70.,100.,160.,250.,350.,500.], log=False):
 
         chi2 = 0
-        for w in wave:
-            # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2
-            chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2)# / (obs['sigma'][obs['wave'] == w])**2
+        if log == False:
+            for w in wave:
+                # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2
+                chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / (obs['sigma'][obs['wave'] == w])**2
+        else:
+            # not proper functioning at this moment
+            for w in wave:
+                # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2
+                print 'print'
+                print np.log10(obs['sed'][obs['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w]-obs['sigma'][obs['wave'] == w])
+                print np.log10(obs['sed'][obs['wave'] == w]+obs['sigma'][obs['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w])
+                chi2 = chi2 + ((np.log10(sim['sed'][sim['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w]))**2) /\
+                         (max(np.log10(obs['sed'][obs['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w]-obs['sigma'][obs['wave'] == w]), np.log10(obs['sed'][obs['wave'] == w]+obs['sigma'][obs['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w])))**2
         return chi2, len(wave)
 
     # setup the aperture size
@@ -40,8 +50,10 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
     # wave_obs = wave_obs[wave_obs > 50]
     # flux_obs = flux_obs[wave_obs > 50]
     sed_obs = c/(wave_obs*1e-4)*flux_obs*1e-23
-    # sed_obs_noise = c/(wave_obs*1e-4)*sed_obs_noise*1e-23
+    sed_obs_noise = c/(wave_obs*1e-4)*sed_obs_noise*1e-23
+    # print sed_obs_noise
     obs_aper_sed = np.empty_like(wl_aper)
+    obs_aper_sed_noise = np.empty_like(wl_aper)
 
     # setup resolution
     for i in range(0, len(wl_aper)):
@@ -54,9 +66,12 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         ind = np.where((wave_obs < wl_aper[i]*(1+1./res)) & (wave_obs > wl_aper[i]*(1-1./res)))
         if len(ind[0]) != 0:
             obs_aper_sed[i] = np.mean(sed_obs[ind])
+            obs_aper_sed_noise[i] = np.mean(sed_obs_noise[ind])
         else:
             f = interp1d(wave_obs, sed_obs)
+            f_noise = interp1d(wave_obs, sed_obs_noise)
             obs_aper_sed[i] = f(wl_aper[i])
+            obs_aper_sed_noise[i] = f_noise(wl_aper[i])
 
     # print obs_aper_sed
 
@@ -140,7 +155,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
 
         p1 = np.array(p1); chi2 = np.array(chi2)
 
-        ax.plot(p1[np.argsort(p1)]/1e4, chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1.5)
+        ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1.5)
         ax.set_xlabel(keywords['label'][0], fontsize=18)
         ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}}$', fontsize=18)
 
@@ -152,48 +167,49 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         fig.savefig('/Users/yaolun/test/chi2_agscs_1d.pdf', format='pdf', dpi=300, bbox_inches='tight')
         fig.clf()
 
-    # rebin the data and plot 2D contour
-    from scipy.interpolate import griddata
-    from mpl_toolkits.axes_grid1 import make_axes_locatable
-    x = np.linspace(min(p1), max(p1), 50)
-    y = np.linspace(min(p2), max(p2), 50)
-    z = griddata((p1, p2), chi2, (x[None,:], y[:,None]), method='cubic')
+    else:
+        # rebin the data and plot 2D contour
+        from scipy.interpolate import griddata
+        from mpl_toolkits.axes_grid1 import make_axes_locatable
+        x = np.linspace(min(p1), max(p1), 50)
+        y = np.linspace(min(p2), max(p2), 50)
+        z = griddata((p1, p2), chi2, (x[None,:], y[:,None]), method='cubic')
 
-    # z = np.log10(z)
+        # z = np.log10(z)
 
-    fig = plt.figure(figsize=(8,8))
-    ax = fig.add_subplot(111)
+        fig = plt.figure(figsize=(8,8))
+        ax = fig.add_subplot(111)
 
-    # plot the contour with color and lines
-    ax.contour((x-min(x))* 50/(max(x)-min(x)),\
-                (y-min(y))* 50/(max(y)-min(y)),z,15,linewidths=0.5,colors='k', vmin=chi2.min())
-    # cs = ax.contourf(x,y,z,15,cmap=plt.cm.jet)
-    im = ax.imshow(z, cmap='Blues_r', origin='lower', vmin=chi2.min())
-    ax.set_xticks(np.linspace(0, 50, 5))
-    ax.set_xticklabels(np.linspace(min(p1), max(p1), 5))
-    ax.set_yticks(np.linspace(0, 50, 5))
-    ax.set_yticklabels(np.linspace(min(p2), max(p2), 5))
+        # plot the contour with color and lines
+        ax.contour((x-min(x))* 50/(max(x)-min(x)),\
+                    (y-min(y))* 50/(max(y)-min(y)),z,15,linewidths=0.5,colors='k', vmin=chi2.min())
+        # cs = ax.contourf(x,y,z,15,cmap=plt.cm.jet)
+        im = ax.imshow(z, cmap='Blues_r', origin='lower', vmin=chi2.min())
+        ax.set_xticks(np.linspace(0, 50, 5))
+        ax.set_xticklabels(np.linspace(min(p1), max(p1), 5))
+        ax.set_yticks(np.linspace(0, 50, 5))
+        ax.set_yticklabels(np.linspace(min(p2), max(p2), 5))
 
-    divider = make_axes_locatable(ax)
-    cax = divider.append_axes("right", size="5%", pad=0.05)
-    cb = fig.colorbar(im, cax=cax)
-    cb.solids.set_edgecolor("face")
-    cb.ax.minorticks_on()
-    cb.ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}}$',fontsize=16)
-    cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
-    plt.setp(cb_obj,fontsize=12)
-    # plot the original data points
-    ori_data = ax.scatter((p1-min(p1))* 50/(max(p1)-min(p1)),\
-                          (p2-min(p2))* 50/(max(p2)-min(p2)), marker='o',c='b',s=5)
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+        cb = fig.colorbar(im, cax=cax)
+        cb.solids.set_edgecolor("face")
+        cb.ax.minorticks_on()
+        cb.ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}}$',fontsize=16)
+        cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
+        plt.setp(cb_obj,fontsize=12)
+        # plot the original data points
+        ori_data = ax.scatter((p1-min(p1))* 50/(max(p1)-min(p1)),\
+                              (p2-min(p2))* 50/(max(p2)-min(p2)), marker='o',c='b',s=5)
 
-    ax.set_xlabel(keywords['label'][0], fontsize=20)
-    ax.set_ylabel(keywords['label'][1], fontsize=20)
-    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
-    ax.minorticks_on() 
-    ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
-    ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+        ax.set_xlabel(keywords['label'][0], fontsize=20)
+        ax.set_ylabel(keywords['label'][1], fontsize=20)
+        [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+        ax.minorticks_on() 
+        ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+        ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-    fig.savefig('/Users/yaolun/test/chi2_%s_%s.pdf' % (keywords['col'][0], keywords['col'][1]), format='pdf', dpi=300, bbox_inches='tight')
+        fig.savefig('/Users/yaolun/test/chi2_%s_%s.pdf' % (keywords['col'][0], keywords['col'][1]), format='pdf', dpi=300, bbox_inches='tight')
 
 
 
@@ -240,12 +256,12 @@ import numpy as np
 #               {'listpath': '/Users/yaolun/bhr71/hyperion/cycle6/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/cycle6',
 #                'model_num': np.arange(39,49)}]
-# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle6/model_list.txt',
-#                'datapath': '/Users/yaolun/bhr71/hyperion/cycle6',
-#                'model_num': np.arange(1,91)}]
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
-               'model_num': np.arange(1,77)}]
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle7/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/cycle7',
+               'model_num': np.arange(1,14)}]
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
+#                'model_num': np.arange(1,77)}]
 # keywords = {'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{viewing\,angle}$']}
 # keywords = {'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{cav}}$']}
 keywords = {'col':['age','Cs'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{c_{s}\,[km\,s^{-1}]}$']}
@@ -256,6 +272,6 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
 # keywords = {'col':['age','Cs'], 'label': [r'$\mathrm{age~[10^{4}~yr]}$', r'$\mathrm{c_{s}~[km~s^{-1}]}$']}
 # obs = '/Users/yaolun/bhr71/obs_for_radmc/'
-p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=22)
+p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, fixed_cs=True)
 for i in range(0, len(p2)):
     print p1[i], p2[i], chi2[i]
