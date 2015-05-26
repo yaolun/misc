@@ -1,5 +1,6 @@
 def get_bhr71_obs(indir):
 	import numpy as np
+	from spitzer_unc import spitzer_unc
 
 	# Read in Herschel data
 	# continuum
@@ -16,11 +17,12 @@ def get_bhr71_obs(indir):
 	flux_spire_noise = flux_spire_data-flux_spire-flux_spire_flat
 
 	# Read in the Spitzer IRS spectrum
-	[wl_irs, flux_irs]= (np.genfromtxt(indir+'bhr71_spitzer_irs.txt',skip_header=2,dtype='float').T)[0:2]
-	# Remove points with zero or negative flux 
-	ind = flux_irs > 0
-	wl_irs = wl_irs[ind]
-	flux_irs = flux_irs[ind]
+	# [wl_irs, flux_irs]= (np.genfromtxt(indir+'bhr71_spitzer_irs.txt',skip_header=2,dtype='float').T)[0:2]
+	# # Remove points with zero or negative flux 
+	# ind = flux_irs > 0
+	# wl_irs = wl_irs[ind]
+	# flux_irs = flux_irs[ind]
+	wl_irs, flux_irs, unc_irs = spitzer_unc(indir+'bhr71_spitzer_irs.txt')
 	# Calculate the local variance (for spire), use the instrument uncertainty for pacs
 	#
 	# Spitzer noise is not considered now
@@ -39,7 +41,7 @@ def get_bhr71_obs(indir):
 				sigma_dum[iwl] = np.std(flux_noise[i][iwl-sig_num/2:iwl+sig_num/2])
 		sigma_noise = np.hstack((sigma_noise,sigma_dum))
 	sigma_noise = np.array(sigma_noise)
-
+	sigma_noise = np.hstack((unc_irs, sigma_noise))
 	# print len(wl_spec), len(sigma_noise)
 	# Read in the photometry data
 	phot = np.genfromtxt(indir+'bhr71.txt',dtype=None,skip_header=1,comments='%')
