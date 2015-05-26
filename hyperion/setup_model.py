@@ -637,10 +637,12 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         name = np.arange(1,len(wl_aper)+1)
         aper = np.empty_like(wl_aper)
         for i in range(0, len(wl_aper)):
-            if wl_aper[i] <= 14:
+            if wl_aper[i] < 5:
+                aper[i] = 1.2 * 7
+            elif (wl_aper[i] < 14) & (wl_aper[i] >=5):
                 # aper[i] = 7.2 * wl_aper[i]/10.
                 aper[i] = 1.8 * 4
-            elif (wl_aper[i] > 14) & (wl_aper[i] <=40):
+            elif (wl_aper[i] >= 14) & (wl_aper[i] <40):
                 # aper[i] = 7.2 * 2
                 aper[i] = 5.1 * 4
             else:
@@ -648,7 +650,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
         dict_peel_sed = {}
         for i in range(0, len(wl_aper)):
-            aper_dum = aper[i] * (1/3600.*np.pi/180.)*dstar*pc
+            aper_dum = aper[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
             dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
             # use the index of wavelength array used by the monochromatic radiative transfer
             if mono == False:
@@ -819,13 +821,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-from input_reader import input_reader_table
-from pprint import pprint
-filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-params = input_reader_table(filename)
-pprint(params[0])
+# from input_reader import input_reader_table
+# from pprint import pprint
+# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+# params = input_reader_table(filename)
+# pprint(params[0])
 # # # # outdir = '/Users/yaolun/bhr71/hyperion/'
-outdir = '/Users/yaolun/test/radmc3d_apertest/'
+# outdir = '/Users/yaolun/test/radmc3d_apertest/'
 # # # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=True,radmc=True)
+# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=True,radmc=True)
