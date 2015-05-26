@@ -694,11 +694,11 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         ind = 0
         for wl in lam:
             if wl < 5:
-                aper[ind] = 8
-            elif wl >= 5 and wl < 10:
-                aper[ind] = 18
-            elif wl >= 10 and wl < 50:
-                aper[ind] = 20
+                aper[ind] = 8.4
+            elif wl >= 5 and wl < 14:
+                aper[ind] = 1.8 * 4
+            elif wl >= 14 and wl < 40:
+                aper[ind] = 5.1 * 4
             else:
                 aper[ind] = 24.5
             ind += 1
@@ -816,9 +816,9 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 # filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
 # params = input_reader_table(filename)
 # pprint(params[0])
-# # # outdir = '/Users/yaolun/bhr71/hyperion/'
+# # # # outdir = '/Users/yaolun/bhr71/hyperion/'
 # outdir = '/Users/yaolun/test/'
-# # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-# dust_file = '/Users/yaolun/programs/misc/dustkappa_oh5_extended.inp'
+# # # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
+# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
 # setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False)
 
