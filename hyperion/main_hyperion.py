@@ -50,7 +50,7 @@ outdir = home + '/hyperion/bhr71/'
 # dust_file = home + '/programs/misc/dustkappa_oh5_extended.inp'
 dust_file = home + '/programs/misc/oh5_hyperion.txt'
 params_table = home + '/programs/misc/hyperion/input_table.txt'
-obs_dir = home + '/radmc_simulation/bhr71/observations/'
+obs_dir = home + '/radmc_simulation/bhr71/cycle1/observations/'
 if control == True:
     print 'Running the controlled grids for paper...'
     params_table = home + '/programs/misc/hyperion/input_table_control.txt'
