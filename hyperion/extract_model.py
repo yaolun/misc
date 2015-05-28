@@ -352,12 +352,12 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     #         f = interp1d(wl_tot, sed_tot)
     #         obs_aper_sed[i] = f(wl_aper[i])
 
-    aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's', mfc='Magenta',markersize=10)
+    # aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's', mfc='Magenta',markersize=10)
 
-    radmc_w_aper = ascii.read('/Users/yaolun/test/radmc3d_apertest/spectrum.out',data_start=2, header_start=None, names=['wave','flux'])
-    radmc_w_aper['vSv'] = radmc_w_aper['flux'] * c/(radmc_w_aper['wave']*1e-4) / 178**2
+    # radmc_w_aper = ascii.read('/Users/yaolun/test/radmc3d_apertest/spectrum.out',data_start=2, header_start=None, names=['wave','flux'])
+    # radmc_w_aper['vSv'] = radmc_w_aper['flux'] * c/(radmc_w_aper['wave']*1e-4) / 178**2
 
-    ax_sed.plot(np.log10(radmc_w_aper['wave']), np.log10(radmc_w_aper['vSv']), ':', color='k')
+    # ax_sed.plot(np.log10(radmc_w_aper['wave']), np.log10(radmc_w_aper['vSv']), ':', color='k')
 
 
 
