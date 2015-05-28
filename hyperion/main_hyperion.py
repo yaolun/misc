@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import sys
-from subprocess import Popen
+from subprocess import Popen, call
 from pprint import pprint
 from setup_model import setup_model
 from input_reader import input_reader_table
@@ -113,9 +113,10 @@ if extract_only == False:
             print 'Running with Hyperion'
             hyp_foo = open(outdir_dum+'hyperion.log','w')
             hyp_err = open(outdir_dum+'hyperion.err','w')
-            run = Popen(['mpirun','-n',str(core_num),'hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
-            while run.poll() == None:
-                time.sleep(30)
+            # run = Popen(['mpirun','-n',str(core_num),'hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
+            run = call('mpirun -n %s hyperion_sph_mpi -f %s %s' % (str(core_num), outdir_dum+'model'+str(int(model_num)+i)+'.rtin', outdir_dum+'model'+str(int(model_num)+i)+'.rtout'), stdout=hyp_foo, stderr=hyp_err)
+            # while run.poll() == None:
+                # time.sleep(30)
             # run.communicate()
         # Extract the results
         # the indir here is the dir that contains the observed spectra.

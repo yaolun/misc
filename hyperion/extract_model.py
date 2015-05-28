@@ -37,7 +37,10 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
         return (np.trapz(fv,freq)*4.*PI*(dist*pc)**2)/SL
 
-
+    # to avoid X server error
+    import matplotlib as mpl
+    mpl.use('Agg')
+    #
     import matplotlib.pyplot as plt
     import numpy as np
     import os
