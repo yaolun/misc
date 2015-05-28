@@ -469,7 +469,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         # Change it into erg/s/cm2/Hz/sr
         factor = 1e-23*1e6
         # avoid zero in log
-        val = image.val[:, :, iwav] * factor + 1e-30
+        # flip the image, because the setup of inclination is upside down
+        val = image.val[::-1, :, iwav] * factor + 1e-30
+        # val = image.val[:, :, iwav] * factor + 1e-30
 
         # This is the command to show the image. The parameters vmin and vmax are
         # the min and max levels for the colorscale (remove for default values).
