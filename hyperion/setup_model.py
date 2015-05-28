@@ -7,6 +7,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     import numpy as np
     import astropy.constants as const
     import scipy as sci
+    # to avoid X server error
+    import matplotlib as mpl
+    mpl.use('Agg')
+    #
     import matplotlib.pyplot as plt
     import matplotlib as mat
     import os
