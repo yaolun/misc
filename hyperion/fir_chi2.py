@@ -266,8 +266,9 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.tx
 # keywords = {'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{cav}}$']}
 # keywords = {'col':['age','Cs'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{c_{s}\,[km\,s^{-1}]}$']}
 # keywords = {'col':['view_angle','theta_cav'], 'label': [r'$\rm{viewing\,angle}$', r'$\rm{\theta_{cav}}$']}
-keywords = {'col':['age','rho_cav_edge'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}
+# keywords = {'col':['age','rho_cav_edge'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}
 # keywords = {'col':['age','rho_cav_center'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$']}
+keywords = {'col':['rho_cav_center','rho_cav_edge'], 'label': [r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}
 
 
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
