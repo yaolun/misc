@@ -63,7 +63,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                        temp_max=2000.)
     #
     d.write(outdir+'oh5.hdf5')
-    d.plot(outdir+'oh5.png')
+    d.plot(outdir+'oh5.pdf')
     plt.clf()
 
     # Grids and Density
