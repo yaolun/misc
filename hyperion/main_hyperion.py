@@ -7,6 +7,7 @@ from setup_model import setup_model
 from input_reader import input_reader_table
 from extract_model import extract_hyperion
 from temp_hyperion import temp_hyperion
+import time
 
 # Default setting
 run = True
@@ -113,12 +114,14 @@ if extract_only == False:
             hyp_foo = open(outdir_dum+'hyperion.log','w')
             hyp_err = open(outdir_dum+'hyperion.err','w')
             run = Popen(['mpirun','-n',str(core_num),'hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
-            run.communicate()
+            while run.poll() == None:
+                time.sleep(30)
+            # run.communicate()
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
         print 'Seems finish, lets check out the results'
-        import pdb
-        pdb.set_trace()
+        # import pdb
+        # pdb.set_trace()
         extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper,filter_func=True)
         temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
