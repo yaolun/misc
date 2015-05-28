@@ -181,8 +181,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         ax = fig.add_subplot(111)
 
         # plot the contour with color and lines
-        ax.contour((x-min(x))* 50/(max(x)-min(x)),\
-                    (y-min(y))* 50/(max(y)-min(y)),z,15,linewidths=0.5,colors='k', vmin=chi2.min())
+        ax.contour((x-min(x))* 49/(max(x)-min(x)),\
+                    (y-min(y))* 49/(max(y)-min(y)),z,15,linewidths=0.5,colors='k', vmin=chi2.min())
         # cs = ax.contourf(x,y,z,15,cmap=plt.cm.jet)
         im = ax.imshow(z, cmap='Blues_r', origin='lower', vmin=chi2.min())
         ax.set_xticks(np.linspace(0, 50, 5))
@@ -256,22 +256,24 @@ import numpy as np
 #               {'listpath': '/Users/yaolun/bhr71/hyperion/cycle6/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/cycle6',
 #                'model_num': np.arange(39,49)}]
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle7/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/cycle7',
-               'model_num': np.arange(1,14)}]
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
+               'model_num': np.arange(1,16)}]
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
 #                'model_num': np.arange(1,77)}]
 # keywords = {'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{viewing\,angle}$']}
 # keywords = {'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{cav}}$']}
-keywords = {'col':['age','Cs'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{c_{s}\,[km\,s^{-1}]}$']}
+# keywords = {'col':['age','Cs'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{c_{s}\,[km\,s^{-1}]}$']}
 # keywords = {'col':['view_angle','theta_cav'], 'label': [r'$\rm{viewing\,angle}$', r'$\rm{\theta_{cav}}$']}
+keywords = {'col':['age','rho_cav_edge'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}
+# keywords = {'col':['age','rho_cav_center'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$']}
 
 
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
 # keywords = {'col':['age','Cs'], 'label': [r'$\mathrm{age~[10^{4}~yr]}$', r'$\mathrm{c_{s}~[km~s^{-1}]}$']}
 # obs = '/Users/yaolun/bhr71/obs_for_radmc/'
-p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, fixed_cs=True)
+p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs)
 for i in range(0, len(p2)):
     print p1[i], p2[i], chi2[i]
