@@ -115,7 +115,8 @@ if extract_only == False:
             hyp_err = open(outdir_dum+'hyperion.err','w')
             # run = Popen(['mpirun','-n',str(core_num),'hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
             # print 'mpirun -n %s hyperion_sph_mpi -f %s %s' % (str(core_num), outdir_dum+'model'+str(int(model_num)+i)+'.rtin', outdir_dum+'model'+str(int(model_num)+i)+'.rtout')
-            run = call(['mpirun','-n',str(core_num),'hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
+            run = call(['mpirun','-n',str(core_num),'hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'],\
+                        shell=True, stdout=hyp_foo, stderr=hyp_err)
             # while run.poll() == None:
                 # time.sleep(30)
             # run.communicate()
