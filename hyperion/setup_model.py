@@ -17,8 +17,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     from record_hyperion import record_hyperion
     from outflow_inner_edge import outflow_inner_edge
     from pprint import pprint
-    import pdb
-    pdb.set_trace()
+    # import pdb
+    # pdb.set_trace()
 
     # Constants setup
     c         = const.c.cgs.value
