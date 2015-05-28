@@ -580,14 +580,17 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # flatten beyond 20 um
         # default aperture
         if wl_aper == None:    
-            wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 20, 24, 70, 160, 250, 350, 500, 850]
+            wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
         name = np.arange(1,len(wl_aper)+1)
         aper = np.empty_like(wl_aper)
         for i in range(0, len(wl_aper)):
-            if wl_aper[i] <= 14:
+            if wl_aper[i] < 5:
+                # aper[i] = 1.2 * 7
+                aper[i] = 1.8 * 4
+            elif (wl_aper[i] < 14) & (wl_aper[i] >=5):
                 # aper[i] = 7.2 * wl_aper[i]/10.
                 aper[i] = 1.8 * 4
-            elif (wl_aper[i] > 14) & (wl_aper[i] <=40):
+            elif (wl_aper[i] >= 14) & (wl_aper[i] <40):
                 # aper[i] = 7.2 * 2
                 aper[i] = 5.1 * 4
             else:
@@ -633,7 +636,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # flatten beyond 20 um
         # default aperture
         if wl_aper == None:    
-            wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 20, 24, 70, 160, 250, 350, 500, 850]
+            wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
         name = np.arange(1,len(wl_aper)+1)
         aper = np.empty_like(wl_aper)
         for i in range(0, len(wl_aper)):
@@ -830,4 +833,5 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 # outdir = '/Users/yaolun/test/radmc3d_apertest/'
 # # # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
 # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=True,radmc=True)
+# fix_params = {'R_min': 0.14}
+# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=False,radmc=True,fix_params=fix_params)
