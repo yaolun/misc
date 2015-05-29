@@ -1,5 +1,7 @@
 def temp_hyperion(rtout,outdir, bb_dust=False):
     import numpy as np
+    import matplotlib as mpl
+    mpl.use('Agg')
     import matplotlib.pyplot as plt
     import os
     from hyperion.model import ModelOutput
@@ -90,6 +92,14 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     ax.minorticks_on()
     ax.tick_params('both',labelsize=24,width=2,which='major',pad=15,length=5)
     ax.tick_params('both',labelsize=24,width=2,which='minor',pad=15,length=2.5)
+
+    # fix the tick label font
+    ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=24)
+    for label in ax.get_xticklabels():
+        label.set_fontproperties(ticks_font)
+    for label in ax.get_yticklabels():
+        label.set_fontproperties(ticks_font)
+
     ax.set_ylim([0,4])
     fig.gca().set_xlim(left=np.log10(0.05))
     # ax.set_xlim([np.log10(0.8),np.log10(10000)])
