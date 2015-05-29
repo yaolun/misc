@@ -485,6 +485,13 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         im = ax.imshow(np.log10(val), vmin= -22, vmax= -12,
                   cmap=plt.cm.jet, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
+        # fix the tick label font
+        ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral')
+        for label in ax.get_xticklabels():
+            label.set_fontproperties(ticks_font)
+        for label in ax.get_yticklabels():
+            label.set_fontproperties(ticks_font)
+
         # Colorbar setting
         # create an axes on the right side of ax. The width of cax will be 5%
         # of ax and the padding between cax and ax will be fixed at 0.05 inch.
@@ -497,6 +504,10 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
             cb.ax.set_ylabel(r'$\rm{log(I_{\nu})\,[erg/s/cm^{2}/Hz/sr]}$',fontsize=12)
             cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
             plt.setp(cb_obj,fontsize=12)
+            # fix the tick label font
+            for label in cb.ax.get_yticklabels():
+                label.set_fontproperties(ticks_font)
+
 
         if (i+1) == 7:
             # Finalize the plot
@@ -507,14 +518,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         ax.set_adjustable('box-forced')
         ax.text(0.7,0.88,str(wav) + r'$\rm{\,\mu m}$',fontsize=16,color='white', transform=ax.transAxes)
 
-        # fix the tick label font
-        ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral')
-        for label in ax.get_xticklabels():
-            label.set_fontproperties(ticks_font)
-        for label in ax.get_yticklabels():
-            label.set_fontproperties(ticks_font)
-        for label in cb.ax.get_yticklabels():
-            label.set_fontproperties(ticks_font)
 
 
     fig.subplots_adjust(hspace=0,wspace=-0.2)
