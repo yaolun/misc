@@ -417,7 +417,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='minor',pad=15,length=2.5*mag)
 
     # fix the tick label font
-    ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral')
+    ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',fontsize=mag*18)
     for label in ax_sed.get_xticklabels():
         label.set_fontproperties(ticks_font)
     for label in ax_sed.get_yticklabels():
@@ -486,7 +486,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
                   cmap=plt.cm.jet, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
         # fix the tick label font
-        ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral')
+        ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',fontsize=14)
         for label in ax.get_xticklabels():
             label.set_fontproperties(ticks_font)
         for label in ax.get_yticklabels():
@@ -505,14 +505,15 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
             cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
             plt.setp(cb_obj,fontsize=12)
             # fix the tick label font
+            ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',fontsize=12)
             for label in cb.ax.get_yticklabels():
                 label.set_fontproperties(ticks_font)
 
 
         if (i+1) == 7:
             # Finalize the plot
-            ax.set_xlabel('RA Offset (arcsec)', fontsize=14)
-            ax.set_ylabel('Dec Offset (arcsec)', fontsize=14)
+            ax.set_xlabel(r'\rm{RA\,Offset\,(arcsec)}', fontsize=14)
+            ax.set_ylabel(r'\rm{Dec\,Offset\,(arcsec)}', fontsize=14)
 
         ax.tick_params(axis='both', which='major', labelsize=16)
         ax.set_adjustable('box-forced')
