@@ -416,6 +416,13 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='minor',pad=15,length=2.5*mag)
 
+    # fix the tick label font
+    ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral')
+    for label in ax_sed.get_xticklabels():
+        label.set_fontproperties(ticks_font)
+    for label in ax_sed.get_yticklabels():
+        label.set_fontproperties(ticks_font)
+
     ax_sed.set_ylim([-14,-7])
     ax_sed.set_xlim([0,3])
 
@@ -499,6 +506,16 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         ax.tick_params(axis='both', which='major', labelsize=16)
         ax.set_adjustable('box-forced')
         ax.text(0.7,0.88,str(wav) + r'$\rm{\,\mu m}$',fontsize=16,color='white', transform=ax.transAxes)
+
+        # fix the tick label font
+        ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral')
+        for label in ax.get_xticklabels():
+            label.set_fontproperties(ticks_font)
+        for label in ax.get_yticklabels():
+            label.set_fontproperties(ticks_font)
+        for label in cb.ax.get_yticklabels():
+            label.set_fontproperties(ticks_font)
+
 
     fig.subplots_adjust(hspace=0,wspace=-0.2)
 
