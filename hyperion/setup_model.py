@@ -12,7 +12,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     mpl.use('Agg')
     #
     import matplotlib.pyplot as plt
-    import matplotlib as mat
     import os
     from matplotlib.colors import LogNorm
     from scipy.integrate import nquad
@@ -425,6 +424,11 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # ax_env.set_ylim([0,10000])
         ax_env.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
                                 r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
+        # fix the tick label font
+        ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=20)
+        for label in ax_env.get_yticklabels():
+            label.set_fontproperties(ticks_font)
+
         ax_env.grid(True)
         cb = fig.colorbar(img_env, pad=0.1)
         cb.ax.set_ylabel(r'$\rm{Averaged\,Gas\,Density\,(cm^{-3})}$',fontsize=20)
@@ -460,6 +464,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         ax.minorticks_on()
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
         ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+
+        # fix the tick label font
+        ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=18)
+        for label in ax.get_xticklabels():
+            label.set_fontproperties(ticks_font)
+        for label in ax.get_yticklabels():
+            label.set_fontproperties(ticks_font)
+
         ax.set_ylim([0,15])
         fig.gca().set_xlim(left=np.log10(0.05))
         # ax.set_xlim([np.log10(0.8),np.log10(10000)])
@@ -830,14 +842,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
+params = input_reader_table(filename)
+pprint(params[0])
 # # # # outdir = '/Users/yaolun/bhr71/hyperion/'
-# outdir = '/Users/yaolun/test/radmc3d_apertest/'
+outdir = '/Users/yaolun/test/'
 # # # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# fix_params = {'R_min': 0.14}
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=False,radmc=True,fix_params=fix_params)
+dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+fix_params = {'R_min': 0.14}
+setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=False,radmc=True,fix_params=fix_params)

@@ -51,9 +51,15 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     cb = fig.colorbar(im, pad=0.1)
     cb.ax.set_ylabel(r'$\rm{Averaged\,Temperature\,(K)}$',fontsize=20)
     cb.set_ticks([5,10,20,30,40,50,60,70,80,90,100])
-    cb.set_ticklabels([5,10,20,30,40,50,60,70,80,90,'$>$100'])
+    cb.set_ticklabels([r'$\rm{5}$',r'$\rm{10}$',r'$\rm{20}$',r'$\rm{30}$',r'$\rm{40}$',r'$\rm{50}$',r'$\rm{60}$',r'$\rm{70}$',r'$\rm{80}$',r'$\rm{90}$',r'$\rm{>100}$'])
     cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
     plt.setp(cb_obj,fontsize=20)
+
+    # fix the tick label font
+    ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=20)
+    for label in ax.get_yticklabels():
+        label.set_fontproperties(ticks_font)
+
     fig.savefig(outdir+print_name+'_temperature.png', format='png', dpi=300, bbox_inches='tight')
     fig.clf()
 
@@ -107,6 +113,6 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     fig.savefig(outdir+print_name+'_temp_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/alma/model2.rtout'
+# rtout = '/Users/yaolun/bhr71/hyperion/cycle7/model46.rtout'
 # outdir = '/Users/yaolun/test/'
 # temp_hyperion(rtout, outdir, bb_dust=True)
