@@ -155,7 +155,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 	pacs, = ax_sed.plot(np.log10(wl_pacs),np.log10(c/(wl_pacs*1e-4)*flux_pacs),'-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
 	spire, = ax_sed.plot(np.log10(wl_spire),np.log10(c/(wl_spire*1e-4)*flux_spire),'-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
 	irs, = ax_sed.plot(np.log10(wl_irs),np.log10(c/(wl_irs*1e-4)*flux_irs),'-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
-	# ax_sed.text(0.75,0.9,r'$\mathrm{L_{bol}= %5.2f L_{\odot}}$' % l_bol_obs,fontsize=mag*16,transform=ax_sed.transAxes) 
+	# ax_sed.text(0.75,0.9,r'$\rm{L_{bol}= %5.2f L_{\odot}}$' % l_bol_obs,fontsize=mag*16,transform=ax_sed.transAxes) 
 
 	# plot the observed photometry data
 	photometry, = ax_sed.plot(np.log10(wl_phot),np.log10(c/(wl_phot*1e-4)*flux_phot),'s',mfc='DimGray',mec='k',markersize=8)
@@ -252,8 +252,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 	# radmc, = ax_sed.plot(np.log10(wl),np.log10(c/(wl*1e-4)*fit/dstar**2),'-',color='DimGray', linewidth=1.5*mag, alpha=0.5)
 
 	# print the L bol of the simulated SED (both Hyperion and RADMC-3D)
-	# lg_sim = ax_sed.legend([sim,radmc],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_sim, \
-	# 	r'$\mathrm{L_{bol,radmc3d}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_radmc],\
+	# lg_sim = ax_sed.legend([sim,radmc],[r'$\rm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_sim, \
+	# 	r'$\rm{L_{bol,radmc3d}=%5.2f~L_{\odot},~L_{center}=9.18~L_{\odot}}$' % l_bol_radmc],\
 	# 	loc='lower right',fontsize=mag*16)
 
 	# read the input central luminosity by reading in the source information from output file
@@ -261,15 +261,15 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 	dum.use_sources(filename)
 	L_cen = dum.sources[0].luminosity/lsun
 
-	# lg_sim = ax_sed.legend([sim],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=%5.2f~L_{\odot}}$' % (l_bol_sim, L_cen)], \
+	# lg_sim = ax_sed.legend([sim],[r'$\rm{L_{bol,sim}=%5.2f~L_{\odot},~L_{center}=%5.2f~L_{\odot}}$' % (l_bol_sim, L_cen)], \
         # loc='lower right',fontsize=mag*16)
-	# lg_sim = ax_sed.legend([sim],[r'$\mathrm{L_{bol,sim}=%5.2f~L_{\odot},~L_{bol,obs}=%5.2f~L_{\odot}}$' % (l_bol_sim, l_bol_obs)], \
+	# lg_sim = ax_sed.legend([sim],[r'$\rm{L_{bol,sim}=%5.2f~L_{\odot},~L_{bol,obs}=%5.2f~L_{\odot}}$' % (l_bol_sim, l_bol_obs)], \
     #     loc='lower right',fontsize=mag*16)
-	# text = ax_sed.text(0.2 ,0.05 ,r'$\mathrm{L_{bol,simulation}=%5.2f~L_{\odot},~L_{bol,observation}=%5.2f~L_{\odot}}$' % (l_bol_sim, l_bol_obs),fontsize=mag*16,transform=ax_sed.transAxes) 
+	# text = ax_sed.text(0.2 ,0.05 ,r'$\rm{L_{bol,simulation}=%5.2f~L_{\odot},~L_{bol,observation}=%5.2f~L_{\odot}}$' % (l_bol_sim, l_bol_obs),fontsize=mag*16,transform=ax_sed.transAxes) 
 	# text.set_bbox(dict( edgecolor='k',facecolor='None',alpha=0.3,pad=10.0))
 	# plot setting
-	ax_sed.set_xlabel(r'$\mathrm{log~\lambda~({\mu}m)}$',fontsize=mag*20)
-	ax_sed.set_ylabel(r'$\mathrm{log~\nu S_{\nu}~(erg/cm^{2}/s)}$',fontsize=mag*20)
+	ax_sed.set_xlabel(r'$\rm{log\,\lambda\,({\mu}m)}$',fontsize=mag*20)
+	ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg\,cm^{-2}\,s^{-1})}$',fontsize=mag*20)
 	[ax_sed.spines[axis].set_linewidth(1.5*mag) for axis in ['top','bottom','left','right']]
 	ax_sed.minorticks_on()
 	ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
@@ -278,12 +278,12 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 	ax_sed.set_ylim([-13,-7.5])
 	ax_sed.set_xlim([0,3])
 
-	# lg_data = ax_sed.legend([sim, aper], [r'$\mathrm{w/o~aperture}$', r'$\mathrm{w/~aperture}$'], \
+	# lg_data = ax_sed.legend([sim, aper], [r'$\rm{w/o~aperture}$', r'$\rm{w/~aperture}$'], \
 	# 						loc='upper left', fontsize=14*mag, framealpha=0.3, numpoints=1)
 
 	lg_data = ax_sed.legend([irs, photometry, aper, aper_obs],\
-		[r'$\mathrm{observation}$',\
-		r'$\mathrm{photometry}$',r'$\mathrm{F_{aper,sim}}$',r'$\mathrm{F_{aper,obs}}$'],\
+		[r'$\rm{observation}$',\
+		r'$\rm{photometry}$',r'$\rm{F_{aper,sim}}$',r'$\rm{F_{aper,obs}}$'],\
 		loc='upper left',fontsize=14*mag,numpoints=1,framealpha=0.3)
 	# plt.gca().add_artist(lg_sim)
 
@@ -349,7 +349,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 			cb = fig.colorbar(im, cax=cax)
 			cb.solids.set_edgecolor("face")
 			cb.ax.minorticks_on()
-			cb.ax.set_ylabel(r'$\mathrm{log(I_{\nu})~[erg/s/cm^{2}/Hz/sr]}$',fontsize=12)
+			cb.ax.set_ylabel(r'$\rm{log(I_{\nu})\,[erg\,s^{-2}\,cm^{-2}\,Hz^{-1}\,sr^{-1}]}$',fontsize=12)
 			cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
 			plt.setp(cb_obj,fontsize=12)
 
@@ -360,7 +360,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
 		ax.tick_params(axis='both', which='major', labelsize=16)
 		ax.set_adjustable('box-forced')
-		ax.text(0.7,0.88,str(wav) + r'$\mathrm{~\mu m}$',fontsize=18,color='white',weight='bold',transform=ax.transAxes)
+		ax.text(0.7,0.88,str(wav) + r'$\rm{\,\mu m}$',fontsize=18,color='white',weight='bold',transform=ax.transAxes)
 
 	fig.subplots_adjust(hspace=0,wspace=-0.2)
 
@@ -372,7 +372,10 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 outdir = '/Users/yaolun/bhr71/hyperion/'
 wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle6/model47.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
-# extract_hyperion('/Users/yaolun/test/model16.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
+extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle7/model46.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
+extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle7/model53.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
+extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle7/model57.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
+
+extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle5/model16.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
 # extract_hyperion('/hyperion/best_model_bettyjo.rtout',indir=indir,outdir=outdir+'bettyjo/')
 # extract_hyperion('/hyperion/old_setup2.rtout',indir=indir,outdir=outdir)
