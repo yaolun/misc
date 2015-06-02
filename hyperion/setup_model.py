@@ -842,14 +842,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-from input_reader import input_reader_table
-from pprint import pprint
-filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
-params = input_reader_table(filename)
-pprint(params[0])
+# from input_reader import input_reader_table
+# from pprint import pprint
+# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
+# params = input_reader_table(filename)
+# pprint(params[0])
 # # # # outdir = '/Users/yaolun/bhr71/hyperion/'
-outdir = '/Users/yaolun/test/'
+# outdir = '/Users/yaolun/test/'
 # # # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
-dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-fix_params = {'R_min': 0.14}
-setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=False,radmc=True,fix_params=fix_params)
+# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+# fix_params = {'R_min': 0.14}
+# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=False,radmc=True,fix_params=fix_params)
