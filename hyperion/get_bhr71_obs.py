@@ -55,6 +55,8 @@ def get_bhr71_obs(indir):
 		flux_sig_phot.append(phot[i][2])
 		note.append(phot[i][4])
 	wl_phot = np.array(wl_phot)
+	flux_phot = np.array(flux_phot)
+	flux_sig_phot = np.array(flux_sig_phot)
 
 	# Print the observed L_bol
 	wl_spec = np.hstack((wl_irs,wl_pacs,wl_spire))
