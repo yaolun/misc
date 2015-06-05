@@ -5,7 +5,7 @@ def l_bol(wl,fv,dist):
 	import matplotlib.pyplot as plt
 	# wavelength unit: um
 	# Flux density unit: Jy
-	#
+	# distance unit: pc
 	# constants setup
 	#
 	c = const.c.cgs.value
