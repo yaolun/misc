@@ -499,6 +499,15 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     source.position = (0., 0., 0.)
     print 'L_center =  % 5.2f L_sun' % ((4*PI*rstar**2)*sigma*(tstar**4)/LS)
 
+    # add an infrared source at the center
+    L_IR = 0.02
+    ir_source = m.add_spherical_source()
+    ir_source.luminosity = L_IR*LS
+    ir_source.radius = rstar      # [cm]
+    ir_source.temperature = 290 # [K]  peak at 10 um
+    ir_source.position = (0., 0., 0.)
+    print 'Additional IR source, L_IR = %5.2f L_sun' % L_IR
+
     # Setting up the wavelength for monochromatic radiative transfer
     lambda0 = 0.1
     lambda1 = 2.0

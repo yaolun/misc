@@ -10,6 +10,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
     from scipy.interpolate import interp1d
     from scipy.interpolate import griddata
     from hyperion.model import ModelOutput
+    from matplotlib.colors import LogNorm
     import copy
     import collections
 
@@ -25,13 +26,19 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
     # chi2 function
     def fir_chi2(obs, sim, wave=[70.,100.,160.,250.,350.,500.], log=False):
 
+        # experimental procedure
+        # introduce a systematic error estimated from the gap between PACS and SPIRE.
+        # Take the ratio of this gap to the peak value as the fraction in fractional uncertainty.
+        # Then add two uncertainties in quadrature
+
         chi2 = 0
         if log == False:
             for w in wave:
                 # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2
                 # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / (obs['sigma'][obs['wave'] == w])**2
-                chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / (obs['sigma'][obs['wave'] == w])**2 / \
-                                (obs['sed'][obs['wave'] == w] / (11.89*LS/4/np.pi/(dstar*pc)**2))
+                # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / ( (obs['sigma'][obs['wave'] == w])**2 + (10**(-0.03*np.log10(obs['sed'][obs['wave'] == w])))**2 )
+                chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / ( (obs['sigma'][obs['wave'] == w])**2 + (0.1*obs['sed'][obs['wave'] == w])**2 )#/ \
+                                # (obs['sed'][obs['wave'] == w] / (11.89*LS/4/np.pi/(dstar*pc)**2))
         else:
             # not proper functioning at this moment
             for w in wave:
@@ -45,7 +52,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
 
     # setup the aperture size
     if wl_aper == None:
-        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500]
         # wl_aper = [70., 100., 160., 250., 350., 500.]
 
@@ -83,6 +90,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
     # calculate Chi2 from simulated SED
     p1 = []
     p2 = []
+    model_label = []
     chi2 = []
     total_chi2 = []
 
@@ -101,7 +109,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
             ref_params.remove_columns(ignore_col)
             ref_params.remove_column('Model#')
             ref_params = (ref_params[:][model_list['Model#'] == 'Model'+str(ref)])[0].data
-            print ref_params
+            # print ref_params
 
         # find the model has minimun chi2 first
         for i in range(0, len(model_num)):
@@ -110,8 +118,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
             chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': sed_obs_noise}, {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data}, wave=wl_aper)
             reduced_chi2_dum = chi2_dum/(n-2-1)
             total_chi2.extend(reduced_chi2_dum)
-        print total_chi2
-        print min(total_chi2), np.where(total_chi2 == min(total_chi2))
+        # print total_chi2
+        # print min(total_chi2), np.where(total_chi2 == min(total_chi2))
 
         for i in range(0, len(model_num)):
             imod = model_num[i]
@@ -130,6 +138,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
                 # read the parameter values
                 p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
                 p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
+                model_label.append(str(imod))
             else:
                 # get other parameters of model i
                 dum_params = copy.copy(model_list)
@@ -144,6 +153,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
                 else:
                     p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
+                    model_label.append(str(imod))
 
             # read the simulated SED
             model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
@@ -218,7 +228,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         x = np.linspace(0, 1, 50)
         y = np.linspace(0, 1, 50)
 
-        z = griddata((p1_norm, p2_norm), chi2, (x[None,:], y[:,None]), method='cubic')
+        z = griddata((p1_norm, p2_norm), chi2, (x[None,:], y[:,None]), method='linear')
 
         # z = np.log10(z)
 
@@ -228,7 +238,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         # plot the contour with color and lines
         ax.contour(x, y, z, 15, linewidths=0.5,colors='k', vmin=chi2.min())
         # cs = ax.contourf(x,y,z,15,cmap=plt.cm.jet)
-        im = ax.imshow(z, cmap='Blues_r', origin='lower', vmin=chi2.min(), extent=[0,1,0,1])
+        im = ax.imshow(z, cmap='jet', origin='lower', vmin=chi2.min(), extent=[0,1,0,1],\
+            norm=LogNorm(vmin=chi2.min(), vmax=chi2.max()))
+        # Blues_r
         ax.set_xticks(np.linspace(0, 1, 5))
         ax.set_xticklabels(np.linspace(min(p1), max(p1), 5))
         ax.set_yticks(np.linspace(0, 1, 5))
@@ -239,11 +251,15 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         cb = fig.colorbar(im, cax=cax)
         cb.solids.set_edgecolor("face")
         cb.ax.minorticks_on()
-        cb.ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}}$',fontsize=16)
+        cb.ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}/(\sigma_{data}^{2}+\sigma_{sys}^{2})}$',fontsize=16)
         cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
         plt.setp(cb_obj,fontsize=12)
         # plot the original data points
         ori_data = ax.scatter(p1_norm,p2_norm, marker='o',c='b',s=5)
+
+        # print the model number near the points
+        # for i in range(len(model_label)):
+            # ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
 
         ax.set_xlabel(keywords['label'][0], fontsize=20)
         ax.set_ylabel(keywords['label'][1], fontsize=20)
@@ -321,13 +337,16 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.tx
 # keywords = {'col':['view_angle','theta_cav'], 'label': [r'$\rm{viewing\,angle}$', r'$\rm{\theta_{cav}}$']}
 # keywords = {'col':['age','rho_cav_edge'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}
 # keywords = {'col':['age','rho_cav_center'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$']}
-keywords = {'col':['rho_cav_center','rho_cav_edge'], 'label': [r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}
-
+# keywords = {'col':['rho_cav_center','rho_cav_edge'], 'label': [r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}
+keywords_list = [{'col':['age','rho_cav_edge'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']},\
+                 {'col':['age','rho_cav_center'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$']},\
+                 {'col':['rho_cav_center','rho_cav_edge'], 'label': [r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}]
 
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
 # keywords = {'col':['age','Cs'], 'label': [r'$\mathrm{age~[10^{4}~yr]}$', r'$\mathrm{c_{s}~[km~s^{-1}]}$']}
 # obs = '/Users/yaolun/bhr71/obs_for_radmc/'
-p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=11)
-for i in range(0, len(p2)):
-    print p1[i], p2[i], chi2[i]
+for keywords in keywords_list:
+    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=11)
+    # for i in range(0, len(p2)):
+        # print p1[i], p2[i], chi2[i]
