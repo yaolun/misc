@@ -316,7 +316,6 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
 
         fig.savefig(outdir+'sed_'+plotname+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
 
-
 def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
     import numpy as np
     import matplotlib.pyplot as plt
@@ -451,6 +450,7 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
         fig.subplots_adjust(hspace=0,wspace=0)
         fig.savefig(outdir+'sed_theta_cav_incl.pdf', format='pdf', dpi=300, bbox_inches='tight')
         fig.clf()
+
 def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
     import numpy as np
     import matplotlib.pyplot as plt
@@ -586,8 +586,6 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
         fig.savefig(outdir+'sed_rho_cav_centeredge.pdf', format='pdf', dpi=300, bbox_inches='tight')
         fig.clf()
 
-
-
 def disk_exist_com(indir, array, outdir, obs=None):
     import numpy as np
     import matplotlib.pyplot as plt
@@ -636,7 +634,6 @@ def disk_exist_com(indir, array, outdir, obs=None):
 
     fig.savefig(outdir+'sed_disk_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
-
 
 def sed_tstar(indir, array, outdir, obs=None):
     import numpy as np
@@ -923,6 +920,310 @@ def sed_lum(indir, array, outdir, obs=None):
     fig.savefig(outdir+'sed_lstar.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
+def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=False):
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import os
+    from hyperion.model import ModelOutput
+    from hyperion.model import Model
+    from scipy.interpolate import interp1d
+    from hyperion.util.constants import pc, c, lsun    
+    import sys
+    sys.path.append('/Users/yaolun/programs/misc/hyperion')
+    from get_bhr71_obs import get_bhr71_obs
+    from l_bol import l_bol    
+
+    # Read in the observation data and calculate the noise & variance
+    if indir == None:
+        indir = '/Users/yaolun/bhr71/'
+    if outdir == None:
+        outdir = '/Users/yaolun/bhr71/hyperion/'
+
+    bhr71 = get_bhr71_obs(obs)  # in um and Jy
+    wave_obs, flux_obs, noise_obs = bhr71['spec']
+    wave_phot, flux_phot, flux_sig_phot = bhr71['phot']
+
+    # Convert the unit from Jy to erg cm-2 Hz-1
+    flux_obs = flux_obs*1e-23
+    noise_obs = noise_obs*1e-23
+    flux_phot = flux_phot*1e-23
+    flux_sig_phot = flux_sig_phot*1e-23
+
+    # Print the observed L_bol
+    wl_tot = np.hstack((wave_obs,wave_phot))
+    flux_tot = np.hstack((flux_obs,flux_phot))
+    flux_tot = flux_tot[np.argsort(wl_tot)]
+    wl_tot = wl_tot[np.argsort(wl_tot)]
+    l_bol_obs = l_bol(wl_tot,flux_tot*1e23, dstar)             
+
+    # Open the model
+    m = ModelOutput(indir+modelname+'.rtout')
+
+    if wl_aper == None:
+        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+
+    # Create the plot
+    mag = 1.5
+    fig = plt.figure(figsize=(8*mag,6*mag))
+    ax_sed = fig.add_subplot(1, 1, 1)
+
+    # Plot the observed SED
+    pacs, = ax_sed.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]),'-',color='DimGray', alpha=0.7, linewidth=1.5*mag)
+    spire, = ax_sed.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]),'-',color='DimGray', alpha=0.7, linewidth=1.5*mag)
+    irs, = ax_sed.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]),'-',color='DimGray', alpha=0.7, linewidth=1.5*mag)
+
+
+    # plot the observed photometry data
+    photometry, = ax_sed.plot(np.log10(wave_phot),np.log10(c/(wave_phot*1e-4)*flux_phot),'s',mfc='DimGray',mec='k',markersize=8)
+    ax_sed.errorbar(np.log10(wave_phot),np.log10(c/(wave_phot*1e-4)*flux_phot),\
+        yerr=[np.log10(c/(wave_phot*1e-4)*flux_phot)-np.log10(c/(wave_phot*1e-4)*(flux_phot-flux_sig_phot)),\
+              np.log10(c/(wave_phot*1e-4)*(flux_phot+flux_sig_phot))-np.log10(c/(wave_phot*1e-4)*flux_phot)],\
+        fmt='s',mfc='DimGray',mec='k',markersize=8)
+
+    # perform the same procedure of flux extraction of aperture flux with observed spectra
+    wl_aper = np.array(wl_aper)
+    obs_aper_wl = wl_aper[(wl_aper >= min(wave_obs)) & (wl_aper <= max(wave_obs))]
+    obs_aper_sed = np.empty_like(obs_aper_wl)
+    sed_tot = c/(wl_tot*1e-4)*flux_tot
+    # wl_tot and flux_tot are already hstacked and sorted by wavelength
+    for i in range(0, len(obs_aper_wl)):
+        if (obs_aper_wl[i] < 50.) & (obs_aper_wl[i] >= 5):
+            res = 60.
+        elif obs_aper_wl[i] < 5:
+            res = 10.
+        else:
+            res = 1000.
+        ind = np.where((wl_tot < obs_aper_wl[i]*(1+1./res)) & (wl_tot > obs_aper_wl[i]*(1-1./res)))
+        if len(ind[0]) != 0:
+            obs_aper_sed[i] = np.mean(sed_tot[ind])
+        else:
+            f = interp1d(wl_tot, sed_tot)
+            obs_aper_sed[i] = f(wl_aper[i])
+
+    # read in the raw output from hyperion and then save the extraction results in text file, otherwise read the text files instead.
+    if rtout == True:
+        sed_inf = m.get_sed(group=0, inclination=0, aperture=-1, distance=dstar * pc)
+        flux_aper = np.empty_like(wl_aper)
+        unc_aper = np.empty_like(wl_aper)
+        for i in range(0, len(wl_aper)):
+            sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
+            # use a rectangle function the average the simulated SED
+            # apply the spectral resolution
+            if (wl_aper[i] < 50.) & (wl_aper[i] >= 5):
+                res = 60.
+            elif wl_aper[i] < 5:
+                res = 10.
+            else:
+                res = 1000.
+            ind = np.where((sed_dum.wav < wl_aper[i]*(1+1./res)) & (sed_dum.wav > wl_aper[i]*(1-1./res)))
+            if len(ind[0]) != 0:
+                flux_aper[i] = np.mean(sed_dum.val[ind])
+            else:
+                f = interp1d(sed_dum.wav, sed_dum.val)
+                flux_aper[i] = f(wl_aper[i])
+        
+        # make the variables consistent with others
+        sim_inf = sed_inf.wav
+        sim_sed_inf = sed_inf.val
+
+        # save the results in text files
+        # unapertured SED
+        foo = open(outdir+modelname+'_sed_inf.txt','w')
+        foo.write('%12s \t %12s \n' % ('wave','vSv'))
+        for i in range(0, len(sed_inf.wav)):
+            foo.write('%12g \t %12g \n' % (sed_inf.wav[i], sed_inf.val[i]))
+        foo.close()
+        # SED with convolution of aperture sizes
+        foo = open(outdir+modelname+'_sed_w_aperture.txt','w')
+        foo.write('%12s \t %12s \n' % ('wave','vSv'))
+        for i in range(0, len(wl_aper)):
+            foo.write('%12g \t %12g \n' % (wl_aper[i], flux_aper[i]))
+        foo.close()
+    else:
+        # read in the extracted text files
+        (sim_inf, sim_sed_inf) = np.genfromtxt(indir+modelname+'_sed_inf.txt', skip_header=1).T
+        (wl_aper, flux_aper) = np.genfromtxt(indir+modelname+'_sed_w_aperture.txt', skip_header=1).T
+
+    aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's-', mec='None', mfc='r', color='r',markersize=10, linewidth=1.5)
+    aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o-', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=3, linewidth=1.7)
+    # calculate the bolometric luminosity of the aperture 
+    l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23, dstar)
+    print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
+
+    # plot setting
+    ax_sed.set_xlabel(r'$\rm{log\,\lambda\,({\mu}m)}$',fontsize=mag*20)
+    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg\,cm^{-2}\,s^{-1})}$',fontsize=mag*20)
+    [ax_sed.spines[axis].set_linewidth(1.5*mag) for axis in ['top','bottom','left','right']]
+    ax_sed.minorticks_on()
+    ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
+    ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='minor',pad=15,length=2.5*mag)
+
+    ax_sed.set_ylim([-13,-7.5])
+    ax_sed.set_xlim([0,3])
+
+    lg_data = ax_sed.legend([irs, photometry, aper, aper_obs],\
+        [r'$\rm{observation}$',\
+        r'$\rm{photometry}$',r'$\rm{F_{aper,sim}}$',r'$\rm{F_{aper,obs}}$'],\
+        loc='upper left',fontsize=14*mag,numpoints=1,framealpha=0.3)
+
+    # Write out the plot
+    fig.savefig(outdir+modelname+'_sed.pdf',format='pdf',dpi=300,bbox_inches='tight')
+    fig.clf()
+
+def three_model_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None,rtout=False):
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import os
+    from hyperion.model import ModelOutput
+    from hyperion.model import Model
+    from scipy.interpolate import interp1d
+    from hyperion.util.constants import pc, c, lsun    
+    import sys
+    sys.path.append('/Users/yaolun/programs/misc/hyperion')
+    from get_bhr71_obs import get_bhr71_obs
+    from l_bol import l_bol    
+
+    color_list = ['CornflowerBlue','SkyBlue','Blue']
+    style = ['-','--','-.']
+    style = ['-','-','-']
+
+    # Read in the observation data and calculate the noise & variance
+    if indir == None:
+        indir = '/Users/yaolun/bhr71/'
+    if outdir == None:
+        outdir = '/Users/yaolun/bhr71/hyperion/'
+
+    bhr71 = get_bhr71_obs(obs)  # in um and Jy
+    wave_obs, flux_obs, noise_obs = bhr71['spec']
+    wave_phot, flux_phot, flux_sig_phot = bhr71['phot']
+
+    # Convert the unit from Jy to erg cm-2 Hz-1
+    flux_obs = flux_obs*1e-23
+    noise_obs = noise_obs*1e-23
+    flux_phot = flux_phot*1e-23
+    flux_sig_phot = flux_sig_phot*1e-23
+
+    # Print the observed L_bol
+    wl_tot = np.hstack((wave_obs,wave_phot))
+    flux_tot = np.hstack((flux_obs,flux_phot))
+    flux_tot = flux_tot[np.argsort(wl_tot)]
+    wl_tot = wl_tot[np.argsort(wl_tot)]
+    l_bol_obs = l_bol(wl_tot,flux_tot*1e23, dstar)             
+
+
+    if wl_aper == None:
+        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+
+    # Create the plot
+    mag = 1.5
+    fig = plt.figure(figsize=(8*mag,6*mag))
+    ax_sed = fig.add_subplot(1, 1, 1)
+
+    # Plot the observed SED
+    ax_sed.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]),'-',color='DimGray', alpha=0.7, linewidth=1.5*mag)
+    ax_sed.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]),'-',color='DimGray', alpha=0.7, linewidth=1.5*mag)
+    ax_sed.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]),'-',color='DimGray', alpha=0.7, linewidth=1.5*mag, label=r'$\rm{observations}$')
+
+
+    # plot the observed photometry data
+    ax_sed.plot(np.log10(wave_phot),np.log10(c/(wave_phot*1e-4)*flux_phot),'s',mfc='DimGray',mec='k',markersize=8,label=r'$\rm{photometry}$')
+    ax_sed.errorbar(np.log10(wave_phot),np.log10(c/(wave_phot*1e-4)*flux_phot),\
+        yerr=[np.log10(c/(wave_phot*1e-4)*flux_phot)-np.log10(c/(wave_phot*1e-4)*(flux_phot-flux_sig_phot)),\
+              np.log10(c/(wave_phot*1e-4)*(flux_phot+flux_sig_phot))-np.log10(c/(wave_phot*1e-4)*flux_phot)],\
+        fmt='s',mfc='DimGray',mec='k',markersize=8)
+
+    # perform the same procedure of flux extraction of aperture flux with observed spectra
+    wl_aper = np.array(wl_aper)
+    obs_aper_wl = wl_aper[(wl_aper >= min(wave_obs)) & (wl_aper <= max(wave_obs))]
+    obs_aper_sed = np.empty_like(obs_aper_wl)
+    sed_tot = c/(wl_tot*1e-4)*flux_tot
+    # wl_tot and flux_tot are already hstacked and sorted by wavelength
+    for i in range(0, len(obs_aper_wl)):
+        if (obs_aper_wl[i] < 50.) & (obs_aper_wl[i] >= 5):
+            res = 60.
+        elif obs_aper_wl[i] < 5:
+            res = 10.
+        else:
+            res = 1000.
+        ind = np.where((wl_tot < obs_aper_wl[i]*(1+1./res)) & (wl_tot > obs_aper_wl[i]*(1-1./res)))
+        if len(ind[0]) != 0:
+            obs_aper_sed[i] = np.mean(sed_tot[ind])
+        else:
+            f = interp1d(wl_tot, sed_tot)
+            obs_aper_sed[i] = f(wl_aper[i])
+    aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's-', mec='None', mfc='r', color='r',markersize=10, linewidth=1.5, label=r'$\rm{F_{aper,obs}}$')
+
+    # iterate through three models, best-fit, Kristensen 2012, and Bourke 1997 geometry
+    for mod in modelname:
+
+        # read in the raw output from hyperion and then save the extraction results in text file, otherwise read the text files instead.
+        if rtout == True:
+            # Open the model
+            m = ModelOutput(mod+'.rtout')
+
+            sed_inf = m.get_sed(group=0, inclination=0, aperture=-1, distance=dstar * pc)
+            flux_aper = np.empty_like(wl_aper)
+            unc_aper = np.empty_like(wl_aper)
+            for i in range(0, len(wl_aper)):
+                sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
+                # use a rectangle function the average the simulated SED
+                # apply the spectral resolution
+                if (wl_aper[i] < 50.) & (wl_aper[i] >= 5):
+                    res = 60.
+                elif wl_aper[i] < 5:
+                    res = 10.
+                else:
+                    res = 1000.
+                ind = np.where((sed_dum.wav < wl_aper[i]*(1+1./res)) & (sed_dum.wav > wl_aper[i]*(1-1./res)))
+                if len(ind[0]) != 0:
+                    flux_aper[i] = np.mean(sed_dum.val[ind])
+                else:
+                    f = interp1d(sed_dum.wav, sed_dum.val)
+                    flux_aper[i] = f(wl_aper[i])
+            
+            # make the variables consistent with others
+            sim_inf = sed_inf.wav
+            sim_sed_inf = sed_inf.val
+
+            # save the results in text files
+            # unapertured SED
+            foo = open(outdir+mod+'_sed_inf.txt','w')
+            foo.write('%12s \t %12s \n' % ('wave','vSv'))
+            for i in range(0, len(sed_inf.wav)):
+                foo.write('%12g \t %12g \n' % (sed_inf.wav[i], sed_inf.val[i]))
+            foo.close()
+            # SED with convolution of aperture sizes
+            foo = open(outdir+mod+'_sed_w_aperture.txt','w')
+            foo.write('%12s \t %12s \n' % ('wave','vSv'))
+            for i in range(0, len(wl_aper)):
+                foo.write('%12g \t %12g \n' % (wl_aper[i], flux_aper[i]))
+            foo.close()
+        else:
+            # read in the extracted text files
+            (sim_inf, sim_sed_inf) = np.genfromtxt(mod+'_sed_inf.txt', skip_header=1).T
+            (wl_aper, flux_aper) = np.genfromtxt(mod+'_sed_w_aperture.txt', skip_header=1).T
+
+        aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o', linestyle=style[modelname.index(mod)], mec=color_list[modelname.index(mod)], mfc='None', color=color_list[modelname.index(mod)],markersize=12, markeredgewidth=3, linewidth=1.7, label=label[modelname.index(mod)])
+        # calculate the bolometric luminosity of the aperture 
+        l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23, dstar)
+        print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
+
+    # plot setting
+    ax_sed.set_xlabel(r'$\rm{log\,\lambda\,({\mu}m)}$',fontsize=mag*20)
+    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg\,cm^{-2}\,s^{-1})}$',fontsize=mag*20)
+    [ax_sed.spines[axis].set_linewidth(1.5*mag) for axis in ['top','bottom','left','right']]
+    ax_sed.minorticks_on()
+    ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
+    ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='minor',pad=15,length=2.5*mag)
+
+    ax_sed.set_ylim([-13,-7.5])
+    ax_sed.set_xlim([0.3,3])
+
+    lg_data = ax_sed.legend(loc='lower right',fontsize=12*mag,numpoints=1,framealpha=0.3)
+
+    # Write out the plot
+    fig.savefig(outdir+'three_models_vs_obs_sed.pdf',format='pdf',dpi=300,bbox_inches='tight')
+    fig.clf()
 
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
@@ -979,8 +1280,8 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
 # # disk & no dis comparison
 # disk & no disk
-array = np.array([71,76])
-disk_exist_com(indir, array, outdir, obs=obs)
+# array = np.array([71,76])
+# disk_exist_com(indir, array, outdir, obs=obs)
 
 # # grid of tstar
 # array = np.array([69,70,71])
@@ -1009,5 +1310,11 @@ disk_exist_com(indir, array, outdir, obs=obs)
 # sed_cav_struc_com(indir, array, outdir, obs=obs)
 
 # grid of tstar with the same lstar
-array = np.array([1,2,3])
-sed_lum(indir, array, outdir)
+# array = np.array([1,2,3])
+# sed_lum(indir, array, outdir)
+
+# model_vs_obs('model46', '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/', obs=obs)
+
+three_model_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle5/model16','/Users/yaolun/bhr71/hyperion/cycle7/model53','/Users/yaolun/bhr71/hyperion/cycle7/model46'],\
+    '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
+    [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{This\,Study}$'], obs)
