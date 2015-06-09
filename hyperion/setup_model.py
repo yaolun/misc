@@ -374,7 +374,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                             i += 1
                         # Disk profile
                         if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
-                            h = ((w/(100*AU))**beta)*h100
+                            h = ((w/(100*AU))**beta)*h100 
                             rho_disk[ir,itheta,iphi] = rho_0*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/h)**2)
                         # Combine envelope and disk
                         rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
@@ -488,6 +488,11 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
     # Insert the calculated grid and dust density profile into hyperion
     m.set_spherical_polar_grid(ri, thetai, phii)
+    # temperary for comparing full TSC and infall-only TSC model
+    # import sys
+    # sys.path.append('/Users/yaolun/programs/misc/')
+    # from tsc_comparison import tsc_com
+    # rho_tsc, rho_ulrich = tsc_com()
     m.add_density_grid(rho.T, d)
     # m.add_density_grid(rho.T, outdir+'oh5.hdf5')    # numpy read the array in reverse order
 
@@ -499,14 +504,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     source.position = (0., 0., 0.)
     print 'L_center =  % 5.2f L_sun' % ((4*PI*rstar**2)*sigma*(tstar**4)/LS)
 
-    # add an infrared source at the center
-    L_IR = 0.04
-    ir_source = m.add_spherical_source()
-    ir_source.luminosity = L_IR*LS
-    ir_source.radius = rstar      # [cm]
-    ir_source.temperature = 500 # [K]  peak at 10 um
-    ir_source.position = (0., 0., 0.)
-    print 'Additional IR source, L_IR = %5.2f L_sun' % L_IR
+    # # add an infrared source at the center
+    # L_IR = 0.04
+    # ir_source = m.add_spherical_source()
+    # ir_source.luminosity = L_IR*LS
+    # ir_source.radius = rstar      # [cm]
+    # ir_source.temperature = 500 # [K]  peak at 10 um
+    # ir_source.position = (0., 0., 0.)
+    # print 'Additional IR source, L_IR = %5.2f L_sun' % L_IR
 
     # Setting up the wavelength for monochromatic radiative transfer
     lambda0 = 0.1
@@ -861,4 +866,4 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 # # # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
 # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
 # fix_params = {'R_min': 0.14}
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=False,radmc=True,fix_params=fix_params)
+# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params)
