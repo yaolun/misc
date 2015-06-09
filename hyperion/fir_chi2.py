@@ -1,4 +1,4 @@
-def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=None):
+def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=None, spitzer_only=False):
     """
     array_list: contains dictionaries, each dictionary represents a location of 'model_list.txt', and the model numbers within.
     """
@@ -38,7 +38,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
                 # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / (obs['sigma'][obs['wave'] == w])**2
                 # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / ( (obs['sigma'][obs['wave'] == w])**2 + (10**(-0.03*np.log10(obs['sed'][obs['wave'] == w])))**2 )
                 chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / ( (obs['sigma'][obs['wave'] == w])**2 + (0.1*obs['sed'][obs['wave'] == w])**2 )#/ \
-                                # (obs['sed'][obs['wave'] == w] / (11.89*LS/4/np.pi/(dstar*pc)**2))
+                # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])/obs['sed'][obs['wave'] == w])**2
         else:
             # not proper functioning at this moment
             for w in wave:
@@ -55,6 +55,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500]
         # wl_aper = [70., 100., 160., 250., 350., 500.]
+    if spitzer_only:
+        wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35]
 
     # read the observed SED and extract with apertures
     bhr71 = get_bhr71_obs(obs)
@@ -230,15 +232,17 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
 
         z = griddata((p1_norm, p2_norm), chi2, (x[None,:], y[:,None]), method='linear')
 
+        # print z.min()
+
         # z = np.log10(z)
 
         fig = plt.figure(figsize=(8,8))
         ax = fig.add_subplot(111)
 
         # plot the contour with color and lines
-        ax.contour(x, y, z, 15, linewidths=0.5,colors='k', vmin=chi2.min())
+        ax.contour(x, y, z, 15, linewidths=0.5,colors='k')
         # cs = ax.contourf(x,y,z,15,cmap=plt.cm.jet)
-        im = ax.imshow(z, cmap='jet', origin='lower', vmin=chi2.min(), extent=[0,1,0,1],\
+        im = ax.imshow(z, cmap='jet', origin='lower', extent=[0,1,0,1],\
             norm=LogNorm(vmin=chi2.min(), vmax=chi2.max()))
         # Blues_r
         ax.set_xticks(np.linspace(0, 1, 5))
@@ -258,8 +262,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         ori_data = ax.scatter(p1_norm,p2_norm, marker='o',c='b',s=5)
 
         # print the model number near the points
-        # for i in range(len(model_label)):
-            # ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
+        for i in range(len(model_label)):
+            ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
 
         ax.set_xlabel(keywords['label'][0], fontsize=20)
         ax.set_ylabel(keywords['label'][1], fontsize=20)
@@ -347,6 +351,6 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # keywords = {'col':['age','Cs'], 'label': [r'$\mathrm{age~[10^{4}~yr]}$', r'$\mathrm{c_{s}~[km~s^{-1}]}$']}
 # obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 for keywords in keywords_list:
-    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=11)
+    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=11, spitzer_only=True)
     # for i in range(0, len(p2)):
         # print p1[i], p2[i], chi2[i]
