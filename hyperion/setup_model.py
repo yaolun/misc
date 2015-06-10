@@ -493,8 +493,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # sys.path.append(os.path.expanduser('~')+'/programs/misc/')
     # from tsc_comparison import tsc_com
     # rho_tsc, rho_ulrich = tsc_com()
-    m.add_density_grid(rho_tsc.T, d)
-    # m.add_density_grid(rho.T, outdir+'oh5.hdf5')    # numpy read the array in reverse order
+    m.add_density_grid(rho.T, d)
+    m.add_density_grid(rho.T, outdir+'oh5.hdf5')    # numpy read the array in reverse order
 
     # Define the luminsoity source
     source = m.add_spherical_source()
