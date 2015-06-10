@@ -490,7 +490,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     m.set_spherical_polar_grid(ri, thetai, phii)
     # temperary for comparing full TSC and infall-only TSC model
     import sys
-    sys.path.append(os.path.expandusers('~')+'/programs/misc/')
+    sys.path.append(os.path.expanduser('~')+'/programs/misc/')
     from tsc_comparison import tsc_com
     rho_tsc, rho_ulrich = tsc_com()
     m.add_density_grid(rho.T, d)
