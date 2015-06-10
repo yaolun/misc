@@ -1070,7 +1070,7 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     fig.savefig(outdir+modelname+'_sed.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-def three_model_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None,rtout=False):
+def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None,rtout=False,color_list=None,style=None,plotname=None):
     import matplotlib.pyplot as plt
     import numpy as np
     import os
@@ -1083,9 +1083,10 @@ def three_model_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper
     from get_bhr71_obs import get_bhr71_obs
     from l_bol import l_bol    
 
-    color_list = ['CornflowerBlue','SkyBlue','Blue']
-    style = ['-','--','-.']
-    style = ['-','-','-']
+    if len(modelname) == 3:
+        color_list = ['Blue','Blue','Blue']
+        style = [':','--','-']
+        plotname = 'three_models_vs_obs_sed'
 
     # Read in the observation data and calculate the noise & variance
     if indir == None:
@@ -1222,7 +1223,7 @@ def three_model_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper
     lg_data = ax_sed.legend(loc='lower right',fontsize=12*mag,numpoints=1,framealpha=0.3)
 
     # Write out the plot
-    fig.savefig(outdir+'three_models_vs_obs_sed.pdf',format='pdf',dpi=300,bbox_inches='tight')
+    fig.savefig(outdir+plotname+'.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
 import numpy as np
@@ -1315,6 +1316,11 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
 # model_vs_obs('model46', '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/', obs=obs)
 
-three_model_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle5/model16','/Users/yaolun/bhr71/hyperion/cycle7/model53','/Users/yaolun/bhr71/hyperion/cycle7/model46'],\
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle5/model16','/Users/yaolun/bhr71/hyperion/cycle7/model53','/Users/yaolun/bhr71/hyperion/cycle7/model46'],\
     '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
-    [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{This\,Study}$'], obs)
+    [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs)
+
+# full TSC vs infall-only TSC model
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle7/model46_tsc_com/model46_tsc','/Users/yaolun/bhr71/hyperion/cycle7/model46_tsc_com/model46_ulrich'],\
+    '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
+    [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model46_tsc_com')
