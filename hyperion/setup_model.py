@@ -266,7 +266,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
             # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
-            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)]))
+            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=max(ri)) # min([R_inf,max(ri)])
         else:
             print 'Read the pre-computed TSC model.'
         # read in the exist file
@@ -858,12 +858,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
 # from input_reader import input_reader_table
 # from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
+# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
 # params = input_reader_table(filename)
 # pprint(params[0])
-# # # # outdir = '/Users/yaolun/bhr71/hyperion/'
 # outdir = '/Users/yaolun/test/'
-# # # # # params_file = '/Users/yaolun/programs/misc/hyperion/tsc_params.dat'
 # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
 # fix_params = {'R_min': 0.14}
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params)
+# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=True,radmc=False,fix_params=fix_params)
