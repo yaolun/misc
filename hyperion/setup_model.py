@@ -492,7 +492,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     m.set_spherical_polar_grid(ri, thetai, phii)
     # temperary for comparing full TSC and infall-only TSC model
     # import sys
-    # sys.path.append(os.path.expandusers('~')+'/programs/misc/')
+    # sys.path.append(os.path.expanduser('~')+'/programs/misc/')
     # from tsc_comparison import tsc_com
     # rho_tsc, rho_ulrich = tsc_com()
     m.add_density_grid(rho.T, d)
@@ -866,4 +866,4 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 # outdir = '/Users/yaolun/test/'
 # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
 # fix_params = {'R_min': 0.14}
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=True,radmc=False,fix_params=fix_params)
+# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params)
