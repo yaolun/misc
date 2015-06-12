@@ -268,11 +268,22 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
             # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
-            idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=max(ri)) # min([R_inf,max(ri)])
+            # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)])) # min([R_inf,max(ri)])
+            #
+            # only run TSC calculation within infall radius
+            # modify the rc array
+            rc_idl = rc[(rc < min([R_inf,max(ri)]))]
+            idl.pro('tsc_run', outdir=outdir, rc=rc_idl, thetac=thatec, time=t, c_s=cs, omega=omega, renv_min=R_env_min)#, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)])) # min([R_inf,max(ri)])
         else:
             print 'Read the pre-computed TSC model.'
         # read in the exist file
-        rho_env_tsc = np.genfromtxt(outdir+'rhoenv.dat').T
+        rho_env_tsc_idl = np.genfromtxt(outdir+'rhoenv.dat').T
+        # because only region within infall radius is calculated by IDL program, need to project it to the original grid
+        rho_env_tsc = np.zeros([len(rc), len(thetac)])
+        for irc in range(len(rc)):
+            if rc[irc] in rc_idl:
+                rho_env_tsc[irc,:] = rho_env_tsc_idl[np.where(rc_idl == rc[irc]),:]
+
         # extrapolate for the NaN values at the outer radius, usually at radius beyond the infall radius
         # using r^-2 profile at radius greater than infall radius
         # and map the 2d strcuture onto 3d grid
