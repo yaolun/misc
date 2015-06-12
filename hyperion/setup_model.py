@@ -273,7 +273,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             # only run TSC calculation within infall radius
             # modify the rc array
             rc_idl = rc[(rc < min([R_inf,max(ri)]))]
-            idl.pro('tsc_run', outdir=outdir, rc=rc_idl, thetac=thatec, time=t, c_s=cs, omega=omega, renv_min=R_env_min)#, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)])) # min([R_inf,max(ri)])
+            idl.pro('tsc_run', outdir=outdir, rc=rc_idl, thetac=thetac, time=t, c_s=cs, omega=omega, renv_min=R_env_min)#, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)])) # min([R_inf,max(ri)])
         else:
             print 'Read the pre-computed TSC model.'
         # read in the exist file
