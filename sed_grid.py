@@ -197,7 +197,7 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
         fig.savefig(outdir+'sed_omega0.pdf', format='pdf', dpi=300, bbox_inches='tight')
         fig.clf()
 
-def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=False, compact=None, yrange=None):
+def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=False, compact=None, yrange=None, inf=False):
     import numpy as np
     import matplotlib.pyplot as plt
     from matplotlib.ticker import MaxNLocator
@@ -238,6 +238,9 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
                 ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='r', alpha=0.7, linewidth=1)
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=3,markeredgewidth=1,linewidth=1.2)
+
+            if inf == True:
+                ax.plot(np.log10(wave_inf), np.log10(sed_inf), '--',mfc='b',mec='b',markersize=3,markeredgewidth=1,linewidth=1.2)
 
             if tbol == True:
                  ax.text(0.4, 0.1, r'$T_{bol}= %4.1f\/K$' % t_bol(wave, sed*wave*1e-4/c), fontsize=12, transform=ax.transAxes)
@@ -298,6 +301,10 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i])
+            
+            if inf == True:
+              ax.plot(np.log10(wave_inf), np.log10(sed_inf), '--',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2)  
+
             ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
         ax.set_xlabel(r'$log(wavelength)\/(\mu m)$', fontsize=18)
         ax.set_ylabel(r'$log\/\nu S_{\nu}\/(erg\/s^{-1}\/cm^{-2})$', fontsize=18)
@@ -1249,12 +1256,12 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # compact = [r'$M_{disk}=0.01\/M_{\odot}$',r'$M_{disk}=0.03\/M_{\odot}$',r'$M_{disk}=0.05\/M_{\odot}$',r'$M_{disk}=0.07\/M_{\odot}$',r'$M_{disk}=0.1\/M_{\odot}$']
 # plotname = 'disk_mdisk'
 # sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
-# # flare power
-# array = np.array([31,32,33,34,35])
-# xlabel = r'$\beta\/(1.0,\/1.2,\/1.4,\/1.6,\/1.8)$'
-# compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
-# plotname = 'disk_beta'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# flare power
+array = np.array([31,32,33,34,35])
+xlabel = r'$\beta\/(1.0,\/1.2,\/1.4,\/1.6,\/1.8)$'
+compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
+plotname = 'disk_beta'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # # scale height
 # array = np.array([36,37,38,39,40])
 # xlabel = r'$h_{100}\/[AU]\/(6,\/8,\/10\/,12,\/14)$'
