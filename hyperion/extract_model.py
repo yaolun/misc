@@ -1,4 +1,4 @@
-def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,save=True,filter_func=False,plot_all=False):
+def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,save=True,filter_func=False,plot_all=False,clean=False):
     def l_bol(wl,fv,dist=178.0):
         import numpy as np
         import astropy.constants as const
@@ -159,10 +159,15 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
     # Plot the observed SED
     # plot the observed spectra
-    pacs, = ax_sed.plot(np.log10(wl_pacs),np.log10(c/(wl_pacs*1e-4)*flux_pacs),'-',color='Green',linewidth=1.5*mag)
-    spire, = ax_sed.plot(np.log10(wl_spire),np.log10(c/(wl_spire*1e-4)*flux_spire),'r-',linewidth=1.5*mag)
-    irs, = ax_sed.plot(np.log10(wl_irs),np.log10(c/(wl_irs*1e-4)*flux_irs),'-',color='Blue',linewidth=1.5*mag)
-    ax_sed.text(0.75,0.9,r'$\rm{L_{bol}= %5.2f L_{\odot}}$' % l_bol_obs,fontsize=mag*16,transform=ax_sed.transAxes) 
+    if clean == False:
+        pacs, = ax_sed.plot(np.log10(wl_pacs),np.log10(c/(wl_pacs*1e-4)*flux_pacs),'-',color='Green',linewidth=1.5*mag)
+        spire, = ax_sed.plot(np.log10(wl_spire),np.log10(c/(wl_spire*1e-4)*flux_spire),'r-',linewidth=1.5*mag)
+        irs, = ax_sed.plot(np.log10(wl_irs),np.log10(c/(wl_irs*1e-4)*flux_irs),'-',color='Blue',linewidth=1.5*mag)
+        ax_sed.text(0.75,0.9,r'$\rm{L_{bol}= %5.2f L_{\odot}}$' % l_bol_obs,fontsize=mag*16,transform=ax_sed.transAxes) 
+    else:
+        pacs, = ax_sed.plot(np.log10(wl_pacs),np.log10(c/(wl_pacs*1e-4)*flux_pacs),'-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
+        spire, = ax_sed.plot(np.log10(wl_spire),np.log10(c/(wl_spire*1e-4)*flux_spire),'-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
+        irs, = ax_sed.plot(np.log10(wl_irs),np.log10(c/(wl_irs*1e-4)*flux_irs),'-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
 
     # plot the observed photometry data
     photometry, = ax_sed.plot(np.log10(wl_phot),np.log10(c/(wl_phot*1e-4)*flux_phot),'s',mfc='DimGray',mec='k',markersize=8)
@@ -170,6 +175,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         yerr=[np.log10(c/(wl_phot*1e-4)*flux_phot)-np.log10(c/(wl_phot*1e-4)*(flux_phot-flux_sig_phot)),\
               np.log10(c/(wl_phot*1e-4)*(flux_phot+flux_sig_phot))-np.log10(c/(wl_phot*1e-4)*flux_phot)],\
         fmt='s',mfc='DimGray',mec='k',markersize=8)
+
 
     # Extract the SED for the smallest inclination and largest aperture, and
     # scale to 300pc. In Python, negative indices can be used for lists and
@@ -184,7 +190,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
 
     # plot the simulated SED
-    sim, = ax_sed.plot(np.log10(sed_inf.wav), np.log10(sed_inf.val), '-', color='GoldenRod', linewidth=1.5*mag)
+    if clean == False:
+        sim, = ax_sed.plot(np.log10(sed_inf.wav), np.log10(sed_inf.val), '-', color='GoldenRod', linewidth=1.5*mag)
     # get flux at different apertures
     flux_aper = np.empty_like(wl_aper)
     unc_aper = np.empty_like(wl_aper)
@@ -354,8 +361,11 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     #     else:
     #         f = interp1d(wl_tot, sed_tot)
     #         obs_aper_sed[i] = f(wl_aper[i])
+    if clean == False:
+        aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's', mfc='Magenta',markersize=10)
+    else:
+        aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's-', mec='None', mfc='r', color='r',markersize=10, linewidth=1.5)
 
-    aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's', mfc='Magenta',markersize=10)
 
     # radmc_w_aper = ascii.read('/Users/yaolun/test/radmc3d_apertest/spectrum.out',data_start=2, header_start=None, names=['wave','flux'])
     # radmc_w_aper['vSv'] = radmc_w_aper['flux'] * c/(radmc_w_aper['wave']*1e-4) / 178**2
@@ -371,7 +381,10 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         # if wl_aper[i] == 9.7:
             # ax_sed.plot(np.log10(sed_dum.wav), np.log10(sed_dum.val), '-', linewidth=1.5*mag)
         # print l_bol(sed_dum.wav, sed_dum.val/(c/sed_dum.wav*1e4)*1e23)
-    aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o',mfc='None',mec='k',markersize=12,markeredgewidth=3)
+    if clean == False:
+        aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o',mfc='None',mec='k',markersize=12,markeredgewidth=3)
+    else:
+        aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o-', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=3, linewidth=1.7)
     # calculate the bolometric luminosity of the aperture 
     l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23)
     print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
@@ -406,8 +419,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     dum.use_sources(filename)
     L_cen = dum.sources[0].luminosity/lsun
 
-    lg_sim = ax_sed.legend([sim],[r'$\rm{L_{bol,sim}=%5.2f\,L_{\odot},\,L_{center}=%5.2f\,L_{\odot}}$' % (l_bol_sim, L_cen)], \
-        loc='lower right',fontsize=mag*16)
+    if clean == False:
+        lg_sim = ax_sed.legend([sim],[r'$\rm{L_{bol,sim}=%5.2f\,L_{\odot},\,L_{center}=%5.2f\,L_{\odot}}$' % (l_bol_sim, L_cen)], \
+            loc='lower right',fontsize=mag*16)
     # plot setting
     ax_sed.set_xlabel(r'$\rm{log\,\lambda\,({\mu}m)}$',fontsize=mag*20)
     ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg/cm^{2}/s)}$',fontsize=mag*20)
@@ -426,9 +440,16 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     ax_sed.set_ylim([-14,-7])
     ax_sed.set_xlim([0,3])
 
-    lg_data = ax_sed.legend([irs, pacs, spire,photometry],[r'$\rm{{\it Spitzer}-IRS}$',r'$\rm{{\it Herschel}-PACS}$',r'$\rm{{\it Herschel}-SPIRE}$',r'$\rm{Photometry}$'],\
-                            loc='upper left',fontsize=14*mag,numpoints=1,framealpha=0.3)
-    plt.gca().add_artist(lg_sim)
+    if clean == False:
+        lg_data = ax_sed.legend([irs, pacs, spire,photometry],[r'$\rm{{\it Spitzer}-IRS}$',r'$\rm{{\it Herschel}-PACS}$',r'$\rm{{\it Herschel}-SPIRE}$',r'$\rm{Photometry}$'],\
+                                loc='upper left',fontsize=14*mag,numpoints=1,framealpha=0.3)
+        plt.gca().add_artist(lg_sim)
+    else:
+        lg_data = ax_sed.legend([irs, photometry, aper, aper_obs],\
+        [r'$\rm{observation}$',\
+        r'$\rm{photometry}$',r'$\rm{F_{aper,sim}}$',r'$\rm{F_{aper,obs}}$'],\
+        loc='upper left',fontsize=14*mag,numpoints=1,framealpha=0.3)
+
 
     # Write out the plot
     fig.savefig(outdir+print_name+'_sed.pdf',format='pdf',dpi=300,bbox_inches='tight')
@@ -528,11 +549,11 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
-# outdir = '/Users/yaolun/bhr71/hyperion/'
-# wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-# extract_hyperion('/Users/yaolun/test/model46_tsc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
-#                  wl_aper=wl_aper,filter_func=True,plot_all=False)
+indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+outdir = '/Users/yaolun/bhr71/hyperion/'
+wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+extract_hyperion('/Users/yaolun/test/model63.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+                 wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/test/model46_ulrich.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False)
 # extract_hyperion('/Users/yaolun/test/radmc3d_apertest/model15.rtout',indir=indir,outdir='/Users/yaolun/test/',\
