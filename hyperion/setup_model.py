@@ -871,7 +871,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
 # from input_reader import input_reader_table
 # from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+# filename = '/Users/yaolun/programs/misc/hyperion/input_table_control.txt'
 # params = input_reader_table(filename)
 # pprint(params[0])
 # outdir = '/Users/yaolun/test/'
