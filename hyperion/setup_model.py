@@ -276,6 +276,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             idl.pro('tsc_run', outdir=outdir, rc=rc_idl, thetac=thetac, time=t, c_s=cs, omega=omega, renv_min=R_env_min)#, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)])) # min([R_inf,max(ri)])
         else:
             print 'Read the pre-computed TSC model.'
+            rc_idl = rc[(rc < min([R_inf,max(ri)]))]
         # read in the exist file
         rho_env_tsc_idl = np.genfromtxt(outdir+'rhoenv.dat').T
         # because only region within infall radius is calculated by IDL program, need to project it to the original grid
@@ -871,10 +872,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
 # from input_reader import input_reader_table
 # from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/input_table_control.txt'
+# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
 # params = input_reader_table(filename)
 # pprint(params[0])
 # outdir = '/Users/yaolun/test/'
 # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
 # fix_params = {'R_min': 0.14}
-# setup_model(outdir,outdir,'test',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params)
+# setup_model(outdir,outdir,'model63_ulrich',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params)

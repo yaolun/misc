@@ -518,7 +518,7 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
                     ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
         fig.text(0.5, -0.05 , r'$\rho_{cav,\circ}\,[g\,cm^{-3}]\,(5\times 10^{-20},\,1\times 10^{-19},\,5\times 10^{-19},\,1\times 10^{-18})$', fontsize=20, ha='center')
-        fig.text(0, 0.5, r'$R_{cav,\circ}\,[AU]\,(40,\,30,\,20)$', fontsize=20, va='center', rotation='vertical')
+        fig.text(0, 0.5, r'$R_{cav,\circ}\,[AU]\,(60,\,40,\,20)$', fontsize=20, va='center', rotation='vertical')
 
         fig.subplots_adjust(hspace=0,wspace=0)
         fig.savefig(outdir+'sed_rho_cav_centeredge.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -587,7 +587,7 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
                 ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
         # fig.text(0.5, -0.05 , r'$\rho_{cav,\circ}\,[g\,cm^{-3}]\,(1\times 10^{-20},\,5\times 10^{-20},\,1\times 10^{-19},\,5\times 10^{-19})$', fontsize=20, ha='center')
-        fig.text(0.5, -0.15, r'$R_{cav,\circ}\,[AU]\,(20,\,30,\,40)$', fontsize=20, ha='center' )
+        fig.text(0.5, -0.15, r'$R_{cav,\circ}\,[AU]\,(20,\,40,\,60)$', fontsize=20, ha='center' )
 
         fig.subplots_adjust(hspace=0,wspace=0)
         fig.savefig(outdir+'sed_rho_cav_centeredge.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -1099,7 +1099,7 @@ def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None
     from l_bol import l_bol    
 
     if len(modelname) == 3:
-        color_list = ['Blue','Blue','Blue']
+        color_list = ['Blue','Green','Magenta']
         style = [':','--','-']
         plotname = 'three_models_vs_obs_sed'
 
@@ -1260,19 +1260,19 @@ sed_omega(indir, array, outdir, obs= None, compact=True)
 
 # # # grid of disk parameters
 # # disk mass
-array = np.array([31,32,33])
+array = np.array([88,89,90])
 xlabel = r'$M_{disk}\,[M_{\odot}]\,(0.025,\,0.075,\,0.25)$'
 compact = [r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$']
 plotname = 'disk_mdisk'
 sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # flare power
-array = np.array([34,35,36,37,38])
+array = np.array([91,92,93,94,95])
 xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
 compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
 plotname = 'disk_beta'
 sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # # scale height
-array = np.array([39,40,41,42,43])
+array = np.array([96,97,98,99,100])
 xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
 compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
 plotname = 'disk_h100'
@@ -1330,9 +1330,9 @@ sed_lum(indir, array, outdir)
 
 # # model_vs_obs('model46', '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/', obs=obs)
 
-# models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle5/model16','/Users/yaolun/bhr71/hyperion/controlled/model80','/Users/yaolun/bhr71/hyperion/cycle8/model63'],\
-#     '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
-#     [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs)
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model101','/Users/yaolun/bhr71/hyperion/controlled/model80','/Users/yaolun/bhr71/hyperion/cycle8/model63'],\
+    '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
+    [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs)
 
 # # full TSC vs infall-only TSC model
 # models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle7/model46_tsc_com/model46_tsc','/Users/yaolun/bhr71/hyperion/cycle7/model46_tsc_com/model46_ulrich'],\

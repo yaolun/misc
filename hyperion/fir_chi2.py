@@ -194,7 +194,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
 
         ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1.5)
         ax.set_xlabel(keywords['label'][0], fontsize=18)
-        ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}}$', fontsize=18)
+        ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}/(\sigma_{data}^{2}+\sigma_{sys}^{2})}$', fontsize=18)
+
+        ax.set_yscale('log')
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on() 
@@ -262,8 +264,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         ori_data = ax.scatter(p1_norm,p2_norm, marker='o',c='b',s=5)
 
         # print the model number near the points
-        for i in range(len(model_label)):
-            ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
+        # for i in range(len(model_label)):
+        #     ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
 
         ax.set_xlabel(keywords['label'][0], fontsize=20)
         ax.set_ylabel(keywords['label'][1], fontsize=20)
@@ -348,9 +350,13 @@ keywords_list = [{'col':['age','rho_cav_edge'], 'label': [r'$\rm{age\,[10^{4}\,y
 
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
-# keywords = {'col':['age','Cs'], 'label': [r'$\mathrm{age~[10^{4}~yr]}$', r'$\mathrm{c_{s}~[km~s^{-1}]}$']}
 # obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 for keywords in keywords_list:
-    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=11, spitzer_only=True)
+    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=11)
     # for i in range(0, len(p2)):
         # print p1[i], p2[i], chi2[i]
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
+               'model_num': np.arange(81,88)}]
+keywords = {'col':['age','Cs'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{c_{s}\,[km\,s^{-1}]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed_cs=True)
