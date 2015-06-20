@@ -20,6 +20,8 @@ alma=False
 core_num = 20
 better_im = False
 chi2 = False
+test = False
+fix_params = {}
 
 # Get command-line arguments
 if 'norun' in sys.argv:
@@ -42,6 +44,9 @@ if 'better_im' in sys.argv:
     better_im = True
 if 'chi2' in sys.argv:
     chi2 = True
+if 'test' in sys.argv:
+    test = True
+
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
@@ -64,6 +69,10 @@ if chi2 == True:
     print 'Running for chi2 grid...'
     params_table = home + '/programs/misc/hyperion/input_table_chi2.txt'
     outdir = home + '/hyperion/bhr71/chi2_grid/'
+if test == True:
+    print 'testing mode...'
+    params_table = home + '/programs/misc/hyperion/test_input.txt'
+    outdir = home + '/hyperion/bhr71/test/'
 
 # temp fix for the broken /opt/local/ of bettyjo
 # outdir = home+'/test/hyperion/'
@@ -104,7 +113,7 @@ if extract_only == False:
         # # older varsion
         # wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
         # option to fix some parameter
-        # fix_params = {'R_min': 0.14}
+        fix_params = {'R_min': 0.14}
         m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,idl=True,record=record,mono=mono,wl_aper=wl_aper,fix_params=fix_params,alma=alma,power=power,better_im=better_im)
         if run == False:
             print 'Hyperion run is skipped. Make sure you have run this model before'
