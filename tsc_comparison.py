@@ -30,19 +30,19 @@ def tsc_com(plot=True):
     #
     # parameter from cycle 7, model 46
     rstar     = 5 * RS
-    tstar     = 4700.0
-    R_env_max = 1.000000e+04 * AU
+    tstar     = 5100.0
+    R_env_max = 2.000000e+04 * AU
     R_env_min = 0.14         * AU             # the inner radius is fixed, 0.100364     * AU 
-    R_cen     = 8.111320e-01 * AU
-    R_inf     = 2.082753e+03 * AU
-    R_disk_min= 0.100364     * AU 
+    R_cen     = 6.072365e-02 * AU
+    R_inf     = 1.054025e+03 * AU
+    R_disk_min= 0.14         * AU 
     R_disk_max= R_cen
     theta_cav = 20.0
     beta      = 1.093
     h100      = 8.123        * AU
-    M_env_dot = 1.271306e-05 * MS/yr
-    M_disk    = 0.01 * MS
-    mstar     = 3.305397e-01 * MS
+    M_env_dot = 2.896073e-05 * MS/yr
+    M_disk    = 0.075 * MS
+    mstar     = 2.896073e-01 * MS
     rin       = rstar
     rout      = R_env_max
     rout_mike = 9.756000e+03 * AU
@@ -75,10 +75,19 @@ def tsc_com(plot=True):
     thetac       = 0.5*( thetai[0:ny] + thetai[1:ny+1] )
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
 
-    rhoenv_tsc = np.genfromtxt('/Users/yaolun/test/rhoenv.dat').T
+    rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv.dat').T
 
-    # extrapolation at the radius greater than infall radius
+    rc_idl = rc[(rc < min([R_inf,max(ri)]))]
 
+    # because only region within infall radius is calculated by IDL program, need to project it to the original grid
+    rho_env_tsc = np.zeros([len(rc), len(thetac)])
+    for irc in range(len(rc)):
+        if rc[irc] in rc_idl:
+            rho_env_tsc[irc,:] = rho_env_tsc_idl[np.where(rc_idl == rc[irc]),:]
+
+    # extrapolate for the NaN values at the outer radius, usually at radius beyond the infall radius
+    # using r^-2 profile at radius greater than infall radius
+    # and map the 2d strcuture onto 3d grid
     def poly(x, y, x0, deg=2):
         import numpy as np
         p = np.polyfit(x, y, deg)
@@ -86,21 +95,22 @@ def tsc_com(plot=True):
         for i in range(0, len(p)):
             y0 = y0 + p[i]*x0**(len(p)-i-1)
         return y0
-
+    # map TSC solution from IDL to actual 2-D grid
     rho_env_tsc2d = np.empty((nx,ny)) 
     if max(ri) > R_inf:
         ind_infall = np.where(rc <= R_inf)[0][-1]
         for i in range(0, len(rc)):
             if i <= ind_infall:
-                rho_env_tsc2d[i,:] = rhoenv_tsc[i,:]
+                rho_env_tsc2d[i,:] = rho_env_tsc[i,:]
             else:
-                rho_env_tsc2d[i,:] =  10**(np.log10(rhoenv_tsc[ind_infall,:]) - 2*(np.log10(rc[i]/rc[ind_infall])))
+                rho_env_tsc2d[i,:] =  10**(np.log10(rho_env_tsc[ind_infall,:]) - 2*(np.log10(rc[i]/rc[ind_infall])))
     else:
-        rho_env_tsc2d = rhoenv_tsc
+        rho_env_tsc2d = rho_env_tsc
     # map it to 3-D grid
     rho_env_tsc = np.empty((nx,ny,nz))
     for i in range(0, nz):
         rho_env_tsc[:,:,i] = rho_env_tsc2d
+       
 
     # calculate the infall-only solution
 
@@ -232,6 +242,8 @@ def tsc_com(plot=True):
     rho_tsc2d = np.sum(rho_tsc**2,axis=2)/np.sum(rho_tsc,axis=2)
     rho_ulrich2d = np.sum(rho_ulrich**2,axis=2)/np.sum(rho_ulrich,axis=2)
 
+    print min(rc)/AU, max(rc)/AU
+
     if plot == True:
 
         # make plots
@@ -240,10 +252,11 @@ def tsc_com(plot=True):
         ax = fig.add_subplot(111)
 
         plot_grid = [199]
-        alpha = np.linspace(0.3,1.0,len(plot_grid))
+        # alpha = np.linspace(0.3,1.0,len(plot_grid))
+        alpha = [1]
         for i in plot_grid:
-            tsc, = ax.plot(np.log10(rc), np.log10(rho_tsc2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='b', linewidth=2)
-            ulrich, = ax.plot(np.log10(rc), np.log10(rho_ulrich2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='r', linewidth=2)
+            tsc, = ax.plot(np.log10(rc/AU), np.log10(rho_tsc2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='b', linewidth=2)
+            ulrich, = ax.plot(np.log10(rc/AU), np.log10(rho_ulrich2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='r', linewidth=2)
 
         rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
         cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
@@ -252,7 +265,7 @@ def tsc_com(plot=True):
                   fontsize=16, numpoints=1, loc='lower center')
 
         ax.set_ylim([0, 15])
-        fig.gca().set_xlim(left=np.log10(0.2))
+        ax.set_xlim(left=np.log10(0.1))
         ax.set_xlabel(r'$\rm{log(radius)\,[AU]}$', fontsize=18)
         ax.set_ylabel(r'$\rm{log(gas\,density)\,[g\,cm^{-3}]}$', fontsize=18)
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
@@ -270,3 +283,4 @@ def tsc_com(plot=True):
         fig.savefig('/Users/yaolun/test/tsc_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
 
     return rho_tsc/100, rho_ulrich/100
+tsc_com()
