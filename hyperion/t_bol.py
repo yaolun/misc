@@ -50,5 +50,5 @@ def t_bol(wave, flux, freq=False):
 
 
 # import numpy as np
-# wave, flux, unc = np.genfromtxt('/Users/yaolun/bhr71/fitting/latest/pacs/data/BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim.txt',skip_header=1).T
+# wave, flux, unc = np.genfromtxt('/Users/yaolun/bhr71/fitting/BHR71/pacs/data/BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim.txt',skip_header=1).T
 # print t_bol(wave, flux)
