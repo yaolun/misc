@@ -41,7 +41,7 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=4,markeredgewidth=1,linewidth=1.2)
             # print the bolometric temperature
-            ax.text(0.4, 0.1, r'$T_{bol}= %4.1f\,K$' % t_bol(wave,sed*wave*1e-4/c), fontsize=12, transform=ax.transAxes)
+            ax.text(0.4, 0.1, r'$T_{bol}= %4.1f\,K$' % t_bol(wave,sed*wave*1e-4/c*1e-23), fontsize=12, transform=ax.transAxes)
 
             ax.set_ylim([-14,-7])
 
@@ -1099,7 +1099,7 @@ def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None
     from l_bol import l_bol    
 
     if len(modelname) == 3:
-        color_list = ['Blue','Green','Magenta']
+        color_list = ['Magenta','Green','Blue']
         style = [':','--','-']
         plotname = 'three_models_vs_obs_sed'
 
@@ -1232,7 +1232,7 @@ def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='minor',pad=15,length=2.5*mag)
 
-    ax_sed.set_ylim([-13,-7.5])
+    ax_sed.set_ylim([-18,-7.5])
     ax_sed.set_xlim([0.3,3])
 
     lg_data = ax_sed.legend(loc='lower right',fontsize=12*mag,numpoints=1,framealpha=0.3)
@@ -1334,7 +1334,7 @@ models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model101','/Users/yaolun
     '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
     [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs)
 
-# # full TSC vs infall-only TSC model
-# models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle7/model46_tsc_com/model46_tsc','/Users/yaolun/bhr71/hyperion/cycle7/model46_tsc_com/model46_ulrich'],\
-#     '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
-#     [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model46_tsc_com')
+# full TSC vs infall-only TSC model
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle8/model63','/Users/yaolun/bhr71/hyperion/cycle8/model63_ulrich/model63_ulrich'],\
+    '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
+    [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model63_tsc_com')

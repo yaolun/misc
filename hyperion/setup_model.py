@@ -503,11 +503,11 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # Insert the calculated grid and dust density profile into hyperion
     m.set_spherical_polar_grid(ri, thetai, phii)
     # temperary for comparing full TSC and infall-only TSC model
-    # import sys
-    # sys.path.append(os.path.expanduser('~')+'/programs/misc/')
-    # from tsc_comparison import tsc_com
-    # rho_tsc, rho_ulrich = tsc_com()
-    m.add_density_grid(rho.T, d)
+    import sys
+    sys.path.append(os.path.expanduser('~')+'/programs/misc/')
+    from tsc_comparison import tsc_com
+    rho_tsc, rho_ulrich = tsc_com()
+    m.add_density_grid(rho_ulrich.T, d)
     # m.add_density_grid(rho.T, outdir+'oh5.hdf5')    # numpy read the array in reverse order
 
     # Define the luminsoity source
@@ -870,12 +870,12 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# outdir = '/Users/yaolun/test/'
-# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# fix_params = {'R_min': 0.14}
-# setup_model(outdir,outdir,'model63_ulrich',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params)
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+outdir = '/Users/yaolun/test/'
+dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+fix_params = {'R_min': 0.14}
+setup_model(outdir,outdir,'model63_ulrich',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params)
