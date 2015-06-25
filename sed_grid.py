@@ -16,12 +16,17 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
 
     # col = col+1
     # row = row+1
-
-    fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(12,7.1))
+    if row > 1:
+        fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(12,9.5))
+    else:
+        fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(12,2.4))
 
     for rr in range(0, row):
         for cc in range(0, col):
-            ax = axarr[rr,cc]
+            if row > 1:
+                ax = axarr[rr,cc]
+            else:
+                ax = axarr[cc]
             # sed part
             # if rr+1 != row:
             # infinite aperture
@@ -88,12 +93,13 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
             # fix the overlap tick labels
             x_nbins = len(ax.get_xticklabels())
             y_nbins = len(ax.get_yticklabels())
-            if (rr != 0) & (cc != 0):
-                ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
+            if rr != 0:
                 ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
-
-    fig.text(0.5, -0.05 , r'$age\,[yr]\,(5\times 10^{3},\,1\times 10^{4},\,2.5\times 10^{4},\,5\times 10^{4},\,7.5\times 10^{4})$', fontsize=20, ha='center')
-    fig.text(0, 0.5, r'$sound\,speed\,[km\,s^{-1}]\,(0.6,\,0.5,\,0.38,\,0.2)$', fontsize=20, va='center', rotation='vertical')
+            if cc != 0:
+                ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
+    if row > 1:
+        fig.text(0.5, 0 , r'$age\,[yr]\,(5\times 10^{3},\,1\times 10^{4},\,2.5\times 10^{4},\,5\times 10^{4},\,7.5\times 10^{4})$', fontsize=20, ha='center')
+        fig.text(0, 0.5, r'$sound\,speed\,[km\,s^{-1}]\,(0.6,\,0.5,\,0.38,\,0.2)$', fontsize=20, va='center', rotation='vertical')
 
     fig.subplots_adjust(hspace=0,wspace=0)
     fig.savefig(outdir+'sed_cs_age.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -197,7 +203,7 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
         fig.savefig(outdir+'sed_omega0.pdf', format='pdf', dpi=300, bbox_inches='tight')
         fig.clf()
 
-def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=False, compact=None, yrange=None, inf=False):
+def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=False, compact=None, yrange=None, inf=False, obs_color='red'):
     import numpy as np
     import matplotlib.pyplot as plt
     from matplotlib.ticker import MaxNLocator
@@ -233,9 +239,9 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
 
                 bhr71 = get_bhr71_obs(obs)  # in um and Jy
                 wave_obs, flux_obs, noise_obs = bhr71['spec']
-                ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
-                ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
-                ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='r', alpha=0.7, linewidth=1)
+                ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
+                ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
+                ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=3,markeredgewidth=1,linewidth=1.2)
 
@@ -290,9 +296,9 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             from get_bhr71_obs import get_bhr71_obs
             bhr71 = get_bhr71_obs(obs)  # in um and Jy
             wave_obs, flux_obs, noise_obs = bhr71['spec']
-            ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
-            ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
-            ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color='r', alpha=0.7, linewidth=1)
+            ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
+            ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
+            ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
 
         for i in range(0, len(array)):
             # infinite aperture
@@ -383,7 +389,7 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                     ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
                     ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
-        fig.text(0.5, -0.05 , r'$\theta_{\rm cav}\,[deg.]\,(15^{\circ},\,20^{\circ},\,25^{\circ},\,30^{\circ},\,35^{\circ})$', fontsize=20, ha='center')
+        fig.text(0.5, -0.05 , r'$\theta_{\rm cav}\,[deg.]\,(10^{\circ},\,15^{\circ},\,20^{\circ},\,35^{\circ},\,40^{\circ})$', fontsize=20, ha='center')
         fig.text(0, 0.5, r'$\theta_{\rm incl.}\,[deg.]\,(30^{\circ},\,40^{\circ},\,80^{\circ})$', fontsize=20, va='center', rotation='vertical')
 
         fig.subplots_adjust(hspace=0,wspace=0)
@@ -452,7 +458,7 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                 ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
         # fig.text(0.5, -0.05 , r'$\rho_{cav,\circ}\,[g\,cm^{-3}]\,(1\times 10^{-20},\,5\times 10^{-20},\,1\times 10^{-19},\,5\times 10^{-19})$', fontsize=20, ha='center')
-        fig.text(0.5, -0.15, r'$\theta_{cav}\,[deg.]\,(15^{\circ},\,20^{\circ},\,25^{\circ},\,30^{\circ},\,35^{\circ})$', fontsize=20, ha='center' )
+        fig.text(0.5, -0.15, r'$\theta_{cav}\,[deg.]\,(10^{\circ},\,15^{\circ},\,20^{\circ},\,35^{\circ},\,40^{\circ})$', fontsize=20, ha='center' )
 
         fig.subplots_adjust(hspace=0,wspace=0)
         fig.savefig(outdir+'sed_theta_cav_incl.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -807,7 +813,7 @@ def sed_cav_powerlaw(indir, array, outdir, obs=None):
     fig.savefig(outdir+'sed_cav_cont_powerlaw.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-def sed_cav_struc_com(indir, array, outdir, obs=None):
+def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     import numpy as np
     import matplotlib.pyplot as plt
     from hyperion.model import ModelOutput
@@ -833,13 +839,14 @@ def sed_cav_struc_com(indir, array, outdir, obs=None):
         (wave_dum, sed_dum) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][i])+'_sed_w_aperture.txt', skip_header=1).T
         r15, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Red',mec='Red',\
             markersize=7,markeredgewidth=1,color='Red', linewidth=2, alpha=alpha_list[i])
-    # const+r2
-    # alpha_list = np.linspace(0.5, 1.0, len(array['const+r-2']))
-    alpha_list = [1]
-    for i in range(len(array['const+r-2'])):
-        (wave_dum, sed_dum) = np.genfromtxt(indir+'/model'+str(array['const+r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
-        const_r2, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Blue',mec='Blue',\
-            markersize=7,markeredgewidth=1,color='Blue', linewidth=2, alpha=alpha_list[i]) 
+    if ver == None:
+        # const+r2
+        # alpha_list = np.linspace(0.5, 1.0, len(array['const+r-2']))
+        alpha_list = [1]
+        for i in range(len(array['const+r-2'])):
+            (wave_dum, sed_dum) = np.genfromtxt(indir+'/model'+str(array['const+r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
+            const_r2, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Blue',mec='Blue',\
+                markersize=7,markeredgewidth=1,color='Blue', linewidth=2, alpha=alpha_list[i]) 
     # uniform
     # alpha_list = np.linspace(0.5, 1.0, len(array['uniform']))
     alpha_list = [1]
@@ -870,14 +877,22 @@ def sed_cav_struc_com(indir, array, outdir, obs=None):
     ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=20)
     ax.set_ylim([-13,-7.5])
 
-    plt.legend([r2, r15, const_r2, uni, obs_data], [r'$\rho(r)\propto\,r^{-2}$', r'$\rho(r)\propto\,r^{-1.5}$',\
-                r'$const.+r^{-2}$',r'$uniform$',r'$observation$'],\
-                numpoints=1, loc='lower right', fontsize=16)
+    if ver == None:
+        plt.legend([r2, r15, const_r2, uni, obs_data], [r'$\rho(r)\propto\,r^{-2}$', r'$\rho(r)\propto\,r^{-1.5}$',\
+                    r'$const.+r^{-2}$',r'$uniform$',r'$observation$'],\
+                    numpoints=1, loc='lower right', fontsize=16)
+        msg = ''
+    else:
+        plt.legend([r2, r15, uni, obs_data], [r'$\rho(r)\propto\,r^{-2}$', r'$\rho(r)\propto\,r^{-1.5}$',\
+                    r'$uniform$',r'$observation$'],\
+                    numpoints=1, loc='lower right', fontsize=16)
+        msg = '_1'
+
     # plt.legend([r1, r2, r4, obs_data], [r'$\rho(r)\propto r^{-2}$', r'$\rho(r)\propto r^{-1.5}$',\
     #             r'$uniform$',r'$observation$'],\
     #             numpoints=1, loc='lower right', fontsize=16)
 
-    fig.savefig(outdir+'sed_cav_struc_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.savefig(outdir+'sed_cav_struc_com'+msg+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
 def sed_lum(indir, array, outdir, obs=None):
@@ -1254,6 +1269,21 @@ cslist = [0.2,0.38,0.5,0.6]
 agelist = [5e3,1e4,2.5e4,5e4,7.5e4]
 sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
+# # for presentation, show only one sound speed bin
+# array = np.array([[17,18,19,20,49]])
+# cslist = [0.5]
+# agelist = [5e3,1e4,2.5e4,5e4,7.5e4]
+# sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
+
+# for presentation, showing how 0.38 km/s incapable of fitting the submm emission
+array = np.array([31,32,33,34,35])
+xlabel = ''
+compact = [r'$\rm{t=5\times10^{3}\,yr}$', r'$\rm{t=1\times10^{4}\,yr}$', r'$\rm{t=2.5\times10^{4}\,yr}$', r'$\rm{t=5\times10^{4}\,yr}$',\
+            r'$\rm{t=7.5\times10^{4}\,yr}$']
+plotname = 'cs_38'
+sed_five('/Users/yaolun/bhr71/hyperion/cycle8/', array, outdir, xlabel, plotname, obs=obs, compact=compact, obs_color='Red')
+
+
 # grid of Omega0
 array = np.array([27,28,29])
 sed_omega(indir, array, outdir, obs= None, compact=True)
@@ -1282,13 +1312,13 @@ sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=co
 array = np.array([[53,54,55,56,57],[58,59,60,61,62],[63,64,65,66,67]])
 # sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
 sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
-# only for incl. = 50
-# array = np.array([54,55,56,57,58])
-# xlabel = r'$\theta_{cav}\,[deg.]\,(15^{\circ}, 20^{\circ}, 25^{\circ}, 30^{\circ}, 35^{\circ})$'
-# plotname = 'theta_cav_incl50'
-# compact = [r'$\theta_{cav}=15^{\circ}$',r'$\theta_{cav}=20^{\circ}$',r'$\theta_{cav}=25^{\circ}$',\
-#            r'$\theta_{cav}=30^{\circ}$',r'$\theta_{cav}=35^{\circ}$']
-# sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
+# only for incl. = 40
+array = np.array([58,59,60,61,62])
+xlabel = r'$\theta_{cav}\,[deg.]\,(10^{\circ}, 15^{\circ}, 20^{\circ}, 35^{\circ}, 40^{\circ})$'
+plotname = 'theta_cav_incl40'
+compact = [r'$\theta_{cav}=10^{\circ}$',r'$\theta_{cav}=15^{\circ}$',r'$\theta_{cav}=20^{\circ}$',\
+           r'$\theta_{cav}=35^{\circ}$',r'$\theta_{cav}=40^{\circ}$']
+sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
 
 # grid of rho_cav_center and sed_rho_cav_edge
 array = np.array([[68,69,70,71],[72,73,74,75],[76,77,78,79]])
@@ -1322,7 +1352,7 @@ sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=c
 
 # grid of cavity structure comparison
 array = {'r-2': [45], 'r-1.5': [51], 'const+r-2': [28], 'uniform': [44]}
-sed_cav_struc_com(indir, array, outdir, obs=obs)
+sed_cav_struc_com(indir, array, outdir, obs=obs, ver=1)
 
 # grid of tstar with the same lstar
 array = np.array([1,2,3])
