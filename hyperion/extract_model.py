@@ -52,6 +52,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     import sys
     sys.path.append(os.path.expanduser('~')+'/programs/spectra_analysis/')
     from phot_filter import phot_filter
+    from get_bhr71_obs import get_bhr71_obs
 
     # Read in the observation data and calculate the noise & variance
     if indir == None:
@@ -62,89 +63,98 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     # assign the file name from the input file
     print_name = os.path.splitext(os.path.basename(filename))[0]
     #
-    [wl_pacs,flux_pacs,unc_pacs] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',\
-                                        dtype='float',skip_header=1).T
-    # Convert the unit from Jy to erg cm-2 Hz-1
-    flux_pacs = flux_pacs*1e-23
-    [wl_spire,flux_spire] = np.genfromtxt(indir+'BHR71_spire_corrected_continuum.txt',dtype='float',skip_header=1).T
-    flux_spire = flux_spire*1e-23 
-    wl_obs = np.hstack((wl_pacs,wl_spire))
-    flux_obs = np.hstack((flux_pacs,flux_spire))
+    # [wl_pacs,flux_pacs,unc_pacs] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',\
+    #                                     dtype='float',skip_header=1).T
+    # # Convert the unit from Jy to erg cm-2 Hz-1
+    # flux_pacs = flux_pacs*1e-23
+    # [wl_spire,flux_spire] = np.genfromtxt(indir+'BHR71_spire_corrected_continuum.txt',dtype='float',skip_header=1).T
+    # flux_spire = flux_spire*1e-23 
+    # wl_obs = np.hstack((wl_pacs,wl_spire))
+    # flux_obs = np.hstack((flux_pacs,flux_spire))
 
-    [wl_pacs_data,flux_pacs_data,unc_pacs_data] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim.txt',\
-                                                  dtype='float').T
-    [wl_spire_data,flux_spire_data] = np.genfromtxt(indir+'BHR71_spire_corrected.txt',\
-                                                    dtype='float').T
+    # [wl_pacs_data,flux_pacs_data,unc_pacs_data] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim.txt',\
+    #                                               dtype='float').T
+    # [wl_spire_data,flux_spire_data] = np.genfromtxt(indir+'BHR71_spire_corrected.txt',\
+    #                                                 dtype='float').T
 
-    [wl_pacs_flat,flux_pacs_flat,unc_pacs_flat] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_flat_spectrum.txt',\
-                                        dtype='float',skip_header=1).T
-    [wl_spire_flat,flux_spire_flat] = np.genfromtxt(indir+'BHR71_spire_corrected_flat_spectrum.txt',dtype='float',skip_header=1).T
+    # [wl_pacs_flat,flux_pacs_flat,unc_pacs_flat] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_flat_spectrum.txt',\
+    #                                     dtype='float',skip_header=1).T
+    # [wl_spire_flat,flux_spire_flat] = np.genfromtxt(indir+'BHR71_spire_corrected_flat_spectrum.txt',dtype='float',skip_header=1).T
 
-    # Convert the unit from Jy to erg cm-2 Hz-1
-    flux_pacs_flat = flux_pacs_flat*1e-23 
-    flux_spire_flat = flux_spire_flat*1e-23
-    flux_pacs_data = flux_pacs_data*1e-23
-    flux_spire_data = flux_spire_data*1e-23
+    # # Convert the unit from Jy to erg cm-2 Hz-1
+    # flux_pacs_flat = flux_pacs_flat*1e-23 
+    # flux_spire_flat = flux_spire_flat*1e-23
+    # flux_pacs_data = flux_pacs_data*1e-23
+    # flux_spire_data = flux_spire_data*1e-23
 
 
-    wl_pacs_noise = wl_pacs_data
-    flux_pacs_noise = flux_pacs_data-flux_pacs-flux_pacs_flat
-    wl_spire_noise = wl_spire_data
-    flux_spire_noise = flux_spire_data-flux_spire-flux_spire_flat
+    # wl_pacs_noise = wl_pacs_data
+    # flux_pacs_noise = flux_pacs_data-flux_pacs-flux_pacs_flat
+    # wl_spire_noise = wl_spire_data
+    # flux_spire_noise = flux_spire_data-flux_spire-flux_spire_flat
 
-    # Read in the Spitzer IRS spectrum
-    [wl_irs, flux_irs]= (np.genfromtxt(indir+'bhr71_spitzer_irs.txt',skip_header=2,dtype='float').T)[0:2]
-    # Convert the unit from Jy to erg cm-2 Hz-1
-    flux_irs = flux_irs*1e-23
-    # Remove points with zero or negative flux 
-    ind = flux_irs > 0
-    wl_irs = wl_irs[ind]
-    flux_irs = flux_irs[ind]
-    # Calculate the local variance (for spire), use the instrument uncertainty for pacs
-    #
-    wl_noise_5 = wl_spire_noise[(wl_spire_noise > 194)*(wl_spire_noise <= 304)]
-    flux_noise_5 = flux_spire_noise[(wl_spire_noise > 194)*(wl_spire_noise <= 304)]
-    wl_noise_6 = wl_spire_noise[wl_spire_noise > 304]
-    flux_noise_6 = flux_spire_noise[wl_spire_noise > 304]
-    wl_noise = [wl_pacs_data[wl_pacs_data<=190.31],wl_noise_5,wl_noise_6]
-    flux_noise = [unc_pacs[wl_pacs_data<=190.31],flux_noise_5,flux_noise_6]
-    sig_num = 20
-    sigma_noise = []
-    for i in range(0,len(wl_noise)):
-        sigma_dum = np.zeros([len(wl_noise[i])])
-        for iwl in range(0,len(wl_noise[i])):
-            if iwl < sig_num/2:
-                sigma_dum[iwl] = np.std(np.hstack((flux_noise[i][0:sig_num/2],flux_noise[i][0:sig_num/2-iwl])))
-            elif len(wl_noise[i])-iwl < sig_num/2:
-                sigma_dum[iwl] = np.std(np.hstack((flux_noise[i][iwl:],flux_noise[i][len(wl_noise[i])-sig_num/2:])))
-            else:
-                sigma_dum[iwl] = np.std(flux_noise[i][iwl-sig_num/2:iwl+sig_num/2])
-        sigma_noise = np.hstack((sigma_noise,sigma_dum))
-    sigma_noise = np.array(sigma_noise)
+    # # Read in the Spitzer IRS spectrum
+    # [wl_irs, flux_irs]= (np.genfromtxt(indir+'bhr71_spitzer_irs.txt',skip_header=2,dtype='float').T)[0:2]
+    # # Convert the unit from Jy to erg cm-2 Hz-1
+    # flux_irs = flux_irs*1e-23
+    # # Remove points with zero or negative flux 
+    # ind = flux_irs > 0
+    # wl_irs = wl_irs[ind]
+    # flux_irs = flux_irs[ind]
+    # # Calculate the local variance (for spire), use the instrument uncertainty for pacs
+    # #
+    # wl_noise_5 = wl_spire_noise[(wl_spire_noise > 194)*(wl_spire_noise <= 304)]
+    # flux_noise_5 = flux_spire_noise[(wl_spire_noise > 194)*(wl_spire_noise <= 304)]
+    # wl_noise_6 = wl_spire_noise[wl_spire_noise > 304]
+    # flux_noise_6 = flux_spire_noise[wl_spire_noise > 304]
+    # wl_noise = [wl_pacs_data[wl_pacs_data<=190.31],wl_noise_5,wl_noise_6]
+    # flux_noise = [unc_pacs[wl_pacs_data<=190.31],flux_noise_5,flux_noise_6]
+    # sig_num = 20
+    # sigma_noise = []
+    # for i in range(0,len(wl_noise)):
+    #     sigma_dum = np.zeros([len(wl_noise[i])])
+    #     for iwl in range(0,len(wl_noise[i])):
+    #         if iwl < sig_num/2:
+    #             sigma_dum[iwl] = np.std(np.hstack((flux_noise[i][0:sig_num/2],flux_noise[i][0:sig_num/2-iwl])))
+    #         elif len(wl_noise[i])-iwl < sig_num/2:
+    #             sigma_dum[iwl] = np.std(np.hstack((flux_noise[i][iwl:],flux_noise[i][len(wl_noise[i])-sig_num/2:])))
+    #         else:
+    #             sigma_dum[iwl] = np.std(flux_noise[i][iwl-sig_num/2:iwl+sig_num/2])
+    #     sigma_noise = np.hstack((sigma_noise,sigma_dum))
+    # sigma_noise = np.array(sigma_noise)
 
-    # Read in the photometry data
-    phot = np.genfromtxt(indir+'bhr71.txt',dtype=None,skip_header=1,comments='%')
-    wl_phot = []
-    flux_phot = []
-    flux_sig_phot = []
-    note = []
-    for i in range(0,len(phot)):
-        wl_phot.append(phot[i][0])
-        flux_phot.append(phot[i][1])
-        flux_sig_phot.append(phot[i][2])
-        note.append(phot[i][4])
-    wl_phot = np.array(wl_phot)
-    # Convert the unit from Jy to erg cm-2 Hz-1
-    flux_phot = np.array(flux_phot)*1e-23
-    flux_sig_phot = np.array(flux_sig_phot)*1e-23
+    # # Read in the photometry data
+    # phot = np.genfromtxt(indir+'bhr71.txt',dtype=None,skip_header=1,comments='%')
+    # wl_phot = []
+    # flux_phot = []
+    # flux_sig_phot = []
+    # note = []
+    # for i in range(0,len(phot)):
+    #     wl_phot.append(phot[i][0])
+    #     flux_phot.append(phot[i][1])
+    #     flux_sig_phot.append(phot[i][2])
+    #     note.append(phot[i][4])
+    # wl_phot = np.array(wl_phot)
+    # # Convert the unit from Jy to erg cm-2 Hz-1
+    # flux_phot = np.array(flux_phot)*1e-23
+    # flux_sig_phot = np.array(flux_sig_phot)*1e-23
 
+    # use a canned function to extract BHR71 observational data
+    bhr71 = get_bhr71_obs(indir)        # unit in um, Jy
+    wl_tot, flux_tot, unc_tot = bhr71['spec']
+    flux_tot = flux_tot*1e-23    # convert unit from Jy to erg s-1 cm-2 Hz-1
+    unc_tot = unc_tot*1e-23
+    l_bol_obs = l_bol(wl_tot, flux_tot*1e23)
+
+    wl_phot, flux_phot, flux_sig_phot = bhr71['phot']
+    flux_phot = flux_phot*1e-23   # convert unit from Jy to erg s-1 cm-2 Hz-1
+    flux_sig_phot = flux_sig_phot*1e-23
     # Print the observed L_bol
-    wl_tot = np.hstack((wl_irs,wl_obs,wl_phot))
-    flux_tot = np.hstack((flux_irs,flux_obs,flux_phot))
-    flux_tot = flux_tot[np.argsort(wl_tot)]
-    wl_tot = wl_tot[np.argsort(wl_tot)]
-    l_bol_obs = l_bol(wl_tot,flux_tot*1e23)             
-
+    # wl_tot = np.hstack((wl_irs,wl_obs,wl_phot))
+    # flux_tot = np.hstack((flux_irs,flux_obs,flux_phot))
+    # flux_tot = flux_tot[np.argsort(wl_tot)]
+    # wl_tot = wl_tot[np.argsort(wl_tot)]
+    # l_bol_obs = l_bol(wl_tot,flux_tot*1e23)             
 
     # Open the model
     m = ModelOutput(filename)
@@ -160,14 +170,22 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     # Plot the observed SED
     # plot the observed spectra
     if clean == False:
-        pacs, = ax_sed.plot(np.log10(wl_pacs),np.log10(c/(wl_pacs*1e-4)*flux_pacs),'-',color='Green',linewidth=1.5*mag)
-        spire, = ax_sed.plot(np.log10(wl_spire),np.log10(c/(wl_spire*1e-4)*flux_spire),'r-',linewidth=1.5*mag)
-        irs, = ax_sed.plot(np.log10(wl_irs),np.log10(c/(wl_irs*1e-4)*flux_irs),'-',color='Blue',linewidth=1.5*mag)
+        pacs, = ax_sed.plot(np.log10(wl_tot[(wl_tot>40) & (wl_tot<190.31)]),\
+                            np.log10(c/(wl_tot[(wl_tot>40) & (wl_tot<190.31)]*1e-4)*flux_tot[(wl_tot>40) & (wl_tot<190.31)]),\
+                            '-',color='Green',linewidth=1.5*mag)
+        spire, = ax_sed.plot(np.log10(wl_tot[wl_tot > 194]),np.log10(c/(wl_tot[wl_tot > 194]*1e-4)*flux_tot[wl_tot > 194]),\
+                            'r-',linewidth=1.5*mag)
+        irs, = ax_sed.plot(np.log10(wl_tot[wl_tot < 40]),np.log10(c/(wl_tot[wl_tot < 40]*1e-4)*flux_tot[wl_tot < 40]),\
+                            '-',color='Blue',linewidth=1.5*mag)
         ax_sed.text(0.75,0.9,r'$\rm{L_{bol}= %5.2f L_{\odot}}$' % l_bol_obs,fontsize=mag*16,transform=ax_sed.transAxes) 
     else:
-        pacs, = ax_sed.plot(np.log10(wl_pacs),np.log10(c/(wl_pacs*1e-4)*flux_pacs),'-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
-        spire, = ax_sed.plot(np.log10(wl_spire),np.log10(c/(wl_spire*1e-4)*flux_spire),'-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
-        irs, = ax_sed.plot(np.log10(wl_irs),np.log10(c/(wl_irs*1e-4)*flux_irs),'-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
+        pacs, = ax_sed.plot(np.log10(wl_tot[(wl_tot>40) & (wl_tot<190.31)]),\
+                            np.log10(c/(wl_tot[(wl_tot>40) & (wl_tot<190.31)]*1e-4)*flux_tot[(wl_tot>40) & (wl_tot<190.31)]),\
+                            '-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
+        spire, = ax_sed.plot(np.log10(wl_tot[wl_tot > 194]),np.log10(c/(wl_tot[wl_tot > 194]*1e-4)*flux_tot[wl_tot > 194]),\
+                            '-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
+        irs, = ax_sed.plot(np.log10(wl_tot[wl_tot < 40]),np.log10(c/(wl_tot[wl_tot < 40]*1e-4)*flux_tot[wl_tot < 40]),\
+                            '-',color='DimGray',linewidth=1.5*mag, alpha=0.7)
 
     # plot the observed photometry data
     photometry, = ax_sed.plot(np.log10(wl_phot),np.log10(c/(wl_phot*1e-4)*flux_phot),'s',mfc='DimGray',mec='k',markersize=8)
@@ -182,8 +200,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     # arrays, and indicate the position from the end. So to get the SED in the
     # largest aperture, we set aperture=-1.
     # aperture group is aranged from smallest to infinite
-    sed_inf = m.get_sed(group=0, inclination=0, aperture=-1, distance=dstar * pc)
-
+    sed_inf = m.get_sed(group=0, inclination=0, aperture=-1, distance=dstar * pc, uncertainties=True)
     # l_bol_sim = l_bol(sed_inf.wav, sed_inf.val/(c/sed_inf.wav*1e4)*1e23)
     # print sed.wav, sed.val
     # print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
@@ -191,15 +208,19 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
     # plot the simulated SED
     if clean == False:
-        sim, = ax_sed.plot(np.log10(sed_inf.wav), np.log10(sed_inf.val), '-', color='GoldenRod', linewidth=1.5*mag)
+        sim, = ax_sed.plot(np.log10(sed_inf.wav), np.log10(sed_inf.val), '-', color='GoldenRod', linewidth=0.5*mag)
+        ax_sed.fill_between(np.log10(sed_inf.wav), np.log10(sed_inf.val-sed_inf.unc), np.log10(sed_inf.val+sed_inf.unc),\
+            color='GoldenRod', alpha=0.5)
     # get flux at different apertures
     flux_aper = np.empty_like(wl_aper)
     unc_aper = np.empty_like(wl_aper)
     color_list = plt.cm.jet(np.linspace(0, 1, len(wl_aper)+1))
     for i in range(0, len(wl_aper)):
-        sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
+        sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc, uncertainties=True)
         if plot_all == True:
             ax_sed.plot(np.log10(sed_dum.wav), np.log10(sed_dum.val),'-', color=color_list[i])
+            ax_sed.fill_between(np.log10(sed_dum.wav), np.log10(sed_dum.val-sed_dum.unc), np.log10(sed_dum.val+sed_dum.unc),\
+                color=color_list[i], alpha=0.5)
         if filter_func == False:
             # use a rectangle function the average the simulated SED
             # apply the spectral resolution
@@ -212,9 +233,12 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
             ind = np.where((sed_dum.wav < wl_aper[i]*(1+1./res)) & (sed_dum.wav > wl_aper[i]*(1-1./res)))
             if len(ind[0]) != 0:
                 flux_aper[i] = np.mean(sed_dum.val[ind])
+                unc_aper[i]  = np.mean(sed_dum.unc[ind])
             else:
                 f = interp1d(sed_dum.wav, sed_dum.val)
+                f_unc = interp1d(sed_dum.wav, sed_dum.unc)
                 flux_aper[i] = f(wl_aper[i])
+                unc_aper[i]  = f_unc(wl_aper[i])
         else:
             # apply the filter function
             # decide the filter name
@@ -251,7 +275,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
                 filter_func = phot_filter(fil_name)
                 # Simulated SED should have enough wavelength coverage for applying photometry filters.
                 f = interp1d(sed_dum.wav, sed_dum.val)
+                f_unc = interp1d(sed_dum.wav, sed_dum.unc)
                 flux_aper[i] = np.trapz(filter_func['wave']/1e4, f(filter_func['wave']/1e4)*filter_func['transmission'])/np.trapz(filter_func['wave']/1e4, filter_func['transmission'])
+                unc_aper[i] = abs(np.trapz((filter_func['wave']/1e4)**2, (f_unc(filter_func['wave']/1e4)*filter_func['transmission'])**2))**0.5 / abs(np.trapz(filter_func['wave']/1e4, filter_func['transmission']))
             else:
                 # use a rectangle function the average the simulated SED
                 # apply the spectral resolution
@@ -264,16 +290,25 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
                 ind = np.where((sed_dum.wav < wl_aper[i]*(1+1./res)) & (sed_dum.wav > wl_aper[i]*(1-1./res)))
                 if len(ind[0]) != 0:
                     flux_aper[i] = np.mean(sed_dum.val[ind])
+                    unc_aper[i]  = np.mean(sed_dum.unc[ind])
                 else:
                     f = interp1d(sed_dum.wav, sed_dum.val)
+                    f_unc = interp1d(sed_dum.wav, sed_dum.unc)
                     flux_aper[i] = f(wl_aper[i])
+                    unc_aper[i]  = f_unc(wl_aper[i])
 
+    # temperory step: solve issue of uncertainty greater than the value
+    for i in range(len(wl_aper)):
+        if unc_aper[i] >= flux_aper[i]:
+            unc_aper[i] = flux_aper[i] - 1e-20
 
     # perform the same procedure of flux extraction of aperture flux with observed spectra
     wl_aper = np.array(wl_aper)
-    obs_aper_wl = wl_aper[(wl_aper >= min(wl_irs)) & (wl_aper <= max(wl_spire))]
+    obs_aper_wl = wl_aper[(wl_aper >= min(wl_tot)) & (wl_aper <= max(wl_tot))]
     obs_aper_sed = np.empty_like(obs_aper_wl)
+    obs_aper_sed_unc = np.empty_like(obs_aper_wl)
     sed_tot = c/(wl_tot*1e-4)*flux_tot
+    sed_unc_tot = c/(wl_tot*1e-4)*unc_tot
     # wl_tot and flux_tot are already hstacked and sorted by wavelength
     for i in range(0, len(obs_aper_wl)):
         if filter_func == False:
@@ -288,9 +323,12 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
             ind = np.where((wl_tot < obs_aper_wl[i]*(1+1./res)) & (wl_tot > obs_aper_wl[i]*(1-1./res)))
             if len(ind[0]) != 0:
                 obs_aper_sed[i] = np.mean(sed_tot[ind])
+                obs_aper_sed_unc[i] = np.mean(sed_unc_tot[ind])
             else:
                 f = interp1d(wl_tot, sed_tot)
+                f_unc = interp1d(wl_tot, sed_unc_tot)
                 obs_aper_sed[i] = f(obs_aper_wl[i])
+                obs_aper_sed_unc[i] = f_unc(obs_aper_wl[i])
         else:
             # apply the filter function
             # decide the filter name
@@ -327,11 +365,15 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
             if fil_name != None:
                 filter_func = phot_filter(fil_name)
                 # Observed SED needs to be trimmed before applying photometry filters
-                filter_func = filter_func[((filter_func['wave']/1e4 >= 54.8)+(filter_func['wave']/1e4 <= 36.0853))*\
+                filter_func = filter_func[(filter_func['wave']/1e4 >= min(wl_tot))*\
+                                          ((filter_func['wave']/1e4 >= 54.8)+(filter_func['wave']/1e4 <= 36.0853))*\
                                           ((filter_func['wave']/1e4 <= 95.05)+(filter_func['wave']/1e4 >=103))*\
-                                          ((filter_func['wave']/1e4 <= 190.31)+(filter_func['wave']/1e4 >= 195))]
+                                          ((filter_func['wave']/1e4 <= 190.31)+(filter_func['wave']/1e4 >= 195))*\
+                                          (filter_func['wave']/1e4 <= max(wl_tot))]
                 f = interp1d(wl_tot, sed_tot)
+                f_unc = interp1d(wl_tot, sed_unc_tot)
                 obs_aper_sed[i] = np.trapz(filter_func['wave']/1e4, f(filter_func['wave']/1e4)*filter_func['transmission'])/np.trapz(filter_func['wave']/1e4, filter_func['transmission'])
+                obs_aper_sed_unc[i] = abs(np.trapz((filter_func['wave']/1e4)**2, (f_unc(filter_func['wave']/1e4)*filter_func['transmission'])**2))**0.5 / abs(np.trapz(filter_func['wave']/1e4, filter_func['transmission']))
             else:
                 # use a rectangle function the average the simulated SED
                 # apply the spectral resolution
@@ -344,28 +386,25 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
                 ind = np.where((wl_tot < obs_aper_wl[i]*(1+1./res)) & (wl_tot > obs_aper_wl[i]*(1-1./res)))
                 if len(ind[0]) != 0:
                     obs_aper_sed[i] = np.mean(sed_tot[ind])
+                    obs_aper_sed_unc[i] = np.mean(sed_unc_tot[ind])
                 else:
                     f = interp1d(wl_tot, sed_tot)
+                    f_unc = interp1d(wl_tot, sed_unc_tot)
                     obs_aper_sed[i] = f(obs_aper_wl[i])
+                    obs_aper_sed_unc[i] = f_unc(obs_aper_wl[i])
 
-    # for i in range(0, len(obs_aper_wl)):
-    #     if (obs_aper_wl[i] < 50.) & (obs_aper_wl[i] >= 5):
-    #         res = 60.
-    #     elif obs_aper_wl[i] < 5:
-    #         res = 10.
-    #     else:
-    #         res = 1000.
-    #     ind = np.where((wl_tot < obs_aper_wl[i]*(1+1./res)) & (wl_tot > obs_aper_wl[i]*(1-1./res)))
-    #     if len(ind[0]) != 0:
-    #         obs_aper_sed[i] = np.mean(sed_tot[ind])
-    #     else:
-    #         f = interp1d(wl_tot, sed_tot)
-    #         obs_aper_sed[i] = f(wl_aper[i])
+    # print obs_aper_sed - obs_aper_sed_unc
+
     if clean == False:
-        aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's', mfc='Magenta',markersize=10)
+        # aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's', mfc='Magenta',markersize=10)
+        aper_obs = ax_sed.errorbar(np.log10(obs_aper_wl), np.log10(obs_aper_sed), \
+            yerr=[np.log10(obs_aper_sed)-np.log10(obs_aper_sed-obs_aper_sed_unc), np.log10(obs_aper_sed+obs_aper_sed_unc)-np.log10(obs_aper_sed)],\
+            fmt='s', mec='Magenta', mfc='Magenta', markersize=10, elinewidth=3, ecolor='Magenta',capthick=3,barsabove=True)
     else:
-        aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's-', mec='None', mfc='r', color='r',markersize=10, linewidth=1.5)
-
+        # aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's-', mec='None', mfc='r', color='r',markersize=10, linewidth=1.5)
+        aper_obs = ax_sed.errorbar(np.log10(obs_aper_wl), np.log10(obs_aper_sed),\
+            yerr=[np.log10(obs_aper_sed)-np.log10(obs_aper_sed-obs_aper_sed_unc), np.log10(obs_aper_sed+obs_aper_sed_unc)-np.log10(obs_aper_sed)],\
+            fmt='s', linestyle='-', mec='None', mfc='r', markersize=10, linewidth=1.5, ecolor='Red', elinewidth=3, capthick=3, barsabove=True)
 
     # radmc_w_aper = ascii.read('/Users/yaolun/test/radmc3d_apertest/spectrum.out',data_start=2, header_start=None, names=['wave','flux'])
     # radmc_w_aper['vSv'] = radmc_w_aper['flux'] * c/(radmc_w_aper['wave']*1e-4) / 178**2
@@ -382,9 +421,15 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
             # ax_sed.plot(np.log10(sed_dum.wav), np.log10(sed_dum.val), '-', linewidth=1.5*mag)
         # print l_bol(sed_dum.wav, sed_dum.val/(c/sed_dum.wav*1e4)*1e23)
     if clean == False:
-        aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o',mfc='None',mec='k',markersize=12,markeredgewidth=3)
+        # aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o',mfc='None',mec='k',markersize=12,markeredgewidth=3)
+        aper = ax_sed.errorbar(np.log10(wl_aper), np.log10(flux_aper),\
+            yerr=[np.log10(flux_aper)-np.log10(flux_aper-unc_aper), np.log10(flux_aper+unc_aper)-np.log10(flux_aper)],\
+            fmt='o', mfc='None', mec='k', ecolor='Black', markersize=12, markeredgewidth=3, elinewidth=3, barsabove=True)
     else:
-        aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o-', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=3, linewidth=1.7)
+        # aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o-', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=3, linewidth=1.7)
+        aper = ax_sed.errorbar(np.log10(wl_aper),np.log10(flux_aper),\
+            yerr=[np.log10(flux_aper)-np.log10(flux_aper-unc_aper), np.log10(flux_aper+unc_aper)-np.log10(flux_aper)],\
+            fmt='o', linestyle='-', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=2.5, linewidth=1.7, ecolor='Blue', elinewidth=3, barsabove=True)
     # calculate the bolometric luminosity of the aperture 
     l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23)
     print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
@@ -393,15 +438,15 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     if save == True:
         # unapertured SED
         foo = open(outdir+print_name+'_sed_inf.txt','w')
-        foo.write('%12s \t %12s \n' % ('wave','vSv'))
+        foo.write('%12s \t %12s \t %12s \n' % ('wave','vSv','sigma_vSv'))
         for i in range(0, len(sed_inf.wav)):
-            foo.write('%12g \t %12g \n' % (sed_inf.wav[i], sed_inf.val[i]))
+            foo.write('%12g \t %12g \t %12g \n' % (sed_inf.wav[i], sed_inf.val[i], sed_inf.unc[i]))
         foo.close()
         # SED with convolution of aperture sizes
         foo = open(outdir+print_name+'_sed_w_aperture.txt','w')
-        foo.write('%12s \t %12s \n' % ('wave','vSv'))
-        for i in range(0, len(wl_aper)):
-            foo.write('%12g \t %12g \n' % (wl_aper[i], flux_aper[i]))
+        foo.write('%12s \t %12s \t %12s \n' % ('wave','vSv','sigma_vSv'))
+        for i in range(0, len(wl_aper)): 
+            foo.write('%12g \t %12g \t %12g \n' % (wl_aper[i], flux_aper[i], unc_aper[i]))
         foo.close()
 
     # Read in and plot the simulated SED produced by RADMC-3D using the same parameters
@@ -552,7 +597,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 # indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 # outdir = '/Users/yaolun/bhr71/hyperion/'
 # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-# extract_hyperion('/Users/yaolun/test/model63.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+# extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle8/model63.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/test/model46_ulrich.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False)
