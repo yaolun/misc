@@ -26,8 +26,13 @@ def spitzer_unc(filename, R=60., width=2.5):
 			wl_dum = wl_irs[(wl_irs >= wl_irs[i]-width/2*wl_irs[i]/R) & (wl_irs <= wl_irs[i]+width/2*wl_irs[i]/R)]
 			flux_dum = flux_irs[(wl_irs >= wl_irs[i]-width/2*wl_irs[i]/R) & (wl_irs <= wl_irs[i]+width/2*wl_irs[i]/R)]
 			# return the coefficient, highest power first.
-			fit_dum = np.polyfit(wl_dum, flux_dum, 2)
-			base_dum = fit_dum[0]*wl_dum**2 + fit_dum[1]*wl_dum + fit_dum[2]
+			fit_dum = np.polyfit(wl_dum, flux_dum, 3)
+			# base_dum = fit_dum[0]*wl_dum**2 + fit_dum[1]*wl_dum + fit_dum[2]
+			base_dum = fit_dum[0]*wl_dum**3 + fit_dum[1]*wl_dum**2 + fit_dum[2]*wl_dum + fit_dum[3]
+			# base_dum[base_dum <= 0] = base_dum[base_dum <= 0]
+			# try fit a straight line to prevent a negative baseline value
+			# fit_dum = np.polyfit(wl_dum, flux_dum, 1)
+			# base_dum = fit_dum[0]*wl_dum + fit_dum[1]
 			# base_dum = fit_dum[0]*wl_dum + fit_dum[1]
 			# ax.plot(wl_dum, base_dum, color='b')
 
@@ -43,6 +48,8 @@ def spitzer_unc(filename, R=60., width=2.5):
 			unc_irs[i] = edge[0]
 		if wl_irs[i]+width/2 * wl_irs[i]/R > max(wl_irs):
 			unc_irs[i] = edge[1]
+		if flux_irs[i] - unc_irs[i] < 0:
+			unc_irs[i] = 1/3. * flux_irs[i]
 
 	# fig.savefig('/Users/yaolun/test/spitzer_unc_plot.pdf', format='pdf', dpi=300, bbox_inches='tight')
 	# fig.clf()
@@ -60,4 +67,4 @@ def spitzer_unc(filename, R=60., width=2.5):
 # import numpy as np
 # filename = '/Users/yaolun/bhr71/obs_for_radmc/bhr71_spitzer_irs.txt'
 # wl_irs, flux_irs, unc_irs = spitzer_unc(filename)
-# print np.log10(flux_irs+unc_irs)
+# print np.log10(flux_irs-unc_irs)

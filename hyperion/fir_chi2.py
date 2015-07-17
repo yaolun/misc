@@ -265,7 +265,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
 
         # print the model number near the points
         for i in range(len(model_label)):
-            ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
+            print model_label[i]
+            # ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
 
         ax.set_xlabel(keywords['label'][0], fontsize=20)
         ax.set_ylabel(keywords['label'][1], fontsize=20)

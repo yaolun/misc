@@ -389,7 +389,7 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                     ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
                     ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
-        fig.text(0.5, -0.05 , r'$\theta_{\rm cav}\,[deg.]\,(10^{\circ},\,15^{\circ},\,20^{\circ},\,35^{\circ},\,40^{\circ})$', fontsize=20, ha='center')
+        fig.text(0.5, -0.05 , r'$\theta_{\rm cav}\,[deg.]\,(10^{\circ},\,15^{\circ},\,20^{\circ},\,25^{\circ},\,30^{\circ})$', fontsize=20, ha='center')
         fig.text(0, 0.5, r'$\theta_{\rm incl.}\,[deg.]\,(30^{\circ},\,40^{\circ},\,80^{\circ})$', fontsize=20, va='center', rotation='vertical')
 
         fig.subplots_adjust(hspace=0,wspace=0)
@@ -458,7 +458,7 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                 ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
 
         # fig.text(0.5, -0.05 , r'$\rho_{cav,\circ}\,[g\,cm^{-3}]\,(1\times 10^{-20},\,5\times 10^{-20},\,1\times 10^{-19},\,5\times 10^{-19})$', fontsize=20, ha='center')
-        fig.text(0.5, -0.15, r'$\theta_{cav}\,[deg.]\,(10^{\circ},\,15^{\circ},\,20^{\circ},\,35^{\circ},\,40^{\circ})$', fontsize=20, ha='center' )
+        fig.text(0.5, -0.15, r'$\theta_{cav}\,[deg.]\,(10^{\circ},\,15^{\circ},\,20^{\circ},\,25^{\circ},\,30^{\circ})$', fontsize=20, ha='center' )
 
         fig.subplots_adjust(hspace=0,wspace=0)
         fig.savefig(outdir+'sed_theta_cav_incl.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -1309,15 +1309,16 @@ plotname = 'disk_h100'
 sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
 
 # grid of theta_cav and incl.
-array = np.array([[53,54,55,56,57],[58,59,60,61,62],[63,64,65,66,67]])
+# array = np.array([[53,54,55,56,57],[58,59,60,61,62],[63,64,65,66,67]])
+array = np.array([[53,54,55,102,103],[58,59,60,104,105],[63,64,65,106,107]])
 # sed_grid_theta_cav_incl(indir, array, outdir, obs= None)
 sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 # only for incl. = 40
-array = np.array([58,59,60,61,62])
-xlabel = r'$\theta_{cav}\,[deg.]\,(10^{\circ}, 15^{\circ}, 20^{\circ}, 35^{\circ}, 40^{\circ})$'
+array = np.array([58,59,60,104,105])
+xlabel = r'$\theta_{cav}\,[deg.]\,(10^{\circ}, 15^{\circ}, 20^{\circ}, 25^{\circ}, 30^{\circ})$'
 plotname = 'theta_cav_incl40'
 compact = [r'$\theta_{cav}=10^{\circ}$',r'$\theta_{cav}=15^{\circ}$',r'$\theta_{cav}=20^{\circ}$',\
-           r'$\theta_{cav}=35^{\circ}$',r'$\theta_{cav}=40^{\circ}$']
+           r'$\theta_{cav}=25^{\circ}$',r'$\theta_{cav}=30^{\circ}$']
 sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
 
 # grid of rho_cav_center and sed_rho_cav_edge
