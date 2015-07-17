@@ -593,7 +593,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     if better_im == False:
         im_photon = 1e6
     else:
-        im_photon = 1e7
+        im_photon = 5e7
 
     if mono == True:
         # Monechromatic radiative transfer setting
