@@ -1276,12 +1276,12 @@ sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 # sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
 # for presentation, showing how 0.38 km/s incapable of fitting the submm emission
-array = np.array([31,32,33,34,35])
-xlabel = ''
-compact = [r'$\rm{t=5\times10^{3}\,yr}$', r'$\rm{t=1\times10^{4}\,yr}$', r'$\rm{t=2.5\times10^{4}\,yr}$', r'$\rm{t=5\times10^{4}\,yr}$',\
-            r'$\rm{t=7.5\times10^{4}\,yr}$']
-plotname = 'cs_38'
-sed_five('/Users/yaolun/bhr71/hyperion/cycle8/', array, outdir, xlabel, plotname, obs=obs, compact=compact, obs_color='Red')
+# array = np.array([31,32,33,34,35])
+# xlabel = ''
+# compact = [r'$\rm{t=5\times10^{3}\,yr}$', r'$\rm{t=1\times10^{4}\,yr}$', r'$\rm{t=2.5\times10^{4}\,yr}$', r'$\rm{t=5\times10^{4}\,yr}$',\
+#             r'$\rm{t=7.5\times10^{4}\,yr}$']
+# plotname = 'cs_38'
+# sed_five('/Users/yaolun/bhr71/hyperion/cycle8/', array, outdir, xlabel, plotname, obs=obs, compact=compact, obs_color='Red')
 
 
 # grid of Omega0
@@ -1361,11 +1361,11 @@ sed_lum(indir, array, outdir)
 
 # # model_vs_obs('model46', '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/', obs=obs)
 
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model101','/Users/yaolun/bhr71/hyperion/controlled/model80','/Users/yaolun/bhr71/hyperion/cycle8/model63'],\
-    '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
-    [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs)
+# models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model101','/Users/yaolun/bhr71/hyperion/controlled/model80','/Users/yaolun/bhr71/hyperion/cycle8/model63'],\
+#     '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
+#     [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs)
 
 # full TSC vs infall-only TSC model
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle8/model63','/Users/yaolun/bhr71/hyperion/cycle8/model63_ulrich/model63_ulrich'],\
-    '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
-    [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model63_tsc_com')
+# models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle8/model63','/Users/yaolun/bhr71/hyperion/cycle8/model63_ulrich/model63_ulrich'],\
+    # '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
+    # [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model63_tsc_com')
