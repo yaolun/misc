@@ -65,3 +65,9 @@ def get_bhr71_obs(indir):
 	wl_spec = wl_spec[np.argsort(wl_spec)]
 
 	return {'spec': (wl_spec, flux_spec, sigma_noise), 'phot': (wl_phot, flux_phot, flux_sig_phot)}
+
+
+# obs = '/Users/yaolun/bhr71/obs_for_radmc/'
+# bhr71 = get_bhr71_obs(obs)
+# for i in range(len(bhr71['spec'][0][bhr71['spec'][0]<30])):
+# 	print bhr71['spec'][1][i] - bhr71['spec'][2][i]

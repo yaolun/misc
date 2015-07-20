@@ -264,8 +264,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         ori_data = ax.scatter(p1_norm,p2_norm, marker='o',c='b',s=5)
 
         # print the model number near the points
-        # for i in range(len(model_label)):
-        #     ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
+        for i in range(len(model_label)):
+            print model_label[i]
+            # ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
 
         ax.set_xlabel(keywords['label'][0], fontsize=20)
         ax.set_ylabel(keywords['label'][1], fontsize=20)
@@ -344,19 +345,20 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.tx
 # keywords = {'col':['age','rho_cav_edge'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}
 # keywords = {'col':['age','rho_cav_center'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$']}
 # keywords = {'col':['rho_cav_center','rho_cav_edge'], 'label': [r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}
-keywords_list = [{'col':['age','rho_cav_edge'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']},\
-                 {'col':['age','rho_cav_center'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$']},\
-                 {'col':['rho_cav_center','rho_cav_edge'], 'label': [r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}]
+keywords_list = [{'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{cav}\,[deg.]}$']},\
+                 {'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']},\
+                 {'col':['view_angle','theta_cav'], 'label': [r'$\rm{\theta_{incl}\,[deg.]}$', r'$\rm{\theta_{cav}\,[deg.]}$']}]
 
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
 # obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 for keywords in keywords_list:
-    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=11)
+    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=32)
+    fir_chi2_2d(array_list, keywords, obs)
     # for i in range(0, len(p2)):
         # print p1[i], p2[i], chi2[i]
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
-               'model_num': np.arange(81,88)}]
-keywords = {'col':['age','Cs'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{c_{s}\,[km\,s^{-1}]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed_cs=True)
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
+#                'model_num': np.arange(1,126)}]
+# keywords = {'col':['age','Cs'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{c_{s}\,[km\,s^{-1}]}$']}
+# fir_chi2_2d(array_list, keywords, obs, fixed_cs=True)
