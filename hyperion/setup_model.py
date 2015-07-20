@@ -1,6 +1,7 @@
 def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,\
                 low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,\
-                wl_aper=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False):
+                wl_aper=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,\
+                output=None,mechine='bettyjo'):
     """
     params = dictionary of the model parameters
     """
@@ -161,6 +162,21 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
     # phic         = 0.5*( phii[0:nz-1]   + phii[1:nz] )
 
+    if output == 'grid':
+        foo = open(outdir+outname+'_grid_ri.txt','w')
+        for i in range(len(ri)):
+            foo.write('%f \n' % ri[i])
+        foo.close()
+        foo = open(outdir+outname+'_grid_thetai.txt','w')
+        for i in range(len(thetai)):
+            foo.write('%f \n' % thetai[i])
+        foo.close()
+        foo = open(outdir+outname+'_grid_phii.txt','w')
+        for i in range(len(phii)):
+            foo.write('%f \n' % phii[i])
+        foo.close()
+
+
     # Make the dust density model
     # Make the density profile of the envelope
     #
@@ -264,8 +280,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         if idl == True:
             print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
-            # idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
-            idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
+            if mechine == 'bettyjo':
+                idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
+            elif mechine == 'grad13yy':
+                idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
+            else:
+                idl_path = raw_input('Please enter the path to IDL: ')
+                idl = pidly.IDL(idl_path)
+
             idl('.r ~/programs/misc/TSC/tsc.pro')
             # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
             # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)])) # min([R_inf,max(ri)])
@@ -870,12 +892,12 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# outdir = '/Users/yaolun/test/'
-# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# fix_params = {'R_min': 0.14}
-# setup_model(outdir,outdir,'model63_ulrich',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params)
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+outdir = '/Users/yaolun/test/'
+dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+fix_params = {'R_min': 0.14}
+setup_model(outdir,outdir,'model78_chi2',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params,mechine='grad13yy',output='grid')

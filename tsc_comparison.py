@@ -28,7 +28,7 @@ def tsc_com(plot=True):
 
     # Variable setup
     #
-    # parameter from cycle 7, model 46
+    # parameter from cycle 8, model 63
     rstar     = 5 * RS
     tstar     = 5100.0
     R_env_max = 2.000000e+04 * AU
@@ -49,6 +49,26 @@ def tsc_com(plot=True):
     rho_cav_center = 5e-19
     rho_cav_edge = 40 * AU
 
+    # parameter from chi2_grid, model 78
+    rstar     = 5 * RS
+    tstar     = 5100.0
+    R_env_max = 2.000000e+04 * AU
+    R_env_min = 0.14         * AU             # the inner radius is fixed, 0.100364     * AU 
+    R_cen     = 7.590457e-03 * AU
+    R_inf     = 5.270124e+02 * AU
+    R_disk_min= 0.14         * AU 
+    R_disk_max= R_cen
+    theta_cav = 30.0
+    beta      = 1.093
+    h100      = 8.123        * AU
+    M_env_dot = 2.896073e-05 * MS/yr
+    M_disk    = 0.075 * MS
+    mstar     = 1.448036e-01 * MS
+    rin       = rstar
+    rout      = R_env_max
+    rout_mike = 9.756000e+03 * AU
+    rho_cav_center = 5e-19
+    rho_cav_edge = 40 * AU
     # Grid Parameters
     nx        = 100L
     ny        = 400L
@@ -265,7 +285,7 @@ def tsc_com(plot=True):
                   fontsize=16, numpoints=1, loc='lower center')
 
         ax.set_ylim([0, 15])
-        ax.set_xlim(left=np.log10(0.15))
+        ax.set_xlim(left=np.log10(0.1))
         ax.set_xlabel(r'$\rm{log(radius)\,[AU]}$', fontsize=18)
         ax.set_ylabel(r'$\rm{log(gas\,density)\,[g\,cm^{-3}]}$', fontsize=18)
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
