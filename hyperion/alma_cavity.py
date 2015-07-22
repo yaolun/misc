@@ -50,7 +50,9 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
     m_reg = ModelOutput(filename_reg)
     image_reg = m_reg.get_image(group=len(wl_aper)+1, inclination=0, distance=178.0*pc, units='MJy/sr')
     # Calculate the image width in arcseconds given the distance used above
-    w = np.degrees((1.5 * pc) / image_reg.distance) * 60.
+    rmax = max(m_reg.get_quantities().r_wall)
+    w = np.degrees(rmax / image_reg.distance) * 3600.
+    # w = np.degrees((1.5 * pc) / image_reg.distance) * 60.
     pix_num = len(image_reg.val[:,0,0])
     pix2arcsec = 2*w/pix_num
     pix2au = np.radians(2*w/pix_num/3600.)*image_reg.distance/au
@@ -63,7 +65,8 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
     m_r2 = ModelOutput(filename_r2)
     image_r2 = m_r2.get_image(group=len(wl_aper)+1, inclination=0, distance=178.0*pc, units='MJy/sr')
     # Calculate the image width in arcseconds given the distance used above
-    w = np.degrees((1.5 * pc) / image_r2.distance) * 60.
+    rmax = max(m_r2.get_quantities().r_wall)
+    w = np.degrees(rmax / image_r2.distance) * 3600.
     pix_num = len(image_reg.val[:,0,0])
     pix2arcsec = 2*w/pix_num
     pix2au = np.radians(2*w/pix_num/3600.)*image_reg.distance/au
@@ -75,7 +78,8 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
     m_r15 = ModelOutput(filename_r15)
     image_r15 = m_r15.get_image(group=len(wl_aper)+1, inclination=0, distance=178.0*pc, units='MJy/sr')
     # Calculate the image width in arcseconds given the distance used above
-    w = np.degrees((1.5 * pc) / image_r15.distance) * 60.
+    rmax = max(m_r15.get_quantities().r_wall)
+    w = np.degrees(rmax / image_r15.distance) * 3600.
     pix_num = len(image_reg.val[:,0,0])
     pix2arcsec = 2*w/pix_num
     pix2au = np.radians(2*w/pix_num/3600.)*image_reg.distance/au
@@ -87,7 +91,9 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
     m_uni = ModelOutput(filename_uni)
     image_uni = m_uni.get_image(group=len(wl_aper)+1, inclination=0, distance=178.0*pc, units='MJy/sr')
     # Calculate the image width in arcseconds given the distance used above
-    w = np.degrees((1.5 * pc) / image_uni.distance) * 60.
+    rmax = max(m_uni.get_quantities().r_wall)
+    w = np.degrees(rmax / image_uni.distance) * 3600.
+    print w
     pix_num = len(image_reg.val[:,0,0])
     pix2arcsec = 2*w/pix_num
     pix2au = np.radians(2*w/pix_num/3600.)*image_reg.distance/au
@@ -137,8 +143,8 @@ def alma_cavity(freq, outdir, vlim, units='MJy/sr', pix=300, filename=None, labe
         trim = np.where(abs(offset)<=2)
         im = grid[i].pcolor(np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec, np.linspace(-pix/2,pix/2,num=pix)*pix2arcsec,\
             image_grid[i], cmap=plt.cm.jet, vmin=vlim[0], vmax=vlim[1])#vmin=(image_grid[i][trim,trim]).min(), vmax=(image_grid[i][trim,trim]).max())
-        grid[i].set_xlim([-4,4])
-        grid[i].set_ylim([-4,4])
+        grid[i].set_xlim([-20,20])
+        grid[i].set_ylim([-20,20])
         grid[i].set_xlabel(r'$\rm{RA\,offset\,(arcsec)}$', fontsize=14)
         grid[i].set_ylabel(r'$\rm{Dec\,offset\,(arcsec)}$', fontsize=14)
         # lg = grid[i].legend([label_grid[i]], loc='upper center', numpoints=1, fontsize=16)
@@ -185,6 +191,10 @@ filename = {'reg': '/Users/yaolun/test/model91_old_aper.rtout',\
             'r2': '/Users/yaolun/test/model91_old_aper.rtout',\
             'r15': '/Users/yaolun/test/model91.rtout',\
             'uni': '/Users/yaolun/test/model91.rtout'}
+filename = {'reg': '/Users/yaolun/bhr71/hyperion/cycle8/model63.rtout',\
+            'r2': '/Users/yaolun/bhr71/hyperion/controlled/model45.rtout',\
+            'r15': '/Users/yaolun/bhr71/hyperion/controlled/model51.rtout',\
+            'uni': '/Users/yaolun/bhr71/hyperion/controlled/model44.rtout'}
 # filename = {'reg': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model2/model2.rtout', \
 #             'r2': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model10/model10.rtout', \
 #             'r15': '/home/bettyjo/yaolun/hyperion/bhr71/alma/model13/model13.rtout', \
@@ -192,9 +202,9 @@ filename = {'reg': '/Users/yaolun/test/model91_old_aper.rtout',\
 label = {'reg': r'$\rm{const.+r^{-2}}$', 'r2': r'$\rm{r^{-2}}$', 'r15': r'$\rm{r^{-1.5}}$', 'uni': r'$\rm{uniform}$'}
 freq = [230,345,460]
 freq = [83275.682]
-# freq = [345]
+freq = [345]
 vlim = [[150,800],[600,3200],[1500,9000]]
-vlim = [[0,100]]
+vlim = [[0,4000]]
 # vlim = [[600,2600]]
 outdir = '/Users/yaolun/test/'
 # outdir = '/home/bettyjo/yaolun/test/'

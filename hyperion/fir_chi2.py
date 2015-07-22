@@ -13,6 +13,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
     from matplotlib.colors import LogNorm
     import copy
     import collections
+    import seaborn.apionly as sns
 
     # function for checking duplicate in lists
     compare = lambda x, y: collections.Counter(x) == collections.Counter(y)
@@ -41,10 +42,10 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
                 # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])/obs['sed'][obs['wave'] == w])**2
                 val = (sim['sed'][sim['wave'] == w] - obs['sed'][obs['wave'] == w]) / obs['sed'][obs['wave'] == w]
                 unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
-                        ( (sim['sigma_vSv'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 ) + \
+                        ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 ) + \
                         2 * (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2
                 # unc = unc_2**0.5
-                print val**2, unc_2
+                # print val**2, unc_2
                 chi2 = chi2 + val**2 / unc_2
         else:
             # not proper functioning at this moment
@@ -68,6 +69,10 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
     # read the observed SED and extract with apertures
     bhr71 = get_bhr71_obs(obs)
     wave_obs, flux_obs, sed_obs_noise = bhr71['spec']
+    # add IRAC1 and IRAC2 photometry data
+    wave_obs = np.hstack((wave_obs, bhr71['phot'][0][0:2]))
+    flux_obs = np.hstack((flux_obs, bhr71['phot'][1][0:2]))
+    sed_obs_noise = np.hstack((sed_obs_noise, bhr71['phot'][2][0:2]))
     # wave_obs = wave_obs[wave_obs > 50]
     # flux_obs = flux_obs[wave_obs > 50]
     sed_obs = c/(wave_obs*1e-4)*flux_obs*1e-23
@@ -94,8 +99,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
             obs_aper_sed[i] = f(wl_aper[i])
             obs_aper_sed_noise[i] = f_noise(wl_aper[i])
 
-    # print obs_aper_sed
-
     # calculate Chi2 from simulated SED
     p1 = []
     p2 = []
@@ -118,7 +121,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
             ref_params.remove_columns(ignore_col)
             ref_params.remove_column('Model#')
             ref_params = (ref_params[:][model_list['Model#'] == 'Model'+str(ref)])[0].data
-            # print ref_params
 
         # find the model has minimun chi2 first
         # for i in range(0, len(model_num)):
@@ -166,14 +168,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
                     p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     model_label.append(str(imod))
 
-            # read the simulated SED
-            # model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
-            # print p1[-1], p2[-1]
-            # print imod
-            # print model_dum
-            # plug them into the chi2 function
-            # chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': sed_obs_noise}, {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data}, wave=wl_aper)
-            # reduced_chi2_dum = chi2_dum/(n-2-1)
             chi2.extend(reduced_chi2_dum)
 
 
@@ -241,7 +235,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         x = np.linspace(0, 1, 50)
         y = np.linspace(0, 1, 50)
 
-        z = griddata((p1_norm, p2_norm), chi2, (x[None,:], y[:,None]), method='linear')
+        z = griddata((p1_norm, p2_norm), chi2, (x[None,:], y[:,None]), method='cubic')
+        if z.min() < 0:
+            z = griddata((p1_norm, p2_norm), chi2, (x[None,:], y[:,None]), method='linear')
 
         # print z.min()
 
@@ -251,9 +247,10 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         ax = fig.add_subplot(111)
 
         # plot the contour with color and lines
-        ax.contour(x, y, z, 15, linewidths=0.5,colors='k')
+        ax.contour(x, y, z, 10, linewidths=0.5,colors='k')
         # cs = ax.contourf(x,y,z,15,cmap=plt.cm.jet)
-        im = ax.imshow(z, cmap='jet', origin='lower', extent=[0,1,0,1],\
+        cmap = sns.cubehelix_palette(light=1, as_cmap=True, reverse=True)
+        im = ax.imshow(z, cmap=cmap, origin='lower', extent=[0,1,0,1],\
             norm=LogNorm(vmin=chi2.min(), vmax=chi2.max()))
         # Blues_r
         ax.set_xticks(np.linspace(0, 1, 5))
@@ -266,15 +263,15 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         cb = fig.colorbar(im, cax=cax)
         cb.solids.set_edgecolor("face")
         cb.ax.minorticks_on()
-        cb.ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}/(\sigma_{data}^{2}+\sigma_{sys}^{2})}$',fontsize=16)
+        cb.ax.set_ylabel(r'$\rm{\Sigma(sim./obs.-1)^{2}/(\sigma_{combine}^{2})}$',fontsize=16)
         cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
         plt.setp(cb_obj,fontsize=12)
         # plot the original data points
         ori_data = ax.scatter(p1_norm,p2_norm, marker='o',c='b',s=5)
 
         # print the model number near the points
-        for i in range(len(model_label)):
-            print model_label[i]
+        # for i in range(len(model_label)):
+            # print model_label[i]
             # ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
 
         ax.set_xlabel(keywords['label'][0], fontsize=20)
