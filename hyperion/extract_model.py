@@ -599,11 +599,11 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight')
     fig.clf()
 
-indir = '/Users/yaolun/bhr71/obs_for_radmc/'
-outdir = '/Users/yaolun/bhr71/hyperion/'
-wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle8/model63.rtout',indir=indir,outdir='/Users/yaolun/test/',\
-                 wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
+# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+# outdir = '/Users/yaolun/bhr71/hyperion/'
+# wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+# extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle8/model63.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+#                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/test/model46_ulrich.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False)
 # extract_hyperion('/Users/yaolun/test/radmc3d_apertest/model15.rtout',indir=indir,outdir='/Users/yaolun/test/',\
