@@ -28,7 +28,7 @@ def tsc_com(plot=True):
 
     # Variable setup
     #
-    # parameter from cycle 7, model 46
+    # parameter from cycle 8, model 63
     rstar     = 5 * RS
     tstar     = 5100.0
     R_env_max = 2.000000e+04 * AU
@@ -255,8 +255,8 @@ def tsc_com(plot=True):
         # alpha = np.linspace(0.3,1.0,len(plot_grid))
         alpha = [1]
         for i in plot_grid:
-            tsc, = ax.plot(np.log10(rc/AU), np.log10(rho_tsc2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='b', linewidth=2)
-            ulrich, = ax.plot(np.log10(rc/AU), np.log10(rho_ulrich2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='r', linewidth=2)
+            tsc, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='b', linewidth=2)
+            ulrich, = ax.plot(np.log10(rc/AU), np.log10(rho_env_ulrich2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='r', linewidth=2)
 
         rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
         cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
@@ -265,7 +265,7 @@ def tsc_com(plot=True):
                   fontsize=16, numpoints=1, loc='lower center')
 
         ax.set_ylim([0, 15])
-        ax.set_xlim(left=np.log10(0.15))
+        ax.set_xlim(left=np.log10(0.17))
         ax.set_xlabel(r'$\rm{log(radius)\,[AU]}$', fontsize=18)
         ax.set_ylabel(r'$\rm{log(gas\,density)\,[g\,cm^{-3}]}$', fontsize=18)
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]

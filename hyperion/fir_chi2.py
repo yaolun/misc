@@ -37,8 +37,15 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
                 # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2
                 # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / (obs['sigma'][obs['wave'] == w])**2
                 # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / ( (obs['sigma'][obs['wave'] == w])**2 + (10**(-0.03*np.log10(obs['sed'][obs['wave'] == w])))**2 )
-                chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / ( (obs['sigma'][obs['wave'] == w])**2 + (0.1*obs['sed'][obs['wave'] == w])**2 )#/ \
+                # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / ( (obs['sigma'][obs['wave'] == w])**2 + (0.1*obs['sed'][obs['wave'] == w])**2 )#/ \
                 # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])/obs['sed'][obs['wave'] == w])**2
+                val = (sim['sed'][sim['wave'] == w] - obs['sed'][obs['wave'] == w]) / obs['sed'][obs['wave'] == w]
+                unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
+                        ( (sim['sigma_vSv'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 ) + \
+                        2 * (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2
+                # unc = unc_2**0.5
+                print val**2, unc_2
+                chi2 = chi2 + val**2 / unc_2
         else:
             # not proper functioning at this moment
             for w in wave:
@@ -114,19 +121,21 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
             # print ref_params
 
         # find the model has minimun chi2 first
-        for i in range(0, len(model_num)):
-            imod = model_num[i]
-            model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
-            chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': sed_obs_noise}, {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data}, wave=wl_aper)
-            reduced_chi2_dum = chi2_dum/(n-2-1)
-            total_chi2.extend(reduced_chi2_dum)
+        # for i in range(0, len(model_num)):
+        #     imod = model_num[i]
+        #     model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
+        #     chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': sed_obs_noise}, 
+        #         {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data, 'sigma': model_dum['sigma_vSv'].data}, wave=wl_aper)
+        #     reduced_chi2_dum = chi2_dum/(n-2-1)
+        #     total_chi2.extend(reduced_chi2_dum)
         # print total_chi2
         # print min(total_chi2), np.where(total_chi2 == min(total_chi2))
 
         for i in range(0, len(model_num)):
             imod = model_num[i]
-
-            chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': sed_obs_noise}, {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data}, wave=wl_aper)
+            model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
+            chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': sed_obs_noise}, 
+                {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data, 'sigma': model_dum['sigma_vSv'].data}, wave=wl_aper)
             reduced_chi2_dum = chi2_dum/(n-2-1)
             total_chi2.extend(reduced_chi2_dum)
             # manually exclude much older age
@@ -158,7 +167,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
                     model_label.append(str(imod))
 
             # read the simulated SED
-            model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
+            # model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
             # print p1[-1], p2[-1]
             # print imod
             # print model_dum

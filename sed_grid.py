@@ -643,7 +643,10 @@ def disk_exist_com(indir, array, outdir, obs=None):
     ax.set_xlabel(r'$log(wavelength)\,[\mu m]$', fontsize=20)
     ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=20)
 
-    plt.legend([disk, nodisk, obs_data], [r'$w/\,disk$', r'$w/o\,disk$',r'$observation$'], numpoints=1, loc='lower right', fontsize=16)
+    if obs != None:
+        plt.legend([disk, nodisk, obs_data], [r'$w/\,disk$', r'$w/o\,disk$',r'$observation$'], numpoints=1, loc='lower right', fontsize=16)
+    else:
+        plt.legend([disk, nodisk], [r'$w/\,disk$', r'$w/o\,disk$'], numpoints=1, loc='lower right', fontsize=16)
 
     fig.savefig(outdir+'sed_disk_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
@@ -1256,6 +1259,74 @@ def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None
     fig.savefig(outdir+plotname+'.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
+def disk_summary(indir, array, outdir, obs=None, compact=None, inf=False, obs_color='red'):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import MaxNLocator
+    from hyperion.model import ModelOutput
+    import astropy.constants as const
+    import sys
+    sys.path.append('/Users/yaolun/programs/misc/hyperion')
+    from t_bol import t_bol
+
+    # constants setup
+    AU = const.au.cgs.value
+    c = const.c.cgs.value
+
+    fig, axarr = plt.subplots(3, 1, sharex='col', sharey='row', figsize=(8,10))
+
+    # color map setting
+    color_list = [[0.8507598215729224, 0.6322174528970308, 0.6702243543099417],\
+                 [0.7357826498167007, 0.4722583075098643, 0.5939898816486836],\
+                 [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
+                 [0.37315740206144277, 0.21948554297767336, 0.40755444345087455],\
+                 [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
+    title = [r'$\rm{M_{disk}}$', r'$\rm{\beta}$', r'$\rm{h_{100}}$']
+    for i in range(3):
+        ax = axarr[i]
+        if obs != None:  
+            from get_bhr71_obs import get_bhr71_obs
+            bhr71 = get_bhr71_obs(obs)  # in um and Jy
+            wave_obs, flux_obs, noise_obs = bhr71['spec']
+            ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
+            ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
+            ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
+
+        for j in range(5):
+            if i == 0:
+                if j > 2:
+                    continue
+            # infinite aperture
+            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[i,j])+'_sed_inf.txt', skip_header=1).T
+            # sed with apertures
+            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i,j])+'_sed_w_aperture.txt', skip_header=1).T
+
+            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[j],mec=color_list[j],color=color_list[j],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i][j])
+            
+            if inf == True:
+              ax.plot(np.log10(wave_inf), np.log10(sed_inf), '--',mfc=color_list[j],mec=color_list[j],color=color_list[j],markersize=7,markeredgewidth=1,linewidth=2)  
+
+            ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
+        ax.text(0.05, 0.85, title[i], fontsize=20, transform=ax.transAxes)
+        ax.set_ylim([-10,-8])
+        ax.set_xlim([0.4,2])
+
+        [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+        ax.minorticks_on() 
+        ax.tick_params('both',labelsize=16,width=1.2,which='major',length=5)
+        ax.tick_params('both',labelsize=16,width=1.2,which='minor',length=2.5)
+
+        if i == 2:
+            ax.set_xlabel(r'$log(wavelength)\,[\mu m]$', fontsize=16)
+            ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=16)
+        
+        y_nbins = len(ax.get_yticklabels())
+        if i != 0:
+            ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
+    fig.subplots_adjust(hspace=0)
+    fig.savefig(outdir+'sed_disk_summary.pdf', format='pdf', dpi=300, bbox_inches='tight')
+
+
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
 outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
@@ -1301,12 +1372,19 @@ xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
 compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
 plotname = 'disk_beta'
 sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
-# # scale height
+# scale height
 array = np.array([96,97,98,99,100])
 xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
 compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
 plotname = 'disk_h100'
 sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
+# all disk parameter
+array = np.array([[88,89,90,0,0],[91,92,93,94,95],[96,97,98,99,100]])
+compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
+           [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
+           [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
+disk_summary(indir, array, outdir, compact=compact)
+
 
 # grid of theta_cav and incl.
 # array = np.array([[53,54,55,56,57],[58,59,60,61,62],[63,64,65,66,67]])
@@ -1329,7 +1407,7 @@ sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 # # disk & no dis comparison
 # disk & no disk
 array = np.array([32,30])
-disk_exist_com(indir, array, outdir, obs=obs)
+disk_exist_com(indir, array, outdir, obs=None)
 
 # # grid of tstar
 # array = np.array([69,70,71])
