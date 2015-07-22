@@ -47,7 +47,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     from hyperion.model import ModelOutput
     from hyperion.model import Model
     from scipy.interpolate import interp1d
-    from hyperion.util.constants import pc, c, lsun
+    from hyperion.util.constants import pc, c, lsun, au
     from astropy.io import ascii
     import sys
     sys.path.append(os.path.expanduser('~')+'/programs/spectra_analysis/')
@@ -539,7 +539,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         iwav = np.argmin(np.abs(wav - image.wav))
 
         # Calculate the image width in arcseconds given the distance used above
-        w = np.degrees((1.5 * pc) / image.distance) * 60.
+        # get the max radius
+        rmax = max(m.get_quantities().r_wall)
+        w = np.degrees(rmax / image.distance) * 3600.
 
         # Image in the unit of MJy/sr
         # Change it into erg/s/cm2/Hz/sr
