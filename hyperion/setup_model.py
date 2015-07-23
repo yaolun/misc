@@ -425,7 +425,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
 
         zmin = 1e-22/mh
-        cmap = 'jet'
+        cmap = plt.cm.CMRmap
         rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
         thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
         # plot the gas density
