@@ -14,6 +14,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
     import copy
     import collections
     import seaborn.apionly as sns
+    import matplotlib as mpl
 
     # function for checking duplicate in lists
     compare = lambda x, y: collections.Counter(x) == collections.Counter(y)
@@ -249,7 +250,11 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         # plot the contour with color and lines
         ax.contour(x, y, z, 10, linewidths=0.5,colors='k')
         # cs = ax.contourf(x,y,z,15,cmap=plt.cm.jet)
-        cmap = sns.cubehelix_palette(light=1, as_cmap=True, reverse=True)
+        # cmap = sns.cubehelix_palette(light=1, as_cmap=True, reverse=True)
+        cmap = plt.cm.CMRmap
+        # import custom colormap
+        from custom_colormap import custom_colormap
+        cmap = mpl.colors.ListedColormap(custom_colormap())
         im = ax.imshow(z, cmap=cmap, origin='lower', extent=[0,1,0,1],\
             norm=LogNorm(vmin=chi2.min(), vmax=chi2.max()))
         # Blues_r
@@ -263,7 +268,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         cb = fig.colorbar(im, cax=cax)
         cb.solids.set_edgecolor("face")
         cb.ax.minorticks_on()
-        cb.ax.set_ylabel(r'$\rm{\Sigma(sim./obs.-1)^{2}/(\sigma_{combine}^{2})}$',fontsize=16)
+        # cb.ax.set_ylabel(r'$\rm{\Sigma(sim./obs.-1)^{2}/(\sigma_{combine}^{2})}$',fontsize=16)
+        cb.ax.set_ylabel(r'$\rm{\chi^{2}_{reduce}}$', fontsize=18)
         cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
         plt.setp(cb_obj,fontsize=12)
         # plot the original data points
