@@ -269,7 +269,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         cb.solids.set_edgecolor("face")
         cb.ax.minorticks_on()
         # cb.ax.set_ylabel(r'$\rm{\Sigma(sim./obs.-1)^{2}/(\sigma_{combine}^{2})}$',fontsize=16)
-        cb.ax.set_ylabel(r'$\rm{\chi^{2}_{reduce}}$', fontsize=18)
+        cb.ax.set_ylabel(r'$\rm{\chi^{2}_{reduce}}$', fontsize=20)
         cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
         plt.setp(cb_obj,fontsize=12)
         # plot the original data points
