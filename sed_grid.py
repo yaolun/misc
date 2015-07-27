@@ -30,9 +30,9 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
             # sed part
             # if rr+1 != row:
             # infinite aperture
-            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
             # sed with apertures
-            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
             # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
             if obs != None:  
@@ -126,9 +126,9 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
             # sed part
             # if rr+1 != row:
             # infinite aperture
-            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_inf.txt', skip_header=1).T
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_inf.txt', skip_header=1).T
             # sed with apertures
-            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
 
             # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1, alpha=0.7)
             if obs != None:  
@@ -182,9 +182,9 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
 
         for i in range(0, len(array)):
             # sed with infinite aperture
-            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_inf.txt', skip_header=1).T
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_inf.txt', skip_header=1).T
             # sed with apertures
-            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=label[i])
         ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
@@ -228,9 +228,9 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             # sed part
             # if rr+1 != row:
             # infinite aperture
-            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_inf.txt', skip_header=1).T
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_inf.txt', skip_header=1).T
             # sed with apertures
-            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
 
             # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1)
             if obs != None:  
@@ -302,9 +302,9 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
 
         for i in range(0, len(array)):
             # infinite aperture
-            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_inf.txt', skip_header=1).T
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_inf.txt', skip_header=1).T
             # sed with apertures
-            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i])
             
@@ -349,9 +349,9 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                 # sed part
                 # if rr+1 != row:
                 # infinite aperture
-                (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
+                (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
                 # sed with apertures
-                (wave, sed) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
+                (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
                 # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
                 if obs != None:  
@@ -429,9 +429,9 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
 
             for i in range(0, num):
                 # infinite aperture
-                (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[i,cc])+'_sed_inf.txt', skip_header=1).T
+                (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[i,cc])+'_sed_inf.txt', skip_header=1).T
                 # sed with apertures
-                (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i,cc])+'_sed_w_aperture.txt', skip_header=1).T
+                (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[i,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
                 ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i], color=color_list[i], markersize=3,markeredgewidth=1,linewidth=1.2, label=label[i])
                 if cc == 0:
@@ -484,9 +484,9 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
                 # sed part
                 # if rr+1 != row:
                 # infinite aperture
-                (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
+                (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
                 # sed with apertures
-                (wave, sed) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
+                (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
                 # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
                 if obs != None:  
@@ -564,9 +564,9 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
 
             for i in range(0, num):
                 # infinite aperture
-                (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[cc,i])+'_sed_inf.txt', skip_header=1).T
+                (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[cc,i])+'_sed_inf.txt', skip_header=1).T
                 # sed with apertures
-                (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc,i])+'_sed_w_aperture.txt', skip_header=1).T
+                (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[cc,i])+'_sed_w_aperture.txt', skip_header=1).T
 
                 ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i], color=color_list[i], markersize=4,markeredgewidth=1,linewidth=1.5, label=label[i])
                 if cc == col-1:
@@ -612,12 +612,12 @@ def disk_exist_com(indir, array, outdir, obs=None):
 
     # get data
     # disk part
-    (d_wave_inf, d_sed_inf) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
-    (d_wave, d_sed) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
+    (d_wave_inf, d_sed_inf, d_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
+    (d_wave, d_sed, d_sed_unc) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
 
     # no disk part
-    (nd_wave_inf, nd_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
-    (nd_wave, nd_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
+    (nd_wave_inf, nd_sed_inf, nd_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
+    (nd_wave, nd_sed, nd_sed_unc) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
 
     disk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='b',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=2)
     nodisk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='k',mec='k',markersize=7,markeredgewidth=1,color='k', linewidth=2)
@@ -832,14 +832,14 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     # alpha_list = np.linspace(0.5, 1.0, len(array['r-2']))
     alpha_list = [1]
     for i in range(len(array['r-2'])):
-        (wave_dum, sed_dum) = np.genfromtxt(indir+'/model'+str(array['r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
+        (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
         r2, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Magenta',mec='Magenta',\
             markersize=7,markeredgewidth=1,color='Magenta', linewidth=2, alpha=alpha_list[i])
     # r^-1.5
     # alpha_list = np.linspace(0.5, 1.0, len(array['r-1.5']))
     alpha_list = [1]
     for i in range(len(array['r-1.5'])):
-        (wave_dum, sed_dum) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][i])+'_sed_w_aperture.txt', skip_header=1).T
+        (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][i])+'_sed_w_aperture.txt', skip_header=1).T
         r15, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Red',mec='Red',\
             markersize=7,markeredgewidth=1,color='Red', linewidth=2, alpha=alpha_list[i])
     if ver == None:
@@ -847,14 +847,14 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
         # alpha_list = np.linspace(0.5, 1.0, len(array['const+r-2']))
         alpha_list = [1]
         for i in range(len(array['const+r-2'])):
-            (wave_dum, sed_dum) = np.genfromtxt(indir+'/model'+str(array['const+r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['const+r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
             const_r2, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Blue',mec='Blue',\
                 markersize=7,markeredgewidth=1,color='Blue', linewidth=2, alpha=alpha_list[i]) 
     # uniform
     # alpha_list = np.linspace(0.5, 1.0, len(array['uniform']))
     alpha_list = [1]
     for i in range(len(array['uniform'])):
-        (wave_dum, sed_dum) = np.genfromtxt(indir+'/model'+str(array['uniform'][i])+'_sed_w_aperture.txt', skip_header=1).T
+        (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['uniform'][i])+'_sed_w_aperture.txt', skip_header=1).T
         uni, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Green',mec='Green',\
             markersize=7,markeredgewidth=1,color='Green', linewidth=2, alpha=alpha_list[i]) 
 
@@ -911,16 +911,16 @@ def sed_lum(indir, array, outdir, obs=None):
 
     # get data
     # tstar = 4500 K
-    (r1_wave_inf, r1_sed_inf) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
-    (r1_wave, r1_sed) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
+    (r1_wave_inf, r1_sed_inf, r1_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
+    (r1_wave, r1_sed, r1_sed_unc) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
 
     # tstar = 5000 K
-    (r2_wave_inf, r2_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
-    (r2_wave, r2_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
+    (r2_wave_inf, r2_sed_inf, r2_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
+    (r2_wave, r2_sed, r2_sed_unc) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
 
     # tstar = 5500 K
-    (r3_wave_inf, r3_sed_inf) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
-    (r3_wave, r3_sed) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
+    (r3_wave_inf, r3_sed_inf, r3_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
+    (r3_wave, r3_sed, r3_sed_unc) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
 
     r1, = ax.plot(np.log10(r1_wave), np.log10(r1_sed), 'o-',mfc='Magenta',mec='Magenta',markersize=5,markeredgewidth=1,color='Magenta', linewidth=1.5)
     r2, = ax.plot(np.log10(r2_wave), np.log10(r2_sed), 'o-',mfc='r',mec='r',markersize=5,markeredgewidth=1,color='r', linewidth=1.5)
@@ -1103,7 +1103,7 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     fig.savefig(outdir+modelname+'_sed.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None,rtout=False,color_list=None,style=None,plotname=None):
+def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None,rtout=False,color_list=None,style=None,plotname=None,stretch=False):
     import matplotlib.pyplot as plt
     import numpy as np
     import os
@@ -1234,10 +1234,17 @@ def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None
             foo.close()
         else:
             # read in the extracted text files
-            (sim_inf, sim_sed_inf) = np.genfromtxt(mod+'_sed_inf.txt', skip_header=1).T
-            (wl_aper, flux_aper) = np.genfromtxt(mod+'_sed_w_aperture.txt', skip_header=1).T
+            print mod
+            (sim_inf, sim_sed_inf, sim_sed_unc) = np.genfromtxt(mod+'_sed_inf.txt', skip_header=1).T
+            (wl_aper, flux_aper, unc_aper) = np.genfromtxt(mod+'_sed_w_aperture.txt', skip_header=1).T
 
         aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o', linestyle=style[modelname.index(mod)], mec=color_list[modelname.index(mod)], mfc='None', color=color_list[modelname.index(mod)],markersize=12, markeredgewidth=3, linewidth=1.7, label=label[modelname.index(mod)])
+
+        # aper = ax_sed.errorbar(np.log10(wl_aper),np.log10(flux_aper),\
+            # yerr=[np.log10(flux_aper)-np.log10(flux_aper-unc_aper), np.log10(flux_aper+unc_aper)-np.log10(flux_aper)],\
+            # fmt='o', linestyle='-', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=2.5, linewidth=1.7, ecolor='Blue', elinewidth=3, barsabove=True)
+        
+
         # calculate the bolometric luminosity of the aperture 
         l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23, dstar)
         print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
@@ -1250,7 +1257,10 @@ def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='minor',pad=15,length=2.5*mag)
 
-    ax_sed.set_ylim([-18,-7.5])
+    if stretch == True:
+        ax_sed.set_ylim([-18,-7.5])
+    else:
+        ax_sed.set_ylim([-13, -7])
     ax_sed.set_xlim([0.3,3])
 
     lg_data = ax_sed.legend(loc='lower right',fontsize=12*mag,numpoints=1,framealpha=0.3)
@@ -1297,9 +1307,9 @@ def disk_summary(indir, array, outdir, obs=None, compact=None, inf=False, obs_co
                 if j > 2:
                     continue
             # infinite aperture
-            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[i,j])+'_sed_inf.txt', skip_header=1).T
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[i,j])+'_sed_inf.txt', skip_header=1).T
             # sed with apertures
-            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i,j])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[i,j])+'_sed_w_aperture.txt', skip_header=1).T
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[j],mec=color_list[j],color=color_list[j],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i][j])
             
@@ -1439,11 +1449,11 @@ sed_lum(indir, array, outdir)
 
 # # model_vs_obs('model46', '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/', obs=obs)
 
-# models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model101','/Users/yaolun/bhr71/hyperion/controlled/model80','/Users/yaolun/bhr71/hyperion/cycle8/model63'],\
-#     '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
-#     [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs)
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model101','/Users/yaolun/bhr71/hyperion/controlled/model80','/Users/yaolun/bhr71/hyperion/cycle9/model1'],\
+    '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
+    [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
 
 # full TSC vs infall-only TSC model
-# models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle8/model63','/Users/yaolun/bhr71/hyperion/cycle8/model63_ulrich/model63_ulrich'],\
-    # '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
-    # [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model63_tsc_com')
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle9/model1','/Users/yaolun/bhr71/hyperion/cycle9/model1_ulrich'],\
+    '/Users/yaolun/bhr71/hyperion/cycle9/', '/Users/yaolun/test/',\
+    [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model63_tsc_com')

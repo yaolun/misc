@@ -31,7 +31,7 @@ def tsc_com(plot=True):
     # parameter from cycle 8, model 63
     rstar     = 5 * RS
     tstar     = 5100.0
-    R_env_max = 2.000000e+04 * AU
+    R_env_max = 1.000000e+04 * AU
     R_env_min = 0.14         * AU             # the inner radius is fixed, 0.100364     * AU 
     R_cen     = 1.000000e+00 * AU             # 6.072365e-02 * AU, increase arbitrary for better illustration
     R_inf     = 1.054025e+03 * AU
@@ -242,7 +242,7 @@ def tsc_com(plot=True):
     rho_tsc2d = np.sum(rho_tsc**2,axis=2)/np.sum(rho_tsc,axis=2)
     rho_ulrich2d = np.sum(rho_ulrich**2,axis=2)/np.sum(rho_ulrich,axis=2)
 
-    print min(rc)/AU, max(rc)/AU
+    # print min(rc)/AU, max(rc)/AU
 
     if plot == True:
 
