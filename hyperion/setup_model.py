@@ -869,13 +869,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-from input_reader import input_reader_table
-from pprint import pprint
-filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-params = input_reader_table(filename)
-pprint(params[0])
-indir = '/Users/yaolun/bhr71/hyperion/cycle9/'
-outdir = '/Users/yaolun/test/'
-dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-fix_params = {'R_min': 0.14}
-setup_model(indir,outdir,'model1_ulrich',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params)
+# from input_reader import input_reader_table
+# from pprint import pprint
+# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+# params = input_reader_table(filename)
+# pprint(params[0])
+# indir = '/Users/yaolun/bhr71/hyperion/cycle9/'
+# outdir = '/Users/yaolun/test/'
+# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+# fix_params = {'R_min': 0.14}
+# setup_model(indir,outdir,'model1_ulrich',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params)
