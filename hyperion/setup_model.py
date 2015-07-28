@@ -502,11 +502,11 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # Insert the calculated grid and dust density profile into hyperion
     m.set_spherical_polar_grid(ri, thetai, phii)
     # temperary for comparing full TSC and infall-only TSC model
-    import sys
-    sys.path.append(os.path.expanduser('~')+'/programs/misc/')
-    from tsc_comparison import tsc_com
-    rho_tsc, rho_ulrich = tsc_com()
-    m.add_density_grid(rho_ulrich.T, d)
+    # import sys
+    # sys.path.append(os.path.expanduser('~')+'/programs/misc/')
+    # from tsc_comparison import tsc_com
+    # rho_tsc, rho_ulrich = tsc_com()
+    m.add_density_grid(rho.T, d)
     # m.add_density_grid(rho.T, outdir+'oh5.hdf5')    # numpy read the array in reverse order
 
     # Define the luminsoity source
