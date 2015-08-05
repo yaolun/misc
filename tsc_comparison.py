@@ -1,4 +1,4 @@
-def tsc_com(plot=True):
+def tsc_com(plot=True, disk=False):
     import numpy as np
     import matplotlib as mpl
     import matplotlib.pyplot as plt
@@ -75,7 +75,10 @@ def tsc_com(plot=True):
     thetac       = 0.5*( thetai[0:ny] + thetai[1:ny+1] )
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
 
-    rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv.dat').T
+    if disk == False:
+        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv.dat').T
+    else:
+        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/bhr71/hyperion/cycle9/rhoenv_disk.dat').T
 
     rc_idl = rc[(rc < min([R_inf,max(ri)]))]
 
@@ -283,4 +286,4 @@ def tsc_com(plot=True):
         fig.savefig('/Users/yaolun/test/tsc_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
 
     return rho_tsc/100, rho_ulrich/100
-tsc_com()
+# tsc_com(disk=True)
