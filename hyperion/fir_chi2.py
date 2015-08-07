@@ -1,4 +1,4 @@
-def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=None, spitzer_only=False):
+def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, spitzer_only=False, herschel_only=False):
     """
     array_list: contains dictionaries, each dictionary represents a location of 'model_list.txt', and the model numbers within.
     """
@@ -37,10 +37,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         if log == False:
             for w in wave:
                 # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2
-                # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / (obs['sigma'][obs['wave'] == w])**2
-                # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / ( (obs['sigma'][obs['wave'] == w])**2 + (10**(-0.03*np.log10(obs['sed'][obs['wave'] == w])))**2 )
-                # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2) / ( (obs['sigma'][obs['wave'] == w])**2 + (0.1*obs['sed'][obs['wave'] == w])**2 )#/ \
-                # chi2 = chi2 + ((sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])/obs['sed'][obs['wave'] == w])**2
                 val = (sim['sed'][sim['wave'] == w] - obs['sed'][obs['wave'] == w]) / obs['sed'][obs['wave'] == w]
                 unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
                         ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 ) + \
@@ -66,6 +62,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         # wl_aper = [70., 100., 160., 250., 350., 500.]
     if spitzer_only:
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35]
+    if herschel_only:
+        wl_aper = [70., 100., 160., 250., 350., 500.]
 
     # read the observed SED and extract with apertures
     bhr71 = get_bhr71_obs(obs)
@@ -81,6 +79,11 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
     # print sed_obs_noise
     obs_aper_sed = np.empty_like(wl_aper)
     obs_aper_sed_noise = np.empty_like(wl_aper)
+
+    # sort the wavelength
+    sed_obs = sed_obs[np.argsort(wave_obs)]
+    sed_obs_noise = sed_obs_noise[np.argsort(wave_obs)]
+    wave_obs = wave_obs[np.argsort(wave_obs)]
 
     # setup resolution
     for i in range(0, len(wl_aper)):
@@ -118,7 +121,10 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         if ref != None:
             ignore_col = ['d_sub', 'M_env_dot', 'R_inf', 'R_cen', 'mstar', 'total_mass', 'M_disk']
             ref_params = copy.copy(model_list)
-            ref_params.remove_columns(keywords['col'])
+            if fixed == True:
+                ref_params.remove_column(keywords['col'][0])
+            else:
+                ref_params.remove_columns(keywords['col'])
             ref_params.remove_columns(ignore_col)
             ref_params.remove_column('Model#')
             ref_params = (ref_params[:][model_list['Model#'] == 'Model'+str(ref)])[0].data
@@ -151,12 +157,16 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
             if ref == None:
                 # read the parameter values
                 p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
-                p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
+                if fixed == False:
+                    p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
                 model_label.append(str(imod))
             else:
                 # get other parameters of model i
                 dum_params = copy.copy(model_list)
-                dum_params.remove_columns(keywords['col'])
+                if fixed == True:
+                    dum_params.remove_column(keywords['col'][0])
+                else:
+                    dum_params.remove_columns(keywords['col'])
                 dum_params.remove_columns(ignore_col)
                 dum_params.remove_column('Model#')
                 dum_params = (dum_params[:][model_list['Model#'] == 'Model'+str(imod)])[0].data
@@ -166,7 +176,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
                     continue
                 else:
                     p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
-                    p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
+                    if fixed == False:
+                        p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     model_label.append(str(imod))
 
             chi2.extend(reduced_chi2_dum)
@@ -182,23 +193,23 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         if keywords['col'][i] == 'age':
             if i == 0:
                 p1 = p1/1e4
-            elif i ==1:
+            elif (i ==1) and (fixed == False):
                 p2 = p2/1e4
 
     # plot 1d relation
-    if fixed_cs == True:
+    if fixed == True:
         fig = plt.figure(figsize=(8,6))
         ax = fig.add_subplot(111)
 
         p1 = np.squeeze(p1)
-        p2 = np.squeeze(p2)
         chi2 = np.squeeze(chi2)
 
         p1 = np.array(p1); chi2 = np.array(chi2)
 
         ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1.5)
         ax.set_xlabel(keywords['label'][0], fontsize=18)
-        ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}/(\sigma_{data}^{2}+\sigma_{sys}^{2})}$', fontsize=18)
+        # ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}/(\sigma_{data}^{2}+\sigma_{sys}^{2})}$', fontsize=18)
+        ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
 
         ax.set_yscale('log')
 
@@ -207,7 +218,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed_cs=False, ref=Non
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
         ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-        fig.savefig('/Users/yaolun/test/chi2_agscs_1d.pdf', format='pdf', dpi=300, bbox_inches='tight')
+        fig.savefig('/Users/yaolun/test/chi2_'+str(keywords['col'][0])+'_1d.pdf', format='pdf', dpi=300, bbox_inches='tight')
         fig.clf()
 
     else:
@@ -363,14 +374,13 @@ keywords_list = [{'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}
 
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
-# obs = '/Users/yaolun/bhr71/obs_for_radmc/'
-for keywords in keywords_list:
-    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=32)
-    fir_chi2_2d(array_list, keywords, obs)
-    # for i in range(0, len(p2)):
-        # print p1[i], p2[i], chi2[i]
-# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
-#                'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
-#                'model_num': np.arange(1,126)}]
-# keywords = {'col':['age','Cs'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{c_{s}\,[km\,s^{-1}]}$']}
-# fir_chi2_2d(array_list, keywords, obs, fixed_cs=True)
+# for keywords in keywords_list:
+#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=32)
+#     fir_chi2_2d(array_list, keywords, obs)
+
+
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
+               'model_num': np.arange(14,20)}]
+keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav}\,[g\,cm^{-3}]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=14)
