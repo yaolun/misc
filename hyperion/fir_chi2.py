@@ -381,6 +381,6 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
-               'model_num': np.arange(14,20)}]
+               'model_num': np.arange(14,24)}]
 keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav}\,[g\,cm^{-3}]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=14)
