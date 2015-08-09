@@ -378,9 +378,23 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 #     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=32)
 #     fir_chi2_2d(array_list, keywords, obs)
 
-
+# 1-D rho_cav_center
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
                'model_num': np.arange(14,24)}]
 keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav}\,[g\,cm^{-3}]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=14)
+
+# 1-D inclination
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
+               'model_num': np.hstack((np.arange(24,30), 14))}]
+keywords = {'col':['view_angle'], 'label': [r'$\rm{\theta_{incl.}\,[deg.]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=14)
+
+# 1-D rho_cav_edge
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
+               'model_num': np.hstack((np.arange(30,34), 14))}]
+keywords = {'col':['rho_cav_edge'], 'label': [r'$\rm{R_{cav,\circ}\,[AU]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=14)
