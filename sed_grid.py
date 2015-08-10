@@ -1366,8 +1366,11 @@ sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
 
 # grid of Omega0
-array = np.array([27,28,29])
+# array = np.array([27,28,29])
+# sed_omega(indir, array, outdir, obs= None, compact=True)
+array = np.array([11,10,9])
 sed_omega(indir, array, outdir, obs= None, compact=True)
+
 
 # # # grid of disk parameters
 # # disk mass
