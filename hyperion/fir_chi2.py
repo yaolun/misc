@@ -388,9 +388,9 @@ fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
 # 1-D inclination
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
-               'model_num': np.hstack((np.arange(24,30), 14))}]
+               'model_num': np.hstack((np.arange(44,50), 34))}]
 keywords = {'col':['view_angle'], 'label': [r'$\rm{\theta_{incl.}\,[deg.]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=14)
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
 
 # 1-D rho_cav_edge
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
