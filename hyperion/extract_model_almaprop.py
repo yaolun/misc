@@ -375,7 +375,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 outdir = '/Users/yaolun/bhr71/hyperion/'
 wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-# extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle8/model63.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
+extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle9/model34.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
 # extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle7/model53.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
 # extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle7/model57.rtout',indir=indir,outdir='/Users/yaolun/test/',wl_aper=wl_aper)
 
