@@ -261,7 +261,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         ax = fig.add_subplot(111)
 
         # plot the contour with color and lines
-        ax.contour(x, y, z, 10, linewidths=0.5,colors='k')
+        ax.contour(x, y, z, 10, linewidths=0.5,colors='k', norm=LogNorm(vmin=chi2.min(), vmax=1e7))
         # cs = ax.contourf(x,y,z,15,cmap=plt.cm.jet)
         # cmap = sns.cubehelix_palette(light=1, as_cmap=True, reverse=True)
         cmap = plt.cm.CMRmap
@@ -269,7 +269,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         from custom_colormap import custom_colormap
         cmap = mpl.colors.ListedColormap(custom_colormap())
         im = ax.imshow(z, cmap=cmap, origin='lower', extent=[0,1,0,1],\
-            norm=LogNorm(vmin=chi2.min(), vmax=chi2.max()))
+            norm=LogNorm(vmin=chi2.min(), vmax=1e7))  # chi2.max()
         # Blues_r
         ax.set_xticks(np.linspace(0, 1, 5))
         ax.set_xticklabels(np.linspace(min(p1), max(p1), 5))
@@ -359,7 +359,7 @@ import numpy as np
 #                'model_num': np.arange(39,49)}]
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
-               'model_num': np.arange(1,126)}]
+               'model_num': np.arange(1,131)}]
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
 #                'model_num': np.arange(1,77)}]
@@ -373,7 +373,7 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.tx
 keywords_list = [{'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{cav}\,[deg.]}$']},\
                  {'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']},\
                  {'col':['view_angle','theta_cav'], 'label': [r'$\rm{\theta_{incl}\,[deg.]}$', r'$\rm{\theta_{cav}\,[deg.]}$']}]
-
+keywords_list = [{'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
 for keywords in keywords_list:
@@ -405,5 +405,5 @@ fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
                'model_num': np.hstack((np.arange(54,68), 34))}]
-keywords = {'col':['age'], 'label': [r'$\rm{t\,[year]}$']}
+keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
