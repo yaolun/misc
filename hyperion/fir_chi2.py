@@ -404,6 +404,6 @@ fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
 # 1-D age
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
-               'model_num': np.hstack((np.arange(54,64), 34))}]
+               'model_num': np.hstack((np.arange(54,68), 34))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[year]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)

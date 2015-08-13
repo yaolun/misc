@@ -611,6 +611,7 @@ def disk_exist_com(indir, array, outdir, obs=None):
     ax = fig.add_subplot(111)
 
     # get data
+    # later age
     # disk part
     (d_wave_inf, d_sed_inf, d_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
     (d_wave, d_sed, d_sed_unc) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
@@ -619,8 +620,18 @@ def disk_exist_com(indir, array, outdir, obs=None):
     (nd_wave_inf, nd_sed_inf, nd_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
     (nd_wave, nd_sed, nd_sed_unc) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
 
-    disk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='b',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=2)
-    nodisk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='k',mec='k',markersize=7,markeredgewidth=1,color='k', linewidth=2)
+    # early age
+    (dy_wave_inf, dy_sed_inf, dy_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
+    (dy_wave, dy_sed, dy_sed_unc) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
+
+    # no disk part
+    (ndy_wave_inf, ndy_sed_inf, ndy_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[3])+'_sed_inf.txt', skip_header=1).T
+    (ndy_wave, ndy_sed, ndy_sed_unc) = np.genfromtxt(indir+'/model'+str(array[3])+'_sed_w_aperture.txt', skip_header=1).T
+
+    disk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='b',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=1.5)
+    nodisk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='k',mec='k',markersize=7,markeredgewidth=1,color='k', linewidth=1.5)
+    disk_y, = ax.plot(np.log10(dy_wave), np.log10(dy_sed), 'o-',mfc='None',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=1.5)
+    nodisk_y, = ax.plot(np.log10(ndy_wave), np.log10(ndy_sed), 'o-',mfc='None',mec='k',markersize=7,markeredgewidth=1,color='k', linewidth=1.5)
 
     if obs != None:  
         import sys
@@ -644,9 +655,9 @@ def disk_exist_com(indir, array, outdir, obs=None):
     ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=20)
 
     if obs != None:
-        plt.legend([disk, nodisk, obs_data], [r'$w/\,disk$', r'$w/o\,disk$',r'$observation$'], numpoints=1, loc='lower right', fontsize=16)
+        plt.legend([disk, nodisk, disk_y, nodisk_y, obs_data], [r'$w/\,disk(old)$', r'$w/o\,disk(old)$', r'$\rm{w/\,disk(young)}$', r'$\rm{w/o\,disk(young)}$',r'$observation$'], numpoints=1, loc='best', fontsize=16)
     else:
-        plt.legend([disk, nodisk], [r'$w/\,disk$', r'$w/o\,disk$'], numpoints=1, loc='lower right', fontsize=16)
+        plt.legend([disk, nodisk, disk_y, nodisk_y], [r'$w/\,disk(old)$', r'$w/o\,disk(old)$', r'$\rm{w/\,disk(young)}$', r'$\rm{w/o\,disk(young)}$'], numpoints=1, loc='best', fontsize=16)
 
     fig.savefig(outdir+'sed_disk_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
@@ -1419,7 +1430,7 @@ sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # # disk & no dis comparison
 # disk & no disk
-array = np.array([32,30])
+array = np.array([10,12,32,30])
 disk_exist_com(indir, array, outdir, obs=None)
 
 # # grid of tstar
