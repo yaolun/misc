@@ -187,7 +187,7 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
             (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=label[i])
-        ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
+        ax.legend(loc='best', numpoints=1, framealpha=0.3, fontsize=16)
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on() 
@@ -196,7 +196,7 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
 
         ax.set_xlabel(r'$log(wavelength)\,[\mu m]$', fontsize=20)
         ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=20)
-        ax.set_ylim([-13,-8])
+        ax.set_ylim([-12,-8])
         # ax.set_xlim([0.4,2])
         # ax.locator_params(axis='x', nbins=5)
 

@@ -53,6 +53,10 @@ list_params = {'age': [5e3, 1e4, 2e4, 4e4, 8e4],\
 			   # 'rho_cav_center': [2e-20, 1e-19, 5e-19, 2.5e-18, 1.25e-17],\
 			   # 'rho_cav_edge': [20,30,40,50,60]}
 
+# for short-term modification
+list_params = {'view_angle': [30,40,60,80,90],\
+			   'age': [3e3]}
+
 # outdir = '/Users/yaolun/test/'
 outdir = home + '/programs/misc/hyperion/'
 grid_create(list_params,outdir)

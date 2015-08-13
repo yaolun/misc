@@ -38,9 +38,11 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             for w in wave:
                 # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2
                 val = (sim['sed'][sim['wave'] == w] - obs['sed'][obs['wave'] == w]) / obs['sed'][obs['wave'] == w]
+                # unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
+                #         ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 ) + \
+                #         2 * (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2
                 unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
-                        ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 ) + \
-                        2 * (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2
+                        ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 )
                 # unc = unc_2**0.5
                 # print val**2, unc_2
                 chi2 = chi2 + val**2 / unc_2
@@ -58,7 +60,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     # setup the aperture size
     if wl_aper == None:
         # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-        wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500]
+        wl_aper = [3.6, 4.5, 8.5, 9, 9.7, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500]
         # wl_aper = [70., 100., 160., 250., 350., 500.]
     if spitzer_only:
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35]
@@ -374,9 +376,9 @@ keywords_list = [{'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}
 
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
-# for keywords in keywords_list:
-#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=32)
-#     fir_chi2_2d(array_list, keywords, obs)
+for keywords in keywords_list:
+    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=32)
+    fir_chi2_2d(array_list, keywords, obs)
 
 # 1-D rho_cav_center
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
