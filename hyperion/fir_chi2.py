@@ -395,6 +395,13 @@ fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
 # 1-D rho_cav_edge
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
-               'model_num': np.hstack((np.arange(30,34), 14))}]
+               'model_num': np.hstack((np.arange(50,54), 34))}]
 keywords = {'col':['rho_cav_edge'], 'label': [r'$\rm{R_{cav,\circ}\,[AU]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=14)
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
+
+# 1-D age
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
+               'model_num': np.hstack((np.arange(54,64), 34))}]
+keywords = {'col':['age'], 'label': [r'$\rm{t\,[year]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
