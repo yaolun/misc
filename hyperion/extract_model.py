@@ -219,6 +219,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     unc_aper = np.empty_like(wl_aper)
     color_list = plt.cm.jet(np.linspace(0, 1, len(wl_aper)+1))
     for i in range(0, len(wl_aper)):
+        # if (wl_aper[i] == 5.8) or (wl_aper[i] == 8.0) or (wl_aper[i] == 10.5) or (wl_aper[i] == 11):
+        #     continue
         sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc, uncertainties=True)
         if plot_all == True:
             ax_sed.plot(np.log10(sed_dum.wav), np.log10(sed_dum.val),'-', color=color_list[i])
@@ -314,6 +316,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     sed_unc_tot = c/(wl_tot*1e-4)*unc_tot
     # wl_tot and flux_tot are already hstacked and sorted by wavelength
     for i in range(0, len(obs_aper_wl)):
+        # if (obs_aper_wl[i] == 5.8) or (obs_aper_wl[i] == 8.0) or (obs_aper_wl[i] == 10.5) or (obs_aper_wl[i] == 11):
+        #     continue
         if filter_func == False:
             # use a rectangle function the average the simulated SED
             # apply the spectral resolution
@@ -604,6 +608,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 # indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 # outdir = '/Users/yaolun/bhr71/hyperion/'
 # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+# wl_aper = [3.6, 4.5, 8.5, 9, 9.7, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
 # extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle9/model1_ulrich.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/cycle9/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle9/model34.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/cycle9/',\
