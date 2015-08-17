@@ -44,8 +44,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     import matplotlib.pyplot as plt
     import numpy as np
     import os
-    from hyperion.model import ModelOutput
-    from hyperion.model import Model
+    from hyperion.model import ModelOutput, Model
     from scipy.interpolate import interp1d
     from hyperion.util.constants import pc, c, lsun, au
     from astropy.io import ascii
@@ -578,7 +577,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
             cb = fig.colorbar(im, cax=cax)
             cb.solids.set_edgecolor("face")
             cb.ax.minorticks_on()
-            cb.ax.set_ylabel(r'$\rm{log(I_{\nu})\,[erg/s/cm^{2}/Hz/sr]}$',fontsize=12)
+            cb.ax.set_ylabel(r'$\rm{log(I_{\nu})\,[erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}]}$',fontsize=12)
             cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
             plt.setp(cb_obj,fontsize=12)
             # fix the tick label font

@@ -1,6 +1,6 @@
 def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,\
                 low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,\
-                wl_aper=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False):
+                wl_aper=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False):
     """
     params = dictionary of the model parameters
     """
@@ -107,6 +107,16 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     beta      = dict_params['beta']
     h100      = dict_params['h100']*AU
     rho_cav   = dict_params['rho_cav']
+    # ellipsoid cavity parameter
+    if ellipsoid == True:
+        c_out = 130 * 178. * AU
+        a_out = 50  * 178. * AU
+        z_out = c_out
+        c_in  = 77.5 * 178. * AU
+        a_in  = 30   * 178. * AU
+        z_in  = c_in
+        rho_cav_out = 1e4 * mh
+        rho_cav_in  = 1e3 * mh 
     # Calculate the dust sublimation radius
     T_sub = 1600
     a     = 1   #in micron
@@ -201,17 +211,32 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         # Envelope profile
                         w = abs(rc[ir]*np.cos(np.pi/2 - thetac[itheta]))
                         z = rc[ir]*np.sin(np.pi/2 - thetac[itheta])
-                        z_cav = c0*abs(w)**1.5
-                        if z_cav == 0:
-                            z_cav = R_env_max
-                        if abs(z) > abs(z_cav):
-                            # rho_env[ir,itheta,iphi] = rho_cav
-                            # Modification for using density gradient in the cavity
-                            if rc[ir] <= rho_cav_edge:
-                                rho_env[ir,itheta,iphi] = rho_cav_center#*((rc[ir]/AU)**2)
+
+                        if ellipsoid == False:
+                            z_cav = c0*abs(w)**1.5
+                            if z_cav == 0:
+                                z_cav = R_env_max
+                            cav_con = abs(z) > abs(z_cav)
+                        else:
+                            # condition for the outer ellipsoid
+                            cav_con = (2*(w/a_out)**2 + ((abs(z)-z_out)/c_out)**2) < 1
+                        if cav_con:
+                            # open cavity
+                            if ellipsoid == False:
+                                if rho_cav_edge == 0:
+                                    rho_cav_edge = R_env_min
+                                if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
+                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center#*((rc[ir]/AU)**2)
+                                else:
+                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**power
+                                i += 1
                             else:
-                                rho_env[ir,itheta,iphi] = rho_cav_center*discont*(rho_cav_edge/rc[ir])**2
-                            i += 1
+                                # condition for the inner ellipsoid
+                                if (2*(w/a_in)**2 + ((abs(z)-z_in)/c_in)**2) > 1:
+                                    rho_env[ir,itheta,iphi] = rho_cav_out
+                                else:
+                                    rho_env[ir,itheta,iphi] = rho_cav_in
+                                i +=1
                         else:
                             j += 1
                             mu = abs(np.cos(thetac[itheta]))
@@ -368,23 +393,33 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         # Envelope profile
                         w = abs(rc[ir]*np.cos(np.pi/2 - thetac[itheta]))
                         z = rc[ir]*np.sin(np.pi/2 - thetac[itheta])
-                        z_cav = c0*abs(w)**1.5
-                        if z_cav == 0:
-                            z_cav = R_env_max
-                        # Cavity
-                        if abs(z) > abs(z_cav):
-                            # rho_env[ir,itheta,iphi] = rho_cav
-                            # Modification for using density gradient in the cavity
-                            # option for using a power law profile without constant region
-                            if rho_cav_edge == 0:
-                                rho_cav_edge = R_env_min
-                            # the rho_cav_center is the dust density calculated from mass loss rate
-                            # gas-to-dust ratio of 100 is applied after the whole calculation, therefore need to time 100 now
-                            if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
-                                rho_env[ir,itheta,iphi] = 100 * rho_cav_center#*((rc[ir]/AU)**2)
+
+                        if ellipsoid == False:
+                            z_cav = c0*abs(w)**1.5
+                            if z_cav == 0:
+                                z_cav = R_env_max
+                            cav_con = abs(z) > abs(z_cav)
+                        else:
+                            # condition for the outer ellipsoid
+                            cav_con = (2*(w/a_out)**2 + ((abs(z)-z_out)/c_out)**2) < 1
+                        if cav_con:
+                            # open cavity
+                            if ellipsoid == False:
+                                if rho_cav_edge == 0:
+                                    rho_cav_edge = R_env_min
+                                if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
+                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center#*((rc[ir]/AU)**2)
+                                else:
+                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**power
+                                i += 1
                             else:
-                                rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**power
-                            i += 1
+                                # condition for the inner ellipsoid
+                                if (2*(w/a_in)**2 + ((abs(z)-z_in)/c_in)**2) > 1:
+                                    rho_env[ir,itheta,iphi] = rho_cav_out
+                                else:
+                                    rho_env[ir,itheta,iphi] = rho_cav_in
+                                i +=1
+
                         # Disk profile
                         if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
                             h = ((w/(100*AU))**beta)*h100 
@@ -878,4 +913,5 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 # outdir = '/Users/yaolun/test/'
 # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
 # fix_params = {'R_min': 0.14}
-# setup_model(indir,outdir,'model1_ulrich',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params)
+# setup_model(indir,outdir,'model34_ellipsoid',params[0],dust_file,plot=True,record=False,\
+#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=True)
