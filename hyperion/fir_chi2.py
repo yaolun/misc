@@ -36,7 +36,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         chi2 = 0
         if log == False:
             for w in wave:
-                # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2
+                # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2 , sim['sigma'][sim['wave'] == w]**2+obs['sigma'][obs['wave'] == w]**2
                 val = (sim['sed'][sim['wave'] == w] - obs['sed'][obs['wave'] == w]) / obs['sed'][obs['wave'] == w]
                 # unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
                 #         ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 ) + \
@@ -44,7 +44,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
                         ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 )
                 # unc = unc_2**0.5
-                # print val**2, unc_2
+                print w, val**2,  unc_2
                 chi2 = chi2 + val**2 / unc_2
         else:
             # not proper functioning at this moment
@@ -177,6 +177,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                     # print dum_params
                     continue
                 else:
+                    print (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data
                     p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     if fixed == False:
                         p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
@@ -376,9 +377,9 @@ keywords_list = [{'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}
 keywords_list = [{'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
-for keywords in keywords_list:
-    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=32)
-    fir_chi2_2d(array_list, keywords, obs)
+# for keywords in keywords_list:
+#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=32)
+#     fir_chi2_2d(array_list, keywords, obs)
 
 # 1-D rho_cav_center
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
@@ -397,13 +398,13 @@ fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
 # 1-D rho_cav_edge
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
-               'model_num': np.hstack((np.arange(50,54), 34))}]
+               'model_num': np.hstack((np.arange(50,54), 34, np.arange(68,71)))}]
 keywords = {'col':['rho_cav_edge'], 'label': [r'$\rm{R_{cav,\circ}\,[AU]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
 
 # 1-D age
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
-               'model_num': np.hstack((np.arange(54,68), 34))}]
+               'model_num': np.hstack((np.arange(54,68), 34, 71))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=True)
