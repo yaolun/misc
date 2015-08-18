@@ -115,8 +115,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         c_in  = 77.5 * 178. * AU
         a_in  = 30   * 178. * AU
         z_in  = c_in
-        rho_cav_out = 1e4 * mh
-        rho_cav_in  = 1e3 * mh 
+        # rho_cav_out = 1e4 * mh
+        # rho_cav_in  = 1e3 * mh 
+        rho_cav_out = dict_params['rho_cav_out'] * mh
+        rho_cav_in  = dict_params['rho_cav_in']  * mh
     # Calculate the dust sublimation radius
     T_sub = 1600
     a     = 1   #in micron
