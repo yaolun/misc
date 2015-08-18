@@ -44,15 +44,17 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     import matplotlib.pyplot as plt
     import numpy as np
     import os
-    from hyperion.model import ModelOutput
-    from hyperion.model import Model
+    from hyperion.model import ModelOutput, Model
     from scipy.interpolate import interp1d
-    from hyperion.util.constants import pc, c, lsun
+    from hyperion.util.constants import pc, c, lsun, au
     from astropy.io import ascii
     import sys
     sys.path.append(os.path.expanduser('~')+'/programs/spectra_analysis/')
     from phot_filter import phot_filter
     from get_bhr71_obs import get_bhr71_obs
+
+    # seaborn colormap, because jet is bad obviously
+    import seaborn.apionly as sns
 
     # Read in the observation data and calculate the noise & variance
     if indir == None:
@@ -216,6 +218,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     unc_aper = np.empty_like(wl_aper)
     color_list = plt.cm.jet(np.linspace(0, 1, len(wl_aper)+1))
     for i in range(0, len(wl_aper)):
+        # if (wl_aper[i] == 5.8) or (wl_aper[i] == 8.0) or (wl_aper[i] == 10.5) or (wl_aper[i] == 11):
+        #     continue
         sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc, uncertainties=True)
         if plot_all == True:
             ax_sed.plot(np.log10(sed_dum.wav), np.log10(sed_dum.val),'-', color=color_list[i])
@@ -311,6 +315,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     sed_unc_tot = c/(wl_tot*1e-4)*unc_tot
     # wl_tot and flux_tot are already hstacked and sorted by wavelength
     for i in range(0, len(obs_aper_wl)):
+        # if (obs_aper_wl[i] == 5.8) or (obs_aper_wl[i] == 8.0) or (obs_aper_wl[i] == 10.5) or (obs_aper_wl[i] == 11):
+        #     continue
         if filter_func == False:
             # use a rectangle function the average the simulated SED
             # apply the spectral resolution
@@ -536,7 +542,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         iwav = np.argmin(np.abs(wav - image.wav))
 
         # Calculate the image width in arcseconds given the distance used above
-        w = np.degrees((1.5 * pc) / image.distance) * 60.
+        # get the max radius
+        rmax = max(m.get_quantities().r_wall)
+        w = np.degrees(rmax / image.distance) * 3600.
 
         # Image in the unit of MJy/sr
         # Change it into erg/s/cm2/Hz/sr
@@ -548,8 +556,10 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
         # This is the command to show the image. The parameters vmin and vmax are
         # the min and max levels for the colorscale (remove for default values).
+        # cmap = sns.cubehelix_palette(start=0.1, rot=-0.7, gamma=0.2, as_cmap=True)
+        cmap = plt.cm.CMRmap
         im = ax.imshow(np.log10(val), vmin= -22, vmax= -12,
-                  cmap=plt.cm.jet, origin='lower', extent=[-w, w, -w, w], aspect=1)
+                  cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
         # fix the tick label font
         ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=14)
@@ -567,7 +577,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
             cb = fig.colorbar(im, cax=cax)
             cb.solids.set_edgecolor("face")
             cb.ax.minorticks_on()
-            cb.ax.set_ylabel(r'$\rm{log(I_{\nu})\,[erg/s/cm^{2}/Hz/sr]}$',fontsize=12)
+            cb.ax.set_ylabel(r'$\rm{log(I_{\nu})\,[erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}]}$',fontsize=12)
             cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
             plt.setp(cb_obj,fontsize=12)
             # fix the tick label font
@@ -597,7 +607,10 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 # indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 # outdir = '/Users/yaolun/bhr71/hyperion/'
 # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-# extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle8/model63.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+# wl_aper = [3.6, 4.5, 8.5, 9, 9.7, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+# extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle9/model1_ulrich.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/cycle9/',\
+#                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
+# extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle9/model34.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/cycle9/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/test/model46_ulrich.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False)

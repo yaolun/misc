@@ -1,4 +1,4 @@
-def tsc_com(plot=True):
+def tsc_com(plot=True, disk=False):
     import numpy as np
     import matplotlib as mpl
     import matplotlib.pyplot as plt
@@ -31,9 +31,9 @@ def tsc_com(plot=True):
     # parameter from cycle 8, model 63
     rstar     = 5 * RS
     tstar     = 5100.0
-    R_env_max = 2.000000e+04 * AU
+    R_env_max = 1.000000e+04 * AU
     R_env_min = 0.14         * AU             # the inner radius is fixed, 0.100364     * AU 
-    R_cen     = 6.072365e-02 * AU
+    R_cen     = 1.000000e+00 * AU             # 6.072365e-02 * AU, increase arbitrary for better illustration
     R_inf     = 1.054025e+03 * AU
     R_disk_min= 0.14         * AU 
     R_disk_max= R_cen
@@ -49,26 +49,6 @@ def tsc_com(plot=True):
     rho_cav_center = 5e-19
     rho_cav_edge = 40 * AU
 
-    # parameter from chi2_grid, model 78
-    rstar     = 5 * RS
-    tstar     = 5100.0
-    R_env_max = 2.000000e+04 * AU
-    R_env_min = 0.14         * AU             # the inner radius is fixed, 0.100364     * AU 
-    R_cen     = 7.590457e-03 * AU
-    R_inf     = 5.270124e+02 * AU
-    R_disk_min= 0.14         * AU 
-    R_disk_max= R_cen
-    theta_cav = 30.0
-    beta      = 1.093
-    h100      = 8.123        * AU
-    M_env_dot = 2.896073e-05 * MS/yr
-    M_disk    = 0.075 * MS
-    mstar     = 1.448036e-01 * MS
-    rin       = rstar
-    rout      = R_env_max
-    rout_mike = 9.756000e+03 * AU
-    rho_cav_center = 5e-19
-    rho_cav_edge = 40 * AU
     # Grid Parameters
     nx        = 100L
     ny        = 400L
@@ -95,7 +75,10 @@ def tsc_com(plot=True):
     thetac       = 0.5*( thetai[0:ny] + thetai[1:ny+1] )
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
 
-    rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv.dat').T
+    if disk == False:
+        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv.dat').T
+    else:
+        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/bhr71/hyperion/cycle9/rhoenv_disk.dat').T
 
     rc_idl = rc[(rc < min([R_inf,max(ri)]))]
 
@@ -262,7 +245,7 @@ def tsc_com(plot=True):
     rho_tsc2d = np.sum(rho_tsc**2,axis=2)/np.sum(rho_tsc,axis=2)
     rho_ulrich2d = np.sum(rho_ulrich**2,axis=2)/np.sum(rho_ulrich,axis=2)
 
-    print min(rc)/AU, max(rc)/AU
+    # print min(rc)/AU, max(rc)/AU
 
     if plot == True:
 
@@ -275,8 +258,8 @@ def tsc_com(plot=True):
         # alpha = np.linspace(0.3,1.0,len(plot_grid))
         alpha = [1]
         for i in plot_grid:
-            tsc, = ax.plot(np.log10(rc/AU), np.log10(rho_tsc2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='b', linewidth=2)
-            ulrich, = ax.plot(np.log10(rc/AU), np.log10(rho_ulrich2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='r', linewidth=2)
+            tsc, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='b', linewidth=2)
+            ulrich, = ax.plot(np.log10(rc/AU), np.log10(rho_env_ulrich2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='r', linewidth=2)
 
         rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
         cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
@@ -285,7 +268,7 @@ def tsc_com(plot=True):
                   fontsize=16, numpoints=1, loc='lower center')
 
         ax.set_ylim([0, 15])
-        ax.set_xlim(left=np.log10(0.1))
+        ax.set_xlim(left=np.log10(0.17))
         ax.set_xlabel(r'$\rm{log(radius)\,[AU]}$', fontsize=18)
         ax.set_ylabel(r'$\rm{log(gas\,density)\,[g\,cm^{-3}]}$', fontsize=18)
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
@@ -303,4 +286,4 @@ def tsc_com(plot=True):
         fig.savefig('/Users/yaolun/test/tsc_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
 
     return rho_tsc/100, rho_ulrich/100
-tsc_com()
+# tsc_com(disk=True)

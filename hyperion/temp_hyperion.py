@@ -8,6 +8,9 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     import astropy.constants as const
     from matplotlib.colors import LogNorm
 
+    # seaborn colormap
+    import seaborn.apionly as sns
+
     # constants setup
     AU = const.au.cgs.value
 
@@ -35,14 +38,15 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     fig = plt.figure(figsize=(mag*8,mag*6))
     ax = fig.add_subplot(111, projection='polar')
 
-    cmap = 'jet'
+    # cmap = sns.cubehelix_palette(light=1, as_cmap=True)
+    cmap = plt.cm.CMRmap
     im = ax.pcolormesh(thetac_exp, rc/AU, temp2d_exp, cmap=cmap, norm=LogNorm(vmin=5, vmax=100))
     im.set_edgecolor('face')
 
     ax.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
     ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
     ax.tick_params(labelsize=20)
-    print np.ceil(max(ri)/AU/1e4)*1e4
+    # print np.ceil(max(ri)/AU/1e4)*1e4
     ax.set_yticks(np.linspace(0,np.ceil(max(ri)/AU/1e4)*1e4,5))
 
     ax.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
@@ -113,6 +117,6 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     fig.savefig(outdir+print_name+'_temp_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/cycle7/model46.rtout'
+# rtout = '/Users/yaolun/bhr71/hyperion/cycle8/model63.rtout'
 # outdir = '/Users/yaolun/test/'
 # temp_hyperion(rtout, outdir, bb_dust=True)

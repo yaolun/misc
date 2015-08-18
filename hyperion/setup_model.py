@@ -1,7 +1,6 @@
 def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,\
                 low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,\
-                wl_aper=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,\
-                output=None,mechine='bettyjo'):
+                wl_aper=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False):
     """
     params = dictionary of the model parameters
     """
@@ -108,6 +107,18 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     beta      = dict_params['beta']
     h100      = dict_params['h100']*AU
     rho_cav   = dict_params['rho_cav']
+    # ellipsoid cavity parameter
+    if ellipsoid == True:
+        c_out = 130 * 178. * AU
+        a_out = 50  * 178. * AU
+        z_out = c_out
+        c_in  = 77.5 * 178. * AU
+        a_in  = 30   * 178. * AU
+        z_in  = c_in
+        # rho_cav_out = 1e4 * mh
+        # rho_cav_in  = 1e3 * mh 
+        rho_cav_out = dict_params['rho_cav_out'] * mh
+        rho_cav_in  = dict_params['rho_cav_in']  * mh
     # Calculate the dust sublimation radius
     T_sub = 1600
     a     = 1   #in micron
@@ -162,21 +173,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
     # phic         = 0.5*( phii[0:nz-1]   + phii[1:nz] )
 
-    if output == 'grid':
-        foo = open(outdir+outname+'_grid_ri.txt','w')
-        for i in range(len(ri)):
-            foo.write('%f \n' % ri[i])
-        foo.close()
-        foo = open(outdir+outname+'_grid_thetai.txt','w')
-        for i in range(len(thetai)):
-            foo.write('%f \n' % thetai[i])
-        foo.close()
-        foo = open(outdir+outname+'_grid_phii.txt','w')
-        for i in range(len(phii)):
-            foo.write('%f \n' % phii[i])
-        foo.close()
-
-
     # Make the dust density model
     # Make the density profile of the envelope
     #
@@ -217,17 +213,32 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         # Envelope profile
                         w = abs(rc[ir]*np.cos(np.pi/2 - thetac[itheta]))
                         z = rc[ir]*np.sin(np.pi/2 - thetac[itheta])
-                        z_cav = c0*abs(w)**1.5
-                        if z_cav == 0:
-                            z_cav = R_env_max
-                        if abs(z) > abs(z_cav):
-                            # rho_env[ir,itheta,iphi] = rho_cav
-                            # Modification for using density gradient in the cavity
-                            if rc[ir] <= rho_cav_edge:
-                                rho_env[ir,itheta,iphi] = rho_cav_center#*((rc[ir]/AU)**2)
+
+                        if ellipsoid == False:
+                            z_cav = c0*abs(w)**1.5
+                            if z_cav == 0:
+                                z_cav = R_env_max
+                            cav_con = abs(z) > abs(z_cav)
+                        else:
+                            # condition for the outer ellipsoid
+                            cav_con = (2*(w/a_out)**2 + ((abs(z)-z_out)/c_out)**2) < 1
+                        if cav_con:
+                            # open cavity
+                            if ellipsoid == False:
+                                if rho_cav_edge == 0:
+                                    rho_cav_edge = R_env_min
+                                if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
+                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center#*((rc[ir]/AU)**2)
+                                else:
+                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**power
+                                i += 1
                             else:
-                                rho_env[ir,itheta,iphi] = rho_cav_center*discont*(rho_cav_edge/rc[ir])**2
-                            i += 1
+                                # condition for the inner ellipsoid
+                                if (2*(w/a_in)**2 + ((abs(z)-z_in)/c_in)**2) > 1:
+                                    rho_env[ir,itheta,iphi] = rho_cav_out
+                                else:
+                                    rho_env[ir,itheta,iphi] = rho_cav_in
+                                i +=1
                         else:
                             j += 1
                             mu = abs(np.cos(thetac[itheta]))
@@ -280,14 +291,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         if idl == True:
             print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
-            if mechine == 'bettyjo':
-                idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
-            elif mechine == 'grad13yy':
-                idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
-            else:
-                idl_path = raw_input('Please enter the path to IDL: ')
-                idl = pidly.IDL(idl_path)
-
+            # idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
+            idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             idl('.r ~/programs/misc/TSC/tsc.pro')
             # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
             # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)])) # min([R_inf,max(ri)])
@@ -351,7 +356,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         rho_env = np.empty((nx,ny,nz))
         for i in range(0, nz):
             rho_env[:,:,i] = rho_env_tsc2d
-       
 
         if dyn_cav == True:
             print 'Calculate the cavity properties using the criteria that swept-up mass = outflowed mass'
@@ -391,23 +395,33 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         # Envelope profile
                         w = abs(rc[ir]*np.cos(np.pi/2 - thetac[itheta]))
                         z = rc[ir]*np.sin(np.pi/2 - thetac[itheta])
-                        z_cav = c0*abs(w)**1.5
-                        if z_cav == 0:
-                            z_cav = R_env_max
-                        # Cavity
-                        if abs(z) > abs(z_cav):
-                            # rho_env[ir,itheta,iphi] = rho_cav
-                            # Modification for using density gradient in the cavity
-                            # option for using a power law profile without constant region
-                            if rho_cav_edge == 0:
-                                rho_cav_edge = R_env_min
-                            # the rho_cav_center is the dust density calculated from mass loss rate
-                            # gas-to-dust ratio of 100 is applied after the whole calculation, therefore need to time 100 now
-                            if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
-                                rho_env[ir,itheta,iphi] = 100 * rho_cav_center#*((rc[ir]/AU)**2)
+
+                        if ellipsoid == False:
+                            z_cav = c0*abs(w)**1.5
+                            if z_cav == 0:
+                                z_cav = R_env_max
+                            cav_con = abs(z) > abs(z_cav)
+                        else:
+                            # condition for the outer ellipsoid
+                            cav_con = (2*(w/a_out)**2 + ((abs(z)-z_out)/c_out)**2) < 1
+                        if cav_con:
+                            # open cavity
+                            if ellipsoid == False:
+                                if rho_cav_edge == 0:
+                                    rho_cav_edge = R_env_min
+                                if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
+                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center#*((rc[ir]/AU)**2)
+                                else:
+                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**power
+                                i += 1
                             else:
-                                rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**power
-                            i += 1
+                                # condition for the inner ellipsoid
+                                if (2*(w/a_in)**2 + ((abs(z)-z_in)/c_in)**2) > 1:
+                                    rho_env[ir,itheta,iphi] = rho_cav_out
+                                else:
+                                    rho_env[ir,itheta,iphi] = rho_cav_in
+                                i +=1
+
                         # Disk profile
                         if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
                             h = ((w/(100*AU))**beta)*h100 
@@ -447,7 +461,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
 
         zmin = 1e-22/mh
-        cmap = 'jet'
+        cmap = plt.cm.CMRmap
         rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
         thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
         # plot the gas density
@@ -892,12 +906,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-from input_reader import input_reader_table
-from pprint import pprint
-filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-params = input_reader_table(filename)
-pprint(params[0])
-outdir = '/Users/yaolun/test/'
-dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-fix_params = {'R_min': 0.14}
-setup_model(outdir,outdir,'model78_chi2',params[0],dust_file,plot=True,record=False, idl=False,radmc=False,fix_params=fix_params,mechine='grad13yy',output='grid')
+# from input_reader import input_reader_table
+# from pprint import pprint
+# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+# params = input_reader_table(filename)
+# pprint(params[0])
+# indir = '/Users/yaolun/bhr71/hyperion/cycle9/'
+# outdir = '/Users/yaolun/test/'
+# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+# fix_params = {'R_min': 0.14}
+# setup_model(indir,outdir,'model34_ellipsoid',params[0],dust_file,plot=True,record=False,\
+#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=True)

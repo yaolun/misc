@@ -30,9 +30,9 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
             # sed part
             # if rr+1 != row:
             # infinite aperture
-            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
             # sed with apertures
-            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
             # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
             if obs != None:  
@@ -126,9 +126,9 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
             # sed part
             # if rr+1 != row:
             # infinite aperture
-            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_inf.txt', skip_header=1).T
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_inf.txt', skip_header=1).T
             # sed with apertures
-            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
 
             # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1, alpha=0.7)
             if obs != None:  
@@ -182,12 +182,12 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
 
         for i in range(0, len(array)):
             # sed with infinite aperture
-            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_inf.txt', skip_header=1).T
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_inf.txt', skip_header=1).T
             # sed with apertures
-            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=label[i])
-        ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
+        ax.legend(loc='best', numpoints=1, framealpha=0.3, fontsize=16)
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on() 
@@ -196,7 +196,7 @@ def sed_omega(indir, array, outdir, obs=None, compact=False):
 
         ax.set_xlabel(r'$log(wavelength)\,[\mu m]$', fontsize=20)
         ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=20)
-        ax.set_ylim([-13,-8])
+        ax.set_ylim([-12,-8])
         # ax.set_xlim([0.4,2])
         # ax.locator_params(axis='x', nbins=5)
 
@@ -228,9 +228,9 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             # sed part
             # if rr+1 != row:
             # infinite aperture
-            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_inf.txt', skip_header=1).T
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_inf.txt', skip_header=1).T
             # sed with apertures
-            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[cc])+'_sed_w_aperture.txt', skip_header=1).T
 
             # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1)
             if obs != None:  
@@ -302,9 +302,9 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
 
         for i in range(0, len(array)):
             # infinite aperture
-            (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_inf.txt', skip_header=1).T
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_inf.txt', skip_header=1).T
             # sed with apertures
-            (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i])
             
@@ -349,9 +349,9 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                 # sed part
                 # if rr+1 != row:
                 # infinite aperture
-                (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
+                (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
                 # sed with apertures
-                (wave, sed) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
+                (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
                 # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
                 if obs != None:  
@@ -429,9 +429,9 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
 
             for i in range(0, num):
                 # infinite aperture
-                (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[i,cc])+'_sed_inf.txt', skip_header=1).T
+                (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[i,cc])+'_sed_inf.txt', skip_header=1).T
                 # sed with apertures
-                (wave, sed) = np.genfromtxt(indir+'/model'+str(array[i,cc])+'_sed_w_aperture.txt', skip_header=1).T
+                (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[i,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
                 ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i], color=color_list[i], markersize=3,markeredgewidth=1,linewidth=1.2, label=label[i])
                 if cc == 0:
@@ -484,9 +484,9 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
                 # sed part
                 # if rr+1 != row:
                 # infinite aperture
-                (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
+                (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_inf.txt', skip_header=1).T
                 # sed with apertures
-                (wave, sed) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
+                (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[rr,cc])+'_sed_w_aperture.txt', skip_header=1).T
 
                 # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
                 if obs != None:  
@@ -564,9 +564,9 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
 
             for i in range(0, num):
                 # infinite aperture
-                (wave_inf, sed_inf) = np.genfromtxt(indir+'/model'+str(array[cc,i])+'_sed_inf.txt', skip_header=1).T
+                (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[cc,i])+'_sed_inf.txt', skip_header=1).T
                 # sed with apertures
-                (wave, sed) = np.genfromtxt(indir+'/model'+str(array[cc,i])+'_sed_w_aperture.txt', skip_header=1).T
+                (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[cc,i])+'_sed_w_aperture.txt', skip_header=1).T
 
                 ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i], color=color_list[i], markersize=4,markeredgewidth=1,linewidth=1.5, label=label[i])
                 if cc == col-1:
@@ -611,16 +611,27 @@ def disk_exist_com(indir, array, outdir, obs=None):
     ax = fig.add_subplot(111)
 
     # get data
+    # later age
     # disk part
-    (d_wave_inf, d_sed_inf) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
-    (d_wave, d_sed) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
+    (d_wave_inf, d_sed_inf, d_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
+    (d_wave, d_sed, d_sed_unc) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
 
     # no disk part
-    (nd_wave_inf, nd_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
-    (nd_wave, nd_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
+    (nd_wave_inf, nd_sed_inf, nd_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
+    (nd_wave, nd_sed, nd_sed_unc) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
 
-    disk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='b',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=2)
-    nodisk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='k',mec='k',markersize=7,markeredgewidth=1,color='k', linewidth=2)
+    # early age
+    (dy_wave_inf, dy_sed_inf, dy_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
+    (dy_wave, dy_sed, dy_sed_unc) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
+
+    # no disk part
+    (ndy_wave_inf, ndy_sed_inf, ndy_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[3])+'_sed_inf.txt', skip_header=1).T
+    (ndy_wave, ndy_sed, ndy_sed_unc) = np.genfromtxt(indir+'/model'+str(array[3])+'_sed_w_aperture.txt', skip_header=1).T
+
+    disk, = ax.plot(np.log10(d_wave), np.log10(d_sed), 'o-',mfc='b',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=1.5)
+    nodisk, = ax.plot(np.log10(nd_wave), np.log10(nd_sed), 'o-',mfc='k',mec='k',markersize=7,markeredgewidth=1,color='k', linewidth=1.5)
+    disk_y, = ax.plot(np.log10(dy_wave), np.log10(dy_sed), 'o-',mfc='None',mec='b',markersize=7,markeredgewidth=1,color='b', linewidth=1.5)
+    nodisk_y, = ax.plot(np.log10(ndy_wave), np.log10(ndy_sed), 'o-',mfc='None',mec='k',markersize=7,markeredgewidth=1,color='k', linewidth=1.5)
 
     if obs != None:  
         import sys
@@ -643,7 +654,10 @@ def disk_exist_com(indir, array, outdir, obs=None):
     ax.set_xlabel(r'$log(wavelength)\,[\mu m]$', fontsize=20)
     ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=20)
 
-    plt.legend([disk, nodisk, obs_data], [r'$w/\,disk$', r'$w/o\,disk$',r'$observation$'], numpoints=1, loc='lower right', fontsize=16)
+    if obs != None:
+        plt.legend([disk, nodisk, disk_y, nodisk_y, obs_data], [r'$w/\,disk(old)$', r'$w/o\,disk(old)$', r'$\rm{w/\,disk(young)}$', r'$\rm{w/o\,disk(young)}$',r'$observation$'], numpoints=1, loc='best', fontsize=16)
+    else:
+        plt.legend([disk, nodisk, disk_y, nodisk_y], [r'$w/\,disk(old)$', r'$w/o\,disk(old)$', r'$\rm{w/\,disk(young)}$', r'$\rm{w/o\,disk(young)}$'], numpoints=1, loc='best', fontsize=16)
 
     fig.savefig(outdir+'sed_disk_com.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
@@ -829,14 +843,14 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     # alpha_list = np.linspace(0.5, 1.0, len(array['r-2']))
     alpha_list = [1]
     for i in range(len(array['r-2'])):
-        (wave_dum, sed_dum) = np.genfromtxt(indir+'/model'+str(array['r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
+        (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
         r2, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Magenta',mec='Magenta',\
             markersize=7,markeredgewidth=1,color='Magenta', linewidth=2, alpha=alpha_list[i])
     # r^-1.5
     # alpha_list = np.linspace(0.5, 1.0, len(array['r-1.5']))
     alpha_list = [1]
     for i in range(len(array['r-1.5'])):
-        (wave_dum, sed_dum) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][i])+'_sed_w_aperture.txt', skip_header=1).T
+        (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][i])+'_sed_w_aperture.txt', skip_header=1).T
         r15, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Red',mec='Red',\
             markersize=7,markeredgewidth=1,color='Red', linewidth=2, alpha=alpha_list[i])
     if ver == None:
@@ -844,14 +858,14 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
         # alpha_list = np.linspace(0.5, 1.0, len(array['const+r-2']))
         alpha_list = [1]
         for i in range(len(array['const+r-2'])):
-            (wave_dum, sed_dum) = np.genfromtxt(indir+'/model'+str(array['const+r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
+            (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['const+r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
             const_r2, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Blue',mec='Blue',\
                 markersize=7,markeredgewidth=1,color='Blue', linewidth=2, alpha=alpha_list[i]) 
     # uniform
     # alpha_list = np.linspace(0.5, 1.0, len(array['uniform']))
     alpha_list = [1]
     for i in range(len(array['uniform'])):
-        (wave_dum, sed_dum) = np.genfromtxt(indir+'/model'+str(array['uniform'][i])+'_sed_w_aperture.txt', skip_header=1).T
+        (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['uniform'][i])+'_sed_w_aperture.txt', skip_header=1).T
         uni, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Green',mec='Green',\
             markersize=7,markeredgewidth=1,color='Green', linewidth=2, alpha=alpha_list[i]) 
 
@@ -908,16 +922,16 @@ def sed_lum(indir, array, outdir, obs=None):
 
     # get data
     # tstar = 4500 K
-    (r1_wave_inf, r1_sed_inf) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
-    (r1_wave, r1_sed) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
+    (r1_wave_inf, r1_sed_inf, r1_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_inf.txt', skip_header=1).T
+    (r1_wave, r1_sed, r1_sed_unc) = np.genfromtxt(indir+'/model'+str(array[0])+'_sed_w_aperture.txt', skip_header=1).T
 
     # tstar = 5000 K
-    (r2_wave_inf, r2_sed_inf) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
-    (r2_wave, r2_sed) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
+    (r2_wave_inf, r2_sed_inf, r2_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_inf.txt', skip_header=1).T
+    (r2_wave, r2_sed, r2_sed_unc) = np.genfromtxt(indir+'/model'+str(array[1])+'_sed_w_aperture.txt', skip_header=1).T
 
     # tstar = 5500 K
-    (r3_wave_inf, r3_sed_inf) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
-    (r3_wave, r3_sed) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
+    (r3_wave_inf, r3_sed_inf, r3_sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_inf.txt', skip_header=1).T
+    (r3_wave, r3_sed, r3_sed_unc) = np.genfromtxt(indir+'/model'+str(array[2])+'_sed_w_aperture.txt', skip_header=1).T
 
     r1, = ax.plot(np.log10(r1_wave), np.log10(r1_sed), 'o-',mfc='Magenta',mec='Magenta',markersize=5,markeredgewidth=1,color='Magenta', linewidth=1.5)
     r2, = ax.plot(np.log10(r2_wave), np.log10(r2_sed), 'o-',mfc='r',mec='r',markersize=5,markeredgewidth=1,color='r', linewidth=1.5)
@@ -1100,7 +1114,7 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     fig.savefig(outdir+modelname+'_sed.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None,rtout=False,color_list=None,style=None,plotname=None):
+def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None,rtout=False,color_list=None,style=None,plotname=None,stretch=False):
     import matplotlib.pyplot as plt
     import numpy as np
     import os
@@ -1231,10 +1245,17 @@ def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None
             foo.close()
         else:
             # read in the extracted text files
-            (sim_inf, sim_sed_inf) = np.genfromtxt(mod+'_sed_inf.txt', skip_header=1).T
-            (wl_aper, flux_aper) = np.genfromtxt(mod+'_sed_w_aperture.txt', skip_header=1).T
+            print mod
+            (sim_inf, sim_sed_inf, sim_sed_unc) = np.genfromtxt(mod+'_sed_inf.txt', skip_header=1).T
+            (wl_aper, flux_aper, unc_aper) = np.genfromtxt(mod+'_sed_w_aperture.txt', skip_header=1).T
 
         aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o', linestyle=style[modelname.index(mod)], mec=color_list[modelname.index(mod)], mfc='None', color=color_list[modelname.index(mod)],markersize=12, markeredgewidth=3, linewidth=1.7, label=label[modelname.index(mod)])
+
+        # aper = ax_sed.errorbar(np.log10(wl_aper),np.log10(flux_aper),\
+            # yerr=[np.log10(flux_aper)-np.log10(flux_aper-unc_aper), np.log10(flux_aper+unc_aper)-np.log10(flux_aper)],\
+            # fmt='o', linestyle='-', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=2.5, linewidth=1.7, ecolor='Blue', elinewidth=3, barsabove=True)
+        
+
         # calculate the bolometric luminosity of the aperture 
         l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23, dstar)
         print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
@@ -1247,7 +1268,10 @@ def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='minor',pad=15,length=2.5*mag)
 
-    ax_sed.set_ylim([-18,-7.5])
+    if stretch == True:
+        ax_sed.set_ylim([-18,-7.5])
+    else:
+        ax_sed.set_ylim([-13, -7])
     ax_sed.set_xlim([0.3,3])
 
     lg_data = ax_sed.legend(loc='lower right',fontsize=12*mag,numpoints=1,framealpha=0.3)
@@ -1255,6 +1279,74 @@ def models_vs_obs(modelname,indir,outdir,label,obs=None,dstar=178.0,wl_aper=None
     # Write out the plot
     fig.savefig(outdir+plotname+'.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
+
+def disk_summary(indir, array, outdir, obs=None, compact=None, inf=False, obs_color='red'):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from matplotlib.ticker import MaxNLocator
+    from hyperion.model import ModelOutput
+    import astropy.constants as const
+    import sys
+    sys.path.append('/Users/yaolun/programs/misc/hyperion')
+    from t_bol import t_bol
+
+    # constants setup
+    AU = const.au.cgs.value
+    c = const.c.cgs.value
+
+    fig, axarr = plt.subplots(3, 1, sharex='col', sharey='row', figsize=(8,10))
+
+    # color map setting
+    color_list = [[0.8507598215729224, 0.6322174528970308, 0.6702243543099417],\
+                 [0.7357826498167007, 0.4722583075098643, 0.5939898816486836],\
+                 [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
+                 [0.37315740206144277, 0.21948554297767336, 0.40755444345087455],\
+                 [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
+    title = [r'$\rm{M_{disk}}$', r'$\rm{\beta}$', r'$\rm{h_{100}}$']
+    for i in range(3):
+        ax = axarr[i]
+        if obs != None:  
+            from get_bhr71_obs import get_bhr71_obs
+            bhr71 = get_bhr71_obs(obs)  # in um and Jy
+            wave_obs, flux_obs, noise_obs = bhr71['spec']
+            ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
+            ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
+            ax.plot(np.log10(wave_obs[wave_obs>194]), np.log10(c/(wave_obs[wave_obs>194]*1e-4)*flux_obs[wave_obs>194]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
+
+        for j in range(5):
+            if i == 0:
+                if j > 2:
+                    continue
+            # infinite aperture
+            (wave_inf, sed_inf, sed_inf_unc) = np.genfromtxt(indir+'/model'+str(array[i,j])+'_sed_inf.txt', skip_header=1).T
+            # sed with apertures
+            (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[i,j])+'_sed_w_aperture.txt', skip_header=1).T
+
+            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[j],mec=color_list[j],color=color_list[j],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i][j])
+            
+            if inf == True:
+              ax.plot(np.log10(wave_inf), np.log10(sed_inf), '--',mfc=color_list[j],mec=color_list[j],color=color_list[j],markersize=7,markeredgewidth=1,linewidth=2)  
+
+            ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
+        ax.text(0.05, 0.85, title[i], fontsize=20, transform=ax.transAxes)
+        ax.set_ylim([-10,-8])
+        ax.set_xlim([0.4,2])
+
+        [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+        ax.minorticks_on() 
+        ax.tick_params('both',labelsize=16,width=1.2,which='major',length=5)
+        ax.tick_params('both',labelsize=16,width=1.2,which='minor',length=2.5)
+
+        if i == 2:
+            ax.set_xlabel(r'$log(wavelength)\,[\mu m]$', fontsize=16)
+            ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=16)
+        
+        y_nbins = len(ax.get_yticklabels())
+        if i != 0:
+            ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
+    fig.subplots_adjust(hspace=0)
+    fig.savefig(outdir+'sed_disk_summary.pdf', format='pdf', dpi=300, bbox_inches='tight')
+
 
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
@@ -1276,17 +1368,20 @@ sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 # sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
 # for presentation, showing how 0.38 km/s incapable of fitting the submm emission
-array = np.array([31,32,33,34,35])
-xlabel = ''
-compact = [r'$\rm{t=5\times10^{3}\,yr}$', r'$\rm{t=1\times10^{4}\,yr}$', r'$\rm{t=2.5\times10^{4}\,yr}$', r'$\rm{t=5\times10^{4}\,yr}$',\
-            r'$\rm{t=7.5\times10^{4}\,yr}$']
-plotname = 'cs_38'
-sed_five('/Users/yaolun/bhr71/hyperion/cycle8/', array, outdir, xlabel, plotname, obs=obs, compact=compact, obs_color='Red')
+# array = np.array([31,32,33,34,35])
+# xlabel = ''
+# compact = [r'$\rm{t=5\times10^{3}\,yr}$', r'$\rm{t=1\times10^{4}\,yr}$', r'$\rm{t=2.5\times10^{4}\,yr}$', r'$\rm{t=5\times10^{4}\,yr}$',\
+#             r'$\rm{t=7.5\times10^{4}\,yr}$']
+# plotname = 'cs_38'
+# sed_five('/Users/yaolun/bhr71/hyperion/cycle8/', array, outdir, xlabel, plotname, obs=obs, compact=compact, obs_color='Red')
 
 
 # grid of Omega0
-array = np.array([27,28,29])
+# array = np.array([27,28,29])
+# sed_omega(indir, array, outdir, obs= None, compact=True)
+array = np.array([11,10,9])
 sed_omega(indir, array, outdir, obs= None, compact=True)
+
 
 # # # grid of disk parameters
 # # disk mass
@@ -1301,12 +1396,19 @@ xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
 compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
 plotname = 'disk_beta'
 sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
-# # scale height
+# scale height
 array = np.array([96,97,98,99,100])
 xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
 compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
 plotname = 'disk_h100'
 sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
+# all disk parameter
+array = np.array([[88,89,90,0,0],[91,92,93,94,95],[96,97,98,99,100]])
+compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
+           [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
+           [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
+disk_summary(indir, array, outdir, compact=compact)
+
 
 # grid of theta_cav and incl.
 # array = np.array([[53,54,55,56,57],[58,59,60,61,62],[63,64,65,66,67]])
@@ -1328,8 +1430,8 @@ sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # # disk & no dis comparison
 # disk & no disk
-array = np.array([32,30])
-disk_exist_com(indir, array, outdir, obs=obs)
+array = np.array([10,12,32,30])
+disk_exist_com(indir, array, outdir, obs=None)
 
 # # grid of tstar
 # array = np.array([69,70,71])
@@ -1361,11 +1463,11 @@ sed_lum(indir, array, outdir)
 
 # # model_vs_obs('model46', '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/', obs=obs)
 
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model101','/Users/yaolun/bhr71/hyperion/controlled/model80','/Users/yaolun/bhr71/hyperion/cycle8/model63'],\
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model101','/Users/yaolun/bhr71/hyperion/controlled/model80','/Users/yaolun/bhr71/hyperion/cycle9/model1'],\
     '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
-    [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs)
+    [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
 
 # full TSC vs infall-only TSC model
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle8/model63','/Users/yaolun/bhr71/hyperion/cycle8/model63_ulrich/model63_ulrich'],\
-    '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle9/model1','/Users/yaolun/bhr71/hyperion/cycle9/model1_ulrich'],\
+    '/Users/yaolun/bhr71/hyperion/cycle9/', '/Users/yaolun/test/',\
     [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model63_tsc_com')
