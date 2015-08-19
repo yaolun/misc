@@ -109,14 +109,16 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     rho_cav   = dict_params['rho_cav']
     # ellipsoid cavity parameter
     if ellipsoid == True:
-        c_out = 130 * 178. * AU
-        a_out = 50  * 178. * AU
+        a_out = 130 * 178. * AU
+        b_out = 50  * 178. * AU
         z_out = c_out
-        c_in  = 77.5 * 178. * AU
-        a_in  = 30   * 178. * AU
+        # a_in  = 77.5 * 178. * AU
+        # b_in  = 30   * 178. * AU
+        a_in  = dict_params['a_in'] * 178. * AU
+        b_in  = a_in/a_out*b_out
         z_in  = c_in
         # rho_cav_out = 1e4 * mh
-        # rho_cav_in  = 1e3 * mh 
+        # rho_cav_in  = 1e3 * mh
         rho_cav_out = dict_params['rho_cav_out'] * mh
         rho_cav_in  = dict_params['rho_cav_in']  * mh
     # Calculate the dust sublimation radius
@@ -221,7 +223,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                             cav_con = abs(z) > abs(z_cav)
                         else:
                             # condition for the outer ellipsoid
-                            cav_con = (2*(w/a_out)**2 + ((abs(z)-z_out)/c_out)**2) < 1
+                            cav_con = (2*(w/b_out)**2 + ((abs(z)-z_out)/a_out)**2) < 1
                         if cav_con:
                             # open cavity
                             if ellipsoid == False:
@@ -234,7 +236,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                                 i += 1
                             else:
                                 # condition for the inner ellipsoid
-                                if (2*(w/a_in)**2 + ((abs(z)-z_in)/c_in)**2) > 1:
+                                if (2*(w/b_in)**2 + ((abs(z)-z_in)/a_in)**2) > 1:
                                     rho_env[ir,itheta,iphi] = rho_cav_out
                                 else:
                                     rho_env[ir,itheta,iphi] = rho_cav_in
@@ -403,7 +405,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                             cav_con = abs(z) > abs(z_cav)
                         else:
                             # condition for the outer ellipsoid
-                            cav_con = (2*(w/a_out)**2 + ((abs(z)-z_out)/c_out)**2) < 1
+                            cav_con = (2*(w/b_out)**2 + ((abs(z)-z_out)/a_out)**2) < 1
                         if cav_con:
                             # open cavity
                             if ellipsoid == False:
@@ -416,7 +418,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                                 i += 1
                             else:
                                 # condition for the inner ellipsoid
-                                if (2*(w/a_in)**2 + ((abs(z)-z_in)/c_in)**2) > 1:
+                                if (2*(w/b_in)**2 + ((abs(z)-z_in)/a_in)**2) > 1:
                                     rho_env[ir,itheta,iphi] = rho_cav_out
                                 else:
                                     rho_env[ir,itheta,iphi] = rho_cav_in
