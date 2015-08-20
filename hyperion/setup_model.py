@@ -111,12 +111,12 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     if ellipsoid == True:
         a_out = 130 * 178. * AU
         b_out = 50  * 178. * AU
-        z_out = c_out
+        z_out = a_out
         # a_in  = 77.5 * 178. * AU
         # b_in  = 30   * 178. * AU
         a_in  = dict_params['a_in'] * 178. * AU
         b_in  = a_in/a_out*b_out
-        z_in  = c_in
+        z_in  = a_in
         # rho_cav_out = 1e4 * mh
         # rho_cav_in  = 1e3 * mh
         rho_cav_out = dict_params['rho_cav_out'] * mh
