@@ -16,6 +16,8 @@ def get_bhr71_obs(indir):
 	flux_pacs_noise = flux_pacs_data-flux_pacs-flux_pacs_flat
 	flux_spire_noise = flux_spire_data-flux_spire-flux_spire_flat
 
+	print flux_spire_noise
+
 	# Read in the Spitzer IRS spectrum
 	# [wl_irs, flux_irs]= (np.genfromtxt(indir+'bhr71_spitzer_irs.txt',skip_header=2,dtype='float').T)[0:2]
 	# # Remove points with zero or negative flux 
@@ -67,7 +69,7 @@ def get_bhr71_obs(indir):
 	return {'spec': (wl_spec, flux_spec, sigma_noise), 'phot': (wl_phot, flux_phot, flux_sig_phot)}
 
 
-# obs = '/Users/yaolun/bhr71/obs_for_radmc/'
-# bhr71 = get_bhr71_obs(obs)
+obs = '/Users/yaolun/bhr71/obs_for_radmc/'
+bhr71 = get_bhr71_obs(obs)
 # for i in range(len(bhr71['spec'][0][bhr71['spec'][0]<30])):
 # 	print bhr71['spec'][1][i] - bhr71['spec'][2][i]
