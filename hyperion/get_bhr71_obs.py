@@ -4,17 +4,20 @@ def get_bhr71_obs(indir):
 
 	# Read in Herschel data
 	# continuum
-	[wl_pacs,flux_pacs,unc_pacs] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',dtype='float',skip_header=1).T
+	[wl_pacs,flux_pacs] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',dtype='float',skip_header=1).T
 	[wl_spire,flux_spire] = np.genfromtxt(indir+'BHR71_spire_corrected_continuum.txt',dtype='float',skip_header=1).T
-	# original spectra
-	[wl_pacs_data,flux_pacs_data,unc_pacs_data] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim.txt',dtype='float').T
-	[wl_spire_data,flux_spire_data] = np.genfromtxt(indir+'BHR71_spire_corrected.txt',dtype='float').T
-	# flat spectra
-	[wl_pacs_flat,flux_pacs_flat,unc_pacs_flat] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_flat_spectrum.txt',dtype='float',skip_header=1).T
-	[wl_spire_flat,flux_spire_flat] = np.genfromtxt(indir+'BHR71_spire_corrected_flat_spectrum.txt',dtype='float',skip_header=1).T
+	# noise spectra
+	[wl_pacs_noise, flux_pacs_noise] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_noise_spectrum.txt',dtype='float',skip_header=1).T
+	[wl_spire_noise,flux_spire_noise] = np.genfromtxt(indir+'BHR71_spire_corrected_noise_spectrum.txt',dtype='float',skip_header=1).T
+	# # original spectra
+	# [wl_pacs_data,flux_pacs_data,unc_pacs_data] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim.txt',dtype='float').T
+	# [wl_spire_data,flux_spire_data] = np.genfromtxt(indir+'BHR71_spire_corrected.txt',dtype='float').T
+	# # flat spectra
+	# [wl_pacs_flat,flux_pacs_flat,unc_pacs_flat] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_flat_spectrum.txt',dtype='float',skip_header=1).T
+	# [wl_spire_flat,flux_spire_flat] = np.genfromtxt(indir+'BHR71_spire_corrected_flat_spectrum.txt',dtype='float',skip_header=1).T
 
-	flux_pacs_noise = flux_pacs_data-flux_pacs-flux_pacs_flat
-	flux_spire_noise = flux_spire_data-flux_spire-flux_spire_flat
+	# flux_pacs_noise = flux_pacs_data-flux_pacs-flux_pacs_flat
+	# flux_spire_noise = flux_spire_data-flux_spire-flux_spire_flat
 
 	# Read in the Spitzer IRS spectrum
 	# [wl_irs, flux_irs]= (np.genfromtxt(indir+'bhr71_spitzer_irs.txt',skip_header=2,dtype='float').T)[0:2]
@@ -26,8 +29,10 @@ def get_bhr71_obs(indir):
 	# Calculate the local variance (for spire), use the instrument uncertainty for pacs
 	#
 	# Spitzer noise is not considered now
-	wl_noise = [wl_pacs_data[wl_pacs_data <= 190.31],wl_spire[(wl_spire > 194) & (wl_spire <= 304)],wl_spire[wl_spire > 304]]
-	flux_noise = [unc_pacs[wl_pacs_data <= 190.31],flux_spire_noise[(wl_spire > 194) & (wl_spire <= 304)],flux_spire_noise[wl_spire > 304]]
+	# wl_noise = [wl_pacs_data[wl_pacs_data <= 190.31],wl_spire[(wl_spire > 194) & (wl_spire <= 304)],wl_spire[wl_spire > 304]]
+	# flux_noise = [unc_pacs[wl_pacs_data <= 190.31],flux_spire_noise[(wl_spire > 194) & (wl_spire <= 304)],flux_spire_noise[wl_spire > 304]]
+	wl_noise = np.hstack((wl_pacs_noise, wl_spire_noise))
+	flux_noise = np.hstack((flux_pacs_noise, flux_spire_noise))
 	sig_num = 20
 	sigma_noise = []
 	for i in range(0,len(wl_noise)):
