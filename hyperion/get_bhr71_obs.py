@@ -4,10 +4,10 @@ def get_bhr71_obs(indir):
 
 	# Read in Herschel data
 	# continuum
-	[wl_pacs,flux_pacs] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',dtype='float',skip_header=1).T
+	[wl_pacs,flux_pacs,unc_pacs] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',dtype='float',skip_header=1).T
 	[wl_spire,flux_spire] = np.genfromtxt(indir+'BHR71_spire_corrected_continuum.txt',dtype='float',skip_header=1).T
 	# noise spectra
-	[wl_pacs_noise, flux_pacs_noise] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_noise_spectrum.txt',dtype='float',skip_header=1).T
+	[wl_pacs_noise, flux_pacs_noise,unc_pacs_noise] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_noise_spectrum.txt',dtype='float',skip_header=1).T
 	[wl_spire_noise,flux_spire_noise] = np.genfromtxt(indir+'BHR71_spire_corrected_noise_spectrum.txt',dtype='float',skip_header=1).T
 	# # original spectra
 	# [wl_pacs_data,flux_pacs_data,unc_pacs_data] = np.genfromtxt(indir+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim.txt',dtype='float').T
@@ -31,12 +31,14 @@ def get_bhr71_obs(indir):
 	# Spitzer noise is not considered now
 	# wl_noise = [wl_pacs_data[wl_pacs_data <= 190.31],wl_spire[(wl_spire > 194) & (wl_spire <= 304)],wl_spire[wl_spire > 304]]
 	# flux_noise = [unc_pacs[wl_pacs_data <= 190.31],flux_spire_noise[(wl_spire > 194) & (wl_spire <= 304)],flux_spire_noise[wl_spire > 304]]
-	wl_noise = np.hstack((wl_pacs_noise, wl_spire_noise))
-	flux_noise = np.hstack((flux_pacs_noise, flux_spire_noise))
+	# wl_noise = np.hstack((wl_pacs_noise, wl_spire_noise))
+	# flux_noise = np.hstack((flux_pacs_noise, flux_spire_noise))
+	wl_noise = [wl_pacs_noise, wl_spire_noise]
+	flux_noise = [flux_pacs_noise, flux_spire_noise]
 	sig_num = 20
 	sigma_noise = []
 	for i in range(0,len(wl_noise)):
-		sigma_dum = np.zeros([len(wl_noise[i])])
+		sigma_dum = np.zeros_like(wl_noise[i])
 		for iwl in range(0,len(wl_noise[i])):
 			if iwl < sig_num/2:
 				sigma_dum[iwl] = np.std(np.hstack((flux_noise[i][0:sig_num/2],flux_noise[i][0:sig_num/2-iwl])))
@@ -44,8 +46,7 @@ def get_bhr71_obs(indir):
 				sigma_dum[iwl] = np.std(np.hstack((flux_noise[i][iwl:],flux_noise[i][len(wl_noise[i])-sig_num/2:])))
 			else:
 				sigma_dum[iwl] = np.std(flux_noise[i][iwl-sig_num/2:iwl+sig_num/2])
-		sigma_noise = np.hstack((sigma_noise,sigma_dum))
-	sigma_noise = np.array(sigma_noise)
+		sigma_noise = np.hstack((sigma_noise, sigma_dum))
 	sigma_noise = np.hstack((unc_irs, sigma_noise))
 	# print len(wl_spec), len(sigma_noise)
 	# Read in the photometry data
@@ -74,5 +75,19 @@ def get_bhr71_obs(indir):
 
 # obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # bhr71 = get_bhr71_obs(obs)
+# import numpy as np
+# [wl_pacs_noise, flux_pacs_noise,unc_pacs_noise] = np.genfromtxt(obs+'BHR71_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_noise_spectrum.txt',dtype='float',skip_header=1).T
+# [wl_spire_noise,flux_spire_noise] = np.genfromtxt(obs+'BHR71_spire_corrected_noise_spectrum.txt',dtype='float',skip_header=1).T
+# import matplotlib.pyplot as plt
+# fig = plt.figure(figsize=(8,6))
+# ax = fig.add_subplot(111)
+# # ax.plot(bhr71['spec'][0],bhr71['spec'][1], '-', color='Red')
+# # ax.fill_between(bhr71['spec'][0], bhr71['spec'][1]-bhr71['spec'][2], bhr71['spec'][1]+bhr71['spec'][2], color='Blue', alpha=0.7)
+# ax.plot(wl_pacs_noise, flux_pacs_noise, alpha=0.5)
+# ax.plot(wl_spire_noise, flux_spire_noise, alpha=0.5)
+# ax.plot(bhr71['spec'][0], bhr71['spec'][2])
+
+# fig.savefig('/Users/yaolun/test/bhr71.pdf', format='pdf', dpi=300, bbox_inches='tight')
+# fig.clf()
 # for i in range(len(bhr71['spec'][0][bhr71['spec'][0]<30])):
 # 	print bhr71['spec'][1][i] - bhr71['spec'][2][i]
