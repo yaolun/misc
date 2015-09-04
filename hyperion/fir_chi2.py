@@ -5,6 +5,10 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     import numpy as np
     import matplotlib.pyplot as plt
     from astropy.io import ascii
+    import sys
+    import os
+    sys.path.append(os.path.expanduser('~')+'/programs/spectra_analysis/')
+    from phot_filter import phot_filter
     from get_bhr71_obs import get_bhr71_obs
     import astropy.constants as const
     from scipy.interpolate import interp1d
@@ -33,26 +37,31 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         # Take the ratio of this gap to the peak value as the fraction in fractional uncertainty.
         # Then add two uncertainties in quadrature
 
+        # add 10 % uncertainty to the spectrophotometry
+        obs['sigma'] = obs['sigma']*1.1
+
         chi2 = 0
         if log == False:
             for w in wave:
                 # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2 , sim['sigma'][sim['wave'] == w]**2+obs['sigma'][obs['wave'] == w]**2
                 val = (sim['sed'][sim['wave'] == w] - obs['sed'][obs['wave'] == w]) / obs['sed'][obs['wave'] == w]
+                # val = (sim['sed'][sim['wave'] == w] - obs['sed'][obs['wave'] == w])
                 # unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
                 #         ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 ) + \
                 #         2 * (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2
                 unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
                         ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 )
+                # unc_2 = sim['sigma'][sim['wave'] == w]**2 + obs['sigma'][obs['wave'] == w]**2
                 # unc = unc_2**0.5
-                print w, val**2,  unc_2
+                # print w, val**2,  unc_2, obs['sed'][obs['wave'] == w], sim['sed'][obs['wave'] == w]
                 chi2 = chi2 + val**2 / unc_2
         else:
             # not proper functioning at this moment
             for w in wave:
                 # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2
-                print 'print'
-                print np.log10(obs['sed'][obs['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w]-obs['sigma'][obs['wave'] == w])
-                print np.log10(obs['sed'][obs['wave'] == w]+obs['sigma'][obs['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w])
+                # print 'print'
+                # print np.log10(obs['sed'][obs['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w]-obs['sigma'][obs['wave'] == w])
+                # print np.log10(obs['sed'][obs['wave'] == w]+obs['sigma'][obs['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w])
                 chi2 = chi2 + ((np.log10(sim['sed'][sim['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w]))**2) /\
                          (max(np.log10(obs['sed'][obs['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w]-obs['sigma'][obs['wave'] == w]), np.log10(obs['sed'][obs['wave'] == w]+obs['sigma'][obs['wave'] == w])-np.log10(obs['sed'][obs['wave'] == w])))**2
         return chi2, len(wave)
@@ -87,23 +96,68 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     sed_obs_noise = sed_obs_noise[np.argsort(wave_obs)]
     wave_obs = wave_obs[np.argsort(wave_obs)]
 
-    # setup resolution
+    # calculate the spectrophotometry
     for i in range(0, len(wl_aper)):
-        if (wl_aper[i] < 50.) & (wl_aper[i] >= 5):
-            res = 60.
-        elif wl_aper[i] < 5:
-            res = 10.
+        # apply the filter function
+        # decide the filter name
+        if wl_aper[i] == 70:
+            fil_name = 'Herschel PACS 70um'
+        elif wl_aper[i] == 100:
+            fil_name = 'Herschel PACS 100um'
+        elif wl_aper[i] == 160:
+            fil_name = 'Herschel PACS 160um'
+        elif wl_aper[i] == 250:
+            fil_name = 'Herschel SPIRE 250um'
+        elif wl_aper[i] == 350:
+            fil_name = 'Herschel SPIRE 350um'
+        elif wl_aper[i] == 500:
+            fil_name = 'Herschel SPIRE 500um'
+        elif wl_aper[i] == 3.6:
+            fil_name = 'IRAC Channel 1'
+        elif wl_aper[i] == 4.5:
+            fil_name = 'IRAC Channel 2'
+        elif wl_aper[i] == 5.8:
+            fil_name = 'IRAC Channel 3'
+        elif wl_aper[i] == 8.0:
+            fil_name = 'IRAC Channel 4'
+        elif wl_aper[i] == 24:
+            fil_name = 'MIPS 24um'
+        # elif wl_aper[i] == 850:
+        #     fil_name = 'SCUBA 850WB'
+        # do not have SCUBA spectra
         else:
-            res = 1000.
-        ind = np.where((wave_obs < wl_aper[i]*(1+1./res)) & (wave_obs > wl_aper[i]*(1-1./res)))
-        if len(ind[0]) != 0:
-            obs_aper_sed[i] = np.mean(sed_obs[ind])
-            obs_aper_sed_noise[i] = np.mean(sed_obs_noise[ind])
-        else:
+            fil_name = None
+
+        if fil_name != None:
+            filter_func = phot_filter(fil_name)
+            # Observed SED needs to be trimmed before applying photometry filters
+            filter_func = filter_func[(filter_func['wave']/1e4 >= min(wave_obs))*\
+                                      ((filter_func['wave']/1e4 >= 54.8)+(filter_func['wave']/1e4 <= 36.0853))*\
+                                      ((filter_func['wave']/1e4 <= 95.05)+(filter_func['wave']/1e4 >=103))*\
+                                      ((filter_func['wave']/1e4 <= 190.31)+(filter_func['wave']/1e4 >= 195))*\
+                                      (filter_func['wave']/1e4 <= max(wave_obs))]
             f = interp1d(wave_obs, sed_obs)
-            f_noise = interp1d(wave_obs, sed_obs_noise)
-            obs_aper_sed[i] = f(wl_aper[i])
-            obs_aper_sed_noise[i] = f_noise(wl_aper[i])
+            f_unc = interp1d(wave_obs, sed_obs_noise)
+            obs_aper_sed[i] = np.trapz(filter_func['wave']/1e4, f(filter_func['wave']/1e4)*filter_func['transmission'])/np.trapz(filter_func['wave']/1e4, filter_func['transmission'])
+            obs_aper_sed_noise[i] = abs(np.trapz((filter_func['wave']/1e4)**2, (f_unc(filter_func['wave']/1e4)*filter_func['transmission'])**2))**0.5 / abs(np.trapz(filter_func['wave']/1e4, filter_func['transmission']))
+        else:
+            # use a rectangle function the average the simulated SED
+            # apply the spectral resolution
+            if (wl_aper[i] < 50.) & (wl_aper[i] >= 5):
+                res = 60.
+            elif wl_aper[i] < 5:
+                res = 10.
+            else:
+                res = 1000.
+            ind = np.where((wave_obs < wl_aper[i]*(1+1./res)) & (wave_obs > wl_aper[i]*(1-1./res)))
+            if len(ind[0]) != 0:
+                obs_aper_sed[i] = np.mean(sed_obs[ind])
+                obs_aper_sed_noise[i] = np.mean(sed_obs_noise[ind])
+            else:
+                f = interp1d(wave_obs, sed_obs)
+                f_unc = interp1d(wave_obs, sed_obs_noise)
+                obs_aper_sed[i] = f(wl_aper[i])
+                obs_aper_sed_noise[i] = f_unc(wl_aper[i])
 
     # calculate Chi2 from simulated SED
     p1 = []
@@ -145,6 +199,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         for i in range(0, len(model_num)):
             imod = model_num[i]
             model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
+            # print datapath+'/model'+str(imod)+'_sed_w_aperture.txt'
+            # print model_dum
             chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': sed_obs_noise}, 
                 {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data, 'sigma': model_dum['sigma_vSv'].data}, wave=wl_aper)
             reduced_chi2_dum = chi2_dum/(n-2-1)
@@ -177,12 +233,12 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                     # print dum_params
                     continue
                 else:
-                    print (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data
+                    print (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data, imod
                     p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     if fixed == False:
                         p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     model_label.append(str(imod))
-
+            print reduced_chi2_dum
             chi2.extend(reduced_chi2_dum)
 
 
@@ -381,30 +437,31 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 #     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=32)
 #     fir_chi2_2d(array_list, keywords, obs)
 
-# 1-D rho_cav_center
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
-               'model_num': np.arange(34,43)}]
-keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav}\,[g\,cm^{-3}]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
+# # 1-D rho_cav_center
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
+#                'model_num': np.arange(34,43)}]
+# keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav}\,[g\,cm^{-3}]}$']}
+# fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
 
-# 1-D inclination
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
-               'model_num': np.hstack((np.arange(44,50), 34))}]
-keywords = {'col':['view_angle'], 'label': [r'$\rm{\theta_{incl.}\,[deg.]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
+# # 1-D inclination
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
+#                'model_num': np.hstack((np.arange(44,50), 34))}]
+# keywords = {'col':['view_angle'], 'label': [r'$\rm{\theta_{incl.}\,[deg.]}$']}
+# fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
 
-# 1-D rho_cav_edge
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
-               'model_num': np.hstack((np.arange(50,54), 34, np.arange(68,71)))}]
-keywords = {'col':['rho_cav_edge'], 'label': [r'$\rm{R_{cav,\circ}\,[AU]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
+# # 1-D rho_cav_edge
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
+#                'model_num': np.hstack((np.arange(50,54), 34, np.arange(68,71)))}]
+# keywords = {'col':['rho_cav_edge'], 'label': [r'$\rm{R_{cav,\circ}\,[AU]}$']}
+# fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
 
 # 1-D age
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
+               # 'model_num': np.hstack((34,71))}]
                'model_num': np.hstack((np.arange(54,68), 34, 71))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=True)
