@@ -30,31 +30,23 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     dstar = 178.0
 
     # chi2 function
-    def fir_chi2(obs, sim, wave=[70.,100.,160.,250.,350.,500.], log=False):
+    def fir_chi2(obs, sim, wave=[70.,100.,160.,250.,350.,500.], log=False, ax=None):
 
         # experimental procedure
         # introduce a systematic error estimated from the gap between PACS and SPIRE.
         # Take the ratio of this gap to the peak value as the fraction in fractional uncertainty.
         # Then add two uncertainties in quadrature
 
-        # add 10 % uncertainty to the spectrophotometry
-        obs['sigma'] = obs['sigma']*1.1
+        if ax != None:
+            ax_sim, label = ax
+            ax_sim.errorbar(sim['wave'], sim['sed'], yerr=sim['sigma'], fmt='o', mfc='None', label=r'$\rm{'+str(label)+'\,yr}$')
 
         chi2 = 0
         if log == False:
             for w in wave:
-                # print w, (sim['sed'][sim['wave'] == w]-obs['sed'][obs['wave'] == w])**2 , sim['sigma'][sim['wave'] == w]**2+obs['sigma'][obs['wave'] == w]**2
                 val = (sim['sed'][sim['wave'] == w] - obs['sed'][obs['wave'] == w]) / obs['sed'][obs['wave'] == w]
-                # val = (sim['sed'][sim['wave'] == w] - obs['sed'][obs['wave'] == w])
-                # unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
-                #         ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 ) + \
-                #         2 * (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2
                 unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
                         ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 )
-                unc_2 = 1.0
-                # unc_2 = sim['sigma'][sim['wave'] == w]**2 + obs['sigma'][obs['wave'] == w]**2
-                # unc = unc_2**0.5
-                # print w, val**2,  unc_2, obs['sed'][obs['wave'] == w], sim['sed'][obs['wave'] == w]
                 chi2 = chi2 + val**2 / unc_2
         else:
             # not proper functioning at this moment
@@ -84,8 +76,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     wave_obs = np.hstack((wave_obs, bhr71['phot'][0][0:2]))
     flux_obs = np.hstack((flux_obs, bhr71['phot'][1][0:2]))
     sed_obs_noise = np.hstack((sed_obs_noise, bhr71['phot'][2][0:2]))
-    # wave_obs = wave_obs[wave_obs > 50]
-    # flux_obs = flux_obs[wave_obs > 50]
+
     sed_obs = c/(wave_obs*1e-4)*flux_obs*1e-23
     sed_obs_noise = c/(wave_obs*1e-4)*sed_obs_noise*1e-23
     # print sed_obs_noise
@@ -160,6 +151,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 obs_aper_sed[i] = f(wl_aper[i])
                 obs_aper_sed_noise[i] = f_unc(wl_aper[i])
 
+    print obs_aper_sed
+    print obs_aper_sed_noise
+
     # calculate Chi2 from simulated SED
     p1 = []
     p2 = []
@@ -186,33 +180,21 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             ref_params.remove_column('Model#')
             ref_params = (ref_params[:][model_list['Model#'] == 'Model'+str(ref)])[0].data
 
-        # find the model has minimun chi2 first
-        # for i in range(0, len(model_num)):
-        #     imod = model_num[i]
-        #     model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
-        #     chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': sed_obs_noise}, 
-        #         {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data, 'sigma': model_dum['sigma_vSv'].data}, wave=wl_aper)
-        #     reduced_chi2_dum = chi2_dum/(n-2-1)
-        #     total_chi2.extend(reduced_chi2_dum)
-        # print total_chi2
-        # print min(total_chi2), np.where(total_chi2 == min(total_chi2))
+        # plot the simulation on top of the observation
+        fig = plt.figure(figsize=(8,6))
+        ax_sim = fig.add_subplot(111)
+        ax_sim.errorbar(wl_aper, obs_aper_sed, yerr=( obs_aper_sed_noise**2 + (obs_aper_sed*0.05)**2 )**0.5, fmt='s', color='DimGray')
 
         for i in range(0, len(model_num)):
             imod = model_num[i]
             model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
-            # print datapath+'/model'+str(imod)+'_sed_w_aperture.txt'
-            # print model_dum
-            chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': sed_obs_noise}, 
-                {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data, 'sigma': model_dum['sigma_vSv'].data}, wave=wl_aper)
+            # print model_dum 
+            chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': ( obs_aper_sed_noise**2 + (obs_aper_sed*0.05)**2 )**0.5}, 
+                {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data, 'sigma': model_dum['sigma_vSv'].data}, wave=wl_aper, \
+                ax={ax_sim,int((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)})
             reduced_chi2_dum = chi2_dum/(n-2-1)
             total_chi2.extend(reduced_chi2_dum)
-            # manually exclude much older age
-            # if keywords['col'][0] == 'age':
-            #     if (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data >= 5e5:
-            #         continue
-            # if keywords['col'][1] == 'age':
-            #     if (model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data >= 5e5:
-            #         continue                    
+
             if ref == None:
                 # read the parameter values
                 p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
@@ -243,6 +225,11 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             chi2.extend(reduced_chi2_dum)
 
 
+            # finish the plot
+            ax_sim.legend(loc='best', numpoints=1)
+            fig.savefig('/Users/yaolun/test/chi2_simulation_summary.pdf', format='pdf', dpi=300, bbox_inches='tight')
+            fig.clf()
+
     # convert to array
     p1 = np.array(p1)
     p2 = np.array(p2)
@@ -268,7 +255,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
 
         ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1.5)
         ax.set_xlabel(keywords['label'][0], fontsize=18)
-        # ax.set_ylabel(r'$\rm{\Sigma(sim.-obs.)^{2}/(\sigma_{data}^{2}+\sigma_{sys}^{2})}$', fontsize=18)
         ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
 
         ax.set_yscale('log')
@@ -320,8 +306,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
 
         # plot the contour with color and lines
         ax.contour(x, y, z, 10, linewidths=0.5,colors='k', norm=LogNorm(vmin=chi2.min(), vmax=1e7))
-        # cs = ax.contourf(x,y,z,15,cmap=plt.cm.jet)
-        # cmap = sns.cubehelix_palette(light=1, as_cmap=True, reverse=True)
         cmap = plt.cm.CMRmap
         # import custom colormap
         from custom_colormap import custom_colormap
@@ -339,7 +323,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         cb = fig.colorbar(im, cax=cax)
         cb.solids.set_edgecolor("face")
         cb.ax.minorticks_on()
-        # cb.ax.set_ylabel(r'$\rm{\Sigma(sim./obs.-1)^{2}/(\sigma_{combine}^{2})}$',fontsize=16)
         cb.ax.set_ylabel(r'$\rm{\chi^{2}_{reduce}}$', fontsize=20)
         cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
         plt.setp(cb_obj,fontsize=12)
@@ -369,42 +352,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             ax.tick_params(axis='y', which='minor', left='off', right='off')
 
         fig.savefig('/Users/yaolun/test/chi2_%s_%s.pdf' % (keywords['col'][0], keywords['col'][1]), format='pdf', dpi=300, bbox_inches='tight')
-
-
-
-
-    # # plot the contour
-    # p1 = np.squeeze(p1)
-    # p2 = np.squeeze(p2)
-    # chi2 = np.squeeze(chi2)
-    # X, Y =  np.meshgrid(p1,p2)
-    # Z = np.empty_like(X)
-    # for i in range(0, len(Z[0])):
-    #     for j in range(0, len(Z[1])):
-    #         Z[i,j] = chi2[(p1 == X[i,j])*(p2 == Y[i,j]).T]
-    #         # print X[i,j], Y[i,j], Z[i,j]
-
-    # fig = plt.figure(figsize=(8,6))
-    # ax = fig.add_subplot(111)
-
-    # CS = ax.contourf(X/1e4, Y, Z, 10, # [-1, -0.1, 0, 0.1],
-    #                     #alpha=0.5,
-    #                     cmap=plt.cm.bone,
-    #                     origin='lower')
-    # # Make a colorbar for the ContourSet returned by the contourf call.
-    # cbar = plt.colorbar(CS)
-    # cbar.ax.set_ylabel(r'$\mathrm{Reduced~\chi^{2}}$', fontsize=16)
-    # # Add the contour line levels to the colorbar
-    # # cbar.add_lines(CS2)
-
-    # ax.set_xlabel(keywords['label'][0], fontsize=20)
-    # ax.set_ylabel(keywords['label'][1], fontsize=20)
-    # [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
-    # ax.minorticks_on() 
-    # ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
-    # ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
-
-    # fig.savefig('/Users/yaolun/test/chi2_agscs.pdf', format='pdf', dpi=300, bbox_inches='tight')
 
     return p1, p2, chi2
 
