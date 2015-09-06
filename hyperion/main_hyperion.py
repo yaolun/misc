@@ -110,7 +110,9 @@ if extract_only == False:
         print 'Model'+str(int(model_num)+i)
         pprint(params_dict)
         # calculate the initial dust profile
-        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        # for feature extraction test
+        wl_aper = [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600, 850]
         # # old version of aperture list
         # wl_aper = [3.6, 4.5, 5.8, 8.0, 9, 9.7, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
         # # older varsion

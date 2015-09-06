@@ -30,16 +30,12 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     dstar = 178.0
 
     # chi2 function
-    def fir_chi2(obs, sim, wave=[70.,100.,160.,250.,350.,500.], log=False, ax=None):
+    def fir_chi2(obs, sim, wave=[70.,100.,160.,250.,350.,500.], log=False, robust_est=False):
 
         # experimental procedure
         # introduce a systematic error estimated from the gap between PACS and SPIRE.
         # Take the ratio of this gap to the peak value as the fraction in fractional uncertainty.
         # Then add two uncertainties in quadrature
-
-        if ax != None:
-            ax_sim, label = ax
-            ax_sim.errorbar(sim['wave'], sim['sed'], yerr=sim['sigma'], fmt='o', mfc='None', label=r'$\rm{'+str(label)+'\,yr}$')
 
         chi2 = 0
         if log == False:
@@ -47,6 +43,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 val = (sim['sed'][sim['wave'] == w] - obs['sed'][obs['wave'] == w]) / obs['sed'][obs['wave'] == w]
                 unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
                         ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 )
+                # unc_2 = 1
+                print w, val, unc_2**0.5
                 chi2 = chi2 + val**2 / unc_2
         else:
             # not proper functioning at this moment
@@ -67,7 +65,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     if spitzer_only:
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35]
     if herschel_only:
-        wl_aper = [70., 100., 160., 250., 350., 500.]
+        wl_aper = [35., 70., 100., 160., 250., 350., 500.]
+    wl_aper = np.array(wl_aper)
 
     # read the observed SED and extract with apertures
     bhr71 = get_bhr71_obs(obs)
@@ -152,7 +151,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 obs_aper_sed_noise[i] = f_unc(wl_aper[i])
 
     print obs_aper_sed
-    print obs_aper_sed_noise
 
     # calculate Chi2 from simulated SED
     p1 = []
@@ -160,6 +158,10 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     model_label = []
     chi2 = []
     total_chi2 = []
+
+    # plot the simulation on top of the observation
+    fig = plt.figure(figsize=(8,6))
+    ax_sim = fig.add_subplot(111)
 
     num_file = len(array_list)
     for ifile in range(0,num_file):
@@ -179,19 +181,34 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             ref_params.remove_columns(ignore_col)
             ref_params.remove_column('Model#')
             ref_params = (ref_params[:][model_list['Model#'] == 'Model'+str(ref)])[0].data
-
-        # plot the simulation on top of the observation
-        fig = plt.figure(figsize=(8,6))
-        ax_sim = fig.add_subplot(111)
-        ax_sim.errorbar(wl_aper, obs_aper_sed, yerr=( obs_aper_sed_noise**2 + (obs_aper_sed*0.05)**2 )**0.5, fmt='s', color='DimGray')
+        print wl_aper, type(obs_aper_sed_noise), np.where(wl_aper>100)
+        print obs_aper_sed_noise, obs_aper_sed_noise[wl_aper > 100.]
+        print  obs_aper_sed_noise[wl_aper < 50.],\
+              ( obs_aper_sed_noise[(wl_aper >= 50.) & (wl_aper < 70.)]**2 + (obs_aper_sed[(wl_aper >= 50.) & (wl_aper < 70)]*0.11)**2 )**0.5,\
+              ( obs_aper_sed_noise[(wl_aper >= 70.) & (wl_aper < 200.)]**2 + (obs_aper_sed[(wl_aper >= 70.) & (wl_aper < 200)]*0.12)**2 )**0.5,\
+              ( obs_aper_sed_noise[wl_aper >= 200.]**2 + (obs_aper_sed[wl_aper >= 200.]*0.07)**2 )**0.5
+        yerr = np.hstack(( obs_aper_sed_noise[wl_aper < 50.],\
+                          ( obs_aper_sed_noise[(wl_aper >= 50.) & (wl_aper < 70.)]**2 + (obs_aper_sed[(wl_aper >= 50.) & (wl_aper < 70)]*0.11)**2 )**0.5,\
+                          ( obs_aper_sed_noise[(wl_aper >= 70.) & (wl_aper < 200.)]**2 + (obs_aper_sed[(wl_aper >= 70.) & (wl_aper < 200)]*0.12)**2 )**0.5,\
+                          ( obs_aper_sed_noise[wl_aper >= 200.]**2 + (obs_aper_sed[wl_aper >= 200.]*0.07)**2 )**0.5))
+        print yerr
+        # yerr = 1e-9 + np.zeros_like(obs_aper_sed)
+        ax_sim.errorbar(wl_aper, obs_aper_sed, yerr=yerr, fmt='s', color='DimGray')
+        ax_sim.plot(bhr71['spec'][0], c/(bhr71['spec'][0]*1e-4)*bhr71['spec'][1]*1e-23, '-', color='DimGray')
 
         for i in range(0, len(model_num)):
             imod = model_num[i]
+            if (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data not in [100., 1000., 10000., 15000.]:
+                continue
             model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
-            # print model_dum 
-            chi2_dum, n = fir_chi2({'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': ( obs_aper_sed_noise**2 + (obs_aper_sed*0.05)**2 )**0.5}, 
-                {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data, 'sigma': model_dum['sigma_vSv'].data}, wave=wl_aper, \
-                ax={ax_sim,int((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)})
+            obs = {'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': yerr}
+            sim = {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data, 'sigma': model_dum['sigma_vSv'].data}
+            chi2_dum, n = fir_chi2(obs, sim, wave=wl_aper)
+
+            # make a test plot
+            ax_sim.errorbar(sim['wave'], sim['sed'], yerr=sim['sigma'], fmt='o', mec='None',alpha=0.5,\
+                label=r'$\rm{'+str(int((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data))+'\,yr}$')
+
             reduced_chi2_dum = chi2_dum/(n-2-1)
             total_chi2.extend(reduced_chi2_dum)
 
@@ -201,9 +218,12 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 if fixed == False:
                     p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
                 model_label.append(str(imod))
+                print reduced_chi2_dum
+                chi2.extend(reduced_chi2_dum)
             else:
                 # get other parameters of model i
                 dum_params = copy.copy(model_list)
+                # clean up test parameters and irrelvant parameters
                 if fixed == True:
                     dum_params.remove_column(keywords['col'][0])
                 else:
@@ -211,9 +231,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 dum_params.remove_columns(ignore_col)
                 dum_params.remove_column('Model#')
                 dum_params = (dum_params[:][model_list['Model#'] == 'Model'+str(imod)])[0].data
-
+                # compare the controlled parameters with the reference
                 if compare(ref_params, dum_params) == False:
-                    # print dum_params
                     continue
                 else:
                     print (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data, imod
@@ -221,14 +240,16 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                     if fixed == False:
                         p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     model_label.append(str(imod))
-            print reduced_chi2_dum
-            chi2.extend(reduced_chi2_dum)
+
+                    print reduced_chi2_dum
+                    chi2.extend(reduced_chi2_dum)
 
 
-            # finish the plot
-            ax_sim.legend(loc='best', numpoints=1)
-            fig.savefig('/Users/yaolun/test/chi2_simulation_summary.pdf', format='pdf', dpi=300, bbox_inches='tight')
-            fig.clf()
+    # finish the plot
+    ax_sim.legend(loc='best', numpoints=1)
+    ax_sim.set_xlim([30,700])
+    fig.savefig('/Users/yaolun/test/chi2_simulation_summary.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
 
     # convert to array
     p1 = np.array(p1)
@@ -412,4 +433,4 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                # 'model_num': np.hstack((34,71))}]
                'model_num': np.hstack((np.arange(54,68), 34, 71))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=False)
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=True)
