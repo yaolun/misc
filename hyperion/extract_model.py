@@ -158,6 +158,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     # get flux at different apertures
     flux_aper = np.zeros_like(wl_aper)
     unc_aper = np.zeros_like(wl_aper)
+    a = np.zeros_like(wl_aper) + 1
     color_list = plt.cm.jet(np.linspace(0, 1, len(wl_aper)+1))
     for i in range(0, len(wl_aper)):
         if wl_aper[i] in exclude_wl:
@@ -217,8 +218,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
             else:
                 fil_name = None
 
-            # print wl_aper[i], fil_name
-
             if fil_name != None:
                 filter_func = phot_filter(fil_name)
                 # Simulated SED should have enough wavelength coverage for applying photometry filters.
@@ -244,14 +243,13 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
                     f_unc = interp1d(sed_dum.wav, sed_dum.unc)
                     flux_aper[i] = f(wl_aper[i])
                     unc_aper[i]  = f_unc(wl_aper[i])
-
     # temperory step: solve issue of uncertainty greater than the value
     for i in range(len(wl_aper)):
         if unc_aper[i] >= flux_aper[i]:
             unc_aper[i] = flux_aper[i] - 1e-20
 
     # perform the same procedure of flux extraction of aperture flux with observed spectra
-    wl_aper = np.array(wl_aper)
+    wl_aper = np.array(wl_aper, dtype=float)
     obs_aper_wl = wl_aper[(wl_aper >= min(wl_tot)) & (wl_aper <= max(wl_tot))]
     obs_aper_sed = np.zeros_like(obs_aper_wl)
     obs_aper_sed_unc = np.zeros_like(obs_aper_wl)
@@ -375,6 +373,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         ax_sed.set_xlim([0, 3])
         # ax_sed.set_ylim([1e-14, 1e-8])
     # calculate the bolometric luminosity of the aperture 
+    print flux_aper
     l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23)
     print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
 
@@ -547,9 +546,12 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
 # indir = '/Users/yaolun/bhr71/obs_for_radmc/'
 # outdir = '/Users/yaolun/bhr71/hyperion/'
+# wl_aper = [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600, 850]
 # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
 # exclude_wl = [5.8,8.0,10.5,11]
 # wl_aper = [3.6, 4.5, 8.5, 9, 9.7, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+# extract_hyperion('/Users/yaolun/test/feature_extraction_test/model1.rtout',indir=indir,outdir='/Users/yaolun/test/feature_extraction_test/',\
+                 # wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle9/model1_ulrich.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/cycle9/',\
                  # wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle9/model34.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/cycle9/',\

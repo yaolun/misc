@@ -65,7 +65,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     if spitzer_only:
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35]
     if herschel_only:
-        wl_aper = [35., 70., 100., 160., 250., 350., 500.]
+        wl_aper = [35., 70., 85., 100., 160., 250., 350., 500.]
+    # test version:
+    # the current wavelength channals: [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600, 850]
     wl_aper = np.array(wl_aper)
 
     # read the observed SED and extract with apertures
@@ -428,9 +430,13 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34)
 
 # 1-D age
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
+#                # 'model_num': np.hstack((34,71))}]
+#                'model_num': np.hstack((np.arange(54,68), 34, 71))}]
+array_list = [{'listpath': '/Users/yaolun/test/feature_extraction_test/model_list.txt',
+               'datapath': '/Users/yaolun/test/feature_extraction_test/',
                # 'model_num': np.hstack((34,71))}]
-               'model_num': np.hstack((np.arange(54,68), 34, 71))}]
+               'model_num': np.arange(1,5)}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=True)
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=3, herschel_only=True)
