@@ -152,8 +152,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 obs_aper_sed[i] = f(wl_aper[i])
                 obs_aper_sed_noise[i] = f_unc(wl_aper[i])
 
-    print obs_aper_sed
-
     # calculate Chi2 from simulated SED
     p1 = []
     p2 = []
@@ -183,17 +181,17 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             ref_params.remove_columns(ignore_col)
             ref_params.remove_column('Model#')
             ref_params = (ref_params[:][model_list['Model#'] == 'Model'+str(ref)])[0].data
-        print wl_aper, type(obs_aper_sed_noise), np.where(wl_aper>100)
-        print obs_aper_sed_noise, obs_aper_sed_noise[wl_aper > 100.]
-        print  obs_aper_sed_noise[wl_aper < 50.],\
-              ( obs_aper_sed_noise[(wl_aper >= 50.) & (wl_aper < 70.)]**2 + (obs_aper_sed[(wl_aper >= 50.) & (wl_aper < 70)]*0.11)**2 )**0.5,\
-              ( obs_aper_sed_noise[(wl_aper >= 70.) & (wl_aper < 200.)]**2 + (obs_aper_sed[(wl_aper >= 70.) & (wl_aper < 200)]*0.12)**2 )**0.5,\
-              ( obs_aper_sed_noise[wl_aper >= 200.]**2 + (obs_aper_sed[wl_aper >= 200.]*0.07)**2 )**0.5
+        # print wl_aper, type(obs_aper_sed_noise), np.where(wl_aper>100)
+        # print obs_aper_sed_noise, obs_aper_sed_noise[wl_aper > 100.]
+        # print  obs_aper_sed_noise[wl_aper < 50.],\
+        #       ( obs_aper_sed_noise[(wl_aper >= 50.) & (wl_aper < 70.)]**2 + (obs_aper_sed[(wl_aper >= 50.) & (wl_aper < 70)]*0.11)**2 )**0.5,\
+        #       ( obs_aper_sed_noise[(wl_aper >= 70.) & (wl_aper < 200.)]**2 + (obs_aper_sed[(wl_aper >= 70.) & (wl_aper < 200)]*0.12)**2 )**0.5,\
+        #       ( obs_aper_sed_noise[wl_aper >= 200.]**2 + (obs_aper_sed[wl_aper >= 200.]*0.07)**2 )**0.5
         yerr = np.hstack(( obs_aper_sed_noise[wl_aper < 50.],\
                           ( obs_aper_sed_noise[(wl_aper >= 50.) & (wl_aper < 70.)]**2 + (obs_aper_sed[(wl_aper >= 50.) & (wl_aper < 70)]*0.11)**2 )**0.5,\
                           ( obs_aper_sed_noise[(wl_aper >= 70.) & (wl_aper < 200.)]**2 + (obs_aper_sed[(wl_aper >= 70.) & (wl_aper < 200)]*0.12)**2 )**0.5,\
                           ( obs_aper_sed_noise[wl_aper >= 200.]**2 + (obs_aper_sed[wl_aper >= 200.]*0.07)**2 )**0.5))
-        print yerr
+        # print yerr
         # yerr = 1e-9 + np.zeros_like(obs_aper_sed)
         ax_sim.errorbar(wl_aper, obs_aper_sed, yerr=yerr, fmt='s', color='DimGray')
         ax_sim.plot(bhr71['spec'][0], c/(bhr71['spec'][0]*1e-4)*bhr71['spec'][1]*1e-23, '-', color='DimGray')

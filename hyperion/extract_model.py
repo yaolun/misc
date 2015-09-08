@@ -156,8 +156,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         ax_sed.fill_between(np.log10(sed_inf.wav), np.log10(sed_inf.val-sed_inf.unc), np.log10(sed_inf.val+sed_inf.unc),\
             color='GoldenRod', alpha=0.5)
     # get flux at different apertures
-    flux_aper = np.zeros_like(wl_aper)
-    unc_aper = np.zeros_like(wl_aper)
+    flux_aper = np.zeros_like(wl_aper, dtype=float)
+    unc_aper = np.zeros_like(wl_aper, dtype=float)
     a = np.zeros_like(wl_aper) + 1
     color_list = plt.cm.jet(np.linspace(0, 1, len(wl_aper)+1))
     for i in range(0, len(wl_aper)):
@@ -544,14 +544,14 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
-# outdir = '/Users/yaolun/bhr71/hyperion/'
-# wl_aper = [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600, 850]
+indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+outdir = '/Users/yaolun/bhr71/hyperion/'
+wl_aper = [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600, 850]
 # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
 # exclude_wl = [5.8,8.0,10.5,11]
 # wl_aper = [3.6, 4.5, 8.5, 9, 9.7, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-# extract_hyperion('/Users/yaolun/test/feature_extraction_test/model1.rtout',indir=indir,outdir='/Users/yaolun/test/feature_extraction_test/',\
-                 # wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
+extract_hyperion('/Users/yaolun/test/feature_extraction_test/model1.rtout',indir=indir,outdir='/Users/yaolun/test/feature_extraction_test/',\
+                 wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle9/model1_ulrich.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/cycle9/',\
                  # wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle9/model34.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/cycle9/',\
