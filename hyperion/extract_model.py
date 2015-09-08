@@ -156,8 +156,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         ax_sed.fill_between(np.log10(sed_inf.wav), np.log10(sed_inf.val-sed_inf.unc), np.log10(sed_inf.val+sed_inf.unc),\
             color='GoldenRod', alpha=0.5)
     # get flux at different apertures
-    flux_aper = np.zeros_like(wl_aper)
-    unc_aper = np.zeros_like(wl_aper)
+    flux_aper = np.zeros_like(wl_aper, dtype=float)
+    unc_aper = np.zeros_like(wl_aper, dtype=float)
     a = np.zeros_like(wl_aper) + 1
     color_list = plt.cm.jet(np.linspace(0, 1, len(wl_aper)+1))
     for i in range(0, len(wl_aper)):
