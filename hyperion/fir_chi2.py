@@ -65,10 +65,10 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     if spitzer_only:
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35]
     if herschel_only:
-        wl_aper = [35., 70., 85., 100., 160., 250., 350., 500.]
+        wl_aper = [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600]
     # test version:
     # the current wavelength channals: [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600, 850]
-    wl_aper = np.array(wl_aper)
+    wl_aper = np.array(wl_aper, dtype=float)
 
     # read the observed SED and extract with apertures
     bhr71 = get_bhr71_obs(obs)
