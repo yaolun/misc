@@ -373,7 +373,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         ax_sed.set_xlim([0, 3])
         # ax_sed.set_ylim([1e-14, 1e-8])
     # calculate the bolometric luminosity of the aperture 
-    print flux_aper
+    # print flux_aper
     l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23)
     print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
 
