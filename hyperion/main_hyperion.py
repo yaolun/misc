@@ -76,6 +76,10 @@ if test == True:
     print 'testing mode...'
     params_table = home + '/programs/misc/hyperion/test_input.txt'
     outdir = home + '/hyperion/bhr71/test/'
+if ellipsoid == True:
+    print 'Running with ellipsoid cavities...'
+    params_table = home + '/programs/misc/hyperion/input_table_ellipsoid.txt'
+    outdir = home + '/hyperion/bhr71/ellipsoid/'
 
 # temp fix for the broken /opt/local/ of bettyjo
 # outdir = home+'/test/hyperion/'
