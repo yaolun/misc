@@ -65,7 +65,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     if spitzer_only:
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35]
     if herschel_only:
-        wl_aper = [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600]
+        wl_aper = [35, 70, 100, 160, 250, 350, 500]
+        # wl_aper = [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600]
     # test version:
     # the current wavelength channals: [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600, 850]
     wl_aper = np.array(wl_aper, dtype=float)
@@ -181,25 +182,19 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             ref_params.remove_columns(ignore_col)
             ref_params.remove_column('Model#')
             ref_params = (ref_params[:][model_list['Model#'] == 'Model'+str(ref)])[0].data
-        # print wl_aper, type(obs_aper_sed_noise), np.where(wl_aper>100)
-        # print obs_aper_sed_noise, obs_aper_sed_noise[wl_aper > 100.]
-        # print  obs_aper_sed_noise[wl_aper < 50.],\
-        #       ( obs_aper_sed_noise[(wl_aper >= 50.) & (wl_aper < 70.)]**2 + (obs_aper_sed[(wl_aper >= 50.) & (wl_aper < 70)]*0.11)**2 )**0.5,\
-        #       ( obs_aper_sed_noise[(wl_aper >= 70.) & (wl_aper < 200.)]**2 + (obs_aper_sed[(wl_aper >= 70.) & (wl_aper < 200)]*0.12)**2 )**0.5,\
-        #       ( obs_aper_sed_noise[wl_aper >= 200.]**2 + (obs_aper_sed[wl_aper >= 200.]*0.07)**2 )**0.5
+
         yerr = np.hstack(( obs_aper_sed_noise[wl_aper < 50.],\
-                          ( obs_aper_sed_noise[(wl_aper >= 50.) & (wl_aper < 70.)]**2 + (obs_aper_sed[(wl_aper >= 50.) & (wl_aper < 70)]*0.11)**2 )**0.5,\
-                          ( obs_aper_sed_noise[(wl_aper >= 70.) & (wl_aper < 200.)]**2 + (obs_aper_sed[(wl_aper >= 70.) & (wl_aper < 200)]*0.12)**2 )**0.5,\
-                          ( obs_aper_sed_noise[wl_aper >= 200.]**2 + (obs_aper_sed[wl_aper >= 200.]*0.07)**2 )**0.5))
-        # print yerr
-        # yerr = 1e-9 + np.zeros_like(obs_aper_sed)
+              ( obs_aper_sed_noise[(wl_aper >= 50.) & (wl_aper < 70.)]**2 + (obs_aper_sed[(wl_aper >= 50.) & (wl_aper < 70)]*0.11)**2 )**0.5,\
+              ( obs_aper_sed_noise[(wl_aper >= 70.) & (wl_aper < 200.)]**2 + (obs_aper_sed[(wl_aper >= 70.) & (wl_aper < 200)]*0.12)**2 )**0.5,\
+              ( obs_aper_sed_noise[wl_aper >= 200.]**2 + (obs_aper_sed[wl_aper >= 200.]*0.07)**2 )**0.5))
+
         ax_sim.errorbar(wl_aper, obs_aper_sed, yerr=yerr, fmt='s', color='DimGray')
         ax_sim.plot(bhr71['spec'][0], c/(bhr71['spec'][0]*1e-4)*bhr71['spec'][1]*1e-23, '-', color='DimGray')
 
         for i in range(0, len(model_num)):
             imod = model_num[i]
-            if (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data not in [100., 1000., 10000., 15000.]:
-                continue
+            # if (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data not in [100., 1000., 10000., 15000.]:
+            #     continue
             model_dum = ascii.read(datapath+'/model'+str(imod)+'_sed_w_aperture.txt')
             obs = {'wave': np.array(wl_aper), 'sed': obs_aper_sed, 'sigma': yerr}
             sim = {'wave': model_dum['wave'].data, 'sed': model_dum['vSv'].data, 'sigma': model_dum['sigma_vSv'].data}
@@ -237,8 +232,12 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 else:
                     print (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data, imod
                     p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
+                    if imod == ref:
+                        ref_p1 = float((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     if fixed == False:
                         p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
+                        if imod == ref:
+                            ref_p2 = float((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     model_label.append(str(imod))
 
                     print reduced_chi2_dum
@@ -273,10 +272,11 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         chi2 = np.squeeze(chi2)
 
         p1 = np.array(p1); chi2 = np.array(chi2)
-
         ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1.5)
         ax.set_xlabel(keywords['label'][0], fontsize=18)
         ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
+        # mark the region where the chi-squared ranging from lowest possible value to double
+        ax.axhspan(chi2[p1*1e4 == ref_p1], 2*chi2[p1*1e4 == ref_p1], color='b', alpha=0.3)
 
         ax.set_yscale('log')
 
@@ -432,9 +432,9 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 #                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
 #                # 'model_num': np.hstack((34,71))}]
 #                'model_num': np.hstack((np.arange(54,68), 34, 71))}]
-array_list = [{'listpath': '/Users/yaolun/test/feature_extraction_test/model_list.txt',
-               'datapath': '/Users/yaolun/test/feature_extraction_test/',
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
                # 'model_num': np.hstack((34,71))}]
-               'model_num': np.arange(1,5)}]
+               'model_num': np.hstack((np.arange(72,84),34))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=3, herschel_only=True)
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=True)
