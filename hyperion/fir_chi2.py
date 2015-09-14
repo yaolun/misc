@@ -435,6 +435,6 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
                # 'model_num': np.hstack((34,71))}]
-               'model_num': np.hstack((np.arange(72,81),34))}]
+               'model_num': np.hstack((np.arange(72,84),34))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=True)
