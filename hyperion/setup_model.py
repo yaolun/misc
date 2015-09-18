@@ -65,8 +65,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                        temp_min=0.1,
                        temp_max=2000.)
     #
-    d.write(outdir+'oh5.hdf5')
-    d.plot(outdir+'oh5.png')
+    d.write(outdir+os.path.basename(dust_file).split('.')[0]+'.hdf5')
+    d.plot(outdir+os.path.basename(dust_file).split('.')[0]+'.png')
     plt.clf()
 
     # Grids and Density
@@ -686,7 +686,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
             # use the index of wavelength array used by the monochromatic radiative transfer
             if mono == False:
-                dict_peel_sed[str(name[i])].set_wavelength_range(1300, 2.0, 1300.0)
+                # dict_peel_sed[str(name[i])].set_wavelength_range(1300, 2.0, 1300.0)
+                dict_peel_sed[str(name[i])].set_wavelength_range(1000, 2.0, 1000.0)
             dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
             # aperture should be given in cm
             dict_peel_sed[str(name[i])].set_aperture_range(1, aper_dum, aper_dum)
@@ -913,9 +914,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 # filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
 # params = input_reader_table(filename)
 # pprint(params[0])
-# indir = '/Users/yaolun/bhr71/hyperion/cycle9/'
+# indir = '/Users/yaolun/test/'
 # outdir = '/Users/yaolun/test/'
 # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+# dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)2opc.txt'
 # fix_params = {'R_min': 0.14}
-# setup_model(indir,outdir,'model34_ellipsoid',params[0],dust_file,plot=True,record=False,\
-#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=True)
+# setup_model(indir,outdir,'model_test_1e4_ics_gra2opc',params[0],dust_file,plot=True,record=False,\
+#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)

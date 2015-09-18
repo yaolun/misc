@@ -44,7 +44,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 unc_2 = (sim['sed'][sim['wave'] == w]/obs['sed'][obs['wave'] == w])**2 *\
                         ( (sim['sigma'][sim['wave'] == w]/sim['sed'][sim['wave'] == w])**2 + (obs['sigma'][obs['wave'] == w]/obs['sed'][obs['wave'] == w])**2 )
                 # unc_2 = 1
-                print w, val, unc_2**0.5
+                # print w, val, unc_2**0.5
                 chi2 = chi2 + val**2 / unc_2
         else:
             # not proper functioning at this moment
@@ -435,6 +435,6 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
                # 'model_num': np.hstack((34,71))}]
-               'model_num': np.hstack((np.arange(72,84),34))}]
+               'model_num': np.hstack((np.arange(72,86),34))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=True)
