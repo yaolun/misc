@@ -81,9 +81,6 @@ if ellipsoid == True:
     params_table = home + '/programs/misc/hyperion/input_table_ellipsoid.txt'
     outdir = home + '/hyperion/bhr71/ellipsoid/'
 
-# temp fix for the broken /opt/local/ of bettyjo
-# outdir = home+'/test/hyperion/'
-# obs_dir = home+'/bhr71/obs_for_radmc/'
 
 params = input_reader_table(params_table)
 
