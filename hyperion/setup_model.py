@@ -690,7 +690,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                 dict_peel_sed[str(name[i])].set_wavelength_range(1000, 2.0, 1000.0)
             dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
             # aperture should be given in cm
-            dict_peel_sed[str(name[i])].set_aperture_range(1, aper_dum, aper_dum)
+            dict_peel_sed[str(name[i])].set_aperture_radii(1, aper_dum, aper_dum)
             dict_peel_sed[str(name[i])].set_uncertainties(True)
             dict_peel_sed[str(name[i])].set_output_bytes(8)
 
@@ -745,7 +745,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                 dict_peel_sed[str(name[i])].set_wavelength_range(1300, 2.0, 1300.0)
             dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
             # aperture should be given in cm
-            dict_peel_sed[str(name[i])].set_aperture_range(1, aper_dum, aper_dum)
+            dict_peel_sed[str(name[i])].set_aperture_radii(1, aper_dum, aper_dum)
             dict_peel_sed[str(name[i])].set_uncertainties(True)
             dict_peel_sed[str(name[i])].set_output_bytes(8)
 
