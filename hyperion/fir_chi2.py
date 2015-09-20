@@ -280,6 +280,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
 
         ax.set_yscale('log')
 
+        # ax.set_xlim([0.5, 2])
+        # ax.set_ylim([10, 100])
+
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on() 
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
@@ -435,6 +438,6 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
                # 'model_num': np.hstack((34,71))}]
-               'model_num': np.hstack((np.arange(72,86),34))}]
+               'model_num': np.hstack((np.arange(72,94),34))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=True)
