@@ -98,12 +98,12 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         #  in: size along minor axis
         # z is the offset of the center of the ellipsoid w.r.t. to the origin
         # in & out stand for inner and outer ellipsoids.  Both of them hav the same shape.
-        a_out = 130 * 178. * AU
-        b_out = 50  * 178. * AU
+        a_out = 130 * dstar. * AU
+        b_out = 50  * dstar. * AU
         z_out = a_out
-        # a_in  = 77.5 * 178. * AU
-        # b_in  = 30   * 178. * AU
-        a_in  = dict_params['a_in'] * 178. * AU
+        # a_in  = 77.5 * dstar. * AU
+        # b_in  = 30   * dstar. * AU
+        a_in  = dict_params['a_in'] * dstar. * AU
         b_in  = a_in/a_out*b_out
         z_in  = a_in
         # rho_cav_out = 1e4 * mh
@@ -140,7 +140,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     if fix_params != None:
         if 'R_min' in fix_params.keys():
             R_disk_min = fix_params['R_min']*AU
-            R_env_min  = fix_params['R_min']*AU
+            R_env_min  = fix_params['R_min']*AU            
 
     # Make the Coordinates
     #
@@ -204,7 +204,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         # Envelope profile
                         w = abs(rc[ir]*np.cos(np.pi/2 - thetac[itheta]))
                         z = rc[ir]*np.sin(np.pi/2 - thetac[itheta])
-
+                        # return the boolean for cavity
                         if ellipsoid == False:
                             z_cav = c0*abs(w)**1.5
                             if z_cav == 0:
@@ -213,6 +213,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         else:
                             # condition for the outer ellipsoid
                             cav_con = (2*(w/b_out)**2 + ((abs(z)-z_out)/a_out)**2) < 1
+
                         if cav_con:
                             # open cavity
                             if ellipsoid == False:
@@ -459,8 +460,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         plot_grid = [0,49,99,149,199]
         alpha = np.linspace(0.3,1.0,len(plot_grid))
         for i in plot_grid:
-            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
-            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(100*rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(100*rho_env_tsc2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
         rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
         cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
         # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
