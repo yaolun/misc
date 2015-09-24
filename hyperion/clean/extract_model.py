@@ -54,7 +54,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     # path to the script for extracting the observation data
     sys.path.append(os.path.expanduser('~')+'/programs/spectra_analysis/')
     from phot_filter import phot_filter
-    from get_bhr71_obs import get_bhr71_obs
+    from get_obs import get_obs
 
     # Read in the observation data and calculate the noise & variance
     if indir == None:
@@ -66,7 +66,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     print_name = os.path.splitext(os.path.basename(filename))[0]
 
     # use a canned function to extract BHR71 observational data
-    bhr71 = get_bhr71_obs(indir)        # unit in um, Jy
+    bhr71 = get_obs(indir)        # unit in um, Jy
     wl_tot, flux_tot, unc_tot = bhr71['spec']
     flux_tot = flux_tot*1e-23    # convert unit from Jy to erg s-1 cm-2 Hz-1
     unc_tot = unc_tot*1e-23

@@ -213,7 +213,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 if fixed == False:
                     p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
                 model_label.append(str(imod))
-                print reduced_chi2_dum
+                # print reduced_chi2_dum
                 chi2.extend(reduced_chi2_dum)
             else:
                 # get other parameters of model i
@@ -230,7 +230,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 if compare(ref_params, dum_params) == False:
                     continue
                 else:
-                    print (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data, imod
+                    # print (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data, imod
                     p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     if imod == ref:
                         ref_p1 = float((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
@@ -240,7 +240,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                             ref_p2 = float((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     model_label.append(str(imod))
 
-                    print reduced_chi2_dum
+                    # print reduced_chi2_dum
                     chi2.extend(reduced_chi2_dum)
 
 
@@ -280,6 +280,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
 
         ax.set_yscale('log')
 
+        # ax.set_xlim([0.5, 2])
+        # ax.set_ylim([10, 100])
+
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on() 
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
@@ -316,6 +319,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
 
         z = griddata((p1_norm, p2_norm), chi2, (x[None,:], y[:,None]), method='cubic')
         if z.min() < 0:
+            print 'Minimum of z is below zero.  Change the interpolation method to linear'
             z = griddata((p1_norm, p2_norm), chi2, (x[None,:], y[:,None]), method='linear')
 
         # print z.min()
@@ -385,7 +389,7 @@ import numpy as np
 #                'model_num': np.arange(39,49)}]
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
-               'model_num': np.arange(1,131)}]
+               'model_num': np.arange(1,26)}]
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
 #                'model_num': np.arange(1,77)}]
@@ -396,15 +400,18 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.tx
 # keywords = {'col':['age','rho_cav_edge'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}
 # keywords = {'col':['age','rho_cav_center'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$']}
 # keywords = {'col':['rho_cav_center','rho_cav_edge'], 'label': [r'$\rm{\rho_{cav,\circ}\,[g\,cm^{-3}]}$', r'$\rm{R_{cav,\circ}\,[AU]}$']}
-keywords_list = [{'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{cav}\,[deg.]}$']},\
-                 {'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']},\
-                 {'col':['view_angle','theta_cav'], 'label': [r'$\rm{\theta_{incl}\,[deg.]}$', r'$\rm{\theta_{cav}\,[deg.]}$']}]
-keywords_list = [{'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
+# keywords_list = [{'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{cav}\,[deg.]}$']},\
+#                  {'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']},\
+#                  {'col':['view_angle','theta_cav'], 'label': [r'$\rm{\theta_{incl}\,[deg.]}$', r'$\rm{\theta_{cav}\,[deg.]}$']}]
+# keywords_list = [{'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
+keywords_list = [{'col':['theta_cav','view_angle'], 'label': [r'$\rm{\theta_{cav}\,[deg.]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
-# for keywords in keywords_list:
-#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=32)
-#     fir_chi2_2d(array_list, keywords, obs)
+for keywords in keywords_list:
+    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=7)
+    for i in range(len(p1)):
+        print p1[i], p2[i], chi2[i]
+    fir_chi2_2d(array_list, keywords, obs)
 
 # # 1-D rho_cav_center
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
@@ -432,9 +439,10 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 #                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
 #                # 'model_num': np.hstack((34,71))}]
 #                'model_num': np.hstack((np.arange(54,68), 34, 71))}]
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
-               # 'model_num': np.hstack((34,71))}]
-               'model_num': np.hstack((np.arange(72,86),34))}]
-keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=True)
+
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
+#                # 'model_num': np.hstack((34,71))}]
+#                'model_num': np.hstack((np.arange(72,94),34))}]
+# keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
+# fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=True)

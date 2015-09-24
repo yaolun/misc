@@ -22,6 +22,7 @@ better_im = False
 chi2 = False
 test = False
 ellipsoid = False
+dstar = 178.
 fix_params = {}
 
 # Get command-line arguments
@@ -126,7 +127,7 @@ if extract_only == False:
 
         m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,\
             idl=True,record=record,mono=mono,wl_aper=wl_aper,fix_params=fix_params,alma=alma,power=power,\
-            better_im=better_im,ellipsoid=ellipsoid)
+            better_im=better_im,ellipsoid=ellipsoid,dstar=dstar)
         if run == False:
             print 'Hyperion run is skipped. Make sure you have run this model before'
         else:

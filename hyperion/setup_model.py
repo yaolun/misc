@@ -499,8 +499,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         plot_grid = [0,49,99,149,199]
         alpha = np.linspace(0.3,1.0,len(plot_grid))
         for i in plot_grid:
-            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
-            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(100*rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(100*rho_env_tsc2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
         rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
         cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
         # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
@@ -793,8 +793,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                 aper[ind] = 24.5
             ind += 1
 
-        # In[107]:
-
         # Write the wavelength_micron.inp file
         #
         f_wave = open(outdir+'wavelength_micron.inp','w')
@@ -810,7 +808,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         for ilam in range(0,nlam):
             f_wave_cam.write('%f \n' % lam[ilam])
         f_wave_cam.close()
-        # In[108]:
 
         # Write the aperture_info.inp
         #
@@ -835,9 +832,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         f_star.write('%f \n' % -tstar)
         f_star.close()
 
-
-        # In[109]:
-
         # Write the grid file
         #
         f_grid = open(outdir+'amr_grid.inp','w')
@@ -851,9 +845,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         [f_grid.write('%f \n' % thetai[itheta]) for itheta in range(0,len(thetai))]
         [f_grid.write('%f \n' % phii[iphi]) for iphi in range(0,len(phii))]
         f_grid.close()
-
-
-        # In[110]:
 
         # Write the density file
         #
@@ -875,8 +866,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         for i in range(len(dust['nu'])):
             f_dustkappa.write('%f \t %f \t %f \t %f \n' % (c/dust['nu'][i]*1e4, dust['chi'][i], dust['chi'][i]*dust['albedo'][i]/(1-dust['albedo'][i]), dust['g'][i]))
         f_dustkappa.close()
-
-        # In[111]:
 
         # Write the Dust opacity control file
         # 
@@ -909,15 +898,15 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     return m
 
 
-from input_reader import input_reader_table
-from pprint import pprint
-filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-params = input_reader_table(filename)
-pprint(params[0])
-indir = '/Users/yaolun/test/'
-outdir = '/Users/yaolun/test/'
+# from input_reader import input_reader_table
+# from pprint import pprint
+# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+# params = input_reader_table(filename)
+# pprint(params[0])
+# indir = '/Users/yaolun/test/'
+# outdir = '/Users/yaolun/test/'
 # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)2opc.txt'
-fix_params = {'R_min': 0.14}
-setup_model(indir,outdir,'model_test_1e4_ics_gra2opc',params[0],dust_file,plot=True,record=False,\
-    idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)
+# dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)2opc.txt'
+# fix_params = {'R_min': 0.14}
+# setup_model(indir,outdir,'model_test_1e4_ics_gra2opc',params[0],dust_file,plot=True,record=False,\
+#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)
