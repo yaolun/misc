@@ -149,7 +149,7 @@ if extract_only == False:
         # calculate the initial dust profile
         # option to fix some parameter
         fix_params = {'R_min': 0.14}
-        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dict_path['dust_file'],\
+        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,home+dict_path['dust_file'],\
             plot=True,idl=True,record=record,mono=mono,aperture=aperture,fix_params=fix_params,alma=alma,\
             power=power,better_im=better_im,ellipsoid=ellipsoid,TSC_dir=dict_path['TSC_dir'],\
             IDL_path=dict_path['IDL_path'])
