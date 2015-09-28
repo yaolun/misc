@@ -1,4 +1,4 @@
-# All paths are related to home directory
+# All paths are related to home directory, except for IDL_path
 input_table		/programs/misc/hyperion/
 outdir 			/hyperion/bhr71/
 dust_file		/programs/misc/oh5_hyperion.txt
