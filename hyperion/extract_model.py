@@ -108,7 +108,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
 
     # Plot the observed SED
     if not clean:
-        color_seq = ['Green','Red','Blue']
+        color_seq = ['Green','Red','Black']
     else:
         color_seq = ['DimGray','DimGray','DimGray']
     # plot the observations
