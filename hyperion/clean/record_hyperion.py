@@ -3,8 +3,8 @@ def record_hyperion(dict_params, outdir):
 	import os
 	from pprint import pprint
 
-	# colhead = ('Model#','M_env_dot','R_cen','R_inf','tstar','R_env_max','theta_cav','rho_cav_center','rho_cav_edge','rstar','M_disk_dot',\
-			   # 'M_disk','beta','h100','rho_cav','d_sub','age','Cs','Omega0','percentile','absolute','relative','view_angle')
+	# the column head of the output record table
+	# If this is changed, make sure change the output tuple at the end of this function as well.
 	colhead = ('Model#','age','Cs','Omega0','tstar','R_env_max','theta_cav','rho_cav_center','rho_cav_edge','rstar','M_disk_dot',\
 			   'M_disk','beta','h100','rho_cav','d_sub','M_env_dot','R_inf','R_cen','mstar','percentile','absolute','relative','view_angle','total_mass')
 
