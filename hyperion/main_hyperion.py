@@ -165,7 +165,7 @@ if extract_only == False:
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
         print 'Seems finish, lets check out the results'
-        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True)
+        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=home+dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True)
         temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
     print 'You are entering the extract-only mode...'
@@ -181,6 +181,6 @@ else:
         print 'Extracting Model'+str(i)
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
-        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True)
+        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True)
         if temp == True:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
