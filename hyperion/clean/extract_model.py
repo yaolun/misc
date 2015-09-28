@@ -52,27 +52,30 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     from astropy.io import ascii
     import sys
     # path to the script for extracting the observation data
-    sys.path.append(os.path.expanduser('~')+'/programs/spectra_analysis/')
+    # sys.path.append(os.path.expanduser('~')+'3DModels/B335')
+    # put phot_filter in run directory (NJE)
     from phot_filter import phot_filter
     from get_obs import get_obs
 
     # Read in the observation data and calculate the noise & variance
     if indir == None:
-        indir = '/Users/yaolun/bhr71/'
+        indir = '/Users/nje/3DModels/B335/Test/'
+    # edited by NJE
     if outdir == None:
-        outdir = '/Users/yaolun/bhr71/hyperion/'
+    # edited by NJE
+        outdir = '/Users/nje/3DModels/B335/Test/'
 
     # assign the file name from the input file
     print_name = os.path.splitext(os.path.basename(filename))[0]
 
-    # use a canned function to extract BHR71 observational data
-    bhr71 = get_obs(indir)        # unit in um, Jy
-    wl_tot, flux_tot, unc_tot = bhr71['spec']
+    # use a canned function to extract B335 observational data
+    b335 = get_obs(indir)        # unit in um, Jy
+    wl_tot, flux_tot, unc_tot = b335['spec']
     flux_tot = flux_tot*1e-23    # convert unit from Jy to erg s-1 cm-2 Hz-1
     unc_tot = unc_tot*1e-23
-    l_bol_obs = l_bol(wl_tot, flux_tot*1e23)
+    l_bol_obs = l_bol(wl_tot, flux_tot*1e23,dist=dstar)
 
-    wl_phot, flux_phot, flux_sig_phot = bhr71['phot']
+    wl_phot, flux_phot, flux_sig_phot = b335['phot']
     flux_phot = flux_phot*1e-23   # convert unit from Jy to erg s-1 cm-2 Hz-1
     flux_sig_phot = flux_sig_phot*1e-23             
 
@@ -80,7 +83,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     m = ModelOutput(filename)
 
     if wl_aper == None:
-        wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        wl_aper = [3.6, 4.5, 5.8, 8.0, 24, 35, 60, 80, 100, 160, 250, 350, 500, 850, 1300]
 
     # Create the plot
     mag = 1.5
@@ -150,6 +153,12 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
         # if (wl_aper[i] == 5.8) or (wl_aper[i] == 8.0) or (wl_aper[i] == 10.5) or (wl_aper[i] == 11):
         #     continue
         sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc, uncertainties=True)
+        # sort by wavelength first.  The numpy trapz function seems to have problem with that
+        sort_wl = np.argsort(sed_dum.wav)
+        val_sort = sed_dum.val[sort_wl]
+        unc_sort = sed_dum.unc[sort_wl]
+        wav_sort = sed_dum.wav[sort_wl]
+        #
         if plot_all == True:
             ax_sed.plot(np.log10(sed_dum.wav), np.log10(sed_dum.val),'-', color=color_list[i])
             ax_sed.fill_between(np.log10(sed_dum.wav), np.log10(sed_dum.val-sed_dum.unc), np.log10(sed_dum.val+sed_dum.unc),\
@@ -205,8 +214,11 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
             if fil_name != None:
                 filter_func = phot_filter(fil_name)
                 # Simulated SED should have enough wavelength coverage for applying photometry filters.
-                f = interp1d(sed_dum.wav, sed_dum.val)
-                f_unc = interp1d(sed_dum.wav, sed_dum.unc)
+                # print fil_name, sed_dum.wav, filter_func
+                # f = interp1d(sed_dum.wav, sed_dum.val)
+                # f_unc = interp1d(sed_dum.wav, sed_dum.unc)
+                f = interp1d(wav_sort, val_sort)
+                f_unc = interp1d(wav_sort, unc_sort)
                 flux_aper[i] = np.trapz(filter_func['wave']/1e4, f(filter_func['wave']/1e4)*filter_func['transmission'])/np.trapz(filter_func['wave']/1e4, filter_func['transmission'])
                 unc_aper[i] = abs(np.trapz((filter_func['wave']/1e4)**2, (f_unc(filter_func['wave']/1e4)*filter_func['transmission'])**2))**0.5 / abs(np.trapz(filter_func['wave']/1e4, filter_func['transmission']))
             else:
@@ -341,7 +353,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
 
     # calculate the bolometric luminosity of the aperture 
     # print flux_aper
-    l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23)
+    l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23,dist=dstar)
     print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
 
     # print out the sed into ascii file for reading in later
@@ -480,9 +492,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,wl_aper=None,sa
     fig.savefig(outdir+print_name+'_cube_plot.png', format='png', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
-# outdir = '/Users/yaolun/bhr71/hyperion/'
+# indir = '/Users/yaolun/b335/obs_for_radmc/'
+# outdir = '/Users/yaolun/b335/hyperion/'
 # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
 # exclude_wl = [5.8,8.0,10.5,11]
-# extract_hyperion('/Users/yaolun/bhr71/hyperion/cycle9/model34.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/cycle9/',\
+# extract_hyperion('/Users/yaolun/b335/hyperion/cycle9/model34.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/cycle9/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)

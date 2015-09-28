@@ -54,33 +54,69 @@ if 'ellipsoid' in sys.argv:
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
 # path setting
+# home = os.path.expanduser('~')
+# outdir = home + '/hyperion/bhr71/'
+# dust_file = home + '/programs/misc/oh5_hyperion.txt'
+# params_table = home + '/programs/misc/hyperion/input_table.txt'
+# obs_dir = home + '/radmc_simulation/bhr71/cycle1/observations/'
+#
+# path setting version 1.1
+# The path file "run_hyperion_path.txt" has to be placed at the same directory as main_hyperion.py
 home = os.path.expanduser('~')
-outdir = home + '/hyperion/bhr71/'
-# dust_file = home + '/programs/misc/dustkappa_oh5_extended.inp'
-dust_file = home + '/programs/misc/oh5_hyperion.txt'
-params_table = home + '/programs/misc/hyperion/input_table.txt'
-obs_dir = home + '/radmc_simulation/bhr71/cycle1/observations/'
+path_list = np.genfromtxt('run_hyperion_path.txt', dtype=str).T
+dict_path = {}
+for name, val in zip(path_list[0],path_list[1]):
+    dict_path[name] = val
+print 'Current path setting --'
+pprint(dict_path)
+#
+# Read in aperture info - under obs_dir with filename "aperture.txt"
+wl_aper, aper_arcsec = np.genfromtxt(home+dict_path['obs_dir']+'aperture.txt', skip_header=1, dtype=float).T
+aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
+# wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+#
+# if control == True:
+#     print 'Running the controlled grids for paper...'
+#     params_table = home + '/programs/misc/hyperion/input_table_control.txt'
+#     outdir = home + '/hyperion/bhr71/controlled/'
+# if alma == True:
+#     print 'Running for ALMA proposal...'
+#     params_table = home + '/programs/misc/hyperion/input_table_alma.txt'
+#     outdir = home + '/hyperion/bhr71/alma/'
+# if chi2 == True:
+#     print 'Running for chi2 grid...'
+#     params_table = home + '/programs/misc/hyperion/input_table_chi2.txt'
+#     outdir = home + '/hyperion/bhr71/chi2_grid/'
+# if test == True:
+#     print 'testing mode...'
+#     params_table = home + '/programs/misc/hyperion/test_input.txt'
+#     outdir = home + '/hyperion/bhr71/test/'
+# if ellipsoid == True:
+#     print 'Running with ellipsoid cavities...'
+#     params_table = home + '/programs/misc/hyperion/input_table_ellipsoid.txt'
+#     outdir = home + '/hyperion/bhr71/ellipsoid/'
 if control == True:
     print 'Running the controlled grids for paper...'
-    params_table = home + '/programs/misc/hyperion/input_table_control.txt'
-    outdir = home + '/hyperion/bhr71/controlled/'
+    params_table = home + dict_path['params']+'input_table_control.txt'
+    outdir = home + dict_path['outdir']+'controlled/'
 if alma == True:
     print 'Running for ALMA proposal...'
-    params_table = home + '/programs/misc/hyperion/input_table_alma.txt'
-    outdir = home + '/hyperion/bhr71/alma/'
+    params_table = home + dict_path['params']+'input_table_alma.txt'
+    outdir = home + dict_path['outdir']+'alma/'
 if chi2 == True:
     print 'Running for chi2 grid...'
-    params_table = home + '/programs/misc/hyperion/input_table_chi2.txt'
-    outdir = home + '/hyperion/bhr71/chi2_grid/'
+    params_table = home + dict_path['params']+'input_table_chi2.txt'
+    outdir = home + dict_path['outdir']+'chi2_grid/'
 if test == True:
     print 'testing mode...'
-    params_table = home + '/programs/misc/hyperion/test_input.txt'
-    outdir = home + '/hyperion/bhr71/test/'
+    params_table = home + dict_path['params']+'test_input.txt'
+    outdir = home + dict_path['outdir']+'test/'
 if ellipsoid == True:
     print 'Running with ellipsoid cavities...'
-    params_table = home + '/programs/misc/hyperion/input_table_ellipsoid.txt'
-    outdir = home + '/hyperion/bhr71/ellipsoid/'
-
+    params_table = home + dict_path['params']+'input_table_ellipsoid.txt'
+    outdir = home + dict_path['outdir']+'ellipsoid/'
+if params_table in locals() == False:
+    params_table = home+dict_path['params']+'input_table.txt'
 
 params = input_reader_table(params_table)
 
@@ -111,18 +147,12 @@ if extract_only == False:
         print 'Model'+str(int(model_num)+i)
         pprint(params_dict)
         # calculate the initial dust profile
-        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-        # for feature extraction test
-        # wl_aper = [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600, 850]
-        # # old version of aperture list
-        # wl_aper = [3.6, 4.5, 5.8, 8.0, 9, 9.7, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-        # # older varsion
-        # wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
         # option to fix some parameter
         fix_params = {'R_min': 0.14}
-        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dust_file,plot=True,\
-            idl=True,record=record,mono=mono,wl_aper=wl_aper,fix_params=fix_params,alma=alma,power=power,\
-            better_im=better_im,ellipsoid=ellipsoid)
+        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,dict_path['dust_file'],\
+            plot=True,idl=True,record=record,mono=mono,aperture=aperture,fix_params=fix_params,alma=alma,\
+            power=power,better_im=better_im,ellipsoid=ellipsoid,TSC_dir=dict_path['TSC_dir'],\
+            IDL_path=dict_path['IDL_path'])
         if run == False:
             print 'Hyperion run is skipped. Make sure you have run this model before'
         else:
@@ -131,18 +161,11 @@ if extract_only == False:
             hyp_foo = open(outdir_dum+'hyperion.log','w')
             hyp_err = open(outdir_dum+'hyperion.err','w')
             run = Popen(['mpirun','-n',str(core_num),'hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'], stdout=hyp_foo, stderr=hyp_err)
-            # print 'mpirun -n %s hyperion_sph_mpi -f %s %s' % (str(core_num), outdir_dum+'model'+str(int(model_num)+i)+'.rtin', outdir_dum+'model'+str(int(model_num)+i)+'.rtout')
-            # run = call(['mpirun','-n',str(core_num),'hyperion_sph_mpi','-f',outdir_dum+'model'+str(int(model_num)+i)+'.rtin',outdir_dum+'model'+str(int(model_num)+i)+'.rtout'],\
-            #             shell=True, stdout=hyp_foo, stderr=hyp_err)
-            # while run.poll() == None:
-                # time.sleep(30)
             run.communicate()
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
         print 'Seems finish, lets check out the results'
-        # import pdb
-        # pdb.set_trace()
-        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper,filter_func=True)
+        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True)
         temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
     print 'You are entering the extract-only mode...'
@@ -156,17 +179,8 @@ else:
         outdir_dum = outdir+'model'+str(i)+'/'
         # print out some information about the current calculating model
         print 'Extracting Model'+str(i)
-        # calculate the initial dust profile
-        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-        # for feature extraction test
-        # wl_aper = [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600, 850]
-        # # old version of aperture list
-        # wl_aper = [3.6, 4.5, 5.8, 8.0, 9, 9.7, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-        # # older varsion
-        # wl_aper = [3.6, 4.5, 5.8, 8.0, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-        # option to fix some parameter
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
-        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper,filter_func=True)
+        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True)
         if temp == True:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)

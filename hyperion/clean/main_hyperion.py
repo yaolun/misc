@@ -22,7 +22,7 @@ better_im = False
 chi2 = False
 test = False
 ellipsoid = False
-dstar = 178.
+dstar = 100
 fix_params = {}
 
 # Get command-line arguments
@@ -57,35 +57,35 @@ print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 # path setting
 home = os.path.expanduser('~')
 # output directory
-outdir = home + '/hyperion/bhr71/'
+outdir = home + '/3DModels/B335/Test/'
 # path to dust model
-dust_file = home + '/programs/misc/oh5_hyperion.txt'
+dust_file = home + '/3DModels/B335/Scripts/oh5_hyperion.txt'
 # path to parameters table
-params_table = home + '/programs/misc/hyperion/input_table.txt'
+params_table = home + '/3DModels/B335/Scripts/input_table.txt'
 # path to observation data
-obs_dir = home + '/radmc_simulation/bhr71/cycle1/observations/'
+obs_dir = home + '/3DModels/B335/Scripts/obs_data/'
 
 # user custom option for running different group of models
 if control == True:
     print 'Running the controlled grids for paper...'
     params_table = home + '/programs/misc/hyperion/input_table_control.txt'
-    outdir = home + '/hyperion/bhr71/controlled/'
+    outdir = home + '/hyperion/b335/controlled/'
 if alma == True:
     print 'Running for ALMA proposal...'
     params_table = home + '/programs/misc/hyperion/input_table_alma.txt'
-    outdir = home + '/hyperion/bhr71/alma/'
+    outdir = home + '/hyperion/b335/alma/'
 if chi2 == True:
     print 'Running for chi2 grid...'
     params_table = home + '/programs/misc/hyperion/input_table_chi2.txt'
-    outdir = home + '/hyperion/bhr71/chi2_grid/'
+    outdir = home + '/hyperion/b335/chi2_grid/'
 if test == True:
     print 'testing mode...'
     params_table = home + '/programs/misc/hyperion/test_input.txt'
-    outdir = home + '/hyperion/bhr71/test/'
+    outdir = home + '/hyperion/b335/test/'
 if ellipsoid == True:
     print 'Running with ellipsoid cavities...'
     params_table = home + '/programs/misc/hyperion/input_table_ellipsoid.txt'
-    outdir = home + '/hyperion/bhr71/ellipsoid/'
+    outdir = home + '/hyperion/b335/ellipsoid/'
 
 params = input_reader_table(params_table)
 
@@ -102,7 +102,7 @@ else:
 
 # define the wavelength where the spectrophotometry extraction will perform.
 # The wavelengths should be within the range of the observed spectrum
-wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+wl_aper = [3.6, 4.5, 5.8, 8.0, 24, 35, 60, 80, 100, 160, 250, 350, 500, 850, 1300]
 
 if extract_only == False:
     model_num = str(int(last_model_num)+1)
@@ -141,7 +141,7 @@ if extract_only == False:
         # the indir here is the dir that contains the observed spectra.
         print 'Seems finish, lets check out the results'
 
-        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper,filter_func=True)
+        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper,filter_func=True,dstar=dstar)
         temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
     print 'You are entering the extract-only mode...'
@@ -158,6 +158,6 @@ else:
         
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
-        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper,filter_func=True)
+        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=obs_dir,outdir=outdir_dum,wl_aper=wl_aper,filter_func=True,dstar=dstar)
         if temp == True:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)

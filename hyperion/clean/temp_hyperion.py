@@ -8,8 +8,8 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     import astropy.constants as const
     from matplotlib.colors import LogNorm
 
-    # seaborn colormap
-    import seaborn.apionly as sns
+    # # seaborn colormap
+    # import seaborn.apionly as sns
 
     # constants setup
     AU = const.au.cgs.value

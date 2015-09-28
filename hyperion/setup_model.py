@@ -1,8 +1,14 @@
-def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,\
+def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,plot=False,\
                 low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,\
-                wl_aper=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False):
+                aperture=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False,\
+                TSC_dir='~/programs/misc/TSC/', IDL_path='/opt/local/exelis/idl83/bin/idl'):
     """
     params = dictionary of the model parameters
+    alma keyword is obsoleted 
+    outdir: The directory for storing Hyperion input files
+    record_dir: The directory contains "model_list.txt" for recording parameters
+    TSC_dir: Path the TSC-related IDL routines
+    IDL_path: The IDL executable 
     """
     import numpy as np
     import astropy.constants as const
@@ -144,7 +150,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # print the variables for radmc3d
     print 'Dust sublimation radius %6f AU' % (d_sub/AU)
     print 'M_star %4f Solar mass' % (mstar/MS)
-    print R_inf / AU
+    print 'Infall radius %4f AU' % (R_inf / AU)
 
 
     # if there is any parameter found in fix_params, then fix them
@@ -294,8 +300,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
             # idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
-            idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
-            idl('.r ~/programs/misc/TSC/tsc.pro')
+            idl = pidly.IDL(IDL_path)
+            idl('.r '+TSC_dir+'tsc.pro')
             # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
             # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)])) # min([R_inf,max(ri)])
             #
@@ -447,7 +453,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # Record the input and calculated parameters
         params = dict_params.copy()
         params.update({'d_sub': d_sub/AU, 'M_env_dot': M_env_dot/MS*yr, 'R_inf': R_inf/AU, 'R_cen': R_cen/AU, 'mstar': mstar/MS, 'total_mass': total_mass})
-        record_hyperion(params,outdir_global)
+        record_hyperion(params,record_dir)
 
     if plot == True:
         # rc setting
@@ -576,31 +582,11 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     n01     = 10.0
     n12     = 20.0
     n23     = 50.0
-    # n23     = (lambda3-lambda2)/2
-    # n34     = (lambda4-lambda3)/2
-    # n45     = (lambda5-lambda4)/2
-    # n56     = (lambda6-lambda5)/2
-    # n23     = (lambda3-lambda2)/0.02
-    # n34     = (lambda4-lambda3)/0.03
-    # n45     = (lambda5-lambda4)/0.1
-    # n56     = (lambda6-lambda5)/0.1
-
 
     lam01   = lambda0 * (lambda1/lambda0)**(np.arange(n01)/n01)
     lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
     lam23   = lambda2 * (lambda6/lambda2)**(np.arange(n23+1)/n23)
-    # lam34   = lambda3 * (lambda4/lambda3)**(np.arange(n34)/n34)
-    # lam45   = lambda4 * (lambda5/lambda4)**(np.arange(n45)/n45)
-    # lam56   = lambda5 * (lambda6/lambda5)**(np.arange(n56+1)/n56)
 
-    # lam01   = lambda0 * (lambda1/lambda0)**(np.arange(n01)/n01)
-    # lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
-    # lam23   = lambda2 * (lambda3/lambda2)**(np.arange(n23)/n23)
-    # lam34   = lambda3 * (lambda4/lambda3)**(np.arange(n34)/n34)
-    # lam45   = lambda4 * (lambda5/lambda4)**(np.arange(n45)/n45)
-    # lam56   = lambda5 * (lambda6/lambda5)**(np.arange(n56+1)/n56)
-
-    # lam     = np.concatenate([lam01,lam12,lam23,lam34,lam45,lam56])
     lam      = np.concatenate([lam01,lam12,lam23])
     nlam    = len(lam)
 
@@ -623,7 +609,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # Radiative transfer setting
 
     # number of photons for temp and image
-    # [3.6, 4.5, 5.8, 8.0, 24, 70, 100, 160, 250, 350, 500, 1000]
     lam_list = lam.tolist()
     # print lam_list
     m.set_raytracing(True)
@@ -649,120 +634,85 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
     # Setting up images and SEDs
     # SED setting
-    if alma == False:
-        # Infinite aperture
-        syn_inf = m.add_peeled_images(image=False)
+
+    # Infinite aperture
+    syn_inf = m.add_peeled_images(image=False)
+    # use the index of wavelength array used by the monochromatic radiative transfer
+    if mono == False:
+        syn_inf.set_wavelength_range(1300, 2.0, 1300.0)
+    syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
+    syn_inf.set_uncertainties(True)
+    syn_inf.set_output_bytes(8)
+
+    # aperture
+    # 7.2 in 10 um scaled by lambda / 10
+    # flatten beyond 20 um
+    # default aperture
+    if aperture == None:    
+        aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850],\
+                    'aperture': [7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 20.4, 20.4, 20.4, 20.4, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5]}
+    # assign wl_aper and aper from dictionary of aperture
+    wl_aper = aperture['wave']
+    aper    = aperture['aperture']
+    # create the non-repetitive aperture list and index array
+    aper_reduced = list(set(aper))
+    index_reduced = np.arange(1, len(aper_reduced)+1)
+
+    # name = np.arange(1,len(wl_aper)+1)
+    # aper = np.empty_like(wl_aper)
+    # for i in range(0, len(wl_aper)):
+    #     if wl_aper[i] < 5:
+    #         # aper[i] = 1.2 * 7
+    #         aper[i] = 1.8 * 4
+    #     elif (wl_aper[i] < 14) & (wl_aper[i] >=5):
+    #         # aper[i] = 7.2 * wl_aper[i]/10.
+    #         aper[i] = 1.8 * 4
+    #     elif (wl_aper[i] >= 14) & (wl_aper[i] <40):
+    #         # aper[i] = 7.2 * 2
+    #         aper[i] = 5.1 * 4
+    #     else:
+    #         aper[i] = 24.5
+
+    # dict_peel_sed = {}
+    # for i in range(0, len(wl_aper)):
+    #     aper_dum = aper[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
+    #     dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
+    #     # use the index of wavelength array used by the monochromatic radiative transfer
+    #     if mono == False:
+    #         # dict_peel_sed[str(name[i])].set_wavelength_range(1300, 2.0, 1300.0)
+    #         dict_peel_sed[str(name[i])].set_wavelength_range(1000, 2.0, 1000.0)
+    #     dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
+    #     # aperture should be given in cm
+    #     dict_peel_sed[str(name[i])].set_aperture_range(1, aper_dum, aper_dum)
+    #     dict_peel_sed[str(name[i])].set_uncertainties(True)
+    #     dict_peel_sed[str(name[i])].set_output_bytes(8)
+
+    dict_peel_sed = {}
+    for i in range(0, len(aper_reduced)):
+        aper_dum = aper_reduced[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
+        dict_peel_sed[str(index_reduced[i])] = m.add_peeled_images(image=False)
         # use the index of wavelength array used by the monochromatic radiative transfer
         if mono == False:
-            syn_inf.set_wavelength_range(1300, 2.0, 1300.0)
-        syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
-        syn_inf.set_uncertainties(True)
-        syn_inf.set_output_bytes(8)
+            dict_peel_sed[str(index_reduced[i])].set_wavelength_range(1000, 2.0, 1000.0)
+        dict_peel_sed[str(index_reduced[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
+        # aperture should be given in cm and its the radius of the aperture
+        dict_peel_sed[str(index_reduced[i])].set_aperture_range(1, aper_dum, aper_dum)
+        dict_peel_sed[str(index_reduced[i])].set_uncertainties(True)
+        dict_peel_sed[str(index_reduced[i])].set_output_bytes(8)
 
-        # aperture
-        # 7.2 in 10 um scaled by lambda / 10
-        # flatten beyond 20 um
-        # default aperture
-        if wl_aper == None:    
-            wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-        name = np.arange(1,len(wl_aper)+1)
-        aper = np.empty_like(wl_aper)
-        for i in range(0, len(wl_aper)):
-            if wl_aper[i] < 5:
-                # aper[i] = 1.2 * 7
-                aper[i] = 1.8 * 4
-            elif (wl_aper[i] < 14) & (wl_aper[i] >=5):
-                # aper[i] = 7.2 * wl_aper[i]/10.
-                aper[i] = 1.8 * 4
-            elif (wl_aper[i] >= 14) & (wl_aper[i] <40):
-                # aper[i] = 7.2 * 2
-                aper[i] = 5.1 * 4
-            else:
-                aper[i] = 24.5
-
-        dict_peel_sed = {}
-        for i in range(0, len(wl_aper)):
-            aper_dum = aper[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
-            dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
-            # use the index of wavelength array used by the monochromatic radiative transfer
-            if mono == False:
-                # dict_peel_sed[str(name[i])].set_wavelength_range(1300, 2.0, 1300.0)
-                dict_peel_sed[str(name[i])].set_wavelength_range(1000, 2.0, 1000.0)
-            dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
-            # aperture should be given in cm
-            dict_peel_sed[str(name[i])].set_aperture_radii(1, aper_dum, aper_dum)
-            dict_peel_sed[str(name[i])].set_uncertainties(True)
-            dict_peel_sed[str(name[i])].set_output_bytes(8)
-
-        # image setting
-        syn_im = m.add_peeled_images(sed=False)
-        # use the index of wavelength array used by the monochromatic radiative transfer
-        if mono == False:
-            syn_im.set_wavelength_range(1300, 2.0, 1300.0)
-        # pixel number
-        syn_im.set_image_size(300, 300)
-        syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
-        syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
-        syn_im.set_uncertainties(True)
-        # output as 64-bit
-        syn_im.set_output_bytes(8)
-    else:
-        # Infinite aperture
-        syn_inf = m.add_peeled_images(image=False)
-        # use the index of wavelength array used by the monochromatic radiative transfer
-        if mono == False:
-            syn_inf.set_wavelength_range(1300, 2.0, 1300.0)
-        syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
-        syn_inf.set_uncertainties(True)
-        syn_inf.set_output_bytes(8)
-
-        # aperture
-        # 7.2 in 10 um scaled by lambda / 10
-        # flatten beyond 20 um
-        # default aperture
-        if wl_aper == None:    
-            wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-        name = np.arange(1,len(wl_aper)+1)
-        aper = np.empty_like(wl_aper)
-        for i in range(0, len(wl_aper)):
-            if wl_aper[i] < 5:
-                aper[i] = 1.2 * 7
-            elif (wl_aper[i] < 14) & (wl_aper[i] >=5):
-                # aper[i] = 7.2 * wl_aper[i]/10.
-                aper[i] = 1.8 * 4
-            elif (wl_aper[i] >= 14) & (wl_aper[i] <40):
-                # aper[i] = 7.2 * 2
-                aper[i] = 5.1 * 4
-            else:
-                aper[i] = 24.5
-
-        dict_peel_sed = {}
-        for i in range(0, len(wl_aper)):
-            aper_dum = aper[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
-            dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
-            # use the index of wavelength array used by the monochromatic radiative transfer
-            if mono == False:
-                dict_peel_sed[str(name[i])].set_wavelength_range(1300, 2.0, 1300.0)
-            dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
-            # aperture should be given in cm
-            dict_peel_sed[str(name[i])].set_aperture_radii(1, aper_dum, aper_dum)
-            dict_peel_sed[str(name[i])].set_uncertainties(True)
-            dict_peel_sed[str(name[i])].set_output_bytes(8)
-
-        # image setting
-        syn_im = m.add_peeled_images(sed=False)
-        # use the index of wavelength array used by the monochromatic radiative transfer
-        if mono == False:
-            syn_im.set_wavelength_range(1300, 2.0, 1300.0)
-        # pixel number
-        # pixel number seems cannot greater than number of grid points
-        syn_im.set_image_size(300, 300)
-        syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
-        # syn_im.set_image_limits(-2000*AU, 2000*AU, -2000*AU, 2000*AU)
-        syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
-        syn_im.set_uncertainties(True)
-        # output as 64-bit
-        syn_im.set_output_bytes(8)
+    # image setting
+    syn_im = m.add_peeled_images(sed=False)
+    # use the index of wavelength array used by the monochromatic radiative transfer
+    if mono == False:
+        syn_im.set_wavelength_range(1300, 2.0, 1300.0)
+    # pixel number
+    syn_im.set_image_size(300, 300)
+    syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
+    syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
+    syn_im.set_uncertainties(True)
+    # output as 64-bit
+    syn_im.set_output_bytes(8)
+    
 
     # Output setting
     # Density
@@ -780,6 +730,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     m.write(outdir+outname+'.rtin')
 
     if radmc == True:
+        # RADMC-3D still use a pre-defined aperture with lazy for-loop
         aper = np.zeros([len(lam)])
         ind = 0
         for wl in lam:
@@ -905,8 +856,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 # pprint(params[0])
 # indir = '/Users/yaolun/test/'
 # outdir = '/Users/yaolun/test/'
-# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)2opc.txt'
+# # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+# dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
 # fix_params = {'R_min': 0.14}
-# setup_model(indir,outdir,'model_test_1e4_ics_gra2opc',params[0],dust_file,plot=True,record=False,\
+# setup_model(indir,outdir,'model_test_1e4_ics_gra3opc',params[0],dust_file,plot=True,record=False,\
 #     idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)

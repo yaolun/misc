@@ -1,5 +1,5 @@
 def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,\
-                low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,\
+                low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=100.,\
                 wl_aper=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False):
     """
     params = dictionary of the model parameters
@@ -53,8 +53,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                        temp_min=0.1,
                        temp_max=2000.)
     #
-    d.write(outdir+os.path.basename.split('.')[0]+'.hdf5')
-    d.plot(outdir+os.path.basename.split('.')[0]+'.png')
+    d.write(outdir+os.path.basename(dust_file).split('.')[0]+'.hdf5')
+    d.plot(outdir+os.path.basename(dust_file).split('.')[0]+'.png')
     plt.clf()
 
     # Grids and Density
@@ -98,12 +98,12 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         #  in: size along minor axis
         # z is the offset of the center of the ellipsoid w.r.t. to the origin
         # in & out stand for inner and outer ellipsoids.  Both of them hav the same shape.
-        a_out = 130 * dstar. * AU
-        b_out = 50  * dstar. * AU
+        a_out = 130 * dstar * AU
+        b_out = 50  * dstar * AU
         z_out = a_out
-        # a_in  = 77.5 * dstar. * AU
-        # b_in  = 30   * dstar. * AU
-        a_in  = dict_params['a_in'] * dstar. * AU
+        # a_in  = 77.5 * dstar * AU
+        # b_in  = 30   * dstar * AU
+        a_in  = dict_params['a_in'] * dstar * AU
         b_in  = a_in/a_out*b_out
         z_in  = a_in
         # rho_cav_out = 1e4 * mh
@@ -284,7 +284,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             import pidly
             idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
             # path to tsc.pro
-            idl('.r ~/programs/misc/TSC/tsc.pro')
+            idl('.r ~/3DModels/B335/Scripts/tsc.pro')
             #
             # only run TSC calculation within infall radius
             # modify the rc array
@@ -522,9 +522,9 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     lambda0 = 0.1
     lambda1 = 2.0
     lambda2 = 50.0
-    # lambda3 = 95.0
-    # lambda4 = 200.0
-    # lambda5 = 314.0
+    lambda3 = 95.0
+    lambda4 = 200.0
+    lambda5 = 314.0
     lambda6 = 1000.0
 
     n01     = 10.0
