@@ -97,26 +97,26 @@ aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
 #     outdir = home + '/hyperion/bhr71/ellipsoid/'
 if control == True:
     print 'Running the controlled grids for paper...'
-    params_table = home + dict_path['params']+'input_table_control.txt'
+    params_table = home + dict_path['input_table']+'input_table_control.txt'
     outdir = home + dict_path['outdir']+'controlled/'
 if alma == True:
     print 'Running for ALMA proposal...'
-    params_table = home + dict_path['params']+'input_table_alma.txt'
+    params_table = home + dict_path['input_table']+'input_table_alma.txt'
     outdir = home + dict_path['outdir']+'alma/'
 if chi2 == True:
     print 'Running for chi2 grid...'
-    params_table = home + dict_path['params']+'input_table_chi2.txt'
+    params_table = home + dict_path['input_table']+'input_table_chi2.txt'
     outdir = home + dict_path['outdir']+'chi2_grid/'
 if test == True:
     print 'testing mode...'
-    params_table = home + dict_path['params']+'test_input.txt'
+    params_table = home + dict_path['input_table']+'test_input.txt'
     outdir = home + dict_path['outdir']+'test/'
 if ellipsoid == True:
     print 'Running with ellipsoid cavities...'
-    params_table = home + dict_path['params']+'input_table_ellipsoid.txt'
+    params_table = home + dict_path['input_table']+'input_table_ellipsoid.txt'
     outdir = home + dict_path['outdir']+'ellipsoid/'
 if params_table in locals() == False:
-    params_table = home+dict_path['params']+'input_table.txt'
+    params_table = home+dict_path['input_table']+'input_table.txt'
 
 params = input_reader_table(params_table)
 
