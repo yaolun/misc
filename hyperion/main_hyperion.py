@@ -117,7 +117,7 @@ if ellipsoid == True:
     outdir = home + dict_path['outdir']+'ellipsoid/'
 print 'params_table' in locals()
 print 'params_table' in globals()
-if 'params_table' in globals() == False:
+if not 'params_table' in globals():
     print 'using the default path to input table'
     params_table = home+dict_path['input_table']+'input_table.txt'
     print params_table
