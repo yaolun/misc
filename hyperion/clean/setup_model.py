@@ -1,8 +1,14 @@
-def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False,plot=False,\
-                low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=100.,\
-                wl_aper=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False):
+def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,plot=False,\
+                low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,\
+                aperture=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False,\
+                TSC_dir='~/programs/misc/TSC/', IDL_path='/opt/local/exelis/idl83/bin/idl'):
     """
     params = dictionary of the model parameters
+    alma keyword is obsoleted 
+    outdir: The directory for storing Hyperion input files
+    record_dir: The directory contains "model_list.txt" for recording parameters
+    TSC_dir: Path the TSC-related IDL routines
+    IDL_path: The IDL executable 
     """
     import numpy as np
     import astropy.constants as const
@@ -20,7 +26,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     from record_hyperion import record_hyperion
     from outflow_inner_edge import outflow_inner_edge
     from pprint import pprint
-    import os
+    # import pdb
+    # pdb.set_trace()
 
     # Constants setup
     c         = const.c.cgs.value
@@ -44,8 +51,19 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     from hyperion.dust import HenyeyGreensteinDust
     # Read in the dust opacity table used by RADMC-3D
     dust = dict()
+    # [dust_radmc['wl'], dust_radmc['abs'], dust_radmc['scat'], dust_radmc['g']] = np.genfromtxt(dust_file,skip_header=2).T
     [dust['nu'], dust['albedo'], dust['chi'], dust['g']] = np.genfromtxt(dust_file).T
+    # opacity per mass of dust?
+    # dust_hy = dict()
+    # dust_hy['nu'] = c/dust_radmc['wl']*1e4
+    # ind = np.argsort(dust_hy['nu'])
+    # dust_hy['nu'] = dust_hy['nu'][ind]
+    # dust_hy['albedo'] = (dust_radmc['scat']/(dust_radmc['abs']+dust_radmc['scat']))[ind]
+    # dust_hy['chi'] = (dust_radmc['abs']+dust_radmc['scat'])[ind]
+    # dust_hy['g'] = dust_radmc['g'][ind]
+    # dust_hy['p_lin_max'] = 0*dust_radmc['wl'][ind]     # assume no polarization
 
+    # d = HenyeyGreensteinDust(dust_hy['nu'], dust_hy['albedo'], dust_hy['chi'], dust_hy['g'], dust_hy['p_lin_max'])
     d = HenyeyGreensteinDust(dust['nu'], dust['albedo'], dust['chi'], dust['g'], dust['g']*0)
     # dust sublimation option
     d.set_sublimation_temperature('slow', temperature=1600.0)
@@ -61,7 +79,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # Calculation inherited from the script used for RADMC-3D
 
     # Grid Parameters
-    # size of the grid in r, theta, and phi direction
     nx        = 300L
     if low_res == True:
         nx    = 100L
@@ -70,7 +87,8 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     [nx, ny, nz] = [int(scale*nx), int(scale*ny), int(scale*nz)]
 
     # TSC model input setting
-    dict_params = params
+    # params    = np.genfromtxt(indir+'/tsc_params.dat', dtype=None)
+    dict_params = params # input_reader(params_file)
     # TSC model parameter
     cs        = dict_params['Cs']*1e5
     t         = dict_params['age']  # year
@@ -80,6 +98,9 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     mstar     = M_env_dot * t * yr
     R_cen     = omega**2 * G**3 * mstar**3 /(16*cs**8)
     R_inf     = cs * t * yr
+    # M_env_dot = dict_params['M_env_dot']*MS/yr
+    # R_cen     = dict_params['R_cen']*AU
+    # R_inf     = dict_params['R_inf']*AU
     # protostar parameter
     tstar     = dict_params['tstar']
     R_env_max = dict_params['R_env_max']*AU
@@ -94,16 +115,12 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     rho_cav   = dict_params['rho_cav']
     # ellipsoid cavity parameter
     if ellipsoid == True:
-        # out: size along major axis
-        #  in: size along minor axis
-        # z is the offset of the center of the ellipsoid w.r.t. to the origin
-        # in & out stand for inner and outer ellipsoids.  Both of them hav the same shape.
-        a_out = 130 * dstar * AU
-        b_out = 50  * dstar * AU
+        a_out = 130 * 178. * AU
+        b_out = 50  * 178. * AU
         z_out = a_out
-        # a_in  = 77.5 * dstar * AU
-        # b_in  = 30   * dstar * AU
-        a_in  = dict_params['a_in'] * dstar * AU
+        # a_in  = 77.5 * 178. * AU
+        # b_in  = 30   * 178. * AU
+        a_in  = dict_params['a_in'] * 178. * AU
         b_in  = a_in/a_out*b_out
         z_in  = a_in
         # rho_cav_out = 1e4 * mh
@@ -112,7 +129,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         rho_cav_in  = dict_params['rho_cav_in']  * mh
     # Calculate the dust sublimation radius
     T_sub = 1600
-    # a     = 1   #in micron
+    a     = 1   #in micron
     # realistic dust
     # d_sub = 2.9388e7*(a/0.1)**-0.2 * (4*np.pi*rstar**2*sigma*tstar**4/LS)**0.5 / T_sub**3 *AU
     # black body dust
@@ -130,17 +147,17 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     # mstar = M_env_dot * t * yr
     # omega = (R_cen * 16*cs**8 / (G**3 * mstar**3))**0.5
 
-    # print the variables
+    # print the variables for radmc3d
     print 'Dust sublimation radius %6f AU' % (d_sub/AU)
     print 'M_star %4f Solar mass' % (mstar/MS)
-    print R_inf / AU
+    print 'Infall radius %4f AU' % (R_inf / AU)
 
 
-    # if there is any parameter found in fix_params input, then fix them
+    # if there is any parameter found in fix_params, then fix them
     if fix_params != None:
         if 'R_min' in fix_params.keys():
             R_disk_min = fix_params['R_min']*AU
-            R_env_min  = fix_params['R_min']*AU            
+            R_env_min  = fix_params['R_min']*AU
 
     # Make the Coordinates
     #
@@ -162,6 +179,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     rc           = 0.5*( ri[0:nx]     + ri[1:nx+1] )
     thetac       = 0.5*( thetai[0:ny] + thetai[1:ny+1] )
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
+    # phic         = 0.5*( phii[0:nz-1]   + phii[1:nz] )
 
     # Make the dust density model
     # Make the density profile of the envelope
@@ -170,6 +188,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     if tsc == False:
         print 'Calculating the dust density profile with infall solution...'
         if theta_cav != 0:
+            # c0 = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
             # using R = 10000 AU as the reference point
             c0 = (10000.*AU)**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
         else:
@@ -188,8 +207,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         rho_0 = M_disk/(nquad(f,[[R_disk_min,R_disk_max],[-R_env_max,R_env_max]], args=(beta,rstar,h100)))[0]
         i = 0
         j = 0
-
-        # Some default values for the constant region if these parameters is not assigned
         if 'rho_cav_center' in locals() == False:
             rho_cav_center = 5.27e-18 # 1.6e-17  # 5.27e-18
             print 'Use 5.27e-18 as the default value for cavity center'
@@ -204,7 +221,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         # Envelope profile
                         w = abs(rc[ir]*np.cos(np.pi/2 - thetac[itheta]))
                         z = rc[ir]*np.sin(np.pi/2 - thetac[itheta])
-                        # return the boolean for cavity
+
                         if ellipsoid == False:
                             z_cav = c0*abs(w)**1.5
                             if z_cav == 0:
@@ -213,7 +230,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                         else:
                             # condition for the outer ellipsoid
                             cav_con = (2*(w/b_out)**2 + ((abs(z)-z_out)/a_out)**2) < 1
-
                         if cav_con:
                             # open cavity
                             if ellipsoid == False:
@@ -274,6 +290,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     else:
         print 'Calculating the dust density profile with TSC solution...'
         if theta_cav != 0:
+            # c0 = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
             c0 = (1e4*AU)**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
         else:
             c0 = 0
@@ -282,9 +299,11 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         if idl == True:
             print 'Using IDL to calculate the TSC model.  Make sure you are running this on mechine with IDL.'
             import pidly
-            idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
-            # path to tsc.pro
-            idl('.r ~/3DModels/B335/Scripts/tsc.pro')
+            # idl = pidly.IDL('/Applications/exelis/idl82/bin/idl')
+            idl = pidly.IDL(IDL_path)
+            idl('.r '+TSC_dir+'tsc.pro')
+            # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=R_env_max)
+            # idl.pro('tsc_run', outdir=outdir, grid=[nxx,ny,nz], time=t, c_s=cs, omega=omega, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)])) # min([R_inf,max(ri)])
             #
             # only run TSC calculation within infall radius
             # modify the rc array
@@ -311,7 +330,25 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
             for i in range(0, len(p)):
                 y0 = y0 + p[i]*x0**(len(p)-i-1)
             return y0
-
+        # rho_env_copy = np.array(rho_env_tsc)
+        # if max(rc) > R_inf:
+        #     ind_infall = np.where(rc <= R_inf)[0][-1]
+        #     print ind_infall
+        #     for ithetac in range(0, len(thetac)):
+        #         # rho_dum = np.log10(rho_env_copy[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
+        #         # rc_dum = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
+        #         # rc_dum_nan = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
+        #         # # print rc_dum
+        #         # for i in range(0, len(rc_dum_nan)):
+        #         #     rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
+        #         #     rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
+        #         #
+        #         for i in range(ind_infall, len(rc)):
+        #             rho_env_copy[i, ithetac] =  10**(np.log10(rho_env_copy[ind_infall, ithetac]) - 2*(np.log10(rc[i]/rc[ind_infall])))
+        # rho_env2d = rho_env_copy
+        # rho_env = np.empty((nx,ny,nz))
+        # for i in range(0, nz):
+        #     rho_env[:,:,i] = rho_env2d
         # map TSC solution from IDL to actual 2-D grid
         rho_env_tsc2d = np.empty((nx,ny)) 
         if max(ri) > R_inf:
@@ -404,7 +441,9 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                     # add the dust mass into the total count
                     cell_mass = rho[ir, itheta, iphi] * (1/3.)*(ri[ir+1]**3 - ri[ir]**3) * (phii[iphi+1]-phii[iphi]) * -(np.cos(thetai[itheta+1])-np.cos(thetai[itheta]))
                     total_mass = total_mass + cell_mass
-
+        # rho_env  = rho_env  + 1e-40
+        # rho_disk = rho_disk + 1e-40
+        # rho      = rho      + 1e-40
     # apply gas-to-dust ratio of 100
     rho = rho/100.
     total_mass = total_mass/MS/100
@@ -414,11 +453,16 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         # Record the input and calculated parameters
         params = dict_params.copy()
         params.update({'d_sub': d_sub/AU, 'M_env_dot': M_env_dot/MS*yr, 'R_inf': R_inf/AU, 'R_cen': R_cen/AU, 'mstar': mstar/MS, 'total_mass': total_mass})
-        record_hyperion(params,outdir_global)
+        record_hyperion(params,record_dir)
 
     if plot == True:
+        # rc setting
+        # mat.rcParams['text.usetex'] = True
+        # mat.rcParams['font.family'] = 'serif'
+        # mat.rcParams['font.serif'] = 'Times'
+        # mat.rcParams['font.sans-serif'] = 'Computer Modern Sans serif'
+
         # Plot the azimuthal averaged density
-        #
         fig = plt.figure(figsize=(8,6))
         ax_env  = fig.add_subplot(111,projection='polar')
         # take the weighted average
@@ -435,6 +479,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         ax_env.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
         ax_env.tick_params(labelsize=20)
         ax_env.set_yticks(np.arange(0,R_env_max/AU,R_env_max/AU/5))
+        # ax_env.set_ylim([0,10000])
         ax_env.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
                                 r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
         # fix the tick label font
@@ -487,11 +532,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
         ax.set_ylim([0,15])
         fig.gca().set_xlim(left=np.log10(0.05))
+        # ax.set_xlim([np.log10(0.8),np.log10(10000)])
 
         # subplot shows the radial density profile along the midplane
         ax_mid = plt.axes([0.2,0.2,0.2,0.2], frameon=True)
         ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/mh),'o',color='b',linewidth=1, markersize=2)
         ax_mid.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,199]/mh),'-',color='r',linewidth=1, markersize=2)
+        # ax_mid.set_ylim([0,10])
         ax_mid.set_xlim([np.log10(0.8),np.log10(10000)])
         ax_mid.set_ylim([0,15])
         fig.savefig(outdir+outname+'_gas_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
@@ -499,7 +546,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
     # Insert the calculated grid and dust density profile into hyperion
     m.set_spherical_polar_grid(ri, thetai, phii)
+    # temperary for comparing full TSC and infall-only TSC model
+    # import sys
+    # sys.path.append(os.path.expanduser('~')+'/programs/misc/')
+    # from tsc_comparison import tsc_com
+    # rho_tsc, rho_ulrich = tsc_com()
     m.add_density_grid(rho.T, d)
+    # m.add_density_grid(rho.T, outdir+'oh5.hdf5')    # numpy read the array in reverse order
 
     # Define the luminsoity source
     source = m.add_spherical_source()
@@ -526,7 +579,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     lambda4 = 200.0
     lambda5 = 314.0
     lambda6 = 1000.0
-
     n01     = 10.0
     n12     = 20.0
     n23     = 50.0
@@ -535,7 +587,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
     lam23   = lambda2 * (lambda6/lambda2)**(np.arange(n23+1)/n23)
 
-    # lam     = np.concatenate([lam01,lam12,lam23,lam34,lam45,lam56])
     lam      = np.concatenate([lam01,lam12,lam23])
     nlam    = len(lam)
 
@@ -557,8 +608,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
     # Radiative transfer setting
 
+    # number of photons for temp and image
+    lam_list = lam.tolist()
+    # print lam_list
     m.set_raytracing(True)
-    # number of photons for imaging
     # option of using more photons for imaging
     if better_im == False:
         im_photon = 1e6
@@ -567,7 +620,6 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
     if mono == True:
         # Monechromatic radiative transfer setting
-        lam_list = lam.tolist()
         m.set_monochromatic(True, wavelengths=lam_list)
         m.set_n_photons(initial=1000000, imaging_sources=im_photon, imaging_dust=im_photon,raytracing_sources=1000000, raytracing_dust=1000000)
     else:
@@ -575,13 +627,14 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         m.set_n_photons(initial=1000000, imaging=im_photon,raytracing_sources=1000000, raytracing_dust=1000000)    
     # number of iteration to compute dust specific energy (temperature)
     m.set_n_initial_iterations(20)
-    # read the covergence critirion from parameters
+    # m.set_convergence(True, percentile=95., absolute=1.5, relative=1.02)
     m.set_convergence(True, percentile=dict_params['percentile'], absolute=dict_params['absolute'], relative=dict_params['relative'])
-    # using modified random walk setting, which reduces computing time for cells with large optical depth.
     m.set_mrw(True)   # Gamma = 1 by default
+    # m.set_forced_first_scattering(forced_first_scattering=True)
 
     # Setting up images and SEDs
     # SED setting
+
     # Infinite aperture
     syn_inf = m.add_peeled_images(image=False)
     # use the index of wavelength array used by the monochromatic radiative transfer
@@ -592,49 +645,74 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
     syn_inf.set_output_bytes(8)
 
     # aperture
+    # 7.2 in 10 um scaled by lambda / 10
+    # flatten beyond 20 um
     # default aperture
-    if wl_aper == None:    
-        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-    name = np.arange(1,len(wl_aper)+1)
-    aper = np.empty_like(wl_aper)
-    for i in range(0, len(wl_aper)):
-        if wl_aper[i] < 5:
-            aper[i] = 1.8 * 4
-        elif (wl_aper[i] < 14) & (wl_aper[i] >=5):
-            aper[i] = 1.8 * 4
-        elif (wl_aper[i] >= 14) & (wl_aper[i] <40):
-            aper[i] = 5.1 * 4
-        else:
-            aper[i] = 24.5
+    if aperture == None:    
+        aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850],\
+                    'aperture': [7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 20.4, 20.4, 20.4, 20.4, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5]}
+    # assign wl_aper and aper from dictionary of aperture
+    wl_aper = aperture['wave']
+    aper    = aperture['aperture']
+    # create the non-repetitive aperture list and index array
+    aper_reduced = list(set(aper))
+    index_reduced = np.arange(1, len(aper_reduced)+1)
+
+    # name = np.arange(1,len(wl_aper)+1)
+    # aper = np.empty_like(wl_aper)
+    # for i in range(0, len(wl_aper)):
+    #     if wl_aper[i] < 5:
+    #         # aper[i] = 1.2 * 7
+    #         aper[i] = 1.8 * 4
+    #     elif (wl_aper[i] < 14) & (wl_aper[i] >=5):
+    #         # aper[i] = 7.2 * wl_aper[i]/10.
+    #         aper[i] = 1.8 * 4
+    #     elif (wl_aper[i] >= 14) & (wl_aper[i] <40):
+    #         # aper[i] = 7.2 * 2
+    #         aper[i] = 5.1 * 4
+    #     else:
+    #         aper[i] = 24.5
+
+    # dict_peel_sed = {}
+    # for i in range(0, len(wl_aper)):
+    #     aper_dum = aper[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
+    #     dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
+    #     # use the index of wavelength array used by the monochromatic radiative transfer
+    #     if mono == False:
+    #         # dict_peel_sed[str(name[i])].set_wavelength_range(1300, 2.0, 1300.0)
+    #         dict_peel_sed[str(name[i])].set_wavelength_range(1000, 2.0, 1000.0)
+    #     dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
+    #     # aperture should be given in cm
+    #     dict_peel_sed[str(name[i])].set_aperture_range(1, aper_dum, aper_dum)
+    #     dict_peel_sed[str(name[i])].set_uncertainties(True)
+    #     dict_peel_sed[str(name[i])].set_output_bytes(8)
 
     dict_peel_sed = {}
-    for i in range(0, len(wl_aper)):
-        aper_dum = aper[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
-        dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
+    for i in range(0, len(aper_reduced)):
+        aper_dum = aper_reduced[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
+        dict_peel_sed[str(index_reduced[i])] = m.add_peeled_images(image=False)
         # use the index of wavelength array used by the monochromatic radiative transfer
         if mono == False:
-            # compute SED with wanvelength from 2 um to 1300 um with 1300 wavelength channels.
-            dict_peel_sed[str(name[i])].set_wavelength_range(1300, 2.0, 1300.0)
-        dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
-        # aperture should be given in cm
-        dict_peel_sed[str(name[i])].set_aperture_range(1, aper_dum, aper_dum)
-        dict_peel_sed[str(name[i])].set_uncertainties(True)
-        dict_peel_sed[str(name[i])].set_output_bytes(8)
+            dict_peel_sed[str(index_reduced[i])].set_wavelength_range(1000, 2.0, 1000.0)
+        dict_peel_sed[str(index_reduced[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
+        # aperture should be given in cm and its the radius of the aperture
+        dict_peel_sed[str(index_reduced[i])].set_aperture_range(1, aper_dum, aper_dum)
+        dict_peel_sed[str(index_reduced[i])].set_uncertainties(True)
+        dict_peel_sed[str(index_reduced[i])].set_output_bytes(8)
 
     # image setting
     syn_im = m.add_peeled_images(sed=False)
     # use the index of wavelength array used by the monochromatic radiative transfer
     if mono == False:
-        # compute image with wanvelength from 2 um to 1300 um with 1300 wavelength channels.
         syn_im.set_wavelength_range(1300, 2.0, 1300.0)
     # pixel number
-    # I remember it broke when I tried to increase.  But may not be true since I fix bugs elsewhere.
     syn_im.set_image_size(300, 300)
     syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
     syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
     syn_im.set_uncertainties(True)
     # output as 64-bit
     syn_im.set_output_bytes(8)
+    
 
     # Output setting
     # Density
@@ -651,14 +729,13 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 
     m.write(outdir+outname+'.rtin')
 
-
-    # output seting from RADMC-3D
     if radmc == True:
+        # RADMC-3D still use a pre-defined aperture with lazy for-loop
         aper = np.zeros([len(lam)])
         ind = 0
         for wl in lam:
             if wl < 5:
-                aper[ind] = 1.8 * 4
+                aper[ind] = 8.4
             elif wl >= 5 and wl < 14:
                 aper[ind] = 1.8 * 4
             elif wl >= 14 and wl < 40:
@@ -732,6 +809,7 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
                     f_dust.write('%e \n' % rho[ir,itheta,iphi])
         f_dust.close()
 
+
         # Write the dust opacity table
         f_dustkappa = open(outdir+'dustkappa_oh5_extended.inp','w')
         f_dustkappa.write('3 \n')                       # format index for including g-factor
@@ -752,6 +830,9 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
         f_opac.write('oh5_extended    Extension of name of dustkappa_***.inp file\n')
         f_opac.write('----------------------------------------------------------------------------\n')
         f_opac.close()
+                
+
+        # In[112]:
 
         # Write the radmc3d.inp control file
         #
@@ -773,9 +854,10 @@ def setup_model(outdir,outdir_global,outname,params,dust_file,tsc=True,idl=False
 # filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
 # params = input_reader_table(filename)
 # pprint(params[0])
-# indir = '/Users/yaolun/bhr71/hyperion/cycle9/'
+# indir = '/Users/yaolun/test/'
 # outdir = '/Users/yaolun/test/'
-# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+# # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+# dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
 # fix_params = {'R_min': 0.14}
-# setup_model(indir,outdir,'model34_ellipsoid',params[0],dust_file,plot=True,record=False,\
-#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=True)
+# setup_model(indir,outdir,'model_test_1e4_ics_gra3opc',params[0],dust_file,plot=True,record=False,\
+#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)
