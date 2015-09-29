@@ -115,8 +115,12 @@ if ellipsoid == True:
     print 'Running with ellipsoid cavities...'
     params_table = home + dict_path['input_table']+'input_table_ellipsoid.txt'
     outdir = home + dict_path['outdir']+'ellipsoid/'
+print locals()
+print globals()
 if 'params_table' in globals() == False:
+    print 'using the default path to input table'
     params_table = home+dict_path['input_table']+'input_table.txt'
+    print params_table
 
 params = input_reader_table(params_table)
 
