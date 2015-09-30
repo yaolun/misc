@@ -8,8 +8,8 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     import astropy.constants as const
     from matplotlib.colors import LogNorm
 
-    # # seaborn colormap
-    # import seaborn.apionly as sns
+    # seaborn colormap
+    import seaborn.apionly as sns
 
     # constants setup
     AU = const.au.cgs.value
@@ -47,7 +47,8 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
     ax.tick_params(labelsize=20)
     # print np.ceil(max(ri)/AU/1e4)*1e4
-    ax.set_yticks(np.linspace(0,np.ceil(max(ri)/AU/1e4)*1e4,5))
+    # ax.set_yticks(np.linspace(0,np.ceil(max(ri)/AU/1e4)*1e4,5))
+    ax.set_yticks(np.arange(0,max(ri)/AU,max(ri)/AU/5))
 
     ax.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
                             r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
