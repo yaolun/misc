@@ -579,8 +579,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
 # import numpy as np
 # wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
 # aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-# # exclude_wl = [5.8,8.0,10.5,11]
 # extract_hyperion('/Users/yaolun/test/new_routine.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  aperture=aperture,filter_func=True,plot_all=True,clean=True,image=False)
 # extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra3opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
