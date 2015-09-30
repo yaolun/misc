@@ -1,5 +1,5 @@
 def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,save=True,filter_func=False,\
-    plot_all=False,clean=False,exclude_wl=[],log=True,image=True):
+    plot_all=False,clean=False,exclude_wl=[],log=True,image=True,obj='BHR71'):
     """
     filename: The path to Hyperion output file
     indir: The path to the directory which contains observations data
@@ -78,7 +78,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
     print_name = os.path.splitext(os.path.basename(filename))[0]
 
     # use a canned function to extract observational data
-    obs_data = get_obs(indir, obj='BHR71')        # unit in um, Jy
+    obs_data = get_obs(indir, obj=obj)        # unit in um, Jy
     wl_tot, flux_tot, unc_tot = obs_data['spec']
     flux_tot = flux_tot*1e-23    # convert unit from Jy to erg s-1 cm-2 Hz-1
     unc_tot = unc_tot*1e-23
@@ -177,9 +177,14 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         # Extracting spectrophotometry values from simulated SED
         # Not using the photometry filer function to extract spectrophotometry values
         #
+        # sort by wavelength first.  It seems needed with different python or numpy version
+        sort_wl = np.argsort(sed_dum.wav)
+        val_sort = sed_dum.val[sort_wl]
+        unc_sort = sed_dum.unc[sort_wl]
+        wav_sort = sed_dum.wav[sort_wl]
         # Before doing that, convert vSv to F_lambda
-        flux_dum = sed_dum.val / sed_dum.wav
-        unc_dum  = sed_dum.unc / sed_dum.wav
+        flux_dum = val_sort / wav_sort
+        unc_dum  = unc_sort / wav_sort
         if filter_func == False:
             # use a rectangle function the average the simulated SED
             # apply the spectral resolution
@@ -189,13 +194,13 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
                 res = 10.
             else:
                 res = 1000.
-            ind = np.where((sed_dum.wav < wl_aper[i]*(1+1./res)) & (sed_dum.wav > wl_aper[i]*(1-1./res)))
+            ind = np.where((wav_sort < wl_aper[i]*(1+1./res)) & (wav_sort > wl_aper[i]*(1-1./res)))
             if len(ind[0]) != 0:
                 flux_aper[i] = np.mean(flux_dum[ind])
                 unc_aper[i]  = np.mean(unc_dum[ind])
             else:
-                f = interp1d(sed_dum.wav, flux_dum)
-                f_unc = interp1d(sed_dum.wav, unc_dum)
+                f = interp1d(wav_sort, flux_dum)
+                f_unc = interp1d(wav_sort, unc_dum)
                 flux_aper[i] = f(wl_aper[i])
                 unc_aper[i]  = f_unc(wl_aper[i])
         # Using photometry filter function to extract spectrophotometry values
@@ -232,8 +237,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
             if fil_name != None:
                 filter_func = phot_filter(fil_name)
                 # Simulated SED should have enough wavelength coverage for applying photometry filters.
-                f = interp1d(sed_dum.wav, flux_dum)
-                f_unc = interp1d(sed_dum.wav, unc_dum)
+                f = interp1d(wav_sort, flux_dum)
+                f_unc = interp1d(wav_sort, unc_dum)
                 flux_aper[i] = np.trapz(f(filter_func['wave']/1e4)*filter_func['transmission'], x=filter_func['wave']/1e4 )/\
                                 np.trapz(filter_func['transmission'], x=filter_func['wave']/1e4)
                 # unc_aper[i] = abs(np.trapz((filter_func['wave']/1e4)**2, (f_unc(filter_func['wave']/1e4)*filter_func['transmission'])**2))**0.5 / abs(np.trapz(filter_func['wave']/1e4, filter_func['transmission']))
@@ -248,13 +253,13 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
                     res = 10.
                 else:
                     res = 1000.
-                ind = np.where((sed_dum.wav < wl_aper[i]*(1+1./res)) & (sed_dum.wav > wl_aper[i]*(1-1./res)))
+                ind = np.where((wav_sort < wl_aper[i]*(1+1./res)) & (wav_sort > wl_aper[i]*(1-1./res)))
                 if len(ind[0]) != 0:
                     flux_aper[i] = np.mean(flux_dum[ind])
                     unc_aper[i]  = np.mean(unc_dum[ind])
                 else:
-                    f = interp1d(sed_dum.wav, flux_dum)
-                    f_unc = interp1d(sed_dum.wav, unc_dum)
+                    f = interp1d(wav_sort, flux_dum)
+                    f_unc = interp1d(wav_sort, unc_dum)
                     flux_aper[i] = f(wl_aper[i])
                     unc_aper[i]  = f_unc(wl_aper[i])
     # temperory step: solve issue of uncertainty greater than the value

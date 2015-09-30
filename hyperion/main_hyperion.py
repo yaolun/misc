@@ -67,6 +67,7 @@ path_list = np.genfromtxt('run_hyperion_path.txt', dtype=str).T
 dict_path = {}
 for name, val in zip(path_list[0],path_list[1]):
     dict_path[name] = val
+obj = dict_path['object']
 print 'Current path setting --'
 pprint(dict_path)
 #
@@ -167,7 +168,7 @@ if extract_only == False:
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
         print 'Seems finish, lets check out the results'
-        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=home+dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True)
+        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=home+dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
         temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
     print 'You are entering the extract-only mode...'
@@ -183,6 +184,6 @@ else:
         print 'Extracting Model'+str(i)
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
-        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True)
+        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
         if temp == True:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
