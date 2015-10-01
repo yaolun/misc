@@ -5,8 +5,4 @@ dust_file		/dust_model/Ormel2011/hyperion/(ic-sil,gra)2opc.txt
 obs_dir			/radmc_simulation/bhr71/cycle1/observations/
 TSC_dir 		/programs/misc/TSC/
 IDL_path 		/opt/local/exelis/idl83/bin/idl
-<<<<<<< HEAD
 object          BHR71
-=======
-object			BHR71
->>>>>>> 5a869a84d3f9c7ae44a78f3452fbdc94c52b32a1
