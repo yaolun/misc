@@ -317,25 +317,23 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         x = np.linspace(0, 1, 50)
         y = np.linspace(0, 1, 50)
 
-        z = griddata((p1_norm, p2_norm), chi2, (x[None,:], y[:,None]), method='cubic')
-        if z.min() < 0:
+        z = griddata((p1_norm, p2_norm), chi2, (x[None,:], y[:,None]), method='nearest')
+        if z[np.isnan(z) != True].min() < 0:
             print 'Minimum of z is below zero.  Change the interpolation method to linear'
             z = griddata((p1_norm, p2_norm), chi2, (x[None,:], y[:,None]), method='linear')
-
-        # print z.min()
-
-        # z = np.log10(z)
+        masked_array = np.ma.array (z, mask=np.isnan(z))
 
         fig = plt.figure(figsize=(8,8))
         ax = fig.add_subplot(111)
 
         # plot the contour with color and lines
-        ax.contour(x, y, z, 10, linewidths=0.5,colors='k', norm=LogNorm(vmin=chi2.min(), vmax=1e7))
+        # ax.contour(x, y, z, 10, linewidths=0.5,colors='k', norm=LogNorm(vmin=chi2.min(), vmax=chi2.max()))
         cmap = plt.cm.CMRmap
         # import custom colormap
         from custom_colormap import custom_colormap
         cmap = mpl.colors.ListedColormap(custom_colormap())
-        im = ax.imshow(z, cmap=cmap, origin='lower', extent=[0,1,0,1],\
+        cmap.set_bad('Red',1.)
+        im = ax.imshow(masked_array, cmap=cmap, origin='lower', extent=[0,1,0,1],\
             norm=LogNorm(vmin=chi2.min(), vmax=1e7))  # chi2.max()
         # Blues_r
         ax.set_xticks(np.linspace(0, 1, 5))
@@ -389,7 +387,7 @@ import numpy as np
 #                'model_num': np.arange(39,49)}]
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
-               'model_num': np.arange(1,26)}]
+               'model_num': np.arange(1,51)}]
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
 #                'model_num': np.arange(1,77)}]
@@ -411,7 +409,7 @@ for keywords in keywords_list:
     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=7)
     for i in range(len(p1)):
         print p1[i], p2[i], chi2[i]
-    fir_chi2_2d(array_list, keywords, obs)
+    # fir_chi2_2d(array_list, keywords, obs)
 
 # # 1-D rho_cav_center
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
