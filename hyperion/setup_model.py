@@ -22,7 +22,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     from matplotlib.colors import LogNorm
     from scipy.integrate import nquad
     from hyperion.model import Model
-    from input_reader import input_reader
     from record_hyperion import record_hyperion
     from outflow_inner_edge import outflow_inner_edge
     from pprint import pprint

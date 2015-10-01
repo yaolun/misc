@@ -9,7 +9,9 @@ def tsc_com(plot=True, disk=False):
     from scipy.optimize import fsolve
     from scipy.optimize import newton
     from scipy.integrate import nquad
-    from envelope_func import func
+    import sys
+    sys.path.append("/Users/yaolun/programs/misc/hyperion")
+    from input_reader import input_reader_table
     home = os.path.expanduser('~')
 
     # read the TSC model
@@ -28,26 +30,48 @@ def tsc_com(plot=True, disk=False):
 
     # Variable setup
     #
-    # parameter from cycle 8, model 63
-    rstar     = 5 * RS
-    tstar     = 5100.0
-    R_env_max = 1.000000e+04 * AU
-    R_env_min = 0.14         * AU             # the inner radius is fixed, 0.100364     * AU 
-    R_cen     = 1.000000e+00 * AU             # 6.072365e-02 * AU, increase arbitrary for better illustration
-    R_inf     = 1.054025e+03 * AU
+    # # parameter from cycle 8, model 63
+    # rstar     = 5 * RS
+    # tstar     = 5100.0
+    # R_env_max = 1.000000e+04 * AU
+    # R_env_min = 0.14         * AU             # the inner radius is fixed, 0.100364     * AU 
+    # R_cen     = 1.000000e+00 * AU             # 6.072365e-02 * AU, increase arbitrary for better illustration
+    # R_inf     = 1.054025e+03 * AU
+    # R_disk_min= 0.14         * AU 
+    # R_disk_max= R_cen
+    # theta_cav = 20.0
+    # beta      = 1.093
+    # h100      = 8.123        * AU
+    # M_env_dot = 2.896073e-05 * MS/yr
+    # M_disk    = 0.075 * MS
+    # mstar     = 2.896073e-01 * MS
+    # rin       = rstar
+    # rout      = R_env_max
+    # rout_mike = 9.756000e+03 * AU
+    # rho_cav_center = 5e-19
+    # rho_cav_edge = 40 * AU
+
+    # read parameter from input_table
+    params_table = '/Users/yaolun/programs/misc/hyperion/input_table_cy9.txt'
+    params = input_reader_table(params_table)[0]
+    rstar     = params['rstar'] * RS
+    tstar     = params['tstar']
+    R_env_max = params['R_env_max'] * AU
+    R_env_min = 0.14         * AU             # the inner radius is fixed, 0.14 AU 
+    R_cen     = params['Omega0']**2 * G**3 * (0.975*(params['Cs']*1e5)**3/G*params['age']*yr)**3 /(16*(params['Cs']*1e5)**8)
+    R_inf     = params['Cs']*1e5*params['age']*yr
     R_disk_min= 0.14         * AU 
     R_disk_max= R_cen
-    theta_cav = 20.0
-    beta      = 1.093
-    h100      = 8.123        * AU
-    M_env_dot = 2.896073e-05 * MS/yr
-    M_disk    = 0.075 * MS
-    mstar     = 2.896073e-01 * MS
+    theta_cav = params['theta_cav']
+    beta      = params['beta']
+    h100      = params['h100'] * AU
+    M_env_dot = 0.975*(params['Cs']*1e5)**3/G
+    M_disk    = params['M_disk'] * MS
+    mstar     = M_env_dot * params['age']*yr
     rin       = rstar
     rout      = R_env_max
-    rout_mike = 9.756000e+03 * AU
-    rho_cav_center = 5e-19
-    rho_cav_edge = 40 * AU
+    rho_cav_center = params['rho_cav_center']
+    rho_cav_edge = params['rho_cav_edge'] * AU
 
     # Grid Parameters
     nx        = 100L
@@ -76,7 +100,7 @@ def tsc_com(plot=True, disk=False):
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
 
     if disk == False:
-        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv.dat').T
+        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv_cy9m87.dat').T
     else:
         rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/bhr71/hyperion/cycle9/rhoenv_disk.dat').T
 
@@ -114,6 +138,7 @@ def tsc_com(plot=True, disk=False):
     for i in range(0, nz):
         rho_env_tsc[:,:,i] = rho_env_tsc2d
        
+    print rho_env_tsc.max()
 
     # calculate the infall-only solution
 
@@ -137,7 +162,7 @@ def tsc_com(plot=True, disk=False):
     envelope = m.add_ulrich_envelope()
     envelope.mdot = M_env_dot    # Infall rate
     envelope.rmin = rin          # Inner radius
-    envelope.rc   = R_cen         # Centrifugal radius
+    envelope.rc   = R_cen        # Centrifugal radius
     envelope.rmax = R_env_max    # Outer radius
     envelope.star = source
 
@@ -241,6 +266,7 @@ def tsc_com(plot=True, disk=False):
                 cell_mass_ulrich = rho_ulrich[ir, itheta, iphi] * (1/3.)*(ri[ir+1]**3 - ri[ir]**3) * (phii[iphi+1]-phii[iphi]) * -(np.cos(thetai[itheta+1])-np.cos(thetai[itheta]))
                 total_mass_ulrich = total_mass_ulrich + cell_mass_ulrich
 
+    print total_mass_tsc, total_mass_ulrich
     # create 2d projection
     rho_tsc2d = np.sum(rho_tsc**2,axis=2)/np.sum(rho_tsc,axis=2)
     rho_ulrich2d = np.sum(rho_ulrich**2,axis=2)/np.sum(rho_ulrich,axis=2)
@@ -286,4 +312,4 @@ def tsc_com(plot=True, disk=False):
         fig.savefig('/Users/yaolun/test/tsc_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
 
     return rho_tsc/100, rho_ulrich/100
-# tsc_com(disk=True)
+tsc_com(disk=False)
