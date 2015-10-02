@@ -445,7 +445,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         # rho      = rho      + 1e-40
     # apply gas-to-dust ratio of 100
     rho_dust = rho/100.
-    total_mass_dust = total_mass/MS/100
+    total_mass_dust = total_mass/MS/100.
     print 'Total dust mass = %f Solar mass' % total_mass_dust
 
     if record == True:
@@ -505,7 +505,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         plot_grid = [0,49,99,149,199]
         alpha = np.linspace(0.3,1.0,len(plot_grid))
         for i in plot_grid:
-            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/100./mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
             tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
         rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
         cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
@@ -517,7 +517,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                         [r'$\rm{\rho_{dust}}$',r'$\rm{\rho_{tsc}}$',r'$\rm{infall\,radius}$',r'$\rm{centrifugal\,radius}$'],\
                         fontsize=20, numpoints=1)
         ax.set_xlabel(r'$\rm{log(Radius)\,(AU)}$',fontsize=20)
-        ax.set_ylabel(r'$\rm{log(Gas~Density)\,(cm^{-3})}$',fontsize=20)
+        ax.set_ylabel(r'$\rm{log(Gas \slash Dust\,Density)\,(cm^{-3})}$',fontsize=20)
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on()
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
@@ -536,10 +536,10 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
         # subplot shows the radial density profile along the midplane
         ax_mid = plt.axes([0.2,0.2,0.2,0.2], frameon=True)
-        ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/mh),'o',color='b',linewidth=1, markersize=2)
+        ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/100./mh),'o',color='b',linewidth=1, markersize=2)
         ax_mid.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,199]/mh),'-',color='r',linewidth=1, markersize=2)
         # ax_mid.set_ylim([0,10])
-        ax_mid.set_xlim([np.log10(0.8),np.log10(10000)])
+        # ax_mid.set_xlim([np.log10(0.8),np.log10(10000)])
         ax_mid.set_ylim([0,15])
         fig.savefig(outdir+outname+'_gas_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
         fig.clf()
@@ -639,7 +639,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     syn_inf = m.add_peeled_images(image=False)
     # use the index of wavelength array used by the monochromatic radiative transfer
     if mono == False:
-        syn_inf.set_wavelength_range(1300, 2.0, 1300.0)
+        syn_inf.set_wavelength_range(1400, 2.0, 1400.0)
     syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
     syn_inf.set_uncertainties(True)
     syn_inf.set_output_bytes(8)
@@ -848,16 +848,15 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     return m
 
-
-from input_reader import input_reader_table
-from pprint import pprint
-filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-params = input_reader_table(filename)
-pprint(params[0])
-indir = '/Users/yaolun/test/'
-outdir = '/Users/yaolun/test/'
-# # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
-fix_params = {'R_min': 0.14}
-setup_model(indir,outdir,'model_test_1e4_ics_gra3opc',params[0],dust_file,plot=True,record=False,\
-    idl=True,radmc=False,fix_params=fix_params,ellipsoid=False)
+# from input_reader import input_reader_table
+# from pprint import pprint
+# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+# params = input_reader_table(filename)
+# pprint(params[0])
+# indir = '/Users/yaolun/test/'
+# outdir = '/Users/yaolun/test/'
+# # # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+# dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
+# fix_params = {'R_min': 0.14}
+# setup_model(indir,outdir,'model_test_1e4_ics_gra3opc',params[0],dust_file,plot=True,record=False,\
+#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)
