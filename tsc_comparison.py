@@ -138,8 +138,6 @@ def tsc_com(plot=True, disk=False):
     for i in range(0, nz):
         rho_env_tsc[:,:,i] = rho_env_tsc2d
        
-    print rho_env_tsc.max()
-
     # calculate the infall-only solution
 
     import hyperion as hp

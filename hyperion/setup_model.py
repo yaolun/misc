@@ -1,7 +1,7 @@
 def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,plot=False,\
                 low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,\
                 aperture=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False,\
-                TSC_dir='~/programs/misc/TSC/', IDL_path='/opt/local/exelis/idl83/bin/idl'):
+                TSC_dir='~/programs/misc/TSC/', IDL_path='/Applications/exelis/idl83/bin/idl'):
     """
     params = dictionary of the model parameters
     alma keyword is obsoleted 
@@ -444,9 +444,9 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         # rho_disk = rho_disk + 1e-40
         # rho      = rho      + 1e-40
     # apply gas-to-dust ratio of 100
-    rho = rho/100.
-    total_mass = total_mass/MS/100
-    print 'Total dust mass = %f Solar mass' % total_mass
+    rho_dust = rho/100.
+    total_mass_dust = total_mass/MS/100
+    print 'Total dust mass = %f Solar mass' % total_mass_dust
 
     if record == True:
         # Record the input and calculated parameters
@@ -465,6 +465,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         fig = plt.figure(figsize=(8,6))
         ax_env  = fig.add_subplot(111,projection='polar')
         # take the weighted average
+        # rho2d is the 2-D projection of gas density
         rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
 
         zmin = 1e-22/mh
@@ -472,7 +473,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
         thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
         # plot the gas density
-        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,100*rho2d_exp/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mh)
+        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mh)
 
         ax_env.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
         ax_env.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
@@ -504,8 +505,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         plot_grid = [0,49,99,149,199]
         alpha = np.linspace(0.3,1.0,len(plot_grid))
         for i in plot_grid:
-            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(100*rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
-            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(100*rho_env_tsc2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
         rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
         cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
         # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
@@ -550,7 +551,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     # sys.path.append(os.path.expanduser('~')+'/programs/misc/')
     # from tsc_comparison import tsc_com
     # rho_tsc, rho_ulrich = tsc_com()
-    m.add_density_grid(rho.T, d)
+    m.add_density_grid(rho_dust.T, d)
     # m.add_density_grid(rho.T, outdir+'oh5.hdf5')    # numpy read the array in reverse order
 
     # Define the luminsoity source
@@ -805,7 +806,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         for iphi in range(0,len(phic)):
             for itheta in range(0,len(thetac)):
                 for ir in range(1,len(rc)):
-                    f_dust.write('%e \n' % rho[ir,itheta,iphi])
+                    f_dust.write('%e \n' % rho_dust[ir,itheta,iphi])
         f_dust.close()
 
 
@@ -848,15 +849,15 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     return m
 
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# indir = '/Users/yaolun/test/'
-# outdir = '/Users/yaolun/test/'
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+indir = '/Users/yaolun/test/'
+outdir = '/Users/yaolun/test/'
 # # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
-# fix_params = {'R_min': 0.14}
-# setup_model(indir,outdir,'model_test_1e4_ics_gra3opc',params[0],dust_file,plot=True,record=False,\
-#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)
+dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
+fix_params = {'R_min': 0.14}
+setup_model(indir,outdir,'model_test_1e4_ics_gra3opc',params[0],dust_file,plot=True,record=False,\
+    idl=True,radmc=False,fix_params=fix_params,ellipsoid=False)
