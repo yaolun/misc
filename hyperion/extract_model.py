@@ -579,7 +579,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
 # import numpy as np
 # wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
 # aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# extract_hyperion('/Users/yaolun/test/new_routine.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+# extract_hyperion('/Users/yaolun/test/test.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  aperture=aperture,filter_func=True,plot_all=True,clean=True,image=False)
 # extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra3opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
