@@ -40,6 +40,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     PI        = np.pi          # PI constant
     sigma     = const.sigma_sb.cgs.value  # Stefan-Boltzmann constant 
     mh        = const.m_p.cgs.value + const.m_e.cgs.value
+    g2d       = 100.
+    mmw       = 2.37   # Kauffmann 2008
 
 
     m = Model()
@@ -444,8 +446,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         # rho_disk = rho_disk + 1e-40
         # rho      = rho      + 1e-40
     # apply gas-to-dust ratio of 100
-    rho_dust = rho/100.
-    total_mass_dust = total_mass/MS/100.
+    rho_dust = rho/g2d
+    total_mass_dust = total_mass/MS/g2d
     print 'Total dust mass = %f Solar mass' % total_mass_dust
 
     if record == True:
@@ -468,12 +470,12 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         # rho2d is the 2-D projection of gas density
         rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
 
-        zmin = 1e-22/mh
+        zmin = 1e-22/mmw/mh
         cmap = plt.cm.CMRmap
         rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
         thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
         # plot the gas density
-        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mh)
+        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mmw/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mmw/mh)
 
         ax_env.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
         ax_env.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
@@ -505,8 +507,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         plot_grid = [0,49,99,149,199]
         alpha = np.linspace(0.3,1.0,len(plot_grid))
         for i in plot_grid:
-            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/100./mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
-            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/g2d/mmw/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mmw/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
         rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
         cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
         # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
@@ -536,8 +538,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
         # subplot shows the radial density profile along the midplane
         ax_mid = plt.axes([0.2,0.2,0.2,0.2], frameon=True)
-        ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/100./mh),'o',color='b',linewidth=1, markersize=2)
-        ax_mid.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,199]/mh),'-',color='r',linewidth=1, markersize=2)
+        ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/g2d/mmw/mh),'o',color='b',linewidth=1, markersize=2)
+        ax_mid.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,199]/mmw/mh),'-',color='r',linewidth=1, markersize=2)
         # ax_mid.set_ylim([0,10])
         # ax_mid.set_xlim([np.log10(0.8),np.log10(10000)])
         ax_mid.set_ylim([0,15])
@@ -848,15 +850,15 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     return m
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# indir = '/Users/yaolun/test/'
-# outdir = '/Users/yaolun/test/'
-# # # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
-# fix_params = {'R_min': 0.14}
-# setup_model(indir,outdir,'model_test_1e4_ics_gra3opc',params[0],dust_file,plot=True,record=False,\
-#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+indir = '/Users/yaolun/test/'
+outdir = '/Users/yaolun/test/'
+# # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
+fix_params = {'R_min': 0.14}
+setup_model(indir,outdir,'model_test_1e4_ics_gra3opc',params[0],dust_file,plot=True,record=False,\
+    idl=True,radmc=False,fix_params=fix_params,ellipsoid=False)

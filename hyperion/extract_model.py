@@ -392,7 +392,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
             yerr=[np.log10(flux_aper*wl_aper)-np.log10(flux_aper*wl_aper-unc_aper*wl_aper), np.log10(flux_aper*wl_aper+unc_aper*wl_aper)-np.log10(flux_aper*wl_aper)],\
             fmt='o', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=2.5, linewidth=1.7, ecolor='Blue', elinewidth=3, barsabove=True)
         ax_sed.set_ylim([-14,-7])
-        ax_sed.set_xlim([0,3])
+        ax_sed.set_xlim([0,3.2])
     # in normal scale
     else:
         aper_obs = ax_sed.errorbar(np.log10(obs_aper_wl), obs_aper_flux*obs_aper_wl, yerr=obs_aper_unc*obs_aper_wl,\
@@ -400,7 +400,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         aper = ax_sed.errorbar(np.log10(wl_aper),flux_aper*wl_aper, yerr=unc_aper*wl_aper,\
             fmt='o', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=2.5, linewidth=1.7, ecolor='Blue', elinewidth=3, barsabove=True)
         # ax_sed.set_xlim([1, 1000])
-        ax_sed.set_xlim([0, 3])
+        ax_sed.set_xlim([0,3.2])
         # ax_sed.set_ylim([1e-14, 1e-8])
     # calculate the bolometric luminosity of the aperture 
     # print flux_aper
