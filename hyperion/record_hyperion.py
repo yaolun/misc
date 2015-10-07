@@ -6,7 +6,7 @@ def record_hyperion(dict_params, outdir):
 	# colhead = ('Model#','M_env_dot','R_cen','R_inf','tstar','R_env_max','theta_cav','rho_cav_center','rho_cav_edge','rstar','M_disk_dot',\
 			   # 'M_disk','beta','h100','rho_cav','d_sub','age','Cs','Omega0','percentile','absolute','relative','view_angle')
 	colhead = ('Model#','age','Cs','Omega0','tstar','R_env_max','theta_cav','rho_cav_center','rho_cav_edge','rstar','M_disk_dot',\
-			   'M_disk','beta','h100','rho_cav','d_sub','M_env_dot','R_inf','R_cen','mstar','percentile','absolute','relative','view_angle','total_mass')
+			   'M_disk','beta','h100','rho_cav','d_sub','M_env_dot','R_inf','R_cen','mstar','percentile','absolute','relative','view_angle','M_tot_gas')
 
 	if not os.path.exists(outdir+'model_list.txt'):
 		foo = open(outdir+'model_list.txt','w')
@@ -30,7 +30,7 @@ def record_hyperion(dict_params, outdir):
 			  dict_params['rstar'],dict_params['M_disk_dot'],dict_params['M_disk'],dict_params['beta'],dict_params['h100'],\
 			  dict_params['rho_cav'],dict_params['d_sub'],dict_params['M_env_dot'],dict_params['R_inf'],dict_params['R_cen'],\
 			  dict_params['mstar'],dict_params['percentile'],dict_params['absolute'],dict_params['relative'],\
-			  dict_params['view_angle'],dict_params['total_mass'])
+			  dict_params['view_angle'],dict_params['M_tot_gas'])
 	foo.write('%10s  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e  %14e \n' % output)
 
 # from input_reader import input_reader

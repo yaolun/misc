@@ -173,7 +173,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         model_list = ascii.read(listpath)
 
         if ref != None:
-            ignore_col = ['d_sub', 'M_env_dot', 'R_inf', 'R_cen', 'mstar', 'total_mass', 'M_disk']
+            ignore_col = ['d_sub', 'M_env_dot', 'R_inf', 'R_cen', 'mstar', 'M_tot_gas', 'M_disk']
             ref_params = copy.copy(model_list)
             if fixed == True:
                 ref_params.remove_column(keywords['col'][0])
@@ -388,6 +388,7 @@ import numpy as np
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
                'model_num': np.arange(1,51)}]
+
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
 #                'model_num': np.arange(1,77)}]
@@ -402,13 +403,13 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.tx
 #                  {'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']},\
 #                  {'col':['view_angle','theta_cav'], 'label': [r'$\rm{\theta_{incl}\,[deg.]}$', r'$\rm{\theta_{cav}\,[deg.]}$']}]
 # keywords_list = [{'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
-keywords_list = [{'col':['theta_cav','view_angle'], 'label': [r'$\rm{\theta_{cav}\,[deg.]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
+# keywords_list = [{'col':['theta_cav','view_angle'], 'label': [r'$\rm{\theta_{cav}\,[deg.]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
-for keywords in keywords_list:
-    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=7)
-    for i in range(len(p1)):
-        print p1[i], p2[i], chi2[i]
+# for keywords in keywords_list:
+#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=7)
+#     for i in range(len(p1)):
+#         print p1[i], p2[i], chi2[i]
     # fir_chi2_2d(array_list, keywords, obs)
 
 # # 1-D rho_cav_center
@@ -438,9 +439,8 @@ for keywords in keywords_list:
 #                # 'model_num': np.hstack((34,71))}]
 #                'model_num': np.hstack((np.arange(54,68), 34, 71))}]
 
-# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
-#                'datapath': '/Users/yaolun/bhr71/hyperion/cycle9',
-#                # 'model_num': np.hstack((34,71))}]
-#                'model_num': np.hstack((np.arange(72,94),34))}]
-# keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
-# fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=34, herschel_only=True)
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle10/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/cycle10',
+               'model_num': np.arange(14,35)}]
+keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=26, herschel_only=True)
