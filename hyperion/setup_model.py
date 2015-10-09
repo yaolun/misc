@@ -237,9 +237,9 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                                 if rho_cav_edge == 0:
                                     rho_cav_edge = R_env_min
                                 if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
-                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center#*((rc[ir]/AU)**2)
+                                    rho_env[ir,itheta,iphi] = g2d * rho_cav_center#*((rc[ir]/AU)**2)
                                 else:
-                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**power
+                                    rho_env[ir,itheta,iphi] = g2d * rho_cav_center*discont*(rho_cav_edge/rc[ir])**power
                                 i += 1
                             else:
                                 # condition for the inner ellipsoid
@@ -419,9 +419,9 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                                 if rho_cav_edge == 0:
                                     rho_cav_edge = R_env_min
                                 if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
-                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center#*((rc[ir]/AU)**2)
+                                    rho_env[ir,itheta,iphi] = g2d * rho_cav_center#*((rc[ir]/AU)**2)
                                 else:
-                                    rho_env[ir,itheta,iphi] = 100 * rho_cav_center*discont*(rho_cav_edge/rc[ir])**power
+                                    rho_env[ir,itheta,iphi] = g2d * rho_cav_center*discont*(rho_cav_edge/rc[ir])**power
                                 i += 1
                             else:
                                 # condition for the inner ellipsoid
