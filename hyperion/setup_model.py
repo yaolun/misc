@@ -1,7 +1,7 @@
 def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,plot=False,\
                 low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,\
                 aperture=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False,\
-                TSC_dir='~/programs/misc/TSC/', IDL_path='/Applications/exelis/idl83/bin/idl'):
+                TSC_dir='~/programs/misc/TSC/', IDL_path='/Applications/exelis/idl83/bin/idl',auto_disk=0.25):
     """
     params = dictionary of the model parameters
     alma keyword is obsoleted 
@@ -114,6 +114,11 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     beta      = dict_params['beta']
     h100      = dict_params['h100']*AU
     rho_cav   = dict_params['rho_cav']
+    # make M_disk varies with mstar, which is the mass of star+disk
+    if auto_disk != None:
+        print 'M_disk is reset to %4f of mstar (star+disk)' % auto_disk
+        M_disk = mstar * auto_disk
+
     # ellipsoid cavity parameter
     if ellipsoid == True:
         a_out = 130 * 178. * AU
