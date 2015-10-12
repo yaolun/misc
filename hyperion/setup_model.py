@@ -715,7 +715,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     if mono == False:
         syn_im.set_wavelength_range(1400, 2.0, 1400.0)
     # pixel number
-    syn_im.set_image_size(500, 500)
+    syn_im.set_image_size(400, 400)
     syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
     syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
     syn_im.set_uncertainties(True)
