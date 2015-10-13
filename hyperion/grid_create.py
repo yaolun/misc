@@ -60,8 +60,8 @@ home = os.path.expanduser('~')
 # should run view angle & outflow cavity opening angle
 # list_params = {'view_angle': [20,30,40,50,60],\
 # 			   'theta_cav': [10,15,20,25,30]}
-list_params = {'view_angle': [25,35,45,55,65],\
-		   'theta_cav': [12.5,17.5,22.5,27.5,32.5]}
+list_params = {'view_angle': [20,30,40,50,60,70,80,90],\
+		   'theta_cav': [10,15,20,25,30,35,40,45]}
 		   
 
 # outdir = '/Users/yaolun/test/'
