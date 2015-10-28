@@ -1426,8 +1426,8 @@ array = np.array([[61,62,63,64],[65,66,67,68],[69,70,71,72]])
 sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # disk & no disk
-# array = np.array([10,12,32,30])
-# disk_exist_com(indir, array, outdir, obs=None)
+array = np.array([30,27,67,83])
+disk_exist_com(indir, array, outdir, obs=None)
 
 # grid of tstar
 # array = np.array([73,74,75])
@@ -1451,7 +1451,7 @@ sed_cav_struc_com(indir, array, outdir, obs=obs)
 
 
 # grid of tstar with the same lstar
-array = np.array([73,74,75])
+array = np.array([80,81,82])
 sed_lum(indir, array, outdir)
 
 # # model_vs_obs('model46', '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/', obs=obs)
