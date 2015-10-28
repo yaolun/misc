@@ -118,8 +118,11 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     rho_cav   = dict_params['rho_cav']
     # make M_disk varies with mstar, which is the mass of star+disk
     if auto_disk != None:
-        print 'M_disk is reset to %4f of mstar (star+disk)' % auto_disk
-        M_disk = mstar * auto_disk
+        if M_disk != 0:
+            print 'M_disk is reset to %4f of mstar (star+disk)' % auto_disk
+            M_disk = mstar * auto_disk
+        else:
+            print 'M_disk = 0 is found.  M_disk is set to 0.'
 
     # ellipsoid cavity parameter
     if ellipsoid == True:
