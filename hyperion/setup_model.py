@@ -563,8 +563,15 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     # sys.path.append(os.path.expanduser('~')+'/programs/misc/')
     # from tsc_comparison import tsc_com
     # rho_tsc, rho_ulrich = tsc_com()
-    m.add_density_grid(rho_dust.T, d)
-    # m.add_density_grid(rho.T, outdir+'oh5.hdf5')    # numpy read the array in reverse order
+
+    # m.add_density_grid(rho_dust.T, d)
+
+    # test script for testing the effect of the outer radius
+    envelope = m.add_power_law_envelope()
+    envelope.mass = 0.03 * MS           # Envelope mass
+    envelope.rmin = R_env_min           # Inner radius
+    envelope.rmax = R_env_max           # Outer radius
+    envelope.power = -2                 # Radial power
 
     # Define the luminsoity source
     source = m.add_spherical_source()
