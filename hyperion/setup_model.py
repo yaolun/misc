@@ -573,6 +573,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     envelope.rmin = R_env_min           # Inner radius
     envelope.rmax = R_env_max           # Outer radius
     envelope.power = -2                 # Radial power
+    envelope.dust = outdir+os.path.basename(dust_file).split('.')[0]+'.hdf5'
 
     # Define the luminsoity source
     source = m.add_spherical_source()
