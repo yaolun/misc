@@ -21,7 +21,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     import os
     from matplotlib.colors import LogNorm
     from scipy.integrate import nquad
-    from hyperion.model import Model
+    from hyperion.model import Model, AnalyticalYSOModel
     from record_hyperion import record_hyperion
     from outflow_inner_edge import outflow_inner_edge
     from pprint import pprint
@@ -44,7 +44,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     mmw       = 2.37   # Kauffmann 2008
 
 
-    m = Model()
+    # m = Model()
+    m = AnalyticalYSOModel()
 
     # Create dust properties
 
