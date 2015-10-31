@@ -49,6 +49,8 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
             ax.text(0.4, 0.1, r'$T_{bol}= %4.1f\,K$' % t_bol(wave,sed*wave*1e-4/c*1e-23), fontsize=12, transform=ax.transAxes)
 
             ax.set_ylim([-14,-7])
+            ax.set_xlim([0.5, 3.5])
+            ax.set_xticks([0.5,1.0,1.5,2.0,2.5,3.0,3.5])
 
             [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
             ax.minorticks_on() 
@@ -92,6 +94,7 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
 
             # fix the overlap tick labels
             x_nbins = len(ax.get_xticklabels())
+            x_nbins = 7
             y_nbins = len(ax.get_yticklabels())
             if rr != 0:
                 ax.yaxis.set_major_locator(MaxNLocator(nbins=y_nbins, prune='upper'))
@@ -845,17 +848,19 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     # get data
     # r^-2
     # alpha_list = np.linspace(0.5, 1.0, len(array['r-2']))
-    alpha_list = [1,0.7]
+    alpha_list = [1,1]
+    linestyle = ['--','-']
     for i in range(len(array['r-2'])):
         (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
-        r2, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Magenta',mec='Magenta',\
+        r2, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o',linestyle=linestyle[i],mfc='Magenta',mec='Magenta',\
             markersize=7,markeredgewidth=1,color='Magenta', linewidth=2, alpha=alpha_list[i])
     # r^-1.5
     # alpha_list = np.linspace(0.5, 1.0, len(array['r-1.5']))
-    alpha_list = [1,0.7]
+    alpha_list = [1,1]
+    linestyle = ['--','-']
     for i in range(len(array['r-1.5'])):
         (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][i])+'_sed_w_aperture.txt', skip_header=1).T
-        r15, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o-',mfc='Red',mec='Red',\
+        r15, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o',linestyle=linestyle[i],mfc='Red',mec='Red',\
             markersize=7,markeredgewidth=1,color='Red', linewidth=2, alpha=alpha_list[i])
     if ver == None:
         # const+r2
@@ -896,10 +901,16 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     ax.set_ylim([-13,-7.5])
 
     if ver == None:
-        plt.legend([r2, r15, const_r2, uni, obs_data], [r'$\rho(r)\propto\,r^{-2}$', r'$\rho(r)\propto\,r^{-1.5}$',\
-                    r'$const.+r^{-2}$',r'$uniform$',r'$observation$'],\
-                    numpoints=1, loc='lower center', fontsize=16)
-        msg = ''
+        if obs != None:
+            plt.legend([r2, r15, const_r2, uni, obs_data], [r'$\rho(r)\propto\,r^{-2}$', r'$\rho(r)\propto\,r^{-1.5}$',\
+                        r'$const.+r^{-2}$',r'$uniform$',r'$observation$'],\
+                        numpoints=1, loc='lower center', fontsize=16)
+            msg = ''
+        else:
+            plt.legend([r2, r15, const_r2, uni], [r'$\rho(r)\propto\,r^{-2}$', r'$\rho(r)\propto\,r^{-1.5}$',\
+                        r'$const.+r^{-2}$',r'$uniform$'],\
+                        numpoints=1, loc='lower center', fontsize=16)
+            msg = '_no_obs'
     else:
         plt.legend([r2, r15, uni, obs_data], [r'$\rho(r)\propto\,r^{-2}$', r'$\rho(r)\propto\,r^{-1.5}$',\
                     r'$uniform$',r'$observation$'],\
@@ -911,6 +922,97 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     #             numpoints=1, loc='lower right', fontsize=16)
 
     fig.savefig(outdir+'sed_cav_struc_com'+msg+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
+
+    # set up the density profile in the outflow cavity
+    rc = np.sort(np.hstack((np.arange(0.14, 41253, 41252/100),40.)))
+    # d2 and d15 have not yet scaled by the density offset
+    d2 = (rc/0.14)**-2
+    d15 = (rc/0.14)**-1.5
+    db = np.empty_like(rc)
+    for i in range(len(rc)):
+        if rc[i] <= 40:
+            db[i] = 1.0
+        else:
+            db[i] = (rc[i]/40.)**-2
+
+    # different style for maybe better illustration
+    fig, axarr = plt.subplots(3, 1, sharex='col', sharey='row', figsize=(8,18))
+    # plot r-2 profile with two density offsets
+    (wave_r21, sed_r21, sed_unc_r21) = np.genfromtxt(indir+'/model'+str(array['r-2'][0])+'_sed_w_aperture.txt', skip_header=1).T   
+    r21, = axarr[0].plot(np.log10(wave_r21), np.log10(sed_r21), 'o', linestyle='-', mfc='Magenta',mec='Magenta',\
+            markersize=7,markeredgewidth=1,color='Magenta', linewidth=1.5)
+    (wave_r22, sed_r22, sed_unc_r22) = np.genfromtxt(indir+'/model'+str(array['r-2'][1])+'_sed_w_aperture.txt', skip_header=1).T   
+    r22, = axarr[0].plot(np.log10(wave_r22), np.log10(sed_r22), 'o', linestyle='--', mfc='Magenta',mec='Magenta',\
+            markersize=7,markeredgewidth=1,color='Magenta', linewidth=1.5)
+    axarr[0].legend([r21, r22], \
+        [r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-19}\,g\,cm^{-3}}$'],\
+        fontsize=14, numpoints=1, framealpha=0.5)
+    axarr[0].text(0.1,0.9, r'$\rm{\rho(r) \propto r^{-2}}$', fontsize=18,color='k', transform=axarr[0].transAxes)
+    # additional embedded axis for density
+    den_r2 = plt.axes([0.45 ,0.67, 0.2, 0.08], frameon=True)
+    den_r2.plot(np.log10(rc), np.log10(5e-18*d2),'-',color='k',linewidth=1)
+    den_r2.plot(np.log10(rc), np.log10(5e-19*d2),'--',color='k',linewidth=1)
+    den_r2.set_xlim([-1,5])
+    den_r2.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
+    den_r2.set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$')
+    #
+    # plot r-1.5 profile with two density offsets
+    (wave_r151, sed_r151, sed_unc_r151) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][0])+'_sed_w_aperture.txt', skip_header=1).T   
+    r151, = axarr[1].plot(np.log10(wave_r151), np.log10(sed_r151), 'o', linestyle='-', mfc='Red',mec='Red',\
+            markersize=7,markeredgewidth=1,color='Red', linewidth=1.5)
+    (wave_r152, sed_r152, sed_unc_r152) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][1])+'_sed_w_aperture.txt', skip_header=1).T   
+    r152, = axarr[1].plot(np.log10(wave_r152), np.log10(sed_r152), 'o', linestyle='--', mfc='Red',mec='Red',\
+            markersize=7,markeredgewidth=1,color='Red', linewidth=1.5)
+    axarr[1].legend([r151, r152], \
+        [r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-19}\,g\,cm^{-3}}$'],\
+        fontsize=14, numpoints=1, framealpha=0.5)
+    axarr[1].text(0.1,0.9, r'$\rm{\rho(r) \propto r^{-1.5}}$', fontsize=18,color='k', transform=axarr[1].transAxes)
+    # additional embedded axis for density
+    den_r15 = plt.axes([0.45 ,0.4, 0.2, 0.08], frameon=True)
+    den_r15.plot(np.log10(rc), np.log10(5e-18*d15),'-',color='k',linewidth=1)
+    den_r15.plot(np.log10(rc), np.log10(5e-19*d15),'--',color='k',linewidth=1)
+    den_r15.set_xlim([-1,5])
+    den_r15.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
+    den_r15.set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$')
+    #
+    (wave_uni, sed_uni, sed_unc_uni) = np.genfromtxt(indir+'/model'+str(array['uniform'][0])+'_sed_w_aperture.txt', skip_header=1).T   
+    (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array['const+r-2'][0])+'_sed_w_aperture.txt', skip_header=1).T   
+    r2, = axarr[2].plot(np.log10(wave_r22), np.log10(sed_r22), 'o', linestyle='-', mfc='Magenta',mec='Magenta',\
+            markersize=7,markeredgewidth=1,color='Magenta', linewidth=1.5)
+    r15, = axarr[2].plot(np.log10(wave_r152), np.log10(sed_r152), 'o', linestyle='-', mfc='Red',mec='Red',\
+            markersize=7,markeredgewidth=1,color='Red', linewidth=1.5)
+    uni, = axarr[2].plot(np.log10(wave_uni), np.log10(sed_uni), 'o', linestyle='-', mfc='Green',mec='Green',\
+            markersize=7,markeredgewidth=1,color='Green', linewidth=1.5)
+    best, = axarr[2].plot(np.log10(wave), np.log10(sed), 'o', linestyle='-', mfc='Blue',mec='Blue',\
+            markersize=7,markeredgewidth=1,color='Blue', linewidth=1.5)
+    axarr[2].legend([r2, r15, uni, best], \
+        [r'$\rho(r)\propto\,r^{-2}$', r'$\rho(r)\propto\,r^{-1.5}$',r'$uniform$',r'$const.+r^{-2}$'],\
+        fontsize=14, numpoints=1, framealpha=0.5)
+    # additional embedded axis for density
+    den_b = plt.axes([0.45 ,0.13, 0.2, 0.08], frameon=True)
+    den_b.plot(np.log10(rc), np.log10(5e-19*d2),'-',color='Magenta',linewidth=1)
+    den_b.plot(np.log10(rc), np.log10(5e-19*d15),'-',color='Red',linewidth=1)
+    den_b.plot(np.log10(rc), np.log10(5e-19*db), '-', color='Blue',linewidth=1)
+    den_b.plot(np.log10(rc), np.log10(rc*0+1e-21), '-', color='Green',linewidth=1)
+    den_b.set_xlim([-1,5])
+    den_b.set_ylim([-30,-17])
+    den_b.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
+    den_b.set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$')
+    #
+    for ax in axarr:
+        [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+        ax.minorticks_on() 
+        ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+        ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+
+        ax.set_xlabel(r'$log(wavelength)\,[\mu m]$', fontsize=20)
+        ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=20)
+        ax.set_ylim([-13,-7.5])
+
+
+    fig.subplots_adjust(hspace=0,wspace=0)
+    fig.savefig(outdir+'sed_cav_struc_com_sty2.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
 def sed_lum(indir, array, outdir, obs=None):
@@ -1426,7 +1528,8 @@ array = np.array([[61,62,63,64],[65,66,67,68],[69,70,71,72]])
 sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # disk & no disk
-array = np.array([30,27,67,83])
+# late: yes & no; early: yes & no
+array = np.array([30,85,67,84])
 disk_exist_com(indir, array, outdir, obs=None)
 
 # grid of tstar
@@ -1448,6 +1551,9 @@ sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=c
 # power = 2, 1.5, const+r-2, and uniform
 array = {'r-2': [42,43], 'r-1.5': [44,45], 'const+r-2': [67], 'uniform': [41]}
 sed_cav_struc_com(indir, array, outdir, obs=obs)
+
+array = {'r-2': [42,43], 'r-1.5': [44,45], 'const+r-2': [67], 'uniform': [41]}
+sed_cav_struc_com(indir, array, outdir, obs=None)
 
 
 # grid of tstar with the same lstar
