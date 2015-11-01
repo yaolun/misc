@@ -579,7 +579,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     # from tsc_comparison import tsc_com
     # rho_tsc, rho_ulrich = tsc_com()
 
-    # m.add_density_grid(rho_dust.T, d)
+    m.add_density_grid(rho_dust.T, d)
 
 
     # Define the luminsoity source
