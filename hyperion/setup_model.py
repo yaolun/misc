@@ -379,16 +379,16 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
 
         # test script for testing the effect of the outer radius
-        envelope = m.add_power_law_envelope()
-        envelope.mass = 0.03 * MS           # Envelope mass
-        envelope.rmin = R_env_min           # Inner radius
-        envelope.rmax = R_env_max           # Outer radius
-        envelope.power = -2                 # Radial power
-        envelope.dust = outdir+os.path.basename(dust_file).split('.')[0]+'.hdf5'
-        envelope.r_0  = R_inf
-        envelope.rho_0 = 1/(2*np.pi*G*(t*yr)**2)
-        from hyperion.grid import SphericalPolarGrid
-        rho_env = envelope.density(SphericalPolarGrid(ri, thetai, phii)).T
+        # envelope = m.add_power_law_envelope()
+        # envelope.mass = 0.03 * MS           # Envelope mass
+        # envelope.rmin = R_env_min           # Inner radius
+        # envelope.rmax = R_env_max           # Outer radius
+        # envelope.power = -2                 # Radial power
+        # envelope.dust = outdir+os.path.basename(dust_file).split('.')[0]+'.hdf5'
+        # envelope.r_0  = R_inf
+        # envelope.rho_0 = 1/(2*np.pi*G*(t*yr)**2)
+        # from hyperion.grid import SphericalPolarGrid
+        # rho_env = envelope.density(SphericalPolarGrid(ri, thetai, phii)).T
         #
 
         if dyn_cav == True:
