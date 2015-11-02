@@ -44,8 +44,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     mmw       = 2.37   # Kauffmann 2008
 
 
-    # m = Model()
-    m = AnalyticalYSOModel()
+    m = Model()
+    # m = AnalyticalYSOModel()
 
     # Create dust properties
 
