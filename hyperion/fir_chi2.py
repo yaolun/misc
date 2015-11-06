@@ -443,6 +443,6 @@ for keywords in keywords_list:
 
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle10/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/cycle10',
-               'model_num': np.arange(14,47)}]
+               'model_num': np.hstack((np.arange(2,8),np.arange(14,47)))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=21, herschel_only=True)
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=2, herschel_only=True)

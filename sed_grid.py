@@ -1106,8 +1106,6 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     wl_tot = wl_tot[np.argsort(wl_tot)]
     l_bol_obs = l_bol(wl_tot,flux_tot*1e23, dstar)             
 
-    # Open the model
-    m = ModelOutput(indir+modelname+'.rtout')
 
     if wl_aper == None:
         wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
@@ -1152,6 +1150,9 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
 
     # read in the raw output from hyperion and then save the extraction results in text file, otherwise read the text files instead.
     if rtout == True:
+        # Open the model
+        m = ModelOutput(indir+modelname+'.rtout')
+
         sed_inf = m.get_sed(group=0, inclination=0, aperture=-1, distance=dstar * pc)
         flux_aper = np.empty_like(wl_aper)
         unc_aper = np.empty_like(wl_aper)
@@ -1191,8 +1192,8 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
         foo.close()
     else:
         # read in the extracted text files
-        (sim_inf, sim_sed_inf) = np.genfromtxt(indir+modelname+'_sed_inf.txt', skip_header=1).T
-        (wl_aper, flux_aper) = np.genfromtxt(indir+modelname+'_sed_w_aperture.txt', skip_header=1).T
+        (sim_inf, sim_sed_inf, sim_sed_inf_unc) = np.genfromtxt(indir+modelname+'_sed_inf.txt', skip_header=1).T
+        (wl_aper, flux_aper, unc_aper) = np.genfromtxt(indir+modelname+'_sed_w_aperture.txt', skip_header=1).T
 
     aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's-', mec='None', mfc='r', color='r',markersize=10, linewidth=1.5)
     aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o-', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=3, linewidth=1.7)
@@ -1209,7 +1210,7 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='minor',pad=15,length=2.5*mag)
 
     ax_sed.set_ylim([-13,-7.5])
-    ax_sed.set_xlim([0,3])
+    ax_sed.set_xlim([0,3.3])
 
     lg_data = ax_sed.legend([irs, photometry, aper, aper_obs],\
         [r'$\rm{observation}$',\
@@ -1560,7 +1561,7 @@ sed_cav_struc_com(indir, array, outdir, obs=None)
 array = np.array([80,81,82])
 sed_lum(indir, array, outdir)
 
-# # model_vs_obs('model46', '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/', obs=obs)
+model_vs_obs('model67', '/Users/yaolun/bhr71/hyperion/controlled/cycle5/', '/Users/yaolun/test/', obs=obs)
 
 # models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model101','/Users/yaolun/bhr71/hyperion/controlled/model80','/Users/yaolun/bhr71/hyperion/cycle9/model1'],\
 #     '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
