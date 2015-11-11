@@ -21,7 +21,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     import os
     from matplotlib.colors import LogNorm
     from scipy.integrate import nquad
-    from hyperion.model import Model, AnalyticalYSOModel
+    from hyperion.model import Model
     from record_hyperion import record_hyperion
     from outflow_inner_edge import outflow_inner_edge
     from pprint import pprint
@@ -45,7 +45,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
 
     m = Model()
-    # m = AnalyticalYSOModel()
 
     # Create dust properties
 
@@ -377,20 +376,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         for i in range(0, nz):
             rho_env[:,:,i] = rho_env_tsc2d
 
-
-        # test script for testing the effect of the outer radius
-        # envelope = m.add_power_law_envelope()
-        # envelope.mass = 0.03 * MS           # Envelope mass
-        # envelope.rmin = R_env_min           # Inner radius
-        # envelope.rmax = R_env_max           # Outer radius
-        # envelope.power = -2                 # Radial power
-        # envelope.dust = outdir+os.path.basename(dust_file).split('.')[0]+'.hdf5'
-        # envelope.r_0  = R_inf
-        # envelope.rho_0 = 1/(2*np.pi*G*(t*yr)**2)
-        # from hyperion.grid import SphericalPolarGrid
-        # rho_env = envelope.density(SphericalPolarGrid(ri, thetai, phii)).T
-        #
-
         if dyn_cav == True:
             print 'Calculate the cavity properties using the criteria that swept-up mass = outflowed mass'
             # using swept-up mass = flow mass to derive the edge of the extended flat density region
@@ -578,9 +563,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     # sys.path.append(os.path.expanduser('~')+'/programs/misc/')
     # from tsc_comparison import tsc_com
     # rho_tsc, rho_ulrich = tsc_com()
-
     m.add_density_grid(rho_dust.T, d)
-
+    # m.add_density_grid(rho.T, outdir+'oh5.hdf5')    # numpy read the array in reverse order
 
     # Define the luminsoity source
     source = m.add_spherical_source()
@@ -667,7 +651,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     syn_inf = m.add_peeled_images(image=False)
     # use the index of wavelength array used by the monochromatic radiative transfer
     if mono == False:
-        # syn_inf.set_wavelength_range(3100, 2.0, 3100.0)
         syn_inf.set_wavelength_range(1400, 2.0, 1400.0)
     syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
     syn_inf.set_uncertainties(True)
@@ -722,7 +705,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         dict_peel_sed[str(index_reduced[i])] = m.add_peeled_images(image=False)
         # use the index of wavelength array used by the monochromatic radiative transfer
         if mono == False:
-            # dict_peel_sed[str(index_reduced[i])].set_wavelength_range(3100, 2.0, 3100.0)
             dict_peel_sed[str(index_reduced[i])].set_wavelength_range(1400, 2.0, 1400.0)
         dict_peel_sed[str(index_reduced[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
         # aperture should be given in cm and its the radius of the aperture
@@ -734,7 +716,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     syn_im = m.add_peeled_images(sed=False)
     # use the index of wavelength array used by the monochromatic radiative transfer
     if mono == False:
-        # syn_im.set_wavelength_range(3100, 2.0, 3100.0)
         syn_im.set_wavelength_range(1400, 2.0, 1400.0)
     # pixel number
     syn_im.set_image_size(300, 300)
@@ -879,16 +860,16 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     return m
 
-from input_reader import input_reader_table
-from pprint import pprint
-filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-params = input_reader_table(filename)
-pprint(params[0])
-indir = '/Users/yaolun/test/'
-outdir = '/Users/yaolun/test/'
-dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
-# fix_params = {'R_min': 0.14}
-fix_params = {}
-setup_model(indir,outdir,'model_test_latest',params[0],dust_file,plot=True,record=False,\
-    idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)
+# from input_reader import input_reader_table
+# from pprint import pprint
+# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+# params = input_reader_table(filename)
+# pprint(params[0])
+# indir = '/Users/yaolun/test/'
+# outdir = '/Users/yaolun/test/'
+# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+# # dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
+# # fix_params = {'R_min': 0.14}
+# fix_params = {}
+# setup_model(indir,outdir,'model_test',params[0],dust_file,plot=True,record=False,\
+#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)
