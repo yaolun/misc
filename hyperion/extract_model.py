@@ -1,5 +1,5 @@
 def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,save=True,filter_func=False,\
-    plot_all=False,clean=False,exclude_wl=[],log=True,image=True,obj='BHR71'):
+    plot_all=False,clean=False,exclude_wl=[],log=True,image=True,obj='BHR71',print_data_w_aper=False):
     """
     filename: The path to Hyperion output file
     indir: The path to the directory which contains observations data
@@ -421,7 +421,15 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         for i in range(0, len(wl_aper)): 
             foo.write('%12g \t %12g \t %12g \n' % (wl_aper[i], flux_aper[i]*wl_aper[i], unc_aper[i]*wl_aper[i]))
         foo.close()
-
+        # print out the aperture-convolved fluxex from observations
+        if print_data_w_aper:
+            foo = open(outdir+print_name+'_obs_w_aperture.txt','w')
+            # foo.write('%12s \t %12s \t %12s \n' % ('wave','vSv','sigma_vSv'))
+            foo.write('%12s \t %12s \t %12s \n' % ('wave','Jy','sigma_Jy'))
+            for i in range(0, len(obs_aper_wl)): 
+                # foo.write('%12g \t %12g \t %12g \n' % (obs_aper_wl[i], obs_aper_flux[i]*obs_aper_wl[i], obs_aper_unc[i]*obs_aper_wl[i]))
+                foo.write('%12g \t %12g \t %12g \n' % (obs_aper_wl[i], obs_aper_flux[i]*obs_aper_wl[i]/(c/obs_aper_wl[i]*1e4)*1e23, obs_aper_unc[i]*obs_aper_wl[i]/(c/obs_aper_wl[i]*1e4)*1e23))
+            foo.close()
     # Read in and plot the simulated SED produced by RADMC-3D using the same parameters
     # [wl,fit] = np.genfromtxt(indir+'hyperion/radmc_comparison/spectrum.out',dtype='float',skip_header=3).T
     # l_bol_radmc = l_bol(wl,fit*1e23/dstar**2)
@@ -574,13 +582,13 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         fig.savefig(outdir+print_name+'_image_gridplot.png', format='png', dpi=300, bbox_inches='tight')
         fig.clf()
 
-# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
-# outdir = '/Users/yaolun/bhr71/hyperion/'
-# import numpy as np
-# wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
-# aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# extract_hyperion('/Users/yaolun/test/model_test_latest.rtout',indir=indir,outdir='/Users/yaolun/test/',\
-#                  aperture=aperture,filter_func=True,plot_all=True,clean=True,image=False)
+indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+outdir = '/Users/yaolun/bhr71/hyperion/'
+import numpy as np
+wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
+aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
+extract_hyperion('/Users/yaolun/test/model_test_latest.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+                 aperture=aperture,filter_func=True,plot_all=True,clean=True,image=False,print_data_w_aper=True)
 # extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra3opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra2opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
