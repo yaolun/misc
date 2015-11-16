@@ -1561,7 +1561,7 @@ sed_cav_struc_com(indir, array, outdir, obs=None)
 array = np.array([80,81,82])
 sed_lum(indir, array, outdir)
 
-model_vs_obs('model67', '/Users/yaolun/bhr71/hyperion/controlled/cycle5/', '/Users/yaolun/test/', obs=obs)
+model_vs_obs('model_test_latest', '/Users/yaolun/test/', '/Users/yaolun/test/', obs=obs)
 
 # models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model101','/Users/yaolun/bhr71/hyperion/controlled/model80','/Users/yaolun/bhr71/hyperion/cycle9/model1'],\
 #     '/Users/yaolun/bhr71/hyperion/cycle7/', '/Users/yaolun/test/',\
