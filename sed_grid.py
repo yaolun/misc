@@ -1461,7 +1461,7 @@ def disk_summary(indir, array, outdir, obs=None, compact=None, inf=False, obs_co
 
 
 import numpy as np
-indir = '/Users/yaolun/bhr71/hyperion/controlled/cycle5/'
+indir = '/Users/yaolun/bhr71/hyperion/controlled/'
 outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
 outdir = '/Users/yaolun/test/updated_bhr71/'
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
@@ -1520,7 +1520,7 @@ disk_summary(indir, array, outdir, compact=compact)
 
 
 # grid of theta_cav and incl.
-array = np.array([[46,47,48,49,50],[51,52,53,54,55],[56,57,58,59,60]])
+array = np.array([[52,53,54,55,56],[57,58,59,60,61],[62,63,64,65,66]])
 sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 # only for incl. = 40
 # array = np.array([58,59,60,104,105])
@@ -1531,14 +1531,14 @@ sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 # sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
 
 # grid of rho_cav_center and sed_rho_cav_edge
-array = np.array([[61,62,63,64],[65,66,67,68],[69,70,71,72]])
+array = np.array([[67,68,69,70],[71,72,73,74],[75,76,77,78]])
 # sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
 sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # disk & no disk
 # late: yes & no; early: yes & no
-array = np.array([30,85,67,84])
-disk_exist_com(indir, array, outdir, obs=None)
+array = np.array([27,29,67,84])
+# disk_exist_com(indir, array, outdir, obs=None)
 
 # grid of tstar
 # array = np.array([73,74,75])
@@ -1549,23 +1549,23 @@ disk_exist_com(indir, array, outdir, obs=None)
 # sed_rstar(indir, array, outdir, obs=obs)
 
 # grid of R_env_max
-array = np.array([76,77,78])
-xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,2.5\times 10^{4},\,5.0\times 10^{4})$'
+array = np.array([82,83,84])
+xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
 compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
 plotname = 'r_max'
 sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact)
 
 # grid of continuous cavity power law
 # power = 2, 1.5, const+r-2, and uniform
-array = {'r-2': [88,43], 'r-1.5': [90,45], 'const+r-2': [67], 'uniform': [41]}
+array = {'r-2': [44,46], 'r-1.5': [48,50], 'const+r-2': [85], 'uniform': [42]}
 sed_cav_struc_com(indir, array, outdir, obs=obs)
 
-array = {'r-2': [88,43], 'r-1.5': [90,45], 'const+r-2': [67], 'uniform': [41]}
+array = {'r-2': [44,46], 'r-1.5': [48,50], 'const+r-2': [85], 'uniform': [42]}
 sed_cav_struc_com(indir, array, outdir, obs=None)
 
 
 # grid of tstar with the same lstar
-array = np.array([80,81,82])
+array = np.array([79,80,81])
 sed_lum(indir, array, outdir)
 
 model_vs_obs('model_test_latest', '/Users/yaolun/test/', '/Users/yaolun/test/', obs=obs)
