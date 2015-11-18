@@ -1196,7 +1196,14 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
         (wl_aper, flux_aper, unc_aper) = np.genfromtxt(indir+modelname+'_sed_w_aperture.txt', skip_header=1).T
 
     aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's-', mec='None', mfc='r', color='r',markersize=10, linewidth=1.5)
-    aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o-', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=3, linewidth=1.7)
+    # aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o-', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=3, linewidth=1.7)
+    # ax_sed.errorbar(np.log10(wl_aper),np.log10(flux_aper), \
+    #     yerr=[np.log10(flux_aper)-np.log10(flux_aper-unc_aper), np.log10(flux_aper+unc_aper)-np.log10(flux_aper)],\
+    #     fmt='o-', mec='Blue', mfc='None', ecolor='Blue', linewidth=1.7)
+    aper = ax_sed.errorbar(np.log10(wl_aper),np.log10(flux_aper),\
+    yerr=[np.log10(flux_aper)-np.log10(flux_aper-unc_aper), np.log10(flux_aper+unc_aper)-np.log10(flux_aper)],\
+    fmt='o', linestyle='-', mec='Blue', mfc='None', color='b',markersize=12, markeredgewidth=2.5, linewidth=1.7, ecolor='Blue', elinewidth=3, barsabove=True)
+
     # calculate the bolometric luminosity of the aperture 
     l_bol_sim = l_bol(wl_aper, flux_aper/(c/np.array(wl_aper)*1e4)*1e23, dstar)
     print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
