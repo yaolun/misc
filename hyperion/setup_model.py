@@ -367,6 +367,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             # ind_infall = np.where(rc <= R_inf)[0][-1]+1
             ind_infall = np.where(rc >= R_inf)[0][0]
             print rc[ind_infall]/AU, R_inf/AU
+            print rho_env_tsc[ind_infall,:]
             for i in range(0, len(rc)):
                 if i <= ind_infall:
                     rho_env_tsc2d[i,:] = rho_env_tsc[i,:]
