@@ -1,6 +1,6 @@
 # All paths are related to home directory, except for IDL_path
 input_table		/programs/misc/hyperion/
-outdir 			/hyperion/bhr71/
+outdir 			/hyperion/bhr71/test/
 dust_file		/dust_model/Ormel2011/hyperion/oh5_hyperion.txt
 obs_dir			/radmc_simulation/bhr71/cycle1/observations/
 TSC_dir 		/programs/misc/TSC/

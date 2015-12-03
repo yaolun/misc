@@ -4,11 +4,11 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                 TSC_dir='~/programs/misc/TSC/', IDL_path='/Applications/exelis/idl83/bin/idl',auto_disk=0.25):
     """
     params = dictionary of the model parameters
-    alma keyword is obsoleted 
+    alma keyword is obsoleted
     outdir: The directory for storing Hyperion input files
     record_dir: The directory contains "model_list.txt" for recording parameters
     TSC_dir: Path the TSC-related IDL routines
-    IDL_path: The IDL executable 
+    IDL_path: The IDL executable
     """
     import numpy as np
     import astropy.constants as const
@@ -38,7 +38,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     G         = 6.67259e-8     # Gravitational constant  [cm3/g/s^2]
     yr        = 60*60*24*365   # Years in seconds
     PI        = np.pi          # PI constant
-    sigma     = const.sigma_sb.cgs.value  # Stefan-Boltzmann constant 
+    sigma     = const.sigma_sb.cgs.value  # Stefan-Boltzmann constant
     mh        = const.m_p.cgs.value + const.m_e.cgs.value
     g2d       = 100.
     mmw       = 2.37   # Kauffmann 2008
@@ -177,7 +177,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     ri           = np.hstack((0.0, ri))
     thetai       = PI*np.arange(ny+1).astype(dtype='float')/float(ny)
     phii         = PI*2.0*np.arange(nz+1).astype(dtype='float')/float(nz)
-    
+
     # Keep the constant cell size in r-direction at large radii
     #
     if flat == True:
@@ -185,7 +185,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         ind = np.where(ri_cellsize/AU > 100.0)[0][0]       # The largest cell size is 100 AU
         ri = np.hstack((ri[0:ind],ri[ind]+np.arange(np.ceil((rout-ri[ind])/100/AU))*100*AU))
         nxx = nx
-        nx = len(ri)-1    
+        nx = len(ri)-1
     # Assign the coordinates of the center of cell as its coordinates.
     #
     rc           = 0.5*( ri[0:nx]     + ri[1:nx+1] )
@@ -362,9 +362,9 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         # for i in range(0, nz):
         #     rho_env[:,:,i] = rho_env2d
         # map TSC solution from IDL to actual 2-D grid
-        rho_env_tsc2d = np.empty((nx,ny)) 
+        rho_env_tsc2d = np.empty((nx,ny))
         if max(ri) > R_inf:
-            ind_infall = np.where(rc <= R_inf)[0][-1]
+            ind_infall = np.where(rc <= R_inf)[0][-1]+1
             for i in range(0, len(rc)):
                 if i <= ind_infall:
                     rho_env_tsc2d[i,:] = rho_env_tsc[i,:]
@@ -458,7 +458,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
                         # Disk profile
                         if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
-                            h = ((w/(100*AU))**beta)*h100 
+                            h = ((w/(100*AU))**beta)*h100
                             rho_disk[ir,itheta,iphi] = rho_0*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/h)**2)
                         # Combine envelope and disk
                         rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
@@ -530,21 +530,30 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         ax = fig.add_subplot(111)
 
         plot_grid = [0,49,99,149,199]
+        color_grid = ['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00']
+        label = [r'$\rm{\theta='+str(int(np.degrees(thetai[plot_grid[0]])))+'^{\circ}}$',\
+                 r'$\rm{\theta='+str(int(np.degrees(thetai[plot_grid[1]])))+'^{\circ}}$',\
+                 r'$\rm{\theta='+str(1+int(np.degrees(thetai[plot_grid[2]])))+'^{\circ}}$',\
+                 r'$\rm{\theta='+str(int(np.degrees(thetai[plot_grid[3]])))+'^{\circ}}$',\
+                 r'$\rm{\theta='+str(1+int(np.degrees(thetai[plot_grid[4]])))+'^{\circ}}$']
         alpha = np.linspace(0.3,1.0,len(plot_grid))
         for i in plot_grid:
-            rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/g2d/mmw/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
-            tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mmw/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
-        rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
-        cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
-        # sisslope, = ax.plot(np.log10(rc/AU), -2*np.log10(rc/AU)+A-(-2)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
-        # gt_R_cen_slope, = ax.plot(np.log10(rc/AU), -1.5*np.log10(rc/AU)+B-(-1.5)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
-        # lt_R_cen_slope, = ax.plot(np.log10(rc/AU), -0.5*np.log10(rc/AU)+A-(-0.5)*np.log10(plot_r_inf), linestyle='--', color='Orange', linewidth=1.5)
+            # rho_rad, = ax.plot(np.log10(rc/AU), np.log10(rho2d[:,i]/g2d/mmw/mh),'-',color='b',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            # tsc_only, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mmw/mh),'o',color='r',linewidth=2, markersize=3,alpha=alpha[plot_grid.index(i)])
+            ax.plot(np.log10(rc[rc > 0.14*AU]/AU), np.log10(rho2d[rc > 0.14*AU,i]/g2d/mmw/mh)+plot_grid[::-1].index(i)*-0.2,'-',color=color_grid[plot_grid.index(i)],mec='None',linewidth=2.5, \
+                    markersize=3, label=label[plot_grid.index(i)]) # alpha=alpha[plot_grid.index(i)],
+        # rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
+        # cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
+        ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5, label=r'$\rm{infall\,radius}$')
+        ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5, label=r'$\rm{centrifugal\,radius}$')
 
-        lg = plt.legend([rho_rad, tsc_only, rinf, cen_r],\
-                        [r'$\rm{\rho_{dust}}$',r'$\rm{\rho_{tsc}}$',r'$\rm{infall\,radius}$',r'$\rm{centrifugal\,radius}$'],\
-                        fontsize=20, numpoints=1)
+        # lg = plt.legend([rho_rad, tsc_only, rinf, cen_r],\
+        #                 [r'$\rm{\rho_{dust}}$',r'$\rm{\rho_{tsc}}$',r'$\rm{infall\,radius}$',r'$\rm{centrifugal\,radius}$'],\
+        #                 fontsize=20, numpoints=1)
+        lg = plt.legend(fontsize=20, numpoints=1, ncol=2, framealpha=0.7, loc='upper right')
+
         ax.set_xlabel(r'$\rm{log(Radius)\,(AU)}$',fontsize=20)
-        ax.set_ylabel(r'$\rm{log(Gas \slash Dust\,Density)\,(cm^{-3})}$',fontsize=20)
+        ax.set_ylabel(r'$\rm{log(Dust\,Density)\,(cm^{-3})}$',fontsize=20)
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on()
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
@@ -557,17 +566,15 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         for label in ax.get_yticklabels():
             label.set_fontproperties(ticks_font)
 
-        ax.set_ylim([0,15])
+        ax.set_ylim([0,11])
         fig.gca().set_xlim(left=np.log10(0.05))
         # ax.set_xlim([np.log10(0.8),np.log10(10000)])
 
         # subplot shows the radial density profile along the midplane
-        ax_mid = plt.axes([0.2,0.2,0.2,0.2], frameon=True)
-        ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/g2d/mmw/mh),'o',color='b',linewidth=1, markersize=2)
-        ax_mid.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,199]/mmw/mh),'-',color='r',linewidth=1, markersize=2)
-        # ax_mid.set_ylim([0,10])
-        # ax_mid.set_xlim([np.log10(0.8),np.log10(10000)])
-        ax_mid.set_ylim([0,15])
+        # ax_mid = plt.axes([0.2,0.2,0.2,0.2], frameon=True)
+        # ax_mid.plot(np.log10(rc/AU), np.log10(rho2d[:,199]/g2d/mmw/mh),'o',color='b',linewidth=1, markersize=2)
+        # ax_mid.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,199]/mmw/mh),'-',color='r',linewidth=1, markersize=2)
+        # ax_mid.set_ylim([0,15])
         fig.savefig(outdir+outname+'_gas_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
         fig.clf()
 
@@ -624,7 +631,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     n34     = 70.0
     n45     = 50.0
     n56     = 50.0
-    
+
     lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
     lam23   = lambda2 * (lambda3/lambda2)**(np.arange(n23)/n23)
     lam34   = lambda3 * (lambda4/lambda3)**(np.arange(n34)/n34)
@@ -652,7 +659,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         m.set_n_photons(initial=1000000, imaging_sources=im_photon, imaging_dust=im_photon,raytracing_sources=1000000, raytracing_dust=1000000)
     else:
         # regular wavelength grid setting
-        m.set_n_photons(initial=1000000, imaging=im_photon,raytracing_sources=1000000, raytracing_dust=1000000)    
+        m.set_n_photons(initial=1000000, imaging=im_photon,raytracing_sources=1000000, raytracing_dust=1000000)
     # number of iteration to compute dust specific energy (temperature)
     m.set_n_initial_iterations(20)
     # m.set_convergence(True, percentile=95., absolute=1.5, relative=1.02)
@@ -677,7 +684,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     # 7.2 in 10 um scaled by lambda / 10
     # flatten beyond 20 um
     # default aperture
-    if aperture == None:    
+    if aperture == None:
         aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 1300],\
                     'aperture': [7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 20.4, 20.4, 20.4, 20.4, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5, 101]}
     # assign wl_aper and aper from dictionary of aperture
@@ -743,7 +750,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     syn_im.set_uncertainties(True)
     # output as 64-bit
     syn_im.set_output_bytes(8)
-    
+
 
     # Output setting
     # Density
@@ -850,7 +857,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         f_dustkappa.close()
 
         # Write the Dust opacity control file
-        # 
+        #
         f_opac = open(outdir+'dustopac.inp','w')
         f_opac.write('2               Format number of this file\n')
         f_opac.write('1               Nr of dust species\n')
@@ -861,7 +868,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         f_opac.write('oh5_extended    Extension of name of dustkappa_***.inp file\n')
         f_opac.write('----------------------------------------------------------------------------\n')
         f_opac.close()
-                
+
 
         # In[112]:
 
@@ -879,16 +886,16 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     return m
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# indir = '/Users/yaolun/test/'
-# outdir = '/Users/yaolun/test/'
-# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/input_table_control.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+indir = '/Users/yaolun/bhr71/hyperion/controlled/'
+outdir = '/Users/yaolun/test/'
+dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
 # # dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
 # # fix_params = {'R_min': 0.14}
-# fix_params = {}
-# setup_model(indir,outdir,'model_test_latest',params[0],dust_file,plot=True,record=False,\
-#     idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)
+fix_params = {}
+setup_model(indir,outdir,'model_test_latest',params[0],dust_file,plot=True,record=False,\
+    idl=False,radmc=False,fix_params=fix_params,ellipsoid=False)
