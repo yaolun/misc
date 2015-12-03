@@ -319,11 +319,21 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             #
             # only run TSC calculation within infall radius
             # modify the rc array
-            rc_idl = rc[(rc < min([R_inf,max(ri)]))]
+            ind_infall = np.where(rc >= R_inf)[0][0]
+            # rc_idl = rc[(rc < min([R_inf,max(ri)]))]
+            if R_inf > max(ri):
+                rc_idl = rc[0:ind_infall+1]
+            else:
+                rc_idl = rc[rc < max(ri)]
             idl.pro('tsc_run', outdir=outdir, rc=rc_idl, thetac=thetac, time=t, c_s=cs, omega=omega, renv_min=R_env_min)#, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)])) # min([R_inf,max(ri)])
         else:
             print 'Read the pre-computed TSC model.'
-            rc_idl = rc[(rc < min([R_inf,max(ri)]))]
+            ind_infall = np.where(rc >= R_inf)[0][0]
+            # rc_idl = rc[(rc < min([R_inf,max(ri)]))]
+            if R_inf > max(ri):
+                rc_idl = rc[0:ind_infall+1]
+            else:
+                rc_idl = rc[rc < max(ri)]
         # read in the exist file
         rho_env_tsc_idl = np.genfromtxt(outdir+'rhoenv.dat').T
         # because only region within infall radius is calculated by IDL program, need to project it to the original grid
@@ -365,8 +375,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         rho_env_tsc2d = np.empty((nx,ny))
         if max(ri) > R_inf:
             # ind_infall = np.where(rc <= R_inf)[0][-1]+1
-            ind_infall = np.where(rc >= R_inf)[0][0]
-            print rc[ind_infall]/AU, R_inf/AU
+            # ind_infall = np.where(rc >= R_inf)[0][0]
+            # print rc[ind_infall]/AU, R_inf/AU
             print rho_env_tsc[ind_infall,:]
             for i in range(0, len(rc)):
                 if i <= ind_infall:
