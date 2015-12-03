@@ -374,15 +374,10 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         # map TSC solution from IDL to actual 2-D grid
         rho_env_tsc2d = np.empty((nx,ny))
         if max(ri) > R_inf:
-            # ind_infall = np.where(rc <= R_inf)[0][-1]+1
-            # ind_infall = np.where(rc >= R_inf)[0][0]
-            # print rc[ind_infall]/AU, R_inf/AU
-            print rho_env_tsc[ind_infall,:]
             for i in range(0, len(rc)):
                 if i <= ind_infall:
                     rho_env_tsc2d[i,:] = rho_env_tsc[i,:]
                 else:
-                    print rc[i]/rc[ind_infall]
                     rho_env_tsc2d[i,:] =  10**(np.log10(rho_env_tsc[ind_infall,:]) - 2*(np.log10(rc[i]/rc[ind_infall])))
         else:
             rho_env_tsc2d = rho_env_tsc
