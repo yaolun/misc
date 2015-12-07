@@ -323,8 +323,9 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             # rc_idl = rc[(rc < min([R_inf,max(ri)]))]
             if R_inf > max(ri):
                 rc_idl = rc[0:ind_infall+1]
-            else:
+            else
                 rc_idl = rc[rc < max(ri)]
+            print len(rc_idl)
             idl.pro('tsc_run', outdir=outdir, rc=rc_idl, thetac=thetac, time=t, c_s=cs, omega=omega, renv_min=R_env_min)#, rstar=rstar, renv_min=R_env_min, renv_max=min([R_inf,max(ri)])) # min([R_inf,max(ri)])
         else:
             print 'Read the pre-computed TSC model.'
