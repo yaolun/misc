@@ -321,7 +321,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             # modify the rc array
             ind_infall = np.where(rc >= R_inf)[0][0]
             # rc_idl = rc[(rc < min([R_inf,max(ri)]))]
-            if R_inf > max(ri):
+            if max(ri) > R_inf:
                 rc_idl = rc[0:ind_infall+1]
             else:
                 rc_idl = rc[rc < max(ri)]
