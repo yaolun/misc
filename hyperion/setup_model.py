@@ -352,25 +352,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             for i in range(0, len(p)):
                 y0 = y0 + p[i]*x0**(len(p)-i-1)
             return y0
-        # rho_env_copy = np.array(rho_env_tsc)
-        # if max(rc) > R_inf:
-        #     ind_infall = np.where(rc <= R_inf)[0][-1]
-        #     print ind_infall
-        #     for ithetac in range(0, len(thetac)):
-        #         # rho_dum = np.log10(rho_env_copy[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False),ithetac])
-        #         # rc_dum = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == False)])
-        #         # rc_dum_nan = np.log10(rc[(rc > R_inf) & (np.isnan(rho_env_copy[:,ithetac]) == True)])
-        #         # # print rc_dum
-        #         # for i in range(0, len(rc_dum_nan)):
-        #         #     rho_extrapol = poly(rc_dum, rho_dum, rc_dum_nan[i])
-        #         #     rho_env_copy[(np.log10(rc) == rc_dum_nan[i]),ithetac] = 10**rho_extrapol
-        #         #
-        #         for i in range(ind_infall, len(rc)):
-        #             rho_env_copy[i, ithetac] =  10**(np.log10(rho_env_copy[ind_infall, ithetac]) - 2*(np.log10(rc[i]/rc[ind_infall])))
-        # rho_env2d = rho_env_copy
-        # rho_env = np.empty((nx,ny,nz))
-        # for i in range(0, nz):
-        #     rho_env[:,:,i] = rho_env2d
         # map TSC solution from IDL to actual 2-D grid
         rho_env_tsc2d = np.empty((nx,ny))
         if max(ri) > R_inf:
@@ -702,35 +683,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     # create the non-repetitive aperture list and index array
     aper_reduced = list(set(aper))
     index_reduced = np.arange(1, len(aper_reduced)+1)
-
-    # name = np.arange(1,len(wl_aper)+1)
-    # aper = np.empty_like(wl_aper)
-    # for i in range(0, len(wl_aper)):
-    #     if wl_aper[i] < 5:
-    #         # aper[i] = 1.2 * 7
-    #         aper[i] = 1.8 * 4
-    #     elif (wl_aper[i] < 14) & (wl_aper[i] >=5):
-    #         # aper[i] = 7.2 * wl_aper[i]/10.
-    #         aper[i] = 1.8 * 4
-    #     elif (wl_aper[i] >= 14) & (wl_aper[i] <40):
-    #         # aper[i] = 7.2 * 2
-    #         aper[i] = 5.1 * 4
-    #     else:
-    #         aper[i] = 24.5
-
-    # dict_peel_sed = {}
-    # for i in range(0, len(wl_aper)):
-    #     aper_dum = aper[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
-    #     dict_peel_sed[str(name[i])] = m.add_peeled_images(image=False)
-    #     # use the index of wavelength array used by the monochromatic radiative transfer
-    #     if mono == False:
-    #         # dict_peel_sed[str(name[i])].set_wavelength_range(1300, 2.0, 1300.0)
-    #         dict_peel_sed[str(name[i])].set_wavelength_range(1000, 2.0, 1000.0)
-    #     dict_peel_sed[str(name[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
-    #     # aperture should be given in cm
-    #     dict_peel_sed[str(name[i])].set_aperture_range(1, aper_dum, aper_dum)
-    #     dict_peel_sed[str(name[i])].set_uncertainties(True)
-    #     dict_peel_sed[str(name[i])].set_output_bytes(8)
 
     dict_peel_sed = {}
     for i in range(0, len(aper_reduced)):
