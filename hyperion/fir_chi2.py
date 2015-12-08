@@ -66,7 +66,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     if spitzer_only:
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35]
     if herschel_only:
-        wl_aper = [35, 70, 100, 160, 250, 350, 500]
+        wl_aper = [35, 70, 100, 160, 250, 350, 500, 1300]
         # wl_aper = [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600]
     # test version:
     # the current wavelength channals: [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600, 850]
@@ -75,10 +75,10 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     # read the observed SED and extract with apertures
     bhr71 = get_bhr71_obs(obs)
     wave_obs, flux_obs, sed_obs_noise = bhr71['spec']
-    # add IRAC1 and IRAC2 photometry data
-    wave_obs = np.hstack((wave_obs, bhr71['phot'][0][0:2]))
-    flux_obs = np.hstack((flux_obs, bhr71['phot'][1][0:2]))
-    sed_obs_noise = np.hstack((sed_obs_noise, bhr71['phot'][2][0:2]))
+    # add IRAC1, IRAC2, and SEST 1.3 mm photometry data
+    wave_obs = np.hstack((wave_obs, bhr71['phot'][0][0:2], bhr71['phot'][0][7]))
+    flux_obs = np.hstack((flux_obs, bhr71['phot'][1][0:2], bhr71['phot'][1][7]))
+    sed_obs_noise = np.hstack((sed_obs_noise, bhr71['phot'][2][0:2], bhr71['phot'][2][7]))
 
     sed_obs = c/(wave_obs*1e-4)*flux_obs*1e-23
     sed_obs_noise = c/(wave_obs*1e-4)*sed_obs_noise*1e-23
@@ -153,7 +153,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 f_unc = interp1d(wave_obs, sed_obs_noise)
                 obs_aper_sed[i] = f(wl_aper[i])
                 obs_aper_sed_noise[i] = f_unc(wl_aper[i])
-
+    # if 1300. in wl_aper:
+    #     obs_aper_sed.append(3.8)
+    #     obs_aper_sed_noise.append(0.57)
     # calculate Chi2 from simulated SED
     p1 = []
     p2 = []
@@ -285,7 +287,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         # ax.set_ylim([10, 100])
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
-        ax.minorticks_on() 
+        ax.minorticks_on()
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
         ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
@@ -362,7 +364,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         ax.set_xlabel(keywords['label'][0], fontsize=20)
         ax.set_ylabel(keywords['label'][1], fontsize=20)
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
-        ax.minorticks_on() 
+        ax.minorticks_on()
         ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
         ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
