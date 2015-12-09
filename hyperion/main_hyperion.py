@@ -167,7 +167,7 @@ if extract_only == False:
             run.communicate()
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
-        # print 'Seems finish, lets check out the results'
+        print 'Seems finish, lets check out the results'
         extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=home+dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
         temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
