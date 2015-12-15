@@ -1652,7 +1652,7 @@ sed_lum(indir, array, outdir)
 array = np.array([[20,18,16],[6,11,16]])
 cs_age_behavior(indir, array, outdir)
 
-# model_vs_obs('model_test_latest', '/Users/yaolun/test/', '/Users/yaolun/test/', obs=obs)
+model_vs_obs('model143', '/Users/yaolun/bhr71/hyperion/controlled/', '/Users/yaolun/test/', obs=obs)
 
 models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model142',\
                '/Users/yaolun/bhr71/hyperion/controlled/model144',\
