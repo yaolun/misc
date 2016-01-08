@@ -850,7 +850,8 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     # alpha_list = np.linspace(0.5, 1.0, len(array['r-2']))
     alpha_list = [1,1]
     linestyle = ['--','-']
-    for i in range(len(array['r-2'])):
+    # for i in range(len(array['r-2'])):
+    for i in [1]:
         (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
         r2, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o',linestyle=linestyle[i],mfc='Magenta',mec='Magenta',\
             markersize=7,markeredgewidth=1,color='Magenta', linewidth=1, alpha=alpha_list[i])
@@ -858,7 +859,8 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     # alpha_list = np.linspace(0.5, 1.0, len(array['r-1.5']))
     alpha_list = [1,1]
     linestyle = ['--','-']
-    for i in range(len(array['r-1.5'])):
+    # for i in range(len(array['r-1.5'])):
+    for i in [1]:
         (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][i])+'_sed_w_aperture.txt', skip_header=1).T
         r15, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o',linestyle=linestyle[i],mfc='Red',mec='Red',\
             markersize=7,markeredgewidth=1,color='Red', linewidth=1, alpha=alpha_list[i])
@@ -1542,7 +1544,7 @@ def cs_age_behavior(indir, array, outdir, obs=None):
     fig.clf()
 
 import numpy as np
-indir = '/Users/yaolun/bhr71/hyperion/controlled/'
+indir = '/Users/yaolun/bhr71/hyperion/controlled/cycle6/'
 outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
 outdir = '/Users/yaolun/test/updated_bhr71/'
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
@@ -1652,11 +1654,11 @@ sed_lum(indir, array, outdir)
 array = np.array([[20,18,16],[6,11,16]])
 cs_age_behavior(indir, array, outdir)
 
-model_vs_obs('model143', '/Users/yaolun/bhr71/hyperion/controlled/', '/Users/yaolun/test/', obs=obs)
+model_vs_obs('model143', '/Users/yaolun/bhr71/hyperion/controlled/cycle6/', '/Users/yaolun/test/', obs=obs)
 
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model142',\
-               '/Users/yaolun/bhr71/hyperion/controlled/model144',\
-               '/Users/yaolun/bhr71/hyperion/controlled/model143'],\
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/cycle6/model142',\
+               '/Users/yaolun/bhr71/hyperion/controlled/cycle6/model144',\
+               '/Users/yaolun/bhr71/hyperion/controlled/cycle6/model143'],\
                '/Users/yaolun/test/',\
                [r'$\rm{Kristensen\,et.\,al.\,2012}$', \
                r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',\
