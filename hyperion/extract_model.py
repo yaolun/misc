@@ -20,7 +20,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         # Convert the unit from Jy to erg s-1 cm-2 Hz-1
         fv = np.array(fv)*1e-23
         freq = c/(1e-4*np.array(wl))
-        
+
         diff_dum = freq[1:]-freq[0:-1]
         freq_interpol = np.hstack((freq[0:-1]+diff_dum/2.0,freq[0:-1]+diff_dum/2.0,freq[0],freq[-1]))
         freq_interpol = freq_interpol[np.argsort(freq_interpol)[::-1]]
@@ -34,7 +34,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
                 fv_interpol[2*i-1] = fv[i-1]
                 fv_interpol[2*i] = fv[i]
         fv_interpol[-1] = fv[-1]
-        
+
         dv = freq_interpol[0:-1]-freq_interpol[1:]
         dv = np.delete(dv,np.where(dv==0))
 
@@ -86,12 +86,12 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
 
     wl_phot, flux_phot, flux_sig_phot = obs_data['phot']
     flux_phot = flux_phot*1e-23   # convert unit from Jy to erg s-1 cm-2 Hz-1
-    flux_sig_phot = flux_sig_phot*1e-23           
+    flux_sig_phot = flux_sig_phot*1e-23
 
     # Open the model
     m = ModelOutput(filename)
 
-    if aperture == None:    
+    if aperture == None:
         aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850],\
                     'aperture': [7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 20.4, 20.4, 20.4, 20.4, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5]}
     # assign wl_aper and aper from dictionary of aperture
@@ -145,7 +145,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
 
     # if keyword 'clean' is not set, print L_bol derived from observations at upper right corner.
     if not clean:
-        ax_sed.text(0.75,0.9,r'$\rm{L_{bol}= %5.2f L_{\odot}}$' % l_bol_obs,fontsize=mag*16,transform=ax_sed.transAxes) 
+        ax_sed.text(0.75,0.9,r'$\rm{L_{bol}= %5.2f L_{\odot}}$' % l_bol_obs,fontsize=mag*16,transform=ax_sed.transAxes)
 
     # getting SED with infinite aperture
     sed_inf = m.get_sed(group=0, inclination=0, aperture=-1, distance=dstar * pc, uncertainties=True)
@@ -402,7 +402,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         # ax_sed.set_xlim([1, 1000])
         ax_sed.set_xlim([0,3.2])
         # ax_sed.set_ylim([1e-14, 1e-8])
-    # calculate the bolometric luminosity of the aperture 
+    # calculate the bolometric luminosity of the aperture
     # print flux_aper
     l_bol_sim = l_bol(wl_aper, flux_aper*wl_aper/(c/np.array(wl_aper)*1e4)*1e23, dstar=dstar)
     print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
@@ -418,7 +418,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         # SED with convolution of aperture sizes
         foo = open(outdir+print_name+'_sed_w_aperture.txt','w')
         foo.write('%12s \t %12s \t %12s \n' % ('wave','vSv','sigma_vSv'))
-        for i in range(0, len(wl_aper)): 
+        for i in range(0, len(wl_aper)):
             foo.write('%12g \t %12g \t %12g \n' % (wl_aper[i], flux_aper[i]*wl_aper[i], unc_aper[i]*wl_aper[i]))
         foo.close()
         # print out the aperture-convolved fluxex from observations
@@ -426,7 +426,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
             foo = open(outdir+print_name+'_obs_w_aperture.txt','w')
             # foo.write('%12s \t %12s \t %12s \n' % ('wave','vSv','sigma_vSv'))
             foo.write('%12s \t %12s \t %12s \n' % ('wave','Jy','sigma_Jy'))
-            for i in range(0, len(obs_aper_wl)): 
+            for i in range(0, len(obs_aper_wl)):
                 # foo.write('%12g \t %12g \t %12g \n' % (obs_aper_wl[i], obs_aper_flux[i]*obs_aper_wl[i], obs_aper_unc[i]*obs_aper_wl[i]))
                 foo.write('%12g \t %12g \t %12g \n' % (obs_aper_wl[i], obs_aper_flux[i]*obs_aper_wl[i]/(c/obs_aper_wl[i]*1e4)*1e23, obs_aper_unc[i]*obs_aper_wl[i]/(c/obs_aper_wl[i]*1e4)*1e23))
             foo.close()
@@ -577,18 +577,18 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
 
         fig.subplots_adjust(hspace=0,wspace=-0.2)
 
-        # Adjust the spaces between the subplots 
+        # Adjust the spaces between the subplots
         # plt.tight_layout()
         fig.savefig(outdir+print_name+'_image_gridplot.png', format='png', dpi=300, bbox_inches='tight')
         fig.clf()
 
-# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
-# outdir = '/Users/yaolun/bhr71/hyperion/'
-# import numpy as np
-# wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
-# aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# extract_hyperion('/Users/yaolun/test/model_test_latest.rtout',indir=indir,outdir='/Users/yaolun/test/',\
-#                  aperture=aperture,filter_func=True,plot_all=True,clean=True,image=False,print_data_w_aper=True)
+indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+outdir = '/Users/yaolun/bhr71/hyperion/'
+import numpy as np
+wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
+aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
+extract_hyperion('/Users/yaolun/test/model_best_nontsc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+                 aperture=aperture,filter_func=True,plot_all=False,clean=True,image=False,print_data_w_aper=True)
 # extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra3opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra2opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
