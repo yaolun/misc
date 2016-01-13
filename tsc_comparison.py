@@ -10,7 +10,7 @@ def tsc_com(plot=True, disk=False):
     from scipy.optimize import newton
     from scipy.integrate import nquad
     import sys
-    sys.path.append("/Users/yaolun/programs/misc/hyperion")
+    sys.path.append("/Users/yaolun/programs/misc/hyperion/")
     from input_reader import input_reader_table
     home = os.path.expanduser('~')
 
@@ -25,42 +25,25 @@ def tsc_com(plot=True, disk=False):
     G         = 6.67259e-8     # Gravitational constant  [cm3/g/s^2]
     yr        = 60*60*24*365   # Years in seconds
     PI        = np.pi          # PI constant
-    sigma     = const.sigma_sb.cgs.value  # Stefan-Boltzmann constant 
+    sigma     = const.sigma_sb.cgs.value  # Stefan-Boltzmann constant
     mh        = const.m_p.cgs.value + const.m_e.cgs.value
 
-    # Variable setup
-    #
-    # # parameter from cycle 8, model 63
-    # rstar     = 5 * RS
-    # tstar     = 5100.0
-    # R_env_max = 1.000000e+04 * AU
-    # R_env_min = 0.14         * AU             # the inner radius is fixed, 0.100364     * AU 
-    # R_cen     = 1.000000e+00 * AU             # 6.072365e-02 * AU, increase arbitrary for better illustration
-    # R_inf     = 1.054025e+03 * AU
-    # R_disk_min= 0.14         * AU 
-    # R_disk_max= R_cen
-    # theta_cav = 20.0
-    # beta      = 1.093
-    # h100      = 8.123        * AU
-    # M_env_dot = 2.896073e-05 * MS/yr
-    # M_disk    = 0.075 * MS
-    # mstar     = 2.896073e-01 * MS
-    # rin       = rstar
-    # rout      = R_env_max
-    # rout_mike = 9.756000e+03 * AU
-    # rho_cav_center = 5e-19
-    # rho_cav_edge = 40 * AU
-
     # read parameter from input_table
-    params_table = '/Users/yaolun/programs/misc/hyperion/input_table_cy9.txt'
+    params_table = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
     params = input_reader_table(params_table)[0]
+    # force omega = 4.1e-13 to emphasize the difference
+    params['Omega0'] = 4.1e-13
+    #
     rstar     = params['rstar'] * RS
     tstar     = params['tstar']
     R_env_max = params['R_env_max'] * AU
-    R_env_min = 0.14         * AU             # the inner radius is fixed, 0.14 AU 
+    T_sub = 1600
+    a     = 1   #in micron
+    d_sub = (LS/16./np.pi/sigma/AU**2*(4*np.pi*rstar**2*sigma*tstar**4/LS)/T_sub**4)**0.5 *AU
+    R_env_min = d_sub
     R_cen     = params['Omega0']**2 * G**3 * (0.975*(params['Cs']*1e5)**3/G*params['age']*yr)**3 /(16*(params['Cs']*1e5)**8)
     R_inf     = params['Cs']*1e5*params['age']*yr
-    R_disk_min= 0.14         * AU 
+    R_disk_min= d_sub
     R_disk_max= R_cen
     theta_cav = params['theta_cav']
     beta      = params['beta']
@@ -100,7 +83,7 @@ def tsc_com(plot=True, disk=False):
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
 
     if disk == False:
-        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv_cy9m87.dat').T
+        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv.dat').T
     else:
         rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/bhr71/hyperion/cycle9/rhoenv_disk.dat').T
 
@@ -123,7 +106,7 @@ def tsc_com(plot=True, disk=False):
             y0 = y0 + p[i]*x0**(len(p)-i-1)
         return y0
     # map TSC solution from IDL to actual 2-D grid
-    rho_env_tsc2d = np.empty((nx,ny)) 
+    rho_env_tsc2d = np.empty((nx,ny))
     if max(ri) > R_inf:
         ind_infall = np.where(rc <= R_inf)[0][-1]
         for i in range(0, len(rc)):
@@ -137,7 +120,7 @@ def tsc_com(plot=True, disk=False):
     rho_env_tsc = np.empty((nx,ny,nz))
     for i in range(0, nz):
         rho_env_tsc[:,:,i] = rho_env_tsc2d
-       
+
     # calculate the infall-only solution
 
     import hyperion as hp
@@ -220,7 +203,7 @@ def tsc_com(plot=True, disk=False):
                         else:
                             rho_env_tsc[ir,itheta,iphi] = 100 * rho_cav_center*(rho_cav_edge/rc[ir])**2
                             rho_env_ulrich[ir,itheta,iphi] = 100 * rho_cav_center*(rho_cav_edge/rc[ir])**2
-                        
+
                     # manually calculate the infall-only solution
                     else:
                         mu = abs(np.cos(thetac[itheta]))
@@ -250,10 +233,10 @@ def tsc_com(plot=True, disk=False):
                     if ((w >= R_disk_min) and (w <= R_disk_max)) == True:
                         h = ((w/(100*AU))**beta)*h100
                         rho_disk[ir,itheta,iphi] = rho_0*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/h)**2)
-                    
+
                     # Combine envelope and disk
                     rho_tsc[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env_tsc[ir,itheta,iphi]
-                    rho_ulrich[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env_ulrich[ir,itheta,iphi]# rho_env_ulrich[ir,itheta,iphi]                    
+                    rho_ulrich[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env_ulrich[ir,itheta,iphi]# rho_env_ulrich[ir,itheta,iphi]
                 else:
                     rho_tsc[ir,itheta,iphi] = 1e-40
                     rho_ulrich[ir,itheta,iphi] = 1e-40
@@ -292,7 +275,7 @@ def tsc_com(plot=True, disk=False):
                   fontsize=16, numpoints=1, loc='lower center')
 
         ax.set_ylim([0, 15])
-        ax.set_xlim(left=np.log10(0.17))
+        ax.set_xlim(left=np.log10(d_sub/AU))
         ax.set_xlabel(r'$\rm{log(radius)\,[AU]}$', fontsize=18)
         ax.set_ylabel(r'$\rm{log(gas\,density)\,[g\,cm^{-3}]}$', fontsize=18)
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]

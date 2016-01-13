@@ -1,5 +1,5 @@
 def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, spitzer_only=False, \
-    herschel_only=False, plot_model=True):
+    herschel_only=False, plot_model=True, zoom_1d=None):
     """
     array_list: contains dictionaries, each dictionary represents a location of 'model_list.txt', and the model numbers within.
     """
@@ -283,7 +283,11 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
 
         ax.set_yscale('log')
 
-        # ax.set_xlim([0.5, 2])
+        if zoom_1d != None:
+            ax.set_xlim(zoom_1d)
+        else:
+            # fig.gca().set_xlim(left=0)
+            ax.set_xlim([0,10])
         # ax.set_ylim([10, 100])
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
@@ -447,9 +451,9 @@ for keywords in keywords_list:
 #                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
 #                # 'model_num': np.hstack((np.arange(2,8),np.arange(14,47)))}]
 #                'model_num': np.arange(86,120)}]
-array_list = [{'listpath': '/Users/yaolun/test/age_density/model_list.txt',
-               'datapath': '/Users/yaolun/test/age_density',
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
                # 'model_num': np.hstack((np.arange(2,8),np.arange(14,47)))}]
-               'model_num': np.arange(1,56)}]
+               'model_num': np.hstack((np.arange(1,56),np.arange(144,154)))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=1, herschel_only=True)
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=1, herschel_only=True, zoom_1d=[0,10])
