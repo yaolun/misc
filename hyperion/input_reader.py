@@ -18,7 +18,7 @@
 # 	G         = const.G.cgs.value                          # Gravitational constant  [cm^3/g/s^2]
 # 	yr        = 60*60*24*365.                              # Years in seconds        [s]
 # 	PI        = np.pi                                      # PI constant
-# 	sigma     = const.sigma_sb.cgs.value                   # Stefan-Boltzmann constant 
+# 	sigma     = const.sigma_sb.cgs.value                   # Stefan-Boltzmann constant
 # 	mh        = const.m_p.cgs.value + const.m_e.cgs.value  # Mass of Hydrogen atom   [g]
 # 	# Maybe don't need this
 # 	u = dict([('c',c), ('AU',AU), ('pc',pc), ('MS',MS), ('LS',LS), ('RS',RS), ('G',G), ('yr',yr), ('sigma',sigma), ('PI', np.pi), ('mh',mh)])
@@ -82,4 +82,3 @@ def input_reader_table(filename,default=False):
 # filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
 # input_reader_table(filename)
 # input_reader(filename)
-

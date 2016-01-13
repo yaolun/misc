@@ -850,8 +850,8 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     # alpha_list = np.linspace(0.5, 1.0, len(array['r-2']))
     alpha_list = [1,1]
     linestyle = ['--','-']
-    # for i in range(len(array['r-2'])):
-    for i in [1]:
+    for i in range(len(array['r-2'])):
+    # for i in [1]:
         (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['r-2'][i])+'_sed_w_aperture.txt', skip_header=1).T
         r2, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o',linestyle=linestyle[i],mfc='Magenta',mec='Magenta',\
             markersize=7,markeredgewidth=1,color='Magenta', linewidth=1, alpha=alpha_list[i])
@@ -859,8 +859,8 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     # alpha_list = np.linspace(0.5, 1.0, len(array['r-1.5']))
     alpha_list = [1,1]
     linestyle = ['--','-']
-    # for i in range(len(array['r-1.5'])):
-    for i in [1]:
+    for i in range(len(array['r-1.5'])):
+    # for i in [1]:
         (wave_dum, sed_dum, sed_unc_dum) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][i])+'_sed_w_aperture.txt', skip_header=1).T
         r15, = ax.plot(np.log10(wave_dum), np.log10(sed_dum), 'o',linestyle=linestyle[i],mfc='Red',mec='Red',\
             markersize=7,markeredgewidth=1,color='Red', linewidth=1, alpha=alpha_list[i])
@@ -1247,6 +1247,10 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
         color_list = ['Magenta','Green','Blue']
         style = [':','--','-']
         plotname = 'three_models_vs_obs_sed'
+    if len(modelname) == 2:
+        color_list = ['Blue','Blue']
+        style = ['-','--']
+        plotname = 'tsc_vs_nontsc'
 
     # Read in the observation data and calculate the noise & variance
     if outdir == None:
@@ -1362,8 +1366,11 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
             print mod
             (sim_inf, sim_sed_inf, sim_sed_unc) = np.genfromtxt(mod+'_sed_inf.txt', skip_header=1).T
             (wl_aper, flux_aper, unc_aper) = np.genfromtxt(mod+'_sed_w_aperture.txt', skip_header=1).T
+            print max(wl_aper)
 
-        aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o', linestyle=style[modelname.index(mod)], mec=color_list[modelname.index(mod)], mfc='None', color=color_list[modelname.index(mod)],markersize=12, markeredgewidth=3, linewidth=1.7, label=label[modelname.index(mod)])
+        aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o', linestyle=style[modelname.index(mod)],\
+                            mec=color_list[modelname.index(mod)], mfc='None', color=color_list[modelname.index(mod)],\
+                            markersize=12, markeredgewidth=3, linewidth=1.7, label=label[modelname.index(mod)])
 
         # aper = ax_sed.errorbar(np.log10(wl_aper),np.log10(flux_aper),\
             # yerr=[np.log10(flux_aper)-np.log10(flux_aper-unc_aper), np.log10(flux_aper+unc_aper)-np.log10(flux_aper)],\
@@ -1376,7 +1383,7 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
 
     # plot setting
     ax_sed.set_xlabel(r'$\rm{log\,\lambda\,({\mu}m)}$',fontsize=mag*20)
-    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg\,cm^{-2}\,s^{-1})}$',fontsize=mag*20)
+    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg\,s^{-1}\,cm^{-2})}$',fontsize=mag*20)
     [ax_sed.spines[axis].set_linewidth(1.5*mag) for axis in ['top','bottom','left','right']]
     ax_sed.minorticks_on()
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
@@ -1385,8 +1392,8 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
     if stretch == True:
         ax_sed.set_ylim([-18,-7.5])
     else:
-        ax_sed.set_ylim([-13, -7])
-    ax_sed.set_xlim([0.3,3.5])
+        ax_sed.set_ylim([-13, -7.5])
+    ax_sed.set_xlim([0.3,3.3])
 
     lg_data = ax_sed.legend(loc='lower right',fontsize=12*mag,numpoints=1,framealpha=0.3)
 
@@ -1654,15 +1661,20 @@ sed_lum(indir, array, outdir)
 array = np.array([[20,18,16],[6,11,16]])
 cs_age_behavior(indir, array, outdir)
 
-model_vs_obs('model143', '/Users/yaolun/bhr71/hyperion/controlled/cycle6/', '/Users/yaolun/test/', obs=obs)
+model_vs_obs('model142', '/Users/yaolun/bhr71/hyperion/controlled/', '/Users/yaolun/test/', obs=obs)
 
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/cycle6/model142',\
-               '/Users/yaolun/bhr71/hyperion/controlled/cycle6/model144',\
-               '/Users/yaolun/bhr71/hyperion/controlled/cycle6/model143'],\
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
+               '/Users/yaolun/bhr71/hyperion/controlled/model143',\
+               '/Users/yaolun/bhr71/hyperion/controlled/model142'],\
                '/Users/yaolun/test/',\
                [r'$\rm{Kristensen\,et.\,al.\,2012}$', \
                r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',\
                r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
+
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model142',\
+               '/Users/yaolun/test/model_best_nontsc'],\
+               '/Users/yaolun/test/',\
+               [r'$\rm{full\,TSC}$',r'$\rm{infall-only\,TSC}$'], obs)
 
 # models_vs_obs(['/Users/yaolun/bhr71/hyperion/three_models/model3','/Users/yaolun/bhr71/hyperion/three_models/model4','/Users/yaolun/bhr71/hyperion/three_models/model1'],\
     # '/Users/yaolun/test/',\
