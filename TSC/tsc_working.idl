@@ -1,0 +1,26 @@
+; Constants setup
+c         = 2.998e10
+AU        = 1.49598e13     ; Astronomical Unit       [cm]
+pc        = 3.08572e18     ; Parsec                  [cm]
+MS        = 1.98892e33     ; Solar mass              [g]
+LS        = 3.8525e33      ; Solar luminosity        [erg/s]
+RS        = 6.96e10        ; Solar radius            [cm]
+G         = 6.67259e-8     ; Gravitational constant  [cm3/g/s^2]
+yr        = 60*60*24*365.0 ; Years in seconds
+; variables setup
+rin = 0.14 * AU
+rou = 41253 * AU
+nx = 100
+ny = 400
+;
+ri           = rin * (rout/rin)**(np.arange(nx+1).astype(dtype='float')/float(nx))
+ri           = np.hstack((0.0, ri))
+thetai       = PI*np.arange(ny+1).astype(dtype='float')/float(ny)
+;
+ri_cellsize = ri[1:-1]-ri[0:-2]
+ind = np.where(ri_cellsize/AU > 100.0)[0][0]       # The largest cell size is 100 AU
+ri = np.hstack((ri[0:ind],ri[ind]+np.arange(np.ceil((rout-ri[ind])/100/AU))*100*AU))
+nxx = nx
+nx = len(ri)-1
+;
+
