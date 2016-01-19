@@ -83,7 +83,7 @@ def tsc_com(plot=True, disk=False):
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
 
     if disk == False:
-        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv.dat').T
+        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv_tsccom.dat').T
     else:
         rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/bhr71/hyperion/cycle9/rhoenv_disk.dat').T
 

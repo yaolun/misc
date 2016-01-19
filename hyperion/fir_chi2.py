@@ -275,7 +275,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         chi2 = np.squeeze(chi2)
 
         p1 = np.array(p1); chi2 = np.array(chi2)
-        ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1.5)
+        ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1, markersize=4)
         ax.set_xlabel(keywords['label'][0], fontsize=18)
         ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
         # mark the region where the chi-squared ranging from lowest possible value to double
@@ -288,7 +288,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         else:
             # fig.gca().set_xlim(left=0)
             ax.set_xlim([0,10])
-        # ax.set_ylim([10, 100])
+        ax.set_ylim([5, 200])
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on()
@@ -456,4 +456,4 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.t
                # 'model_num': np.hstack((np.arange(2,8),np.arange(14,47)))}]
                'model_num': np.hstack((np.arange(1,56),np.arange(144,154)))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=1, herschel_only=True, zoom_1d=[0,10])
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=1, herschel_only=True, zoom_1d=[0,3])
