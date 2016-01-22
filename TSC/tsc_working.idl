@@ -9,18 +9,38 @@ G         = 6.67259e-8     ; Gravitational constant  [cm3/g/s^2]
 yr        = 60*60*24*365.0 ; Years in seconds
 ; variables setup
 rin = 0.14 * AU
-rou = 41253 * AU
+rout = 41253 * AU
 nx = 100
 ny = 400
 ;
-ri           = rin * (rout/rin)**(np.arange(nx+1).astype(dtype='float')/float(nx))
-ri           = np.hstack((0.0, ri))
-thetai       = PI*np.arange(ny+1).astype(dtype='float')/float(ny)
-;
-ri_cellsize = ri[1:-1]-ri[0:-2]
-ind = np.where(ri_cellsize/AU > 100.0)[0][0]       # The largest cell size is 100 AU
-ri = np.hstack((ri[0:ind],ri[ind]+np.arange(np.ceil((rout-ri[ind])/100/AU))*100*AU))
-nxx = nx
-nx = len(ri)-1
-;
+; Make the Coordinates
+ri           = rin * (rout/rin)^(dindgen(nx+1)/nx)
+ri           = [0.0, ri]
+thetai       = !pi*dindgen(ny+1)/ny  ; the angle respect to the rotaional axis
 
+; Keep the constant cell size in r-direction
+
+ri_cellsize = ri[1:-1]-ri[0:-2]
+ind = (where(ri_cellsize/AU gt 100.0))[0]      ; The largest cell size is 100 AU
+
+ri = [ri[0:ind-1], ri[ind]+dindgen(ceil((rout-ri[ind])/100/AU))*100*AU]
+nx = n_elements(ri)-1
+
+; Assign the coordinates of the center of cell as its coordinates.q
+
+rc           = 0.5*( ri[0:nx-1]     + ri[1:nx] )
+thetac       = 0.5*( thetai[0:ny-1] + thetai[1:ny] )
+;
+; ind_infall = where(rc le R_inf)[0][0]
+; if max(ri) gt R_inf:
+;     rc_idl = rc[0:ind_infall+1]
+; else:
+;     rc_idl = rc[rc < max(ri)]
+;
+t = 1e4*yr
+cs = 0.5e5
+omega = 1e-13
+R_env_min = rin
+outdir = '~/test/'
+;
+tsc_run, outdir=outdir, rc=rc, thetac=thetac, time=t, c_s=cs, omega=omega, renv_min=R_env_min
