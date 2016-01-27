@@ -10,7 +10,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     import os
     sys.path.append(os.path.expanduser('~')+'/programs/spectra_analysis/')
     from phot_filter import phot_filter
-    from get_bhr71_obs import get_bhr71_obs
+    from get_obs import get_obs
     import astropy.constants as const
     from scipy.interpolate import interp1d
     from scipy.interpolate import griddata
@@ -73,7 +73,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     wl_aper = np.array(wl_aper, dtype=float)
 
     # read the observed SED and extract with apertures
-    bhr71 = get_bhr71_obs(obs)
+    bhr71 = get_obs(obs)
     wave_obs, flux_obs, sed_obs_noise = bhr71['spec']
     # add IRAC1, IRAC2, and SEST 1.3 mm photometry data
     wave_obs = np.hstack((wave_obs, bhr71['phot'][0][0:2], bhr71['phot'][0][7]))
