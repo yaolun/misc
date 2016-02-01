@@ -66,7 +66,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     if spitzer_only:
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35]
     if herschel_only:
-        wl_aper = [35, 70, 100, 160, 250, 350, 500, 1300]
+        wl_aper = [70, 100, 160, 250, 350, 500, 1300]
         # wl_aper = [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600]
     # test version:
     # the current wavelength channals: [35, 70, 85, 100, 120, 140, 160, 200, 250, 300, 350, 400, 500, 600, 850]
@@ -204,8 +204,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             chi2_dum, n = fir_chi2(obs, sim, wave=wl_aper)
 
             # make a test plot
-            ax_sim.errorbar(sim['wave'], sim['sed'], yerr=sim['sigma'], fmt='o', mec='None',alpha=0.5,\
-                label=r'$\rm{'+str(int((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data))+'\,yr}$')
+            # ax_sim.errorbar(sim['wave'], sim['sed'], yerr=sim['sigma'], fmt='o', mec='None',alpha=0.5,\
+                # label=r'$\rm{'+str(int((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data))+'\,yr}$')
 
             reduced_chi2_dum = chi2_dum/(n-2-1)
             total_chi2.extend(reduced_chi2_dum)
@@ -288,7 +288,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         else:
             # fig.gca().set_xlim(left=0)
             ax.set_xlim([0,10])
-        ax.set_ylim([5, 200])
+        ax.set_ylim([1, 50])
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on()
@@ -414,10 +414,10 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.tx
 keywords_list = [{'col':['theta_cav','view_angle'], 'label': [r'$\rm{\theta_{cav}\,[deg.]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
-for keywords in keywords_list:
-    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=19, plot_model=False)
-    # for i in range(len(p1)):
-        # print p1[i], p2[i], chi2[i]
+# for keywords in keywords_list:
+#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=19, plot_model=False)
+#     for i in range(len(p1)):
+#         print p1[i], p2[i], chi2[i]
     # fir_chi2_2d(array_list, keywords, obs)
 
 # # 1-D rho_cav_center
@@ -456,4 +456,4 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.t
                # 'model_num': np.hstack((np.arange(2,8),np.arange(14,47)))}]
                'model_num': np.hstack((np.arange(1,56),np.arange(144,154)))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=1, herschel_only=True, zoom_1d=[0,3])
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=1, herschel_only=True, zoom_1d=[0,4])
