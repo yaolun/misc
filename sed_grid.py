@@ -1212,7 +1212,7 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
 
     # plot setting
     ax_sed.set_xlabel(r'$\rm{log\,\lambda\,({\mu}m)}$',fontsize=mag*20)
-    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg\,cm^{-2}\,s^{-1})}$',fontsize=mag*20)
+    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg\,s^{-1}\,cm^{-2})}$',fontsize=mag*20)
     [ax_sed.spines[axis].set_linewidth(1.5*mag) for axis in ['top','bottom','left','right']]
     ax_sed.minorticks_on()
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
@@ -1661,7 +1661,7 @@ sed_lum(indir, array, outdir)
 array = np.array([[20,18,16],[6,11,16]])
 cs_age_behavior(indir, array, outdir)
 
-model_vs_obs('model142', '/Users/yaolun/bhr71/hyperion/controlled/', '/Users/yaolun/test/updated_bhr71/BHR71_ult/', obs=obs)
+model_vs_obs('model154', '/Users/yaolun/bhr71/hyperion/controlled/', '/Users/yaolun/test/updated_bhr71/BHR71_ult/', obs=obs)
 
 models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
                '/Users/yaolun/bhr71/hyperion/controlled/model143',\
