@@ -853,17 +853,17 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     return m
 
-from input_reader import input_reader_table
-from pprint import pprint
-filename = '/Users/yaolun/programs/misc/hyperion/input_table_control.txt'
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-params = input_reader_table(filename)
-pprint(params[0])
-outdir = '/Users/yaolun/bhr71/hyperion/controlled/'
-record_dir = '/Users/yaolun/test/'
-dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# # # dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
-# # # fix_params = {'R_min': 0.14}
-fix_params = {}
-setup_model(outdir,record_dir,'model154_v2',params[0],dust_file,plot=True,record=False,\
-    idl='rhoenv_model154.dat',radmc=False,fix_params=fix_params,ellipsoid=False,tsc=True)
+# from input_reader import input_reader_table
+# from pprint import pprint
+# filename = '/Users/yaolun/programs/misc/hyperion/input_table_control.txt'
+# # filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+# params = input_reader_table(filename)
+# pprint(params[0])
+# outdir = '/Users/yaolun/bhr71/hyperion/controlled/'
+# record_dir = '/Users/yaolun/test/'
+# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+# # # # dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
+# # # # fix_params = {'R_min': 0.14}
+# fix_params = {}
+# setup_model(outdir,record_dir,'model154_v2',params[0],dust_file,plot=True,record=False,\
+#     idl='rhoenv_model154.dat',radmc=False,fix_params=fix_params,ellipsoid=False,tsc=True)
