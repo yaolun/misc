@@ -334,8 +334,12 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                 rc_idl = rc[0:ind_infall+1]
             else:
                 rc_idl = rc[rc < max(ri)]
+        if idl == False:
+            file_idl = 'rhoenv.dat'
+        else:
+            file_idl = idl
         # read in the exist file
-        rho_env_tsc_idl = np.genfromtxt(outdir+'rhoenv.dat').T
+        rho_env_tsc_idl = np.genfromtxt(outdir+file_idl).T
         # because only region within infall radius is calculated by IDL program, need to project it to the original grid
         rho_env_tsc = np.zeros([len(rc), len(thetac)])
         for irc in range(len(rc)):
@@ -494,8 +498,9 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
         ax_env.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
         ax_env.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
-        ax_env.tick_params(labelsize=20)
+        ax_env.tick_params(labelsize=18)
         ax_env.set_yticks(np.arange(0,R_env_max/AU,R_env_max/AU/5))
+        # ax_env.set_yticks([])
         # ax_env.set_ylim([0,10000])
         ax_env.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
                                 r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
@@ -848,17 +853,17 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     return m
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/input_table_control.txt'
+from input_reader import input_reader_table
+from pprint import pprint
+filename = '/Users/yaolun/programs/misc/hyperion/input_table_control.txt'
 # filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# outdir = '/Users/yaolun/test/'
-# record_dir = '/Users/yaolun/test/'
-# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+outdir = '/Users/yaolun/bhr71/hyperion/controlled/'
+record_dir = '/Users/yaolun/test/'
+dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
 # # # dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
 # # # fix_params = {'R_min': 0.14}
-# fix_params = {}
-# setup_model(outdir,record_dir,'model_best_nontsc',params[0],dust_file,plot=True,record=False,\
-    # idl=False,radmc=False,fix_params=fix_params,ellipsoid=False,tsc=False)
+fix_params = {}
+setup_model(outdir,record_dir,'model154_v2',params[0],dust_file,plot=True,record=False,\
+    idl='rhoenv_model154.dat',radmc=False,fix_params=fix_params,ellipsoid=False,tsc=True)
