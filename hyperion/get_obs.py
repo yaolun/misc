@@ -7,15 +7,19 @@ def get_obs(indir, obj='BHR71'):
 
 	# Read in Herschel data
 	# continuum
-	[wl_pacs,flux_pacs,unc_pacs] = np.genfromtxt(indir+obj+'_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',dtype='float',skip_header=1).T
+	[wl_pacs,flux_pacs] = np.genfromtxt(indir+obj+'_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',dtype='float',skip_header=1).T
 	[wl_spire,flux_spire] = np.genfromtxt(indir+obj+'_spire_corrected_continuum.txt',dtype='float',skip_header=1).T
 	# noise spectra
-	[wl_pacs_noise, flux_pacs_noise,unc_pacs_noise] = np.genfromtxt(indir+obj+'_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_noise_spectrum.txt',dtype='float',skip_header=1).T
-	[wl_spire_noise,flux_spire_noise] = np.genfromtxt(indir+obj+'_spire_corrected_noise_spectrum.txt',dtype='float',skip_header=1).T
+	# [wl_pacs_noise, flux_pacs_noise,unc_pacs_noise] = np.genfromtxt(indir+obj+'_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_noise_spectrum.txt',dtype='float',skip_header=1).T
+	# [wl_spire_noise,flux_spire_noise] = np.genfromtxt(indir+obj+'_spire_corrected_noise_spectrum.txt',dtype='float',skip_header=1).T
+	#
+	[wl_pacs_noise, flux_pacs_noise] = np.genfromtxt(indir+obj+'_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_residual_spectrum.txt',dtype='float',skip_header=1).T
+	[wl_spire_noise,flux_spire_noise] = np.genfromtxt(indir+obj+'_spire_corrected_residual_spectrum.txt',dtype='float',skip_header=1).T
+
 
 	# Read in Spitzer data
 	wl_irs, flux_irs, unc_irs = spitzer_unc(indir+obj.lower()+'_spitzer_irs.txt')
-	
+
 	# Calculate the local variance (for spire), use the instrument uncertainty for pacs
 	#
 	wl_noise = [wl_pacs_noise, wl_spire_noise]

@@ -36,9 +36,9 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
 
             # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=0.7)
             if obs != None:
-                from get_bhr71_obs import get_bhr71_obs
+                from get_obs import get_obs
 
-                bhr71 = get_bhr71_obs(obs)  # in um and Jy
+                bhr71 = get_obs(obs)  # in um and Jy
                 wave_obs, flux_obs, noise_obs = bhr71['spec']
                 ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
                 ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
@@ -137,10 +137,10 @@ def sed_omega(indir, array, outdir, obs=None, compact=False, addname=''):
             if obs != None:
                 import sys
                 sys.path.append('/Users/yaolun/programs/misc/hyperion')
-                from get_bhr71_obs import get_bhr71_obs
+                from get_obs import get_obs
                 c = const.c.cgs.value
 
-                bhr71 = get_bhr71_obs(obs)  # in um and Jy
+                bhr71 = get_obs(obs)  # in um and Jy
                 wave_obs, flux_obs, noise_obs = bhr71['spec']
                 ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
                 ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
@@ -238,9 +238,9 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1)
             if obs != None:
 
-                from get_bhr71_obs import get_bhr71_obs
+                from get_obs import get_obs
 
-                bhr71 = get_bhr71_obs(obs)  # in um and Jy
+                bhr71 = get_obs(obs)  # in um and Jy
                 wave_obs, flux_obs, noise_obs = bhr71['spec']
                 ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
                 ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
@@ -296,8 +296,8 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             color_list = [color_list[0],color_list[2],color_list[4]]
 
         if obs != None:
-            from get_bhr71_obs import get_bhr71_obs
-            bhr71 = get_bhr71_obs(obs)  # in um and Jy
+            from get_obs import get_obs
+            bhr71 = get_obs(obs)  # in um and Jy
             wave_obs, flux_obs, noise_obs = bhr71['spec']
             ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
             ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
@@ -360,10 +360,10 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                 if obs != None:
                     import sys
                     sys.path.append('/Users/yaolun/programs/misc/hyperion')
-                    from get_bhr71_obs import get_bhr71_obs
+                    from get_obs import get_obs
                     c = const.c.cgs.value
 
-                    bhr71 = get_bhr71_obs(obs)  # in um and Jy
+                    bhr71 = get_obs(obs)  # in um and Jy
                     wave_obs, flux_obs, noise_obs = bhr71['spec']
                     ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
                     ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
@@ -422,9 +422,9 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
             # obs part
             if obs != None:
 
-                from get_bhr71_obs import get_bhr71_obs
+                from get_obs import get_obs
 
-                bhr71 = get_bhr71_obs(obs)  # in um and Jy
+                bhr71 = get_obs(obs)  # in um and Jy
                 wave_obs, flux_obs, noise_obs = bhr71['spec']
                 ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
                 ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
@@ -497,10 +497,10 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
                 if obs != None:
                     import sys
                     sys.path.append('/Users/yaolun/programs/misc/hyperion')
-                    from get_bhr71_obs import get_bhr71_obs
+                    from get_obs import get_obs
                     c = const.c.cgs.value
 
-                    bhr71 = get_bhr71_obs(obs)  # in um and Jy
+                    bhr71 = get_obs(obs)  # in um and Jy
                     wave_obs, flux_obs, noise_obs = bhr71['spec']
                     ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
                     ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
@@ -559,9 +559,9 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
             # obs part
             if obs != None:
 
-                from get_bhr71_obs import get_bhr71_obs
+                from get_obs import get_obs
 
-                bhr71 = get_bhr71_obs(obs)  # in um and Jy
+                bhr71 = get_obs(obs)  # in um and Jy
                 wave_obs, flux_obs, noise_obs = bhr71['spec']
                 ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
                 ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
@@ -643,10 +643,10 @@ def disk_exist_com(indir, array, outdir, obs=None):
     if obs != None:
         import sys
         sys.path.append('/Users/yaolun/programs/misc/hyperion')
-        from get_bhr71_obs import get_bhr71_obs
+        from get_obs import get_obs
         c = const.c.cgs.value
 
-        bhr71 = get_bhr71_obs(obs)  # in um and Jy
+        bhr71 = get_obs(obs)  # in um and Jy
         wave_obs, flux_obs, noise_obs = bhr71['spec']
         obs_data, = ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='r', alpha=0.7, linewidth=1)
         ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='r', alpha=0.7, linewidth=1)
@@ -700,10 +700,10 @@ def sed_tstar(indir, array, outdir, obs=None):
     if obs != None:
         import sys
         sys.path.append('/Users/yaolun/programs/misc/hyperion')
-        from get_bhr71_obs import get_bhr71_obs
+        from get_obs import get_obs
         c = const.c.cgs.value
 
-        bhr71 = get_bhr71_obs(obs)  # in um and Jy
+        bhr71 = get_obs(obs)  # in um and Jy
         wave_obs, flux_obs, noise_obs = bhr71['spec']
         obs_data, = ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='k', alpha=0.7, linewidth=1)
         ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='k', alpha=0.7, linewidth=1)
@@ -755,10 +755,10 @@ def sed_rstar(indir, array, outdir, obs=None):
     if obs != None:
         import sys
         sys.path.append('/Users/yaolun/programs/misc/hyperion')
-        from get_bhr71_obs import get_bhr71_obs
+        from get_obs import get_obs
         c = const.c.cgs.value
 
-        bhr71 = get_bhr71_obs(obs)  # in um and Jy
+        bhr71 = get_obs(obs)  # in um and Jy
         wave_obs, flux_obs, noise_obs = bhr71['spec']
         obs_data, = ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='k', alpha=0.7, linewidth=1)
         ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='k', alpha=0.7, linewidth=1)
@@ -810,10 +810,10 @@ def sed_cav_powerlaw(indir, array, outdir, obs=None):
     if obs != None:
         import sys
         sys.path.append('/Users/yaolun/programs/misc/hyperion')
-        from get_bhr71_obs import get_bhr71_obs
+        from get_obs import get_obs
         c = const.c.cgs.value
 
-        bhr71 = get_bhr71_obs(obs)  # in um and Jy
+        bhr71 = get_obs(obs)  # in um and Jy
         wave_obs, flux_obs, noise_obs = bhr71['spec']
         obs_data, = ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='k', alpha=0.7, linewidth=1)
         ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='k', alpha=0.7, linewidth=1)
@@ -883,10 +883,10 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     if obs != None:
         import sys
         sys.path.append('/Users/yaolun/programs/misc/hyperion')
-        from get_bhr71_obs import get_bhr71_obs
+        from get_obs import get_obs
         c = const.c.cgs.value
 
-        bhr71 = get_bhr71_obs(obs)  # in um and Jy
+        bhr71 = get_obs(obs)  # in um and Jy
         wave_obs, flux_obs, noise_obs = bhr71['spec']
         obs_data, = ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='k', alpha=0.7, linewidth=1)
         ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='k', alpha=0.7, linewidth=1)
@@ -1048,10 +1048,10 @@ def sed_lum(indir, array, outdir, obs=None):
     if obs != None:
         import sys
         sys.path.append('/Users/yaolun/programs/misc/hyperion')
-        from get_bhr71_obs import get_bhr71_obs
+        from get_obs import get_obs
         c = const.c.cgs.value
 
-        bhr71 = get_bhr71_obs(obs)  # in um and Jy
+        bhr71 = get_obs(obs)  # in um and Jy
         wave_obs, flux_obs, noise_obs = bhr71['spec']
         obs_data, = ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='k', alpha=0.7, linewidth=1)
         ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='k', alpha=0.7, linewidth=1)
@@ -1082,7 +1082,7 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     from hyperion.util.constants import pc, c, lsun
     import sys
     sys.path.append('/Users/yaolun/programs/misc/hyperion')
-    from get_bhr71_obs import get_bhr71_obs
+    from get_obs import get_obs
     from l_bol import l_bol
 
     # Read in the observation data and calculate the noise & variance
@@ -1091,7 +1091,7 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     if outdir == None:
         outdir = '/Users/yaolun/bhr71/hyperion/'
 
-    bhr71 = get_bhr71_obs(obs)  # in um and Jy
+    bhr71 = get_obs(obs)  # in um and Jy
     wave_obs, flux_obs, noise_obs = bhr71['spec']
     wave_phot, flux_phot, flux_sig_phot = bhr71['phot']
 
@@ -1212,7 +1212,7 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
 
     # plot setting
     ax_sed.set_xlabel(r'$\rm{log\,\lambda\,({\mu}m)}$',fontsize=mag*20)
-    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg\,cm^{-2}\,s^{-1})}$',fontsize=mag*20)
+    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg\,s^{-1}\,cm^{-2})}$',fontsize=mag*20)
     [ax_sed.spines[axis].set_linewidth(1.5*mag) for axis in ['top','bottom','left','right']]
     ax_sed.minorticks_on()
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
@@ -1240,7 +1240,7 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
     from hyperion.util.constants import pc, c, lsun
     import sys
     sys.path.append('/Users/yaolun/programs/misc/hyperion')
-    from get_bhr71_obs import get_bhr71_obs
+    from get_obs import get_obs
     from l_bol import l_bol
 
     if len(modelname) == 3:
@@ -1256,7 +1256,7 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
     if outdir == None:
         outdir = '/Users/yaolun/bhr71/hyperion/'
 
-    bhr71 = get_bhr71_obs(obs)  # in um and Jy
+    bhr71 = get_obs(obs)  # in um and Jy
     wave_obs, flux_obs, noise_obs = bhr71['spec']
     wave_phot, flux_phot, flux_sig_phot = bhr71['phot']
 
@@ -1427,8 +1427,8 @@ def disk_summary(indir, array, outdir, obs=None, compact=None, inf=False, obs_co
     for i in range(3):
         ax = axarr[i]
         if obs != None:
-            from get_bhr71_obs import get_bhr71_obs
-            bhr71 = get_bhr71_obs(obs)  # in um and Jy
+            from get_obs import get_obs
+            bhr71 = get_obs(obs)  # in um and Jy
             wave_obs, flux_obs, noise_obs = bhr71['spec']
             ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
             ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color=obs_color, alpha=0.7, linewidth=1.5)
@@ -1523,10 +1523,10 @@ def cs_age_behavior(indir, array, outdir, obs=None):
     if obs != None:
         import sys
         sys.path.append('/Users/yaolun/programs/misc/hyperion')
-        from get_bhr71_obs import get_bhr71_obs
+        from get_obs import get_obs
         c = const.c.cgs.value
 
-        bhr71 = get_bhr71_obs(obs)  # in um and Jy
+        bhr71 = get_obs(obs)  # in um and Jy
         wave_obs, flux_obs, noise_obs = bhr71['spec']
         obs_data, = ax.plot(np.log10(wave_obs[wave_obs<50]), np.log10(c/(wave_obs[wave_obs<50]*1e-4)*flux_obs[wave_obs<50]*1e-23), color='k', alpha=0.7, linewidth=1)
         ax.plot(np.log10(wave_obs[(wave_obs>50)&(wave_obs<190.31)]), np.log10(c/(wave_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-4)*flux_obs[(wave_obs>50)&(wave_obs<190.31)]*1e-23), color='k', alpha=0.7, linewidth=1)
@@ -1553,7 +1553,7 @@ def cs_age_behavior(indir, array, outdir, obs=None):
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/cycle6/'
 outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
-outdir = '/Users/yaolun/test/updated_bhr71/'
+outdir = '/Users/yaolun/test/updated_bhr71/BHR71_ult/'
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
 # grid of cs and age
@@ -1661,19 +1661,19 @@ sed_lum(indir, array, outdir)
 array = np.array([[20,18,16],[6,11,16]])
 cs_age_behavior(indir, array, outdir)
 
-model_vs_obs('model142', '/Users/yaolun/bhr71/hyperion/controlled/', '/Users/yaolun/test/', obs=obs)
+model_vs_obs('model154', '/Users/yaolun/bhr71/hyperion/controlled/', '/Users/yaolun/test/updated_bhr71/BHR71_ult/', obs=obs)
 
 models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
                '/Users/yaolun/bhr71/hyperion/controlled/model143',\
                '/Users/yaolun/bhr71/hyperion/controlled/model142'],\
-               '/Users/yaolun/test/',\
+               '/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
                [r'$\rm{Kristensen\,et.\,al.\,2012}$', \
                r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',\
                r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
 
 models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model142',\
                '/Users/yaolun/test/model_best_nontsc'],\
-               '/Users/yaolun/test/',\
+               '/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
                [r'$\rm{full\,TSC}$',r'$\rm{infall-only\,TSC}$'], obs)
 
 # models_vs_obs(['/Users/yaolun/bhr71/hyperion/three_models/model3','/Users/yaolun/bhr71/hyperion/three_models/model4','/Users/yaolun/bhr71/hyperion/three_models/model1'],\
