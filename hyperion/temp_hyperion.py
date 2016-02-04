@@ -51,10 +51,11 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     # print np.ceil(max(ri)/AU/1e4)*1e4
     # ax.set_yticks(np.linspace(0,np.ceil(max(ri)/AU/1e4)*1e4,5))
     ax.set_yticks(np.arange(0,max(ri)/AU,max(ri)/AU/5))
+    # ax.set_yticks([])
 
     ax.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
                             r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
-    ax.grid(True, color='grey')
+    # ax.grid(True, color='grey')
     cb = fig.colorbar(im, pad=0.1)
     cb.ax.set_ylabel(r'$\rm{Averaged\,Temperature\,(K)}$',fontsize=20)
     cb.set_ticks([5,10,20,30,40,50,60,70,80,90,100])
@@ -120,6 +121,6 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     fig.savefig(outdir+print_name+'_temp_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-rtout = '/Users/yaolun/bhr71/hyperion/controlled/model154.rtout'
-outdir = '/Users/yaolun/test/'
-temp_hyperion(rtout, outdir, bb_dust=True)
+# rtout = '/Users/yaolun/bhr71/hyperion/controlled/model154.rtout'
+# outdir = '/Users/yaolun/test/'
+# temp_hyperion(rtout, outdir, bb_dust=True)

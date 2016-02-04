@@ -1628,7 +1628,7 @@ sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 # disk & no disk
 # late: yes & no; early: yes & no
 array = np.array([27,29,67,84])
-# disk_exist_com(indir, array, outdir, obs=None)
+disk_exist_com(indir, array, outdir, obs=None)
 
 # grid of tstar
 # array = np.array([73,74,75])
