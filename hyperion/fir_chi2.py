@@ -279,7 +279,12 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         ax.set_xlabel(keywords['label'][0], fontsize=18)
         ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
         # mark the region where the chi-squared ranging from lowest possible value to double
-        ax.axhspan(chi2[p1*1e4 == ref_p1], 2*chi2[p1*1e4 == ref_p1], color='b', alpha=0.3)
+        ax.axhspan(chi2[p1*1e4 == ref_p1], 2*chi2[p1*1e4 == ref_p1], color='grey', alpha=0.3)
+
+        # make vertical lines to show the uncertainty with a certain chi-square criteria
+        print min(p1[chi2 <= min(chi2)*2])*1e4, max(p1[chi2 <= min(chi2)*2])*1e4
+        ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
+                   color='b', alpha=0.3)
 
         ax.set_yscale('log')
 
@@ -454,6 +459,6 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
                # 'model_num': np.hstack((np.arange(2,8),np.arange(14,47)))}]
-               'model_num': np.hstack((np.arange(1,56),np.arange(144,154)))}]
+               'model_num': np.arange(155,223)}]
 keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=1, herschel_only=True, zoom_1d=[0,5])
+fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=181, herschel_only=True, zoom_1d=[0,5])

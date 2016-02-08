@@ -1,7 +1,8 @@
 def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,plot=False,\
                 low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,\
                 aperture=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False,\
-                TSC_dir='~/programs/misc/TSC/', IDL_path='/Applications/exelis/idl83/bin/idl',auto_disk=0.25):
+                TSC_dir='~/programs/misc/TSC/', IDL_path='/Applications/exelis/idl83/bin/idl',auto_disk=0.25,\
+                fast_plot=False):
     """
     params = dictionary of the model parameters
     alma keyword is obsoleted
@@ -371,20 +372,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         for i in range(0, nz):
             rho_env[:,:,i] = rho_env_tsc2d
 
-
-        # test script for testing the effect of the outer radius
-        # envelope = m.add_power_law_envelope()
-        # envelope.mass = 0.03 * MS           # Envelope mass
-        # envelope.rmin = R_env_min           # Inner radius
-        # envelope.rmax = R_env_max           # Outer radius
-        # envelope.power = -2                 # Radial power
-        # envelope.dust = outdir+os.path.basename(dust_file).split('.')[0]+'.hdf5'
-        # envelope.r_0  = R_inf
-        # envelope.rho_0 = 1/(2*np.pi*G*(t*yr)**2)
-        # from hyperion.grid import SphericalPolarGrid
-        # rho_env = envelope.density(SphericalPolarGrid(ri, thetai, phii)).T
-        #
-
         if dyn_cav == True:
             print 'Calculate the cavity properties using the criteria that swept-up mass = outflowed mass'
             # using swept-up mass = flow mass to derive the edge of the extended flat density region
@@ -476,49 +463,44 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         record_hyperion(params,record_dir)
 
     if plot == True:
-        # rc setting
-        # mat.rcParams['text.usetex'] = True
-        # mat.rcParams['font.family'] = 'serif'
-        # mat.rcParams['font.serif'] = 'Times'
-        # mat.rcParams['font.sans-serif'] = 'Computer Modern Sans serif'
+        if fast_plot == False:
+            # Plot the azimuthal averaged density
+            fig = plt.figure(figsize=(8,6))
+            ax_env  = fig.add_subplot(111,projection='polar')
+            # take the weighted average
+            # rho2d is the 2-D projection of gas density
+            rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
 
-        # Plot the azimuthal averaged density
-        fig = plt.figure(figsize=(8,6))
-        ax_env  = fig.add_subplot(111,projection='polar')
-        # take the weighted average
-        # rho2d is the 2-D projection of gas density
-        rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
+            zmin = 1e-22/mmw/mh
+            cmap = plt.cm.CMRmap
+            rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
+            thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
+            # plot the gas density
+            img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mmw/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mmw/mh)
 
-        zmin = 1e-22/mmw/mh
-        cmap = plt.cm.CMRmap
-        rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
-        thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
-        # plot the gas density
-        img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mmw/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mmw/mh)
+            ax_env.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
+            ax_env.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
+            ax_env.tick_params(labelsize=18)
+            ax_env.set_yticks(np.arange(0,R_env_max/AU,R_env_max/AU/5))
+            # ax_env.set_yticks([])
+            # ax_env.set_ylim([0,10000])
+            ax_env.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
+                                    r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
+            # fix the tick label font
+            ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=20)
+            for label in ax_env.get_yticklabels():
+                label.set_fontproperties(ticks_font)
 
-        ax_env.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
-        ax_env.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
-        ax_env.tick_params(labelsize=18)
-        ax_env.set_yticks(np.arange(0,R_env_max/AU,R_env_max/AU/5))
-        # ax_env.set_yticks([])
-        # ax_env.set_ylim([0,10000])
-        ax_env.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
-                                r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
-        # fix the tick label font
-        ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=20)
-        for label in ax_env.get_yticklabels():
-            label.set_fontproperties(ticks_font)
-
-        ax_env.grid(True)
-        cb = fig.colorbar(img_env, pad=0.1)
-        cb.ax.set_ylabel(r'$\rm{Averaged\,Gas\,Density\,(cm^{-3})}$',fontsize=20)
-        cb.set_ticks([1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9])
-        cb.set_ticklabels([r'$\rm{10^{2}}$',r'$\rm{10^{3}}$',r'$\rm{10^{4}}$',r'$\rm{10^{5}}$',r'$\rm{10^{6}}$',\
-                           r'$\rm{10^{7}}$',r'$\rm{10^{8}}$',r'$\rm{\geq 10^{9}}$'])
-        cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
-        plt.setp(cb_obj,fontsize=20)
-        fig.savefig(outdir+outname+'_gas_density.png', format='png', dpi=300, bbox_inches='tight')
-        fig.clf()
+            ax_env.grid(True)
+            cb = fig.colorbar(img_env, pad=0.1)
+            cb.ax.set_ylabel(r'$\rm{Averaged\,Gas\,Density\,(cm^{-3})}$',fontsize=20)
+            cb.set_ticks([1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9])
+            cb.set_ticklabels([r'$\rm{10^{2}}$',r'$\rm{10^{3}}$',r'$\rm{10^{4}}$',r'$\rm{10^{5}}$',r'$\rm{10^{6}}$',\
+                               r'$\rm{10^{7}}$',r'$\rm{10^{8}}$',r'$\rm{\geq 10^{9}}$'])
+            cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
+            plt.setp(cb_obj,fontsize=20)
+            fig.savefig(outdir+outname+'_gas_density.png', format='png', dpi=300, bbox_inches='tight')
+            fig.clf()
 
         # Plot the radial density profile
         fig = plt.figure(figsize=(12,9))
