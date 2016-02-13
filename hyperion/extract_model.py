@@ -587,8 +587,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
 # import numpy as np
 # wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
 # aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# extract_hyperion('/Users/yaolun/bhr71/hyperion/controlled/model154.rtout',indir=indir,outdir='/Users/yaolun/test/',\
-                #  aperture=aperture,filter_func=True,plot_all=False,clean=True,image=False,print_data_w_aper=True)
+# extract_hyperion('/Users/yaolun/bhr71/hyperion/controlled/model154_nontsc.rtout',indir=indir,outdir='/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
+#                  aperture=aperture,filter_func=True,plot_all=False,clean=True,image=False,print_data_w_aper=True)
 # extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra3opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra2opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\

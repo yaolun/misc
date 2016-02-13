@@ -1671,8 +1671,8 @@ models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
                r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',\
                r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
 
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model154',\
-               '/Users/yaolun/test/model_best_nontsc'],\
+models_vs_obs(['/Users/yaolun/test/updated_bhr71/BHR71_ult/model154',\
+               '/Users/yaolun/test/updated_bhr71/BHR71_ult/model154_nontsc'],\
                '/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
                [r'$\rm{full\,TSC}$',r'$\rm{infall-only\,TSC}$'], obs)
 

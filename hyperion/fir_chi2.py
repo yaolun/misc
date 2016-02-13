@@ -460,5 +460,5 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.t
                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
                # 'model_num': np.hstack((np.arange(2,8),np.arange(14,47)))}]
                'model_num': np.arange(155,223)}]
-keywords = {'col':['age'], 'label': [r'$\rm{t\,[10^{4}\,year]}$']}
+keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=181, herschel_only=True, zoom_1d=[0,5])
