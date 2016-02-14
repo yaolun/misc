@@ -279,8 +279,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         ax.set_xlabel(keywords['label'][0], fontsize=18)
         ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
         # mark the region where the chi-squared ranging from lowest possible value to double
-        ax.axhspan(chi2[p1*1e4 == ref_p1], 2*chi2[p1*1e4 == ref_p1], color='grey', alpha=0.3)
-
+        # ax.axhspan(chi2[p1*1e4 == ref_p1], 2*chi2[p1*1e4 == ref_p1], color='grey', alpha=0.3)
+        print chi2
         # make vertical lines to show the uncertainty with a certain chi-square criteria
         print min(p1[chi2 <= min(chi2)*2])*1e4, max(p1[chi2 <= min(chi2)*2])*1e4
         ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
@@ -462,3 +462,10 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.t
                'model_num': np.arange(155,223)}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=181, herschel_only=True, zoom_1d=[0,5])
+
+# For estimating the effect of the uncertainty in dust opacity at submm wavelength.
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/test/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/test/',
+               'model_num':np.array([17,18])}]
+keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[0,5])
