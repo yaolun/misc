@@ -948,13 +948,13 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     r22, = axarr[0].plot(np.log10(wave_r22), np.log10(sed_r22), 'o', linestyle='--', mfc='Magenta',mec='Magenta',\
             markersize=7,markeredgewidth=1,color='Magenta', linewidth=1.5)
     axarr[0].legend([r21, r22], \
-        [r'$\rm{\rho_{\circ}=5\times 10^{-16}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-19}\,g\,cm^{-3}}$'],\
+        [r'$\rm{\rho_{\circ}=5\times 10^{-16}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$'],\
         fontsize=14, numpoints=1, framealpha=0.5)
     axarr[0].text(0.1,0.9, r'$\rm{\rho(r) \propto r^{-2}}$', fontsize=18,color='k', transform=axarr[0].transAxes)
     # additional embedded axis for density
     den_r2 = plt.axes([0.45 ,0.67, 0.2, 0.08], frameon=True)
     den_r2.plot(np.log10(rc), np.log10(5e-16*d2),'-',color='k',linewidth=1)
-    den_r2.plot(np.log10(rc), np.log10(5e-19*d2),'--',color='k',linewidth=1)
+    den_r2.plot(np.log10(rc), np.log10(5e-18*d2),'--',color='k',linewidth=1)
     den_r2.set_xlim([-1,5])
     den_r2.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
     den_r2.set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$')
@@ -967,13 +967,13 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     r152, = axarr[1].plot(np.log10(wave_r152), np.log10(sed_r152), 'o', linestyle='--', mfc='Red',mec='Red',\
             markersize=7,markeredgewidth=1,color='Red', linewidth=1.5)
     axarr[1].legend([r151, r152], \
-        [r'$\rm{\rho_{\circ}=5\times 10^{-16}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-19}\,g\,cm^{-3}}$'],\
+        [r'$\rm{\rho_{\circ}=5\times 10^{-16}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$'],\
         fontsize=14, numpoints=1, framealpha=0.5)
     axarr[1].text(0.1,0.9, r'$\rm{\rho(r) \propto r^{-1.5}}$', fontsize=18,color='k', transform=axarr[1].transAxes)
     # additional embedded axis for density
     den_r15 = plt.axes([0.45 ,0.4, 0.2, 0.08], frameon=True)
     den_r15.plot(np.log10(rc), np.log10(5e-16*d15),'-',color='k',linewidth=1)
-    den_r15.plot(np.log10(rc), np.log10(5e-19*d15),'--',color='k',linewidth=1)
+    den_r15.plot(np.log10(rc), np.log10(5e-18*d15),'--',color='k',linewidth=1)
     den_r15.set_xlim([-1,5])
     den_r15.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
     den_r15.set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$')
@@ -996,7 +996,7 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     den_b.plot(np.log10(rc), np.log10(5e-16*d2),'-',color='Magenta',linewidth=1)
     den_b.plot(np.log10(rc), np.log10(5e-16*d15),'-',color='Red',linewidth=1)
     den_b.plot(np.log10(rc), np.log10(5e-19*db), '-', color='Blue',linewidth=1)
-    den_b.plot(np.log10(rc), np.log10(rc*0+1e-21), '-', color='Green',linewidth=1)
+    den_b.plot(np.log10(rc), np.log10(rc*0+1e-20), '-', color='Green',linewidth=1)
     den_b.set_xlim([-1,5])
     den_b.set_ylim([-28,-14])
     den_b.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
@@ -1551,7 +1551,7 @@ def cs_age_behavior(indir, array, outdir, obs=None):
     fig.clf()
 
 import numpy as np
-indir = '/Users/yaolun/bhr71/hyperion/controlled/cycle6/'
+indir = '/Users/yaolun/bhr71/hyperion/controlled/'
 outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
 outdir = '/Users/yaolun/test/updated_bhr71/BHR71_ult/'
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
@@ -1560,7 +1560,7 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 array = np.array([[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20]])
 cslist = [0.2,0.38,0.5,0.6]
 agelist = [5e3,1e4,2.5e4,5e4,7.5e4]
-sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
+sed_grid_cs_age(indir+'cycle6/', array, outdir, cslist, agelist, obs= None)
 
 # # for presentation, show only one sound speed bin
 # array = np.array([[17,18,19,20,49]])
@@ -1578,9 +1578,9 @@ sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
 # grid of Omega0
 array = np.array([23,22,21])
-sed_omega(indir, array, outdir, obs=None, compact=True, addname='_1e4')
+sed_omega(indir+'cycle6/', array, outdir, obs=None, compact=True, addname='_1e4')
 array = np.array([26,25,24])
-sed_omega(indir, array, outdir, obs=None, compact=True, addname='_7.5e4')
+sed_omega(indir+'cycle6/', array, outdir, obs=None, compact=True, addname='_7.5e4')
 
 # grid of disk parameters
 # disk mass
@@ -1588,29 +1588,29 @@ array = np.array([28,29,30])
 xlabel = r'$M_{disk}\,[M_{\odot}]\,(0.025,\,0.075,\,0.25)$'
 compact = [r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$']
 plotname = 'disk_mdisk'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+sed_five(indir+'cycle6/', array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # flare power
 array = np.array([31,32,33,34,35])
 xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
 compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
 plotname = 'disk_beta'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+sed_five(indir+'cycle6/', array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # scale height
 array = np.array([36,37,38,39,40])
 xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
 compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
 plotname = 'disk_h100'
-sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
+sed_five(indir+'cycle6/', array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
 # all disk parameter
 array = np.array([[28,39,30,0,0],[31,32,33,34,35],[36,37,38,39,40]])
 compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
            [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
            [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
-disk_summary(indir, array, outdir, compact=compact)
+disk_summary(indir+'cycle6/', array, outdir, compact=compact)
 
 
 # grid of theta_cav and incl.
-array = np.array([[52,53,54,55,56],[57,58,59,60,61],[62,63,64,65,66]])
+array = np.array([[242,243,244,245,246],[247,248,249,250,251],[252,253,254,255,256]])
 sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 # only for incl. = 40
 # array = np.array([58,59,60,104,105])
@@ -1621,14 +1621,14 @@ sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 # sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
 
 # grid of rho_cav_center and sed_rho_cav_edge
-array = np.array([[67,68,69,70],[71,72,73,74],[75,76,77,78]])
+array = np.array([[257,258,259,260],[261,262,263,264],[265,266,267,268]])
 # sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
 sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # disk & no disk
 # late: yes & no; early: yes & no
 array = np.array([27,29,67,84])
-disk_exist_com(indir, array, outdir, obs=None)
+disk_exist_com(indir+'cycle6/', array, outdir, obs=None)
 
 # grid of tstar
 # array = np.array([73,74,75])
@@ -1639,7 +1639,7 @@ disk_exist_com(indir, array, outdir, obs=None)
 # sed_rstar(indir, array, outdir, obs=obs)
 
 # grid of R_env_max
-array = np.array([82,83,84])
+array = np.array([272,273,274])
 xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
 compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
 plotname = 'r_max'
@@ -1647,25 +1647,25 @@ sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=c
 
 # grid of continuous cavity power law
 # power = 2, 1.5, const+r-2, and uniform
-array = {'r-2': [44,46], 'r-1.5': [48,50], 'const+r-2': [85], 'uniform': [42]}
+array = {'r-2': [234,236], 'r-1.5': [238,240], 'const+r-2': [224], 'uniform': [232]}
 sed_cav_struc_com(indir, array, outdir, obs=obs)
 
-array = {'r-2': [44,46], 'r-1.5': [48,50], 'const+r-2': [85], 'uniform': [42]}
+array = {'r-2': [234,236], 'r-1.5': [238,240], 'const+r-2': [224], 'uniform': [232]}
 sed_cav_struc_com(indir, array, outdir, obs=None)
 
 
 # grid of tstar with the same lstar
-array = np.array([79,80,81])
+array = np.array([269,270,271])
 sed_lum(indir, array, outdir)
 
 array = np.array([[20,18,16],[6,11,16]])
-cs_age_behavior(indir, array, outdir)
+cs_age_behavior(indir+'cycle6/', array, outdir)
 
-model_vs_obs('model154', '/Users/yaolun/bhr71/hyperion/controlled/', '/Users/yaolun/test/updated_bhr71/BHR71_ult/', obs=obs)
+model_vs_obs('model224', '/Users/yaolun/bhr71/hyperion/controlled/', '/Users/yaolun/test/updated_bhr71/BHR71_ult/', obs=obs)
 
 models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
-               '/Users/yaolun/bhr71/hyperion/controlled/model143',\
-               '/Users/yaolun/bhr71/hyperion/controlled/model154'],\
+               '/Users/yaolun/bhr71/hyperion/controlled/model225',\
+               '/Users/yaolun/bhr71/hyperion/controlled/model224'],\
                '/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
                [r'$\rm{Kristensen\,et.\,al.\,2012}$', \
                r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',\
