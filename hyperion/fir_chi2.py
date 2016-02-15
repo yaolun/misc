@@ -212,6 +212,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
 
             if ref == None:
                 # read the parameter values
+                print (model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data
                 p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
                 if fixed == False:
                     p2.extend((model_list[keywords['col'][1]][model_list['Model#'] == 'Model'+str(imod)]).data)
@@ -280,7 +281,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
         # mark the region where the chi-squared ranging from lowest possible value to double
         # ax.axhspan(chi2[p1*1e4 == ref_p1], 2*chi2[p1*1e4 == ref_p1], color='grey', alpha=0.3)
-        print chi2
+        print len(p1), len(chi2)
         # make vertical lines to show the uncertainty with a certain chi-square criteria
         print min(p1[chi2 <= min(chi2)*2])*1e4, max(p1[chi2 <= min(chi2)*2])*1e4
         ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
@@ -456,16 +457,23 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 #                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
 #                # 'model_num': np.hstack((np.arange(2,8),np.arange(14,47)))}]
 #                'model_num': np.arange(86,120)}]
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
-               # 'model_num': np.hstack((np.arange(2,8),np.arange(14,47)))}]
-               'model_num': np.arange(155,223)}]
-keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=181, herschel_only=True, zoom_1d=[0,5])
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
+#                # 'model_num': np.hstack((np.arange(2,8),np.arange(14,47)))}]
+#                'model_num': np.arange(155,223)}]
+# keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+# fir_chi2_2d(array_list, keywords, obs, fixed=True, ref=181, herschel_only=True, zoom_1d=[0,5])
 
 # For estimating the effect of the uncertainty in dust opacity at submm wavelength.
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/test/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/test/',
+#                'model_num':np.array([17,18])}]
+# keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+# fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[0,5])
+
+# For fitting the best age for p25 dust opactity
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/test/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/test/',
-               'model_num':np.array([17,18])}]
+               'model_num':np.hstack((17,np.arange(19,32)))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[0,5])
