@@ -67,8 +67,8 @@ list_params = {'view_angle': [20,30,40,50,60,70,80,90],\
 list_params = {'age': [1.7e4, 2e4, 2.4e4, 3e4, 4e4],\
 			   'Cs':  [0.3, 0.4, 0.5, 0.6, 0.7]}
 # grid of age and tstar
-list_params = {'age': [2e4,2.5e5,3e4,3.5e4],
-			   'lstar': }
+list_params = {'age': [1.7e4,1.9e4,2.1e4,2.3e4],
+			   'tstar': [6200,6300] }
 
 # outdir = '/Users/yaolun/test/'
 outdir = home + '/programs/misc/hyperion/'
