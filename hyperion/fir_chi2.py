@@ -474,7 +474,7 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # For fitting the best age for p25 dust opactity
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/test/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/test/',
-               'model_num': np.array([47,47])}]
+               'model_num': np.arange(47,53)}]
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[0,5])
