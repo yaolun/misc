@@ -44,9 +44,9 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     im.set_edgecolor('face')
 
     ax.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
-    ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
+    ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20, labelpad=-140, color='grey')
     # ax.set_ylabel('radius', fontsize=20)
-    ax.tick_params(labelsize=18)
+    ax.tick_params(labelsize=16)
     ax.tick_params(axis='y', colors='grey')
     # print np.ceil(max(ri)/AU/1e4)*1e4
     # ax.set_yticks(np.linspace(0,np.ceil(max(ri)/AU/1e4)*1e4,5))
@@ -121,6 +121,6 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     fig.savefig(outdir+print_name+'_temp_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/controlled/model154.rtout'
-# outdir = '/Users/yaolun/test/'
+# rtout = '/Users/yaolun/bhr71/hyperion/controlled/model224.rtout'
+# outdir = '/Users/yaolun/bhr71/hyperion/controlled/'
 # temp_hyperion(rtout, outdir, bb_dust=True)

@@ -479,7 +479,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mmw/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mmw/mh)
 
             ax_env.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
-            ax_env.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20)
+            ax_env.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20, labelpad=-140)
             ax_env.tick_params(labelsize=18)
             ax_env.set_yticks(np.arange(0,R_env_max/AU,R_env_max/AU/5))
             # ax_env.set_yticks([])
@@ -847,5 +847,5 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 # # # # dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
 # # # # fix_params = {'R_min': 0.14}
 # fix_params = {}
-# setup_model(outdir,record_dir,'model154_nontsc',params[0],dust_file,plot=True,record=False,\
-#     idl='rhoenv_model154.dat',radmc=False,fix_params=fix_params,ellipsoid=False,tsc=False)
+# setup_model(outdir,record_dir,'model224',params[0],dust_file,plot=True,record=False,\
+#     idl='rhoenv_model224.dat',radmc=False,fix_params=fix_params,ellipsoid=False,tsc=False)
