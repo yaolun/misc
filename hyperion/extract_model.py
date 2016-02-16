@@ -367,21 +367,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
                     obs_aper_flux[i] = f(obs_aper_wl[i])
                     obs_aper_unc[i] = f_unc(obs_aper_wl[i])
 
-    # if clean == False:
-    #     if log:
-    #         aper_obs = ax_sed.errorbar(np.log10(obs_aper_wl), np.log10(obs_aper_sed), \
-    #             yerr=[np.log10(obs_aper_sed)-np.log10(obs_aper_sed-obs_aper_sed_unc), np.log10(obs_aper_sed+obs_aper_sed_unc)-np.log10(obs_aper_sed)],\
-    #             fmt='s', mec='Magenta', mfc='Magenta', markersize=10, elinewidth=3, ecolor='Magenta',capthick=3,barsabove=True)
-    #         aper = ax_sed.errorbar(np.log10(wl_aper), np.log10(flux_aper),\
-    #             yerr=[np.log10(flux_aper)-np.log10(flux_aper-unc_aper), np.log10(flux_aper+unc_aper)-np.log10(flux_aper)],\
-    #             fmt='o', mfc='None', mec='k', ecolor='Black', markersize=12, markeredgewidth=3, elinewidth=3, barsabove=True)
-    #     else:
-    #         aper_obs = ax_sed.errorbar(obs_aper_wl, obs_aper_sed, yerr=obs_aper_sed_unc,\
-    #             fmt='s', mec='Magenta', mfc='Magenta', markersize=10, elinewidth=3, ecolor='Magenta',capthick=3,barsabove=True)
-    #         aper = ax_sed.errorbar(wl_aper, flux_aper, yerr=unc_aper,\
-    #             fmt='o', mfc='None', mec='k', ecolor='Black', markersize=12, markeredgewidth=3, elinewidth=3, barsabove=True)
-    # else:
-
     # plot the aperture-extracted spectrophotometry fluxes from observed spectra and simulations
     # in log-scale
     if log:
@@ -424,10 +409,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         # print out the aperture-convolved fluxex from observations
         if print_data_w_aper:
             foo = open(outdir+print_name+'_obs_w_aperture.txt','w')
-            # foo.write('%12s \t %12s \t %12s \n' % ('wave','vSv','sigma_vSv'))
             foo.write('%12s \t %12s \t %12s \n' % ('wave','Jy','sigma_Jy'))
             for i in range(0, len(obs_aper_wl)):
-                # foo.write('%12g \t %12g \t %12g \n' % (obs_aper_wl[i], obs_aper_flux[i]*obs_aper_wl[i], obs_aper_unc[i]*obs_aper_wl[i]))
                 foo.write('%12g \t %12g \t %12g \n' % (obs_aper_wl[i], obs_aper_flux[i]*obs_aper_wl[i]/(c/obs_aper_wl[i]*1e4)*1e23, obs_aper_unc[i]*obs_aper_wl[i]/(c/obs_aper_wl[i]*1e4)*1e23))
             foo.close()
     # Read in and plot the simulated SED produced by RADMC-3D using the same parameters
@@ -447,12 +430,12 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
 
     # legend
     lg_data = ax_sed.legend([irs, photometry, aper, aper_obs],\
-    [r'$\rm{observation}$',\
-    r'$\rm{photometry}$',r'$\rm{F_{aper,sim}}$',r'$\rm{F_{aper,obs}}$'],\
-    loc='upper left',fontsize=14*mag,numpoints=1,framealpha=0.3)
+                            [r'$\rm{observation}$',\
+                            r'$\rm{photometry}$',r'$\rm{F_{aper,sim}}$',r'$\rm{F_{aper,obs}}$'],\
+                            loc='upper left',fontsize=14*mag,numpoints=1,framealpha=0.3)
     if clean == False:
         lg_sim = ax_sed.legend([sim],[r'$\rm{L_{bol,sim}=%5.2f\,L_{\odot},\,L_{center}=%5.2f\,L_{\odot}}$' % (l_bol_sim, L_cen)], \
-            loc='lower right',fontsize=mag*16)
+                               loc='lower right',fontsize=mag*16)
         plt.gca().add_artist(lg_data)
 
     # plot setting
@@ -469,17 +452,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         label.set_fontproperties(ticks_font)
     for label in ax_sed.get_yticklabels():
         label.set_fontproperties(ticks_font)
-
-    # if clean == False:
-    #     lg_data = ax_sed.legend([irs, pacs, spire,photometry],[r'$\rm{{\it Spitzer}-IRS}$',r'$\rm{{\it Herschel}-PACS}$',r'$\rm{{\it Herschel}-SPIRE}$',r'$\rm{Photometry}$'],\
-    #                             loc='upper left',fontsize=14*mag,numpoints=1,framealpha=0.3)
-    #     plt.gca().add_artist(lg_sim)
-    # else:
-    #     lg_data = ax_sed.legend([irs, photometry, aper, aper_obs],\
-    #     [r'$\rm{observation}$',\
-    #     r'$\rm{photometry}$',r'$\rm{F_{aper,sim}}$',r'$\rm{F_{aper,obs}}$'],\
-    #     loc='upper left',fontsize=14*mag,numpoints=1,framealpha=0.3)
-
 
     # Write out the plot
     fig.savefig(outdir+print_name+'_sed.pdf',format='pdf',dpi=300,bbox_inches='tight')
@@ -500,10 +472,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
 
         # Pre-set maximum for colorscales
         VMAX = {}
-        # VMAX[3.6] = 10.
-        # VMAX[24] = 100.
-        # VMAX[160] = 2000.
-        # VMAX[500] = 2000.
         VMAX[100] = 10.
         VMAX[250] = 100.
         VMAX[500] = 2000.
@@ -533,7 +501,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
             # avoid zero in log
             # flip the image, because the setup of inclination is upside down
             val = image.val[::-1, :, iwav] * factor + 1e-30
-            # val = image.val[:, :, iwav] * factor + 1e-30
 
             # This is the command to show the image. The parameters vmin and vmax are
             # the min and max levels for the colorscale (remove for default values).
@@ -587,7 +554,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
 # import numpy as np
 # wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
 # aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# extract_hyperion('/Users/yaolun/bhr71/hyperion/controlled/model154_nontsc.rtout',indir=indir,outdir='/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
+# extract_hyperion('/Users/yaolun/bhr71/hyperion/controlled/model224.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/controlled/',\
 #                  aperture=aperture,filter_func=True,plot_all=False,clean=True,image=False,print_data_w_aper=True)
 # extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra3opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
