@@ -347,7 +347,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         cmap = mpl.colors.ListedColormap(custom_colormap())
         cmap.set_bad('Red',1.)
         im = ax.imshow(masked_array, cmap=cmap, origin='lower', extent=[0,1,0,1],\
-            norm=LogNorm(vmin=chi2.min(), vmax=1e7))  # chi2.max()
+            norm=LogNorm(vmin=chi2.min(), vmax=chi2.max()))  # chi2.max()  # 1e7
         # Blues_r
         ax.set_xticks(np.linspace(0, 1, 5))
         ax.set_xticklabels(np.linspace(min(p1), max(p1), 5))
@@ -401,7 +401,7 @@ import numpy as np
 #                'model_num': np.arange(39,49)}]
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
-               'model_num': np.arange(1,65)}]
+               'model_num': np.arange(1,9)}]
 
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
@@ -420,8 +420,11 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.tx
 keywords_list = [{'col':['theta_cav','view_angle'], 'label': [r'$\rm{\theta_{cav}\,[deg.]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
 obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 
+# for tstar & age
+# keywords_list = [{'col':['tstar','age'], 'label': [r'$\rm{T_{\star}\,[K]}$', r'$\rm{age\,[10^{4}\,yr]}$']}]
+#
 # for keywords in keywords_list:
-#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=19, plot_model=False)
+#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=1, plot_model=False, herschel_only=True)
 #     for i in range(len(p1)):
 #         print p1[i], p2[i], chi2[i]
     # fir_chi2_2d(array_list, keywords, obs)
@@ -476,6 +479,6 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/test/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/test/',
                'model_num': np.arange(58,63)}]
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
-keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+# keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[6100,6600])
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[6000,6600])
