@@ -477,7 +477,7 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # For fitting the best age for p25 dust opactity
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/test/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/test/',
-               'model_num': np.arange(63,86)}]
+               'model_num': np.arange(63,94)}]
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 # keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
