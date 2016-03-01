@@ -10,7 +10,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         import astropy.constants as const
         # wavelength unit: um
         # Flux density unit: Jy
-        #
         # constants setup
         #
         c = const.c.cgs.value
@@ -241,7 +240,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
                 f_unc = interp1d(wav_sort, unc_dum)
                 flux_aper[i] = np.trapz(f(filter_func['wave']/1e4)*filter_func['transmission'], x=filter_func['wave']/1e4 )/\
                                 np.trapz(filter_func['transmission'], x=filter_func['wave']/1e4)
-                # unc_aper[i] = abs(np.trapz((filter_func['wave']/1e4)**2, (f_unc(filter_func['wave']/1e4)*filter_func['transmission'])**2))**0.5 / abs(np.trapz(filter_func['wave']/1e4, filter_func['transmission']))
                 # fix a bug
                 unc_aper[i] = unc_spectrophoto(filter_func['wave']/1e4, f_unc(filter_func['wave']/1e4), filter_func['transmission'])
             else:
@@ -478,11 +476,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         VMAX[1000] = 2000.
 
         # We will now show four sub-plots, each one for a different wavelength
-        # for i, wav in enumerate([3.6, 24, 160, 500]):
-        # for i, wav in enumerate([100, 250, 500, 1000]):
-        # for i, wav in enumerate([4.5, 9.7, 24, 40, 70, 100, 250, 500, 1000]):
         for i, wav in enumerate([3.6, 8.0, 9.7, 24, 40, 100, 250, 500, 1000]):
-
 
             # ax = fig.add_subplot(3, 3, i + 1)
             ax = axarr[i/3, i%3]

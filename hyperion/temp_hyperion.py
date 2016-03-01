@@ -17,7 +17,6 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     # misc variable setup
     print_name = os.path.splitext(os.path.basename(rtout))[0]
 
-
     m = ModelOutput(rtout)
     q = m.get_quantities()
 
@@ -45,17 +44,12 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
 
     ax.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
     ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20, labelpad=-140, color='grey')
-    # ax.set_ylabel('radius', fontsize=20)
     ax.tick_params(labelsize=16)
     ax.tick_params(axis='y', colors='grey')
-    # print np.ceil(max(ri)/AU/1e4)*1e4
-    # ax.set_yticks(np.linspace(0,np.ceil(max(ri)/AU/1e4)*1e4,5))
-    ax.set_yticks(np.arange(0,max(ri)/AU,max(ri)/AU/5))
-    # ax.set_yticks([])
+    ax.set_yticks(np.arange(0,int(R_env_max/AU/10000.)*10000, 10000))
 
     ax.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
                             r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
-    # ax.grid(True, color='grey')
     cb = fig.colorbar(im, pad=0.1)
     cb.ax.set_ylabel(r'$\rm{Averaged\,Temperature\,(K)}$',fontsize=20)
     cb.set_ticks([5,10,20,30,40,50,60,70,80,90,100])
@@ -79,8 +73,8 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     label_grid = [r'$\rm{outflow}$', r'$\rm{45^{\circ}}$', r'$\rm{midplane}$']
     alpha = np.linspace(0.3,1.0,len(plot_grid))
     color_list = [[0.8507598215729224, 0.6322174528970308, 0.6702243543099417],\
-             [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
-             [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
+                  [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
+                  [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
 
     for i in plot_grid:
         temp_rad, = ax.plot(np.log10(rc/AU), np.log10(temp2d[:,i]),'-',color=color_list[plot_grid.index(i)],\
