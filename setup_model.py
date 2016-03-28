@@ -1,4 +1,5 @@
-def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,flat=True,scale=1,radmc=False,mono=False):
+def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
+                flat=True,scale=1,mono=False):
     import numpy as np
     import astropy.constants as const
     import scipy as sci
@@ -22,9 +23,8 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
     G         = 6.67259e-8     # Gravitational constant  [cm3/g/s^2]
     yr        = 60*60*24*365   # Years in seconds
     PI        = np.pi          # PI constant
-    sigma     = const.sigma_sb.cgs.value  # Stefan-Boltzmann constant 
+    sigma     = const.sigma_sb.cgs.value  # Stefan-Boltzmann constant
     mh        = const.m_p.cgs.value + const.m_e.cgs.value
-
 
     m = Model()
 
@@ -34,20 +34,23 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
     from hyperion.dust import HenyeyGreensteinDust
     # Read in the dust opacity table used by RADMC-3D
     dust_radmc = dict()
-    [dust_radmc['wl'], dust_radmc['abs'], dust_radmc['scat'], dust_radmc['g']] = np.genfromtxt('dustkappa_oh5_extended.inp',skip_header=2).T
+    [dust_radmc['wl'],dust_radmc['abs'],dust_radmc['scat'],dust_radmc['g']] =
+                    np.genfromtxt('dustkappa_oh5_extended.inp',skip_header=2).T
     # opacity per mass of dust?
     dust_hy = dict()
     dust_hy['nu'] = c/dust_radmc['wl']*1e4
     ind = np.argsort(dust_hy['nu'])
     dust_hy['nu'] = dust_hy['nu'][ind]
-    dust_hy['albedo'] = (dust_radmc['scat']/(dust_radmc['abs']+dust_radmc['scat']))[ind]
+    dust_hy['albedo'] =
+                (dust_radmc['scat']/(dust_radmc['abs']+dust_radmc['scat']))[ind]
     dust_hy['chi'] = (dust_radmc['abs']+dust_radmc['scat'])[ind]
     dust_hy['g'] = dust_radmc['g'][ind]
     dust_hy['p_lin_max'] = 0*dust_radmc['wl'][ind]     # assume no polarization
 
-    d = HenyeyGreensteinDust(dust_hy['nu'], dust_hy['albedo'], dust_hy['chi'], dust_hy['g'], dust_hy['p_lin_max'])
-    # dust sublimation does not occur
-    # d.set_sublimation_temperature(None)
+    d = HenyeyGreensteinDust(dust_hy['nu'], dust_hy['albedo'], dust_hy['chi'],
+                             dust_hy['g'], dust_hy['p_lin_max'])
+    # use 'slow' method to do dust sublimation
+    d.set_sublimation_temperature('slow', temperature=1600.0)
     d.write(outdir+'oh5.hdf5')
     d.plot(outdir+'oh5.png')
 
@@ -64,7 +67,7 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
 
     if tsc == False:
         # Parameters setup
-        # Import the model parameters from another file 
+        # Import the model parameters from another file
         #
         params     = np.genfromtxt(indir+'/params.dat',dtype=None)
         tstar      = params[0][1]
@@ -146,7 +149,7 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
     ri           = np.hstack((0.0, ri))
     thetai       = PI*np.arange(ny+1).astype(dtype='float')/float(ny)
     phii         = PI*2.0*np.arange(nz+1).astype(dtype='float')/float(nz)
-    
+
     # Keep the constant cell size in r-direction
     #
     if flat == True:
@@ -154,7 +157,7 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
         ind = np.where(ri_cellsize/AU > 100.0)[0][0]       # The largest cell size is 100 AU
         ri = np.hstack((ri[0:ind],ri[ind]+np.arange(np.ceil((rout-ri[ind])/100/AU))*100*AU))
         nxx = nx
-        nx = len(ri)-1    
+        nx = len(ri)-1
 
     # Assign the coordinates of the center of cell as its coordinates.
     #
@@ -401,56 +404,18 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
     n01     = 10.0
     n12     = 20.0
     n23     = 50.0
-    # n23     = (lambda3-lambda2)/2
-    # n34     = (lambda4-lambda3)/2
-    # n45     = (lambda5-lambda4)/2
-    # n56     = (lambda6-lambda5)/2
-    # n23     = (lambda3-lambda2)/0.02
-    # n34     = (lambda4-lambda3)/0.03
-    # n45     = (lambda5-lambda4)/0.1
-    # n56     = (lambda6-lambda5)/0.1
-
 
     lam01   = lambda0 * (lambda1/lambda0)**(np.arange(n01)/n01)
     lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
     lam23   = lambda2 * (lambda6/lambda2)**(np.arange(n23+1)/n23)
-    # lam34   = lambda3 * (lambda4/lambda3)**(np.arange(n34)/n34)
-    # lam45   = lambda4 * (lambda5/lambda4)**(np.arange(n45)/n45)
-    # lam56   = lambda5 * (lambda6/lambda5)**(np.arange(n56+1)/n56)
 
-    # lam01   = lambda0 * (lambda1/lambda0)**(np.arange(n01)/n01)
-    # lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
-    # lam23   = lambda2 * (lambda3/lambda2)**(np.arange(n23)/n23)
-    # lam34   = lambda3 * (lambda4/lambda3)**(np.arange(n34)/n34)
-    # lam45   = lambda4 * (lambda5/lambda4)**(np.arange(n45)/n45)
-    # lam56   = lambda5 * (lambda6/lambda5)**(np.arange(n56+1)/n56)
-
-    # lam     = np.concatenate([lam01,lam12,lam23,lam34,lam45,lam56])
     lam      = np.concatenate([lam01,lam12,lam23])
     nlam    = len(lam)
-
-    # Create camera wavelength points
-    n12     = 70.0
-    n23     = 70.0
-    n34     = 70.0
-    n45     = 50.0
-    n56     = 50.0
-    
-    lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
-    lam23   = lambda2 * (lambda3/lambda2)**(np.arange(n23)/n23)
-    lam34   = lambda3 * (lambda4/lambda3)**(np.arange(n34)/n34)
-    lam45   = lambda4 * (lambda5/lambda4)**(np.arange(n45)/n45)
-    lam56   = lambda5 * (lambda6/lambda5)**(np.arange(n56+1)/n56)
-
-    lam_cam = np.concatenate([lam12,lam23,lam34,lam45,lam56])
-    n_lam_cam = len(lam_cam)
 
     # Radiative transfer setting
 
     # number of photons for temp and image
-    # [3.6, 4.5, 5.8, 8.0, 24, 70, 100, 160, 250, 350, 500, 1000]
     lam_list = lam.tolist()
-    # print lam_list
     m.set_raytracing(True)
     if mono == True:
         # Monechromatic radiative transfer setting
@@ -458,7 +423,7 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
         m.set_n_photons(initial=1000000, imaging_sources=1000000, imaging_dust=1000000,raytracing_sources=1000000, raytracing_dust=1000000)
     else:
         # regular wavelength grid setting
-        m.set_n_photons(initial=1000000, imaging=1000000,raytracing_sources=1000000, raytracing_dust=1000000)    
+        m.set_n_photons(initial=1000000, imaging=1000000,raytracing_sources=1000000, raytracing_dust=1000000)
     # number of iteration to compute dust specific energy (temperature)
     m.set_n_initial_iterations(20)
     m.set_convergence(True, percentile=95., absolute=1.5, relative=1.02)
@@ -494,125 +459,6 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
 
     m.write(outdir+outname+'.rtin')
 
-    if radmc == True:
-        aper = np.zeros([len(lam)])
-        ind = 0
-        for wl in lam:
-            if wl < 5:
-                aper[ind] = 8
-            elif wl >= 5 and wl < 10:
-                aper[ind] = 18
-            elif wl >= 10 and wl < 50:
-                aper[ind] = 20
-            else:
-                aper[ind] = 24.5
-            ind += 1
-
-        # In[107]:
-
-        # Write the wavelength_micron.inp file
-        #
-        f_wave = open(outdir+'wavelength_micron.inp','w')
-        f_wave.write('%d \n' % int(nlam))
-        for ilam in range(0,nlam):
-            f_wave.write('%f \n' % lam[ilam])
-        f_wave.close()
-
-        # Write the camera_wavelength_micron.inp file
-        #
-        f_wave_cam = open(outdir+'camera_wavelength_micron.inp','w')
-        f_wave_cam.write('%d \n' % int(nlam))
-        for ilam in range(0,nlam):
-            f_wave_cam.write('%f \n' % lam[ilam])
-        f_wave_cam.close()
-        # In[108]:
-
-        # Write the aperture_info.inp
-        #
-        f_aper = open(outdir+'aperture_info.inp','w')
-        f_aper.write('1 \n')
-        f_aper.write('%d \n' % int(nlam))
-        for iaper in range(0, len(aper)):
-            f_aper.write('%f \t %f \n' % (lam[iaper],aper[iaper]))
-        f_aper.close()
-
-        # Write the stars.inp file
-        #
-        f_star = open(outdir+'stars.inp','w')
-        f_star.write('2\n')
-        f_star.write('1 \t %d \n' % int(nlam))
-        f_star.write('\n')
-        f_star.write('%e \t %e \t %e \t %e \t %e \n' % (rstar*0.9999,mstar,0,0,0))
-        f_star.write('\n')
-        for ilam in range(0,nlam):
-            f_star.write('%f \n' % lam[ilam])
-        f_star.write('\n')
-        f_star.write('%f \n' % -tstar)
-        f_star.close()
-
-
-        # In[109]:
-
-        # Write the grid file
-        #
-        f_grid = open(outdir+'amr_grid.inp','w')
-        f_grid.write('1\n')                               # iformat
-        f_grid.write('0\n')                               # AMR grid style  (0=regular grid, no AMR)
-        f_grid.write('150\n')                             # Coordinate system  coordsystem<100: Cartisian; 100<=coordsystem<200: Spherical; 200<=coordsystem<300: Cylindrical
-        f_grid.write('0\n')                               # gridinfo
-        f_grid.write('1 \t 1 \t 1 \n')                    # Include x,y,z coordinate
-        f_grid.write('%d \t %d \t %d \n' % (int(nx)-1,int(ny),int(nz)))    # Size of the grid
-        [f_grid.write('%e \n' % ri[ir]) for ir in range(1,len(ri))]
-        [f_grid.write('%f \n' % thetai[itheta]) for itheta in range(0,len(thetai))]
-        [f_grid.write('%f \n' % phii[iphi]) for iphi in range(0,len(phii))]
-        f_grid.close()
-
-
-        # In[110]:
-
-        # Write the density file
-        #
-        f_dust = open(outdir+'dust_density.inp','w')
-        f_dust.write('1 \n')                      # format number
-        f_dust.write('%d \n' % int((nx-1)*ny*nz))         # Nr of cells
-        f_dust.write('1 \n')                      # Nr of dust species
-        for iphi in range(0,len(phic)):
-            for itheta in range(0,len(thetac)):
-                for ir in range(1,len(rc)):
-                    f_dust.write('%e \n' % rho[ir,itheta,iphi])
-        f_dust.close()
-
-
-        # In[111]:
-
-        # Write the Dust opacity control file
-        # 
-        f_opac = open(outdir+'dustopac.inp','w')
-        f_opac.write('2               Format number of this file\n')
-        f_opac.write('1               Nr of dust species\n')
-        f_opac.write('============================================================================\n')
-        f_opac.write('1               Way in which this dust species is read\n')
-        f_opac.write('0               0=Thermal grain\n')
-        # f_opac.write('klaus           Extension of name of dustkappa_***.inp file\n')
-        f_opac.write('oh5_extended    Extension of name of dustkappe_***.inp file\n')
-        f_opac.write('----------------------------------------------------------------------------\n')
-        f_opac.close()
-                
-
-        # In[112]:
-
-        # Write the radmc3d.inp control file
-        #
-        f_control = open(outdir+'radmc3d.inp','w')
-        f_control.write('nphot = %d \n' % 100000)
-        f_control.write('scattering_mode_max = 2\n')
-        f_control.write('camera_min_drr = 0.1\n')
-        f_control.write('camera_min_dangle = 0.1\n')
-        f_control.write('camera_spher_cavity_relres = 0.1\n')
-        f_control.write('istar_sphere = 1\n')
-        f_control.write('modified_random_walk = 1\n')
-        f_control.close()
-
     return m
 
 
@@ -621,4 +467,3 @@ def setup_model(indir,outdir,outname,tsc=True,idl=False,plot=False,low_res=True,
 indir = '/Users/yaolun/bhr71/radmc3d_params'
 outdir = '/Users/yaolun/bhr71/hyperion/'
 setup_model(indir,outdir,'bhr71_init_regwave',plot=True)
-

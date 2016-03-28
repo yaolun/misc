@@ -10,7 +10,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         import astropy.constants as const
         # wavelength unit: um
         # Flux density unit: Jy
-        #
         # constants setup
         #
         c = const.c.cgs.value
@@ -241,7 +240,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
                 f_unc = interp1d(wav_sort, unc_dum)
                 flux_aper[i] = np.trapz(f(filter_func['wave']/1e4)*filter_func['transmission'], x=filter_func['wave']/1e4 )/\
                                 np.trapz(filter_func['transmission'], x=filter_func['wave']/1e4)
-                # unc_aper[i] = abs(np.trapz((filter_func['wave']/1e4)**2, (f_unc(filter_func['wave']/1e4)*filter_func['transmission'])**2))**0.5 / abs(np.trapz(filter_func['wave']/1e4, filter_func['transmission']))
                 # fix a bug
                 unc_aper[i] = unc_spectrophoto(filter_func['wave']/1e4, f_unc(filter_func['wave']/1e4), filter_func['transmission'])
             else:
@@ -478,11 +476,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         VMAX[1000] = 2000.
 
         # We will now show four sub-plots, each one for a different wavelength
-        # for i, wav in enumerate([3.6, 24, 160, 500]):
-        # for i, wav in enumerate([100, 250, 500, 1000]):
-        # for i, wav in enumerate([4.5, 9.7, 24, 40, 70, 100, 250, 500, 1000]):
         for i, wav in enumerate([3.6, 8.0, 9.7, 24, 40, 100, 250, 500, 1000]):
-
 
             # ax = fig.add_subplot(3, 3, i + 1)
             ax = axarr[i/3, i%3]
@@ -549,13 +543,13 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
         fig.savefig(outdir+print_name+'_image_gridplot.png', format='png', dpi=300, bbox_inches='tight')
         fig.clf()
 
-# indir = '/Users/yaolun/bhr71/obs_for_radmc/'
-# outdir = '/Users/yaolun/bhr71/hyperion/'
-# import numpy as np
-# wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
-# aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# extract_hyperion('/Users/yaolun/bhr71/hyperion/controlled/model224.rtout',indir=indir,outdir='/Users/yaolun/bhr71/hyperion/controlled/',\
-#                  aperture=aperture,filter_func=True,plot_all=False,clean=True,image=False,print_data_w_aper=True)
+indir = '/Users/yaolun/bhr71/obs_for_radmc/'
+outdir = '/Users/yaolun/bhr71/hyperion/'
+import numpy as np
+wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
+aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
+extract_hyperion('/Users/yaolun/test/model224.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+                 aperture=aperture,filter_func=True,plot_all=False,clean=True,image=False,print_data_w_aper=True)
 # extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra3opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
 #                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
 # extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra2opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
