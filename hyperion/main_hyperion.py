@@ -66,9 +66,9 @@ if mono:
         mono_wave = [3.6, 4.5, 5.8, 8.0]
     elif mono_wave == 'MIPS':
         mono_wave = [24., 70., 160.]
-    elif mono_wave = 'PACS':
+    elif mono_wave == 'PACS':
         mono_wave = [70., 100., 160.]
-    elif mono_wave = 'SPIRE':
+    elif mono_wave == 'SPIRE':
         mono_wave = [250., 350., 500.]
 
     print 'Simulations will be performed at the following wavelengths: ', mono_wave
