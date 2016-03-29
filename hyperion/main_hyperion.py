@@ -13,6 +13,7 @@ import time
 run = True
 record = True
 mono = False
+mono_wave = None
 control = False
 extract_only = False
 temp = False
@@ -52,13 +53,22 @@ if 'ellipsoid' in sys.argv:
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
-# path setting
-# home = os.path.expanduser('~')
-# outdir = home + '/hyperion/bhr71/'
-# dust_file = home + '/programs/misc/oh5_hyperion.txt'
-# params_table = home + '/programs/misc/hyperion/input_table.txt'
-# obs_dir = home + '/radmc_simulation/bhr71/cycle1/observations/'
-#
+# require additional input for monochromatic radiative transfer
+if mono:
+    mono_wave = raw_input('What are the bands for monochromatic RT?')
+
+    if mono_wave == 'NIR':
+        mono_wave = [1.26, 1.60, 2.22]
+    elif mono_wave == 'IRAC':
+        mono_wave = [3.6, 4.5, 5.8, 8.0]
+    elif mono_wave == 'MIPS':
+        mono_wave = [24., 70., 160.]
+    elif mono_wave = 'PACS':
+        mono_wave = [70., 100., 160.]
+    elif mono_wave = 'SPIRE':
+        mono_wave = [250., 350., 500.]
+
+    print 'Simulations will be performed at the following wavelengths: ', mono_wave
 # path setting version 1.1
 # The path file "run_hyperion_path.txt" has to be placed at the same directory as main_hyperion.py
 home = os.path.expanduser('~')
@@ -72,29 +82,7 @@ pprint(dict_path)
 #
 # Read in aperture info - under obs_dir with filename "aperture.txt"
 wl_aper, aper_arcsec = np.genfromtxt(home+dict_path['obs_dir']+'aperture.txt', skip_header=1, dtype=float).T
-aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-#
-# if control == True:
-#     print 'Running the controlled grids for paper...'
-#     params_table = home + '/programs/misc/hyperion/input_table_control.txt'
-#     outdir = home + '/hyperion/bhr71/controlled/'
-# if alma == True:
-#     print 'Running for ALMA proposal...'
-#     params_table = home + '/programs/misc/hyperion/input_table_alma.txt'
-#     outdir = home + '/hyperion/bhr71/alma/'
-# if chi2 == True:
-#     print 'Running for chi2 grid...'
-#     params_table = home + '/programs/misc/hyperion/input_table_chi2.txt'
-#     outdir = home + '/hyperion/bhr71/chi2_grid/'
-# if test == True:
-#     print 'testing mode...'
-#     params_table = home + '/programs/misc/hyperion/test_input.txt'
-#     outdir = home + '/hyperion/bhr71/test/'
-# if ellipsoid == True:
-#     print 'Running with ellipsoid cavities...'
-#     params_table = home + '/programs/misc/hyperion/input_table_ellipsoid.txt'
-#     outdir = home + '/hyperion/bhr71/ellipsoid/'
+
 if control == True:
     print 'Running the controlled grids for paper...'
     params_table = home + dict_path['input_table']+'input_table_control.txt'
@@ -151,10 +139,10 @@ if extract_only == False:
         # calculate the initial dust profile
         # option to fix some parameter
         # fix_params = {'R_min': 0.14}
-        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,home+dict_path['dust_file'],\
-            plot=True,idl=True,record=record,mono=mono,aperture=aperture,fix_params=fix_params,alma=alma,\
-            power=power,better_im=better_im,ellipsoid=ellipsoid,TSC_dir=home+dict_path['TSC_dir'],\
-            IDL_path=dict_path['IDL_path'])
+        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,home+dict_path['dust_file'],
+            plot=True,idl=True,record=record,mono=mono,mono_wave=mono_wave,aperture=aperture,
+            fix_params=fix_params,alma=alma,power=power,better_im=better_im,ellipsoid=ellipsoid,
+            TSC_dir=home+dict_path['TSC_dir'],IDL_path=dict_path['IDL_path'])
         if run == False:
             print 'Hyperion run is skipped. Make sure you have run this model before'
         else:
@@ -167,7 +155,8 @@ if extract_only == False:
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
         print 'Seems finish, lets check out the results'
-        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=home+dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
+        extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=home+dict_path['obs_dir'],
+                         outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
@@ -184,6 +173,7 @@ else:
         print 'Extracting Model'+str(i)
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
-        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
+        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
+                         outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
