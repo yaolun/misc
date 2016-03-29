@@ -550,13 +550,13 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                 mono_wave = [3.6, 4.5, 5.8, 8.0]
             elif mono_wave == 'MIPS':
                 mono_wave = [24., 70., 160.]
-            elif mono_wave = 'PACS':
+            elif mono_wave == 'PACS':
                 mono_wave = [70., 100., 160.]
-            elif mono_wave = 'SPIRE':
+            elif mono_wave == 'SPIRE':
                 mono_wave = [250., 350., 500.]
         if (type(mono_wave) == int) or (type(mono_wave) == float):
             mono_wave = list(mono_wave)
-            
+
         # Monechromatic radiative transfer setting
         m.set_monochromatic(True, wavelengths=mono_wave)
         m.set_n_photons(initial=1000000, imaging_sources=im_photon, imaging_dust=im_photon,raytracing_sources=1000000, raytracing_dust=1000000)
