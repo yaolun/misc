@@ -23,6 +23,7 @@ better_im = False
 chi2 = False
 test = False
 ellipsoid = False
+fast_plot = False
 fix_params = {}
 
 # Get command-line arguments
@@ -50,6 +51,8 @@ if 'test' in sys.argv:
     test = True
 if 'ellipsoid' in sys.argv:
     ellipsoid = True
+if 'fast_plot' in sys.argv:
+    fast_plot = True
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
@@ -140,7 +143,7 @@ if extract_only == False:
         # option to fix some parameter
         # fix_params = {'R_min': 0.14}
         m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,home+dict_path['dust_file'],
-            plot=True,idl=True,record=record,mono=mono,mono_wave=mono_wave,aperture=aperture,
+            plot=True,fast_plot=fast_plot,idl=True,record=record,mono=mono,mono_wave=mono_wave,aperture=aperture,
             fix_params=fix_params,alma=alma,power=power,better_im=better_im,ellipsoid=ellipsoid,
             TSC_dir=home+dict_path['TSC_dir'],IDL_path=dict_path['IDL_path'])
         if run == False:
@@ -160,7 +163,7 @@ if extract_only == False:
         if temp:
             temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
-    print 'You are entering the extract-only mode...'
+    print 'You have entered the extract-only mode...'
     num_min = raw_input('What is the number of the first model?')
     num_max = raw_input('What is the number of the last model?')
     num_min = int(num_min)
