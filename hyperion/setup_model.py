@@ -414,13 +414,14 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         record_hyperion(params,record_dir)
 
     if plot == True:
+        # rho2d is the 2-D projection of gas density
+        rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
+
         if fast_plot == False:
             # Plot the azimuthal averaged density
             fig = plt.figure(figsize=(8,6))
             ax_env  = fig.add_subplot(111,projection='polar')
             # take the weighted average
-            # rho2d is the 2-D projection of gas density
-            rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
 
             zmin = 1e-22/mmw/mh
             cmap = plt.cm.CMRmap
