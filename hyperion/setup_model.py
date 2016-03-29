@@ -1,5 +1,5 @@
 def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,plot=False,\
-                low_res=True,flat=True,scale=1,radmc=False,mono=False,record=True,dstar=178.,\
+                low_res=True,flat=True,scale=1,radmc=False,mono=False,mono_wave=None,record=True,dstar=178.,\
                 aperture=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False,\
                 TSC_dir='~/programs/misc/TSC/', IDL_path='/Applications/exelis/idl83/bin/idl',auto_disk=0.25,\
                 fast_plot=False):
@@ -509,30 +509,32 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     source.position = (0., 0., 0.)
     print 'L_center =  % 5.2f L_sun' % ((4*PI*rstar**2)*sigma*(tstar**4)/LS)
 
-    # Setting up the wavelength for monochromatic radiative transfer
-    lambda0 = 0.1
-    lambda1 = 2.0
-    lambda2 = 50.0
-    lambda3 = 95.0
-    lambda4 = 200.0
-    lambda5 = 314.0
-    lambda6 = 1000.0
-    n01     = 10.0
-    n12     = 20.0
-    n23     = 50.0
+    # # Setting up the wavelength for monochromatic radiative transfer
+    # lambda0 = 0.1
+    # lambda1 = 2.0
+    # lambda2 = 50.0
+    # lambda3 = 95.0
+    # lambda4 = 200.0
+    # lambda5 = 314.0
+    # lambda6 = 1000.0
+    # n01     = 10.0
+    # n12     = 20.0
+    # n23     = 50.0
+    #
+    # lam01   = lambda0 * (lambda1/lambda0)**(np.arange(n01)/n01)
+    # lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
+    # lam23   = lambda2 * (lambda6/lambda2)**(np.arange(n23+1)/n23)
+    #
+    # lam      = np.concatenate([lam01,lam12,lam23])
+    # nlam    = len(lam)
+    #
+    # # Radiative transfer setting
+    #
+    # # number of photons for temp and image
+    # lam_list = lam.tolist()
 
-    lam01   = lambda0 * (lambda1/lambda0)**(np.arange(n01)/n01)
-    lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
-    lam23   = lambda2 * (lambda6/lambda2)**(np.arange(n23+1)/n23)
+    # monochromatic radiative transfer now has to be entered a list of specific wavelength externally.
 
-    lam      = np.concatenate([lam01,lam12,lam23])
-    nlam    = len(lam)
-
-    # Radiative transfer setting
-
-    # number of photons for temp and image
-    lam_list = lam.tolist()
-    # print lam_list
     m.set_raytracing(True)
     # option of using more photons for imaging
     if better_im == False:
@@ -541,8 +543,22 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         im_photon = 5e7
 
     if mono == True:
+        if type(mono_wave) != list:
+            if mono_wave == 'NIR':
+                mono_wave = [1.26, 1.60, 2.22]
+            elif mono_wave == 'IRAC':
+                mono_wave = [3.6, 4.5, 5.8, 8.0]
+            elif mono_wave == 'MIPS':
+                mono_wave = [24., 70., 160.]
+            elif mono_wave = 'PACS':
+                mono_wave = [70., 100., 160.]
+            elif mono_wave = 'SPIRE':
+                mono_wave = [250., 350., 500.]
+        if (type(mono_wave) == int) or (type(mono_wave) == float):
+            mono_wave = list(mono_wave)
+            
         # Monechromatic radiative transfer setting
-        m.set_monochromatic(True, wavelengths=lam_list)
+        m.set_monochromatic(True, wavelengths=mono_wave)
         m.set_n_photons(initial=1000000, imaging_sources=im_photon, imaging_dust=im_photon,raytracing_sources=1000000, raytracing_dust=1000000)
     else:
         # regular wavelength grid setting
