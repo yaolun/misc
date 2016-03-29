@@ -85,6 +85,7 @@ pprint(dict_path)
 #
 # Read in aperture info - under obs_dir with filename "aperture.txt"
 wl_aper, aper_arcsec = np.genfromtxt(home+dict_path['obs_dir']+'aperture.txt', skip_header=1, dtype=float).T
+aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
 
 if control == True:
     print 'Running the controlled grids for paper...'
