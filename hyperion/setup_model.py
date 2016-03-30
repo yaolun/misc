@@ -2,7 +2,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                 low_res=True,flat=True,scale=1,radmc=False,mono=False,mono_wave=None,record=True,dstar=178.,\
                 aperture=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False,\
                 TSC_dir='~/programs/misc/TSC/', IDL_path='/Applications/exelis/idl83/bin/idl',auto_disk=0.25,\
-                fast_plot=False):
+                fast_plot=False, image_only=False):
     """
     params = dictionary of the model parameters
     alma keyword is obsoleted
@@ -69,7 +69,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     # Grid Parameters
     nx        = 300L
     if low_res == True:
-        nx    = 100L
+        nx    = 400L
     ny        = 400L
     nz        = 50L
     [nx, ny, nz] = [int(scale*nx), int(scale*ny), int(scale*nz)]
@@ -595,18 +595,19 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     aper_reduced = list(set(aper))
     index_reduced = np.arange(1, len(aper_reduced)+1)
 
-    dict_peel_sed = {}
-    for i in range(0, len(aper_reduced)):
-        aper_dum = aper_reduced[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
-        dict_peel_sed[str(index_reduced[i])] = m.add_peeled_images(image=False)
-        # use the index of wavelength array used by the monochromatic radiative transfer
-        if mono == False:
-            dict_peel_sed[str(index_reduced[i])].set_wavelength_range(1400, 2.0, 1400.0)
-        dict_peel_sed[str(index_reduced[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
-        # aperture should be given in cm and its the radius of the aperture
-        dict_peel_sed[str(index_reduced[i])].set_aperture_range(1, aper_dum, aper_dum)
-        dict_peel_sed[str(index_reduced[i])].set_uncertainties(True)
-        dict_peel_sed[str(index_reduced[i])].set_output_bytes(8)
+    if not image_only:
+        dict_peel_sed = {}
+        for i in range(0, len(aper_reduced)):
+            aper_dum = aper_reduced[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
+            dict_peel_sed[str(index_reduced[i])] = m.add_peeled_images(image=False)
+            # use the index of wavelength array used by the monochromatic radiative transfer
+            if mono == False:
+                dict_peel_sed[str(index_reduced[i])].set_wavelength_range(1400, 2.0, 1400.0)
+            dict_peel_sed[str(index_reduced[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
+            # aperture should be given in cm and its the radius of the aperture
+            dict_peel_sed[str(index_reduced[i])].set_aperture_range(1, aper_dum, aper_dum)
+            dict_peel_sed[str(index_reduced[i])].set_uncertainties(True)
+            dict_peel_sed[str(index_reduced[i])].set_output_bytes(8)
 
     # image setting
     syn_im = m.add_peeled_images(sed=False)
@@ -614,7 +615,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     if mono == False:
         syn_im.set_wavelength_range(1400, 2.0, 1400.0)
     # pixel number
-    syn_im.set_image_size(300, 300)
+    syn_im.set_image_size(600, 600)
     syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
     syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
     syn_im.set_uncertainties(True)
