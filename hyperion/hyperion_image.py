@@ -13,10 +13,8 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178.):
 
     # Extract the image for the first inclination, and scale to 300pc. We
     # have to specify group=1 as there is no image in group 0.
-    image = m.get_image(group=5, inclination=0, distance=dstar * pc, units='MJy/sr')
-    # image = m.get_image(group=14, inclination=0, distance=dstar * pc, units='MJy/sr')
+    image = m.get_image(group=0, inclination=0, distance=dstar * pc, units='MJy/sr')
     # Open figure and create axes
-    # fig = plt.figure(figsize=(8, 8))
     fig = plt.figure(figsize=(8,8))
     ax = fig.add_subplot(111)
 
@@ -33,14 +31,14 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178.):
     factor = 1e-23*1e6
     # avoid zero in log
     # flip the image, because the setup of inclination is upside down
-    val = image.val[::-1, :, iwav] * factor + 1e-30
-    # val = image.val[:, :, iwav] * factor + 1e-30
+    # val = image.val[::-1, :, iwav] * factor + 1e-30
+    val = image.val[:, :, iwav] * factor + 1e-30
 
     # This is the command to show the image. The parameters vmin and vmax are
     # the min and max levels for the colorscale (remove for default values).
     # cmap = sns.cubehelix_palette(start=0.1, rot=-0.7, gamma=0.2, as_cmap=True)
     cmap = plt.cm.CMRmap
-    im = ax.imshow(np.log10(val), vmin= -20, vmax= -15,
+    im = ax.imshow(np.log10(val), vmin= -20, vmax= -17,
               cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
     # fix the tick label font
@@ -75,11 +73,7 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178.):
     fig.savefig(plotdir+printname+'_image_'+str(wave)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-
-
-rtout = '/Users/yaolun/bhr71/hyperion/controlled/model143.rtout'
-wave = 3.6
+rtout = '/Users/yaolun/bhr71/hyperion/model11.rtout'
+wave = 1.6
 plotdir = '/Users/yaolun/test/'
-# hyperion_image(rtout, wave, plotdir, 'best_fit')
-rtout = '/Users/yaolun/bhr71/hyperion/controlled/model144.rtout'
-hyperion_image(rtout, wave, plotdir, 'bourke_geo')
+hyperion_image(rtout, wave, plotdir, 'BHR71')

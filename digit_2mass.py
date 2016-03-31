@@ -82,7 +82,7 @@ for coord in digit_coord:
         os.mkdir(objdir+obj)
 
     size = '0.01'
-    band = 'H'
+    band = 'K'
     run = Popen(['curl','-o', objdir+obj+'/'+obj+'.xml',
                  'http://irsa.ipac.caltech.edu/cgi-bin/2MASS/IM/nph-im_sia?'+\
                  'POS='+str(coord.ra.degree)+','+str(coord.dec.degree)+'&'+\
@@ -112,4 +112,4 @@ for coord in digit_coord:
     #     int_unit = fits.open(foo)[1].header
         make_image(foo, coord, size=0.03, plotname=os.path.basename(foo).split('.')[0],
                    plotdir=objdir+obj+'/data/', stretch='arcsinh', vmin=None,
-                   bar_size=30, aper=None, int_unit='A.U.', text=obj+' 2MASS H band')
+                   bar_size=30, aper=None, int_unit='A.U.', text=obj+' 2MASS '+band+' band')
