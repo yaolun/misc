@@ -1,4 +1,4 @@
-def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,save=True,filter_func=False,\
+def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,save=True,filter_func=False,
     plot_all=False,clean=False,exclude_wl=[],log=True,image=True,obj='BHR71',print_data_w_aper=False):
     """
     filename: The path to Hyperion output file
@@ -64,8 +64,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
     from phot_filter import phot_filter
     from get_obs import get_obs
 
-    # seaborn colormap, because jet is bad obviously
-    # import seaborn.apionly as sns
+    # Open the model
+    m = ModelOutput(filename)
 
     # Read in the observation data and calculate the noise & variance
     if indir == None:
@@ -86,9 +86,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,s
     wl_phot, flux_phot, flux_sig_phot = obs_data['phot']
     flux_phot = flux_phot*1e-23   # convert unit from Jy to erg s-1 cm-2 Hz-1
     flux_sig_phot = flux_sig_phot*1e-23
-
-    # Open the model
-    m = ModelOutput(filename)
 
     if aperture == None:
         aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850],\

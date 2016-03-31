@@ -570,32 +570,33 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     m.set_mrw(True)   # Gamma = 1 by default
 
     # Setting up images and SEDs
-    # SED setting
-
-    # Infinite aperture
-    syn_inf = m.add_peeled_images(image=False)
-    # use the index of wavelength array used by the monochromatic radiative transfer
-    if mono == False:
-        syn_inf.set_wavelength_range(1400, 2.0, 1400.0)
-    syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
-    syn_inf.set_uncertainties(True)
-    syn_inf.set_output_bytes(8)
-
-    # aperture
-    # 7.2 in 10 um scaled by lambda / 10
-    # flatten beyond 20 um
-    # default aperture
-    if aperture == None:
-        aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 1300],\
-                    'aperture': [7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 20.4, 20.4, 20.4, 20.4, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5, 101]}
-    # assign wl_aper and aper from dictionary of aperture
-    wl_aper = aperture['wave']
-    aper    = aperture['aperture']
-    # create the non-repetitive aperture list and index array
-    aper_reduced = list(set(aper))
-    index_reduced = np.arange(1, len(aper_reduced)+1)
-
     if not image_only:
+        # SED setting
+
+        # Infinite aperture
+        syn_inf = m.add_peeled_images(image=False)
+        # use the index of wavelength array used by the monochromatic radiative transfer
+        if mono == False:
+            syn_inf.set_wavelength_range(1400, 2.0, 1400.0)
+        syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
+        syn_inf.set_uncertainties(True)
+        syn_inf.set_output_bytes(8)
+
+        # aperture
+        # 7.2 in 10 um scaled by lambda / 10
+        # flatten beyond 20 um
+        # default aperture
+        if aperture == None:
+            aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 1300],\
+                        'aperture': [7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 20.4, 20.4, 20.4, 20.4, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5, 101]}
+        # assign wl_aper and aper from dictionary of aperture
+        wl_aper = aperture['wave']
+        aper    = aperture['aperture']
+        # create the non-repetitive aperture list and index array
+        aper_reduced = list(set(aper))
+        index_reduced = np.arange(1, len(aper_reduced)+1)
+
+
         dict_peel_sed = {}
         for i in range(0, len(aper_reduced)):
             aper_dum = aper_reduced[i]/2 * (1/3600.*np.pi/180.)*dstar*pc
@@ -615,7 +616,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     if mono == False:
         syn_im.set_wavelength_range(1400, 2.0, 1400.0)
     # pixel number
-    syn_im.set_image_size(600, 600)
+    syn_im.set_image_size(4000, 4000)
     syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
     syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
     syn_im.set_uncertainties(True)
