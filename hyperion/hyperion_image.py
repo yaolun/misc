@@ -1,4 +1,7 @@
 def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0):
+    # to avoid X server error
+    import matplotlib as mpl
+    mpl.use('Agg')
     import numpy as np
     import matplotlib.pyplot as plt
     import matplotlib as mpl
