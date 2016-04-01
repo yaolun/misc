@@ -1,14 +1,8 @@
 # All paths are related to home directory, except for IDL_path
 input_table		/programs/misc/hyperion/
-<<<<<<< HEAD
 outdir 			/hyperion/bhr71/
 dust_file       /programs/misc/oh5_hyperion.txt
-obs_dir			/radmc_simulation/bhr71/cycle1/observations/
-=======
-outdir 			/hyperion/bhr71/test/
-dust_file		/dust_model/Ormel2011/hyperion/oh5_hyperion.txt
 obs_dir			/bhr71/best_calibrated/
->>>>>>> 395a0316568c8d2166df70830ba49774223a6cdd
 TSC_dir 		/programs/misc/TSC/
 IDL_path 		/opt/local/exelis/idl83/bin/idl
 object          BHR71
