@@ -1554,7 +1554,7 @@ import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
 outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
 outdir = '/Users/yaolun/test/updated_bhr71/BHR71_ult/'
-obs = '/Users/yaolun/bhr71/obs_for_radmc/'
+obs = '/Users/yaolun/bhr71/best_calibrated/'
 
 # grid of cs and age
 array = np.array([[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20]])
@@ -1661,7 +1661,7 @@ sed_lum(indir, array, outdir)
 array = np.array([[20,18,16],[6,11,16]])
 cs_age_behavior(indir+'cycle6/', array, outdir)
 
-model_vs_obs('model224', '/Users/yaolun/bhr71/hyperion/controlled/', '/Users/yaolun/test/updated_bhr71/BHR71_ult/', obs=obs)
+model_vs_obs('model8', '/Users/yaolun/bhr71/hyperion/', '/Users/yaolun/test/', obs=obs)
 
 models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
                '/Users/yaolun/bhr71/hyperion/controlled/model225',\

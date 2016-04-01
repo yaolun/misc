@@ -34,14 +34,14 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0):
     factor = 1e-23*1e6
     # avoid zero in log
     # flip the image, because the setup of inclination is upside down
-    # val = image.val[::-1, :, iwav] * factor + 1e-30
-    val = image.val[:, :, iwav] * factor + 1e-30
+    val = image.val[::-1, :, iwav] * factor + 1e-30
+    # val = image.val[:, :, iwav] * factor + 1e-30
 
     # This is the command to show the image. The parameters vmin and vmax are
     # the min and max levels for the colorscale (remove for default values).
     # cmap = sns.cubehelix_palette(start=0.1, rot=-0.7, gamma=0.2, as_cmap=True)
     cmap = plt.cm.CMRmap
-    im = ax.imshow(np.log10(val), vmin= -19, vmax= -14,
+    im = ax.imshow(np.log10(val), vmin= -20, vmax= -17,
               cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
     # fix the tick label font
@@ -76,7 +76,7 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0):
     fig.savefig(plotdir+printname+'_image_'+str(wave)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/controlled/model224.rtout'
-# wave = 24
+# rtout = '/Users/yaolun/bhr71/hyperion/model11.rtout'
+# wave = 1.6
 # plotdir = '/Users/yaolun/test/'
-# hyperion_image(rtout, wave, plotdir, 'BHR71')
+# hyperion_image(rtout, wave, plotdir, 'BHR71', group=1)
