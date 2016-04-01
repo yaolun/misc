@@ -544,17 +544,17 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         im_photon = 5e7
 
     if mono == True:
-        if type(mono_wave) != list:
-            if mono_wave == 'NIR':
-                mono_wave = [1.26, 1.60, 2.22]
-            elif mono_wave == 'IRAC':
-                mono_wave = [3.6, 4.5, 5.8, 8.0]
-            elif mono_wave == 'MIPS':
-                mono_wave = [24., 70., 160.]
-            elif mono_wave == 'PACS':
-                mono_wave = [70., 100., 160.]
-            elif mono_wave == 'SPIRE':
-                mono_wave = [250., 350., 500.]
+        # if type(mono_wave) != list:
+        #     if mono_wave == 'NIR':
+        #         mono_wave = [1.26, 1.60, 2.22]
+        #     elif mono_wave == 'IRAC':
+        #         mono_wave = [3.6, 4.5, 5.8, 8.0]
+        #     elif mono_wave == 'MIPS':
+        #         mono_wave = [24., 70., 160.]
+        #     elif mono_wave == 'PACS':
+        #         mono_wave = [70., 100., 160.]
+        #     elif mono_wave == 'SPIRE':
+        #         mono_wave = [250., 350., 500.]
         if (type(mono_wave) == int) or (type(mono_wave) == float):
             mono_wave = list(mono_wave)
 

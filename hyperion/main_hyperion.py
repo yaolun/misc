@@ -73,6 +73,8 @@ if mono:
         mono_wave = [70., 100., 160.]
     elif mono_wave == 'SPIRE':
         mono_wave = [250., 350., 500.]
+    elif mono_wave == 'H':
+        mono_wave = [1.6]
 
     print 'Simulations will be performed at the following wavelengths: ', mono_wave
 # path setting version 1.1
