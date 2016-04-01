@@ -7,6 +7,7 @@ from setup_model import setup_model
 from input_reader import input_reader_table
 from extract_model import extract_hyperion
 from temp_hyperion import temp_hyperion
+from hyperion_image import hyperion_image
 import time
 
 # Default setting
@@ -183,7 +184,11 @@ else:
         print 'Extracting Model'+str(i)
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
-        extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
-                         outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
+        if not mono:
+            extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
+                             outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
+        else:
+            for w in mono_wave:
+                hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', w, outdir_dum, obj)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
