@@ -1,4 +1,4 @@
-def hyperion_image(rtout, wave, plotdir, printname, dstar=178.):
+def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0):
     import numpy as np
     import matplotlib.pyplot as plt
     import matplotlib as mpl
@@ -13,7 +13,7 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178.):
 
     # Extract the image for the first inclination, and scale to 300pc. We
     # have to specify group=1 as there is no image in group 0.
-    image = m.get_image(group=5, inclination=0, distance=dstar * pc, units='MJy/sr')
+    image = m.get_image(group=group, inclination=0, distance=dstar * pc, units='MJy/sr')
     # Open figure and create axes
     fig = plt.figure(figsize=(8,8))
     ax = fig.add_subplot(111)
