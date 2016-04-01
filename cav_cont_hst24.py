@@ -9,10 +9,10 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 # constant
 pc = const.pc.cgs.value
 
-foo_reg = '/Users/yaolun/bhr71/hyperion/model11.rtout'  # it has three bands images
-foo_const = '/Users/yaolun/bhr71/hyperion/model11.rtout'
-foo_r2 = '/Users/yaolun/bhr71/hyperion/model11.rtout'
-foo_incl = '/Users/yaolun/bhr71/hyperion/model11.rtout'
+foo_reg = '/Users/yaolun/bhr71/hyperion/model12.rtout'  # it has three bands images
+foo_const = '/Users/yaolun/bhr71/hyperion/model13.rtout'
+foo_r2 = '/Users/yaolun/bhr71/hyperion/model14.rtout'
+foo_incl = '/Users/yaolun/bhr71/hyperion/model15.rtout'
 
 filename = [foo_reg, foo_const, foo_r2, foo_incl]
 
@@ -38,9 +38,8 @@ density = [db, dconst, d2]
 # fig, axarr = plt.subplots(2, 4, sharex='col', sharey='row',figsize=(12,6))
 fig = plt.figure(figsize=(12,8))
 grid = ImageGrid(fig, 111,  # similar to subplot(111)
-                 nrows_ncols=(2,4),
+                 nrows_ncols=(1,4),
                  direction="row",
-                 axes_pad=0.05,
                  add_all=True,
                  label_mode="1",
                  share_all=True,
@@ -49,12 +48,10 @@ grid = ImageGrid(fig, 111,  # similar to subplot(111)
                  cbar_size="10%",
                  cbar_pad=0.05,
                  )
-for i in range(4,8):
+for i in range(4):
     # get the H-band simulated image
-    m = ModelOutput(filename[i-4])
-    group = 1
-    if i == 0:
-        group = 1
+    m = ModelOutput(filename[i])
+    group = 0
 
     image = m.get_image(group=group, inclination=0, distance=178 * pc, units='MJy/sr')
 
@@ -92,15 +89,47 @@ for i in range(4,8):
     grid[i].set_xlabel(r'$\rm{RA\,Offset\,[arcsec]}$', fontsize=14)
     grid[i].set_ylabel(r'$\rm{Dec\,Offset\,[arcsec]}$', fontsize=14)
 
-# for cavity density profiles
-def scale(rc):
-    r_scale = rc * (2*w)/(max(rc)-min(rc)) - w
-
-    return r_scale
-
-for j in range(3):
-    d = density[j]
-    grid[j].plot(scale(np.log10(rc)), scale(d))
-
 fig.savefig('/Users/yaolun/Dropbox/HST_cycle24/cav_struc_H.pdf', format='pdf', dpi=300, bbox_inches='tight')
+fig.clf()
+
+def adjustFigAspect(fig,aspect=1):
+    '''
+    Adjust the subplot parameters so that the figure has the correct
+    aspect ratio.
+    '''
+    xsize,ysize = fig.get_size_inches()
+    minsize = min(xsize,ysize)
+    xlim = .4*minsize/xsize
+    ylim = .4*minsize/ysize
+    if aspect < 1:
+        xlim *= aspect
+    else:
+        ylim /= aspect
+    fig.subplots_adjust(left=.5-xlim,
+                        right=.5+xlim,
+                        bottom=.5-ylim,
+                        top=.5+ylim)
+
+fig = plt.figure(figsize=(12,2))
+grid = ImageGrid(fig, 111,  # similar to subplot(111)
+                 nrows_ncols=(1,4),
+                 direction="row",
+                 add_all=True,
+                 label_mode="1",
+                 share_all=True)
+for j in range(4):
+    if j != 3:
+        d = density[j]
+        grid[j].plot(np.log10(rc), np.log10(d))
+
+    # [grid[j].spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    # grid[j].minorticks_on()
+    grid[j].tick_params('both',which='both',bottom='off',top='off',left='off',right='off')
+    # grid[j].tick_params('both',labelsize=12,width=1.5,which='minor',pad=15,length=2.5)
+
+    grid[j].set_xlabel(r'$\rm{log(Radius)\,[AU]}$')
+    grid[j].set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$')
+
+
+fig.savefig('/Users/yaolun/Dropbox/HST_cycle24/cav_struc_density.pdf', format='pdf', dpi=300, bbox_inches='tight')
 fig.clf()
