@@ -7,6 +7,7 @@ from setup_model import setup_model
 from input_reader import input_reader_table
 from extract_model import extract_hyperion
 from temp_hyperion import temp_hyperion
+from hyperion_image import hyperion_image
 import time
 
 # Default setting
