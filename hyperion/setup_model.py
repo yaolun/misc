@@ -558,7 +558,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         if (type(mono_wave) == int) or (type(mono_wave) == float):
             mono_wave = list(mono_wave)
 
-        # Monechromatic radiative transfer setting
+        # Monochromatic radiative transfer setting
         m.set_monochromatic(True, wavelengths=mono_wave)
         m.set_n_photons(initial=1000000, imaging_sources=im_photon, imaging_dust=im_photon,raytracing_sources=1000000, raytracing_dust=1000000)
     else:
@@ -616,7 +616,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     if mono == False:
         syn_im.set_wavelength_range(1400, 2.0, 1400.0)
     # pixel number
-    syn_im.set_image_size(4000, 4000)
+    syn_im.set_image_size(8000, 8000)
     syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
     syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
     syn_im.set_uncertainties(True)
