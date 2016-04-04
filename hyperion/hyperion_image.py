@@ -14,8 +14,7 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0):
 
     m = ModelOutput(rtout)
 
-    # Extract the image for the first inclination, and scale to 300pc. We
-    # have to specify group=1 as there is no image in group 0.
+    # Extract the image.
     image = m.get_image(group=group, inclination=0, distance=dstar * pc, units='MJy/sr')
     # Open figure and create axes
     fig = plt.figure(figsize=(8,8))

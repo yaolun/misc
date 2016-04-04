@@ -64,7 +64,7 @@ if mono:
     mono_wave = raw_input('What are the bands for monochromatic RT?')
 
     if mono_wave == 'NIR':
-        mono_wave = [1.26, 1.60, 2.22]
+        mono_wave = [1.25, 1.53]
     elif mono_wave == 'IRAC':
         mono_wave = [3.6, 4.5, 5.8, 8.0]
     elif mono_wave == 'MIPS':

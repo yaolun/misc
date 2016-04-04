@@ -5,6 +5,7 @@ from astropy.io import fits, ascii
 import os
 from astropy.io.votable import parse
 import urllib
+import numpy as np
 
 def make_image(filepath, coord, size=0.03, plotname=None, plotdir=None, stretch='log', vmin=None,
                bar_size=30, aper=None, int_unit='MJy/sr', text=None):
@@ -36,8 +37,8 @@ def make_image(filepath, coord, size=0.03, plotname=None, plotdir=None, stretch=
     im.colorbar.set_axis_label_text('Intensity ('+int_unit+')')
     im.colorbar.set_axis_label_font(size=20)
     im.set_tick_labels_format(xformat='hh:mm:ss',yformat='dd:mm:ss')
-    im.ticks.set_xspacing(2/60.)
-    im.ticks.set_yspacing(1/60.)
+    im.ticks.set_xspacing(0.5/60.)
+    im.ticks.set_yspacing(0.5/60.)
     im.axis_labels.set_font(size=20)
     im.ticks.set_linewidth(2)
 
@@ -73,6 +74,13 @@ for i in range(len(digit)):
 
 objdir = '/Users/yaolun/data/digit_hst/2MASS/'
 
+# flux calibration data
+fnu_mag = {'J': [1594., 27.8], 'H': [1024., 20.]}
+
+# 2MASS search parameters
+band = 'H'
+size = '0'
+
 for coord in digit_coord:
     # search on 2MASS image server
     obj = digit['Name'][digit_coord.index(coord)]
@@ -81,8 +89,6 @@ for coord in digit_coord:
     if not os.path.exists(objdir+obj):
         os.mkdir(objdir+obj)
 
-    size = '0.01'
-    band = 'K'
     run = Popen(['curl','-o', objdir+obj+'/'+obj+'.xml',
                  'http://irsa.ipac.caltech.edu/cgi-bin/2MASS/IM/nph-im_sia?'+\
                  'POS='+str(coord.ra.degree)+','+str(coord.dec.degree)+'&'+\
@@ -110,6 +116,34 @@ for coord in digit_coord:
 
     for foo in filepath:
     #     int_unit = fits.open(foo)[1].header
-        make_image(foo, coord, size=0.03, plotname=os.path.basename(foo).split('.')[0],
+        make_image(foo, coord, size=0.01, plotname=os.path.basename(foo).split('.')[0],
                    plotdir=objdir+obj+'/data/', stretch='arcsinh', vmin=None,
-                   bar_size=30, aper=None, int_unit='A.U.', text=obj+' 2MASS '+band+' band')
+                   bar_size=10, aper=None, int_unit='A.U.', text=obj+' 2MASS '+band+' band')
+
+        # convert "dn" unit to magnitude
+        im = fits.open(foo)
+        skymag, skymag_err = im[0].header['SKYVAL'], im[0].header['SKYSIG']
+        m0 = im[0].header['MAGZP']
+        Fnu_m0, Fnu_m0_err = fnu_mag[band][0], fnu_mag[band][1]
+
+        # convert dn unit to magnitude
+        # add the magnitude of sky error to avoid invalid value for log.
+        im_mag = m0 - 2.5*np.log(im[0].data-skymag + skymag_err)
+        # convert magnitude to flux (Jy)
+        # im_flux = Fnu_m0 * 10**(im_mag/(-2.5))
+
+        # get pixel size in arcsec
+        cdelt1 = im[0].header['CDELT1']
+        cdelt2 = im[0].header['CDELT2']
+        pixel_size = abs(cdelt1)*abs(cdelt2)*3600**2
+
+        # update the FITS and save with another name
+        # absolute magnitude / arcsec^2
+        im[0].data = im_mag/pixel_size
+        im.writeto(objdir+obj+'/data/'+os.path.basename(foo).split('.')[0]+'_mag.fits', clobber=True)
+
+        # make image for magnitude
+        make_image(objdir+obj+'/data/'+os.path.basename(foo).split('.')[0]+'_mag.fits',
+                   coord, size=0.01, plotname=os.path.basename(foo).split('.')[0]+'_mag',
+                   plotdir=objdir+obj+'/data/', stretch='linear', vmin=None,
+                   bar_size=10, aper=None, int_unit=r'$\rm{M_{Vega}\,arcsec^{-2}}$', text=obj+' 2MASS '+band+' band')
