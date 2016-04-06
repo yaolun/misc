@@ -1,4 +1,4 @@
-def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0):
+def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=0):
     # to avoid X server error
     import matplotlib as mpl
     mpl.use('Agg')
@@ -43,6 +43,13 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0):
     im = ax.imshow(np.log10(val), vmin= -20, vmax= -17,
               cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
+    # plot the marker for center position by default or user input offset
+    ax.plot([0],[-marker], '+', color='LawnGreen', markersize=10, mew=2)
+    ax.set_xlim([-w,w])
+    ax.set_ylim([-w,w])
+    # ax.plot([0],[-10], '+', color='m', markersize=10, mew=2)
+
+
     # fix the tick label font
     ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=14)
     for label in ax.get_xticklabels():
@@ -75,7 +82,7 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0):
     fig.savefig(plotdir+printname+'_image_'+str(wave)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/model11.rtout'
-# wave = 1.6
-# plotdir = '/Users/yaolun/test/'
-# hyperion_image(rtout, wave, plotdir, 'BHR71', group=1)
+rtout = '/Users/yaolun/bhr71/hyperion/model17.rtout'
+wave = 1.6
+plotdir = '/Users/yaolun/test/'
+hyperion_image(rtout, wave, plotdir, 'BHR71', group=0, marker=0)
