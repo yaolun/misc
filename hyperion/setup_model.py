@@ -555,7 +555,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         #         mono_wave = [70., 100., 160.]
         #     elif mono_wave == 'SPIRE':
         #         mono_wave = [250., 350., 500.]
-        if (type(mono_wave) == int) or (type(mono_wave) == float):
+        if (type(mono_wave) == int) or (type(mono_wave) == float) or (type(mono_wave) == str):
+            mono_wave = float(mono_wave)
             mono_wave = list(mono_wave)
 
         # Monochromatic radiative transfer setting

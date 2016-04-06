@@ -34,11 +34,18 @@ db = db*5e-19
 
 density = [db, dconst, d2]
 
+# function for stretch
+def scale(array, (start,end)):
+    print (array.max() - array.min())
+    array = (array-array.min())*(end-start)/(array.max()-array.min()) + start
+
+    return array
+
 # plot
 # fig, axarr = plt.subplots(2, 4, sharex='col', sharey='row',figsize=(12,6))
 fig = plt.figure(figsize=(12,8))
 grid = ImageGrid(fig, 111,  # similar to subplot(111)
-                 nrows_ncols=(1,4),
+                 nrows_ncols=(2,4),
                  direction="row",
                  add_all=True,
                  label_mode="1",
@@ -48,12 +55,10 @@ grid = ImageGrid(fig, 111,  # similar to subplot(111)
                  cbar_size="10%",
                  cbar_pad=0.05,
                  )
-for i in range(4):
+for i in range(4,8):
     # get the H-band simulated image
-    m = ModelOutput(filename[i])
-    group = 0
-
-    image = m.get_image(group=group, inclination=0, distance=178 * pc, units='MJy/sr')
+    m = ModelOutput(filename[i-4])
+    image = m.get_image(group=0, inclination=0, distance=178 * pc, units='MJy/sr')
 
     # Find the closest wavelength
     iwav = np.argmin(np.abs(wave - image.wav))
@@ -88,6 +93,12 @@ for i in range(4):
 
     grid[i].set_xlabel(r'$\rm{RA\,Offset\,[arcsec]}$', fontsize=14)
     grid[i].set_ylabel(r'$\rm{Dec\,Offset\,[arcsec]}$', fontsize=14)
+
+for i in range(3):
+    d = density[i]
+    r_s = scale(np.log(rc), (-w,w))
+    d_s = scale(np.log10(d), (-w,w))
+    grid[i].plot(r_s, d_s)
 
 fig.savefig('/Users/yaolun/Dropbox/HST_cycle24/cav_struc_H.pdf', format='pdf', dpi=300, bbox_inches='tight')
 fig.clf()
