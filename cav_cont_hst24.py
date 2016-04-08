@@ -17,10 +17,11 @@ foo_incl = '/Users/yaolun/bhr71/hyperion/model15.rtout'
 filename = [foo_reg, foo_const, foo_r2, foo_incl]
 
 wave = 1.6
+size = 100.
 
 # construct the cavity density profile
 # set up the density profile in the outflow cavity
-rc = np.sort(np.hstack((np.arange(0.14, 41253, 41252/100),40.)))
+rc = np.sort(np.hstack((np.arange(0.14, 41253, 41252/10),60.)))
 # d2 and d15 have not yet scaled by the density offset
 d2 = (rc/0.14)**-2*5e-16
 dconst = np.zeros_like(rc)+1e-20
@@ -32,17 +33,16 @@ for i in range(len(rc)):
         db[i] = (rc[i]/60.)**-2
 db = db*5e-19
 
-density = [db, dconst, d2]
+density = [db, dconst, d2, db]
 
 # function for stretch
-def scale(array, (start,end)):
-    print (array.max() - array.min())
-    array = (array-array.min())*(end-start)/(array.max()-array.min()) + start
+def scale(array, (data_start, data_end), (start,end)):
+    # print (array.max() - array.min())
+    array = (array-data_start)*(end-start)/(data_end-data_start) + start
 
     return array
 
 # plot
-# fig, axarr = plt.subplots(2, 4, sharex='col', sharey='row',figsize=(12,6))
 fig = plt.figure(figsize=(12,8))
 grid = ImageGrid(fig, 111,  # similar to subplot(111)
                  nrows_ncols=(2,4),
@@ -52,9 +52,48 @@ grid = ImageGrid(fig, 111,  # similar to subplot(111)
                  share_all=True,
                  cbar_location="right",
                  cbar_mode="single",
-                 cbar_size="10%",
+                 cbar_size="7%",
                  cbar_pad=0.05,
                  )
+w = size/2.
+for i in range(4):
+    d = density[i]
+    r_s = scale(np.log10(rc), (np.log10(0.14), np.log10(41253)), (-w,w))
+    d_s = scale(np.log10(d), (-25,-15), (-w,w))
+    grid[i].plot(r_s, d_s, linewidth=1.5)
+
+    if i == 0:
+        d_ticks = scale(np.array([-24,-22,-20,-18,-16,-14]), (-25,-14), (-w,w))
+        d_tick_labels = [-24,-22,-20,-18,-16,-14]
+        grid[i].set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$', fontsize=14)
+        grid[i].set_yticks(d_ticks)
+        grid[i].set_yticklabels(d_tick_labels)
+
+        grid[i].text(-0.15, 0.1, '-24', transform=grid[i].transAxes, horizontalalignment='left', fontsize=14)
+        grid[i].text(-0.15, 0.3, '-22', transform=grid[i].transAxes, horizontalalignment='left', fontsize=14)
+        grid[i].text(-0.15, 0.5, '-20', transform=grid[i].transAxes, horizontalalignment='left', fontsize=14)
+        grid[i].text(-0.15, 0.7, '-18', transform=grid[i].transAxes, horizontalalignment='left', fontsize=14)
+        grid[i].text(-0.15, 0.9, '-16', transform=grid[i].transAxes, horizontalalignment='left', fontsize=14)
+        grid[i].text(-0.28, 0.5, r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$',
+                    transform=grid[i].transAxes, verticalalignment='center',
+                    rotation='vertical', fontsize=16)
+
+        # second x-label
+        r_ticks = scale(np.array([0,1,2,3,4]), (np.log10(0.14), np.log10(41253)), (-w,w))
+        r_tick_labels = [0,1,2,3,4]
+        ax_top = grid[i].twiny()
+        ax_top.set_xlabel(r'$\rm{log(radius)\,[AU]}$', fontsize=16)
+        ax_top.set_xticks(r_ticks)
+        ax_top.set_xticklabels(r_tick_labels)
+        ax_top.tick_params('x', labelsize=14)
+
+    else:
+        r_ticks = scale(np.array([0,1,2,3,4]), (np.log10(0.14), np.log10(41253)), (-w,w))
+        ax_top = grid[i].twiny()
+        ax_top.set_xticks(r_ticks)
+        ax_top.set_xticklabels([])
+    grid[i].tick_params('both',labelsize=14)
+
 for i in range(4,8):
     # get the H-band simulated image
     m = ModelOutput(filename[i-4])
@@ -73,74 +112,45 @@ for i in range(4,8):
     factor = 1e-23*1e6
     # avoid zero in log
     # flip the image, because the setup of inclination is upside down
-    val = image.val[:, :, iwav] * factor + 1e-30
+    val = image.val[::-1, :, iwav] * factor + 1e-30
+
+    if size != 'full':
+        pix_e2c = (w-size/2.)/w * len(val[:,0])/2
+        val = val[pix_e2c:-pix_e2c, pix_e2c:-pix_e2c]
+        w = size/2.
 
     # This is the command to show the image. The parameters vmin and vmax are
     # the min and max levels for the colorscale (remove for default values).
     cmap = plt.cm.CMRmap
-    im = grid[i].imshow(np.log10(val), vmin= -20, vmax= -17,
+    im = grid[i].imshow(np.log10(val), vmin= -21, vmax= -16,
               cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
+
+    grid[i].plot([0],[0], '+', color='ForestGreen', markersize=10, mew=1.5)
 
     cb = grid[i].cax.colorbar(im)
     cb.solids.set_edgecolor("face")
     cb.ax.minorticks_on()
-    cb.ax.set_ylabel(r'$\rm{log(I_{\nu})\,[erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}]}$',fontsize=12)
+    cb.ax.set_ylabel(r'$\rm{log(I_{\nu})\,[erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}]}$',fontsize=16)
     cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
-    plt.setp(cb_obj,fontsize=12)
-    ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=12)
+    plt.setp(cb_obj,fontsize=14)
+    ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=14)
     for label in cb.ax.get_yticklabels():
         label.set_fontproperties(ticks_font)
 
-    grid[i].set_xlabel(r'$\rm{RA\,Offset\,[arcsec]}$', fontsize=14)
-    grid[i].set_ylabel(r'$\rm{Dec\,Offset\,[arcsec]}$', fontsize=14)
+    off_tick = [-40,-20,0,20,40]
+    off_tick_label = [-40,-20,0,20,40]
+    if i == 4:
+        grid[i].set_xlabel(r'$\rm{RA\,Offset\,[arcsec]}$', fontsize=16)
+        grid[i].set_ylabel(r'$\rm{Dec\,Offset\,[arcsec]}$', fontsize=16)
+        grid[i].set_xticks(off_tick)
+        grid[i].set_yticks(off_tick)
+        grid[i].set_xticklabels(off_tick_label)
+        grid[i].set_yticklabels(off_tick_label)
 
-for i in range(3):
-    d = density[i]
-    r_s = scale(np.log(rc), (-w,w))
-    d_s = scale(np.log10(d), (-w,w))
-    grid[i].plot(r_s, d_s)
+    grid[i].set_xlim([-w,w])
+    grid[i].set_ylim([-w,w])
+    grid[i].tick_params('both',labelsize=14)
+
 
 fig.savefig('/Users/yaolun/Dropbox/HST_cycle24/cav_struc_H.pdf', format='pdf', dpi=300, bbox_inches='tight')
-fig.clf()
-
-def adjustFigAspect(fig,aspect=1):
-    '''
-    Adjust the subplot parameters so that the figure has the correct
-    aspect ratio.
-    '''
-    xsize,ysize = fig.get_size_inches()
-    minsize = min(xsize,ysize)
-    xlim = .4*minsize/xsize
-    ylim = .4*minsize/ysize
-    if aspect < 1:
-        xlim *= aspect
-    else:
-        ylim /= aspect
-    fig.subplots_adjust(left=.5-xlim,
-                        right=.5+xlim,
-                        bottom=.5-ylim,
-                        top=.5+ylim)
-
-fig = plt.figure(figsize=(12,2))
-grid = ImageGrid(fig, 111,  # similar to subplot(111)
-                 nrows_ncols=(1,4),
-                 direction="row",
-                 add_all=True,
-                 label_mode="1",
-                 share_all=True)
-for j in range(4):
-    if j != 3:
-        d = density[j]
-        grid[j].plot(np.log10(rc), np.log10(d))
-
-    # [grid[j].spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
-    # grid[j].minorticks_on()
-    grid[j].tick_params('both',which='both',bottom='off',top='off',left='off',right='off')
-    # grid[j].tick_params('both',labelsize=12,width=1.5,which='minor',pad=15,length=2.5)
-
-    grid[j].set_xlabel(r'$\rm{log(Radius)\,[AU]}$')
-    grid[j].set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$')
-
-
-fig.savefig('/Users/yaolun/Dropbox/HST_cycle24/cav_struc_density.pdf', format='pdf', dpi=300, bbox_inches='tight')
 fig.clf()

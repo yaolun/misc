@@ -1,4 +1,4 @@
-def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=0):
+def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=0, size='full'):
     # to avoid X server error
     import matplotlib as mpl
     mpl.use('Agg')
@@ -34,17 +34,21 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=
     # avoid zero in log
     # flip the image, because the setup of inclination is upside down
     val = image.val[::-1, :, iwav] * factor + 1e-30
-    # val = image.val[:, :, iwav] * factor + 1e-30
+
+    if size != 'full':
+        pix_e2c = (w-size/2.)/w * len(val[:,0])/2
+        val = val[pix_e2c:-pix_e2c, pix_e2c:-pix_e2c]
+        w = size/2.
 
     # This is the command to show the image. The parameters vmin and vmax are
     # the min and max levels for the colorscale (remove for default values).
     # cmap = sns.cubehelix_palette(start=0.1, rot=-0.7, gamma=0.2, as_cmap=True)
     cmap = plt.cm.CMRmap
-    im = ax.imshow(np.log10(val), vmin= -20, vmax= -17,
+    im = ax.imshow(np.log10(val), vmin= -20, vmax= -15,
               cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
     # plot the marker for center position by default or user input offset
-    ax.plot([0],[-marker], '+', color='LawnGreen', markersize=10, mew=2)
+    ax.plot([0],[-marker], '+', color='ForestGreen', markersize=10, mew=2)
     ax.set_xlim([-w,w])
     ax.set_ylim([-w,w])
     # ax.plot([0],[-10], '+', color='m', markersize=10, mew=2)
@@ -65,16 +69,16 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=
     cb = fig.colorbar(im, cax=cax)
     cb.solids.set_edgecolor("face")
     cb.ax.minorticks_on()
-    cb.ax.set_ylabel(r'$\rm{log(I_{\nu})\,[erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}]}$',fontsize=12)
+    cb.ax.set_ylabel(r'$\rm{log(I_{\nu})\,[erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}]}$',fontsize=18)
     cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
-    plt.setp(cb_obj,fontsize=12)
+    plt.setp(cb_obj,fontsize=14)
     # fix the tick label font
-    ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=12)
+    ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=14)
     for label in cb.ax.get_yticklabels():
         label.set_fontproperties(ticks_font)
 
-    ax.set_xlabel(r'$\rm{RA\,Offset\,(arcsec)}$', fontsize=16)
-    ax.set_ylabel(r'$\rm{Dec\,Offset\,(arcsec)}$', fontsize=16)
+    ax.set_xlabel(r'$\rm{RA\,Offset\,(arcsec)}$', fontsize=18)
+    ax.set_ylabel(r'$\rm{Dec\,Offset\,(arcsec)}$', fontsize=18)
 
     ax.tick_params(axis='both', which='major', labelsize=18)
     ax.text(0.7,0.88,str(wave) + r'$\rm{\,\mu m}$',fontsize=20,color='white', transform=ax.transAxes)
@@ -82,7 +86,7 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=
     fig.savefig(plotdir+printname+'_image_'+str(wave)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/model17.rtout'
-# wave = 1.6
-# plotdir = '/Users/yaolun/test/'
-# hyperion_image(rtout, wave, plotdir, 'BHR71', group=0, marker=0)
+rtout = '/Users/yaolun/bhr71/hyperion/model26.rtout'
+wave = 24
+plotdir = '/Users/yaolun/test/'
+hyperion_image(rtout, wave, plotdir, 'BHR71', group=0, marker=0, size=100.)
