@@ -65,7 +65,8 @@ def make_image(filepath, coord, size=0.03, plotname=None, plotdir=None, stretch=
     im.save(plotdir+'/'+plotname+'.pdf',format='pdf',transparent=True, dpi=300)
 
 # read in DIGIT source list
-filename = '/Users/yaolun/data/digit_source'
+# filename = '/Users/yaolun/data/digit_source'
+filename = '/Users/yaolun/data/hst24_sources'
 digit = ascii.read(filename)
 digit_coord = []
 for i in range(len(digit)):
@@ -78,7 +79,7 @@ objdir = '/Users/yaolun/data/digit_hst/2MASS/'
 fnu_mag = {'J': [1594., 27.8], 'H': [1024., 20.]}
 
 # 2MASS search parameters
-band = 'H'
+band = 'J'
 size = '0'
 
 for coord in digit_coord:
@@ -122,13 +123,16 @@ for coord in digit_coord:
 
         # convert "dn" unit to magnitude
         im = fits.open(foo)
+        print obj, band, im[0].header['SKYVAL'], im[0].header['MAGZP']-2.5*np.log10(im[0].header['SKYVAL']), im[0].header['MAGZP']-2.5*np.log10(im[0].header['SKYSIG'])
         skymag, skymag_err = im[0].header['SKYVAL'], im[0].header['SKYSIG']
         m0 = im[0].header['MAGZP']
         Fnu_m0, Fnu_m0_err = fnu_mag[band][0], fnu_mag[band][1]
 
         # convert dn unit to magnitude
         # add the magnitude of sky error to avoid invalid value for log.
-        im_mag = m0 - 2.5*np.log(im[0].data-skymag + skymag_err)
+        # im_mag = m0 - 2.5*np.log(im[0].data-skymag + skymag_err)
+        im_mag = m0 - 2.5*np.log(im[0].data)
+
         # convert magnitude to flux (Jy)
         # im_flux = Fnu_m0 * 10**(im_mag/(-2.5))
 
