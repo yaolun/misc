@@ -510,32 +510,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     source.position = (0., 0., 0.)
     print 'L_center =  % 5.2f L_sun' % ((4*PI*rstar**2)*sigma*(tstar**4)/LS)
 
-    # # Setting up the wavelength for monochromatic radiative transfer
-    # lambda0 = 0.1
-    # lambda1 = 2.0
-    # lambda2 = 50.0
-    # lambda3 = 95.0
-    # lambda4 = 200.0
-    # lambda5 = 314.0
-    # lambda6 = 1000.0
-    # n01     = 10.0
-    # n12     = 20.0
-    # n23     = 50.0
-    #
-    # lam01   = lambda0 * (lambda1/lambda0)**(np.arange(n01)/n01)
-    # lam12   = lambda1 * (lambda2/lambda1)**(np.arange(n12)/n12)
-    # lam23   = lambda2 * (lambda6/lambda2)**(np.arange(n23+1)/n23)
-    #
-    # lam      = np.concatenate([lam01,lam12,lam23])
-    # nlam    = len(lam)
-    #
-    # # Radiative transfer setting
-    #
-    # # number of photons for temp and image
-    # lam_list = lam.tolist()
-
-    # monochromatic radiative transfer now has to be entered a list of specific wavelength externally.
-
     m.set_raytracing(True)
     # option of using more photons for imaging
     if better_im == False:
@@ -544,17 +518,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         im_photon = 5e7
 
     if mono == True:
-        # if type(mono_wave) != list:
-        #     if mono_wave == 'NIR':
-        #         mono_wave = [1.26, 1.60, 2.22]
-        #     elif mono_wave == 'IRAC':
-        #         mono_wave = [3.6, 4.5, 5.8, 8.0]
-        #     elif mono_wave == 'MIPS':
-        #         mono_wave = [24., 70., 160.]
-        #     elif mono_wave == 'PACS':
-        #         mono_wave = [70., 100., 160.]
-        #     elif mono_wave == 'SPIRE':
-        #         mono_wave = [250., 350., 500.]
         if (type(mono_wave) == int) or (type(mono_wave) == float) or (type(mono_wave) == str):
             mono_wave = float(mono_wave)
             mono_wave = [mono_wave]
@@ -573,7 +536,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     # Setting up images and SEDs
     if not image_only:
         # SED setting
-
         # Infinite aperture
         syn_inf = m.add_peeled_images(image=False)
         # use the index of wavelength array used by the monochromatic radiative transfer
@@ -596,7 +558,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         # create the non-repetitive aperture list and index array
         aper_reduced = list(set(aper))
         index_reduced = np.arange(1, len(aper_reduced)+1)
-
 
         dict_peel_sed = {}
         for i in range(0, len(aper_reduced)):
