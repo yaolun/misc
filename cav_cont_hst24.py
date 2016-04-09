@@ -18,6 +18,7 @@ filename = [foo_reg, foo_const, foo_r2, foo_incl]
 
 wave = 1.6
 size = 100.
+convolve = True
 
 # construct the cavity density profile
 # set up the density profile in the outflow cavity
@@ -119,10 +120,16 @@ for i in range(4,8):
         val = val[pix_e2c:-pix_e2c, pix_e2c:-pix_e2c]
         w = size/2.
 
+    if convolve:
+        from astropy.convolution import convolve, Gaussian2DKernel
+
+        kernel = Gaussian2DKernel(0.16/(len(val[:,0])/2/w)/2.354)
+        val = convolve(val, kernel)
+
     # This is the command to show the image. The parameters vmin and vmax are
     # the min and max levels for the colorscale (remove for default values).
     cmap = plt.cm.CMRmap
-    im = grid[i].imshow(np.log10(val), vmin= -21, vmax= -16,
+    im = grid[i].imshow(np.log10(val), vmin= -21, vmax= -12,
               cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
     grid[i].plot([0],[0], '+', color='ForestGreen', markersize=10, mew=1.5)
@@ -152,5 +159,6 @@ for i in range(4,8):
     grid[i].tick_params('both',labelsize=14)
 
 
-fig.savefig('/Users/yaolun/Dropbox/HST_cycle24/cav_struc_H.pdf', format='pdf', dpi=300, bbox_inches='tight')
+fig.savefig('/Users/yaolun/Dropbox/HST_cycle24/cav_struc_H.pdf',
+            format='pdf', dpi=300, bbox_inches='tight')
 fig.clf()
