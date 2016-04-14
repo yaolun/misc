@@ -1108,7 +1108,6 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     wl_tot = wl_tot[np.argsort(wl_tot)]
     l_bol_obs = l_bol(wl_tot,flux_tot*1e23, dstar)
 
-
     if wl_aper == None:
         wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
 
@@ -1661,7 +1660,7 @@ sed_lum(indir, array, outdir)
 array = np.array([[20,18,16],[6,11,16]])
 cs_age_behavior(indir+'cycle6/', array, outdir)
 
-model_vs_obs('model28', '/Users/yaolun/bhr71/hyperion/', '/Users/yaolun/test/', obs=obs)
+model_vs_obs('model28', '/Users/yaolun/bhr71/hyperion/', '/Users/yaolun/test/', obs=obs, rtout=True)
 
 models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
                '/Users/yaolun/bhr71/hyperion/controlled/model225',\
