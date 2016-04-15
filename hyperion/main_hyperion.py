@@ -168,8 +168,11 @@ if extract_only == False:
             extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=home+dict_path['obs_dir'],
                              outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
         else:
-            for w in mono_wave:
-                hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', w, outdir_dum, 'model'+str(int(model_num)+i))
+            if type(mono_wave) is str:
+                hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', float(mono_wave), outdir_dum, 'model'+str(int(model_num)+i))
+            elif
+                for w in mono_wave:
+                    hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', w, outdir_dum, 'model'+str(int(model_num)+i))
         if temp:
             temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
@@ -190,7 +193,10 @@ else:
             extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
                              outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
         else:
-            for w in mono_wave:
-                hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w, outdir_dum, 'model'+str(i))
+            if type(mono_wave) is str:
+                hyperion_image(outdir_dum+'model'+str(i)+'.rtout', float(mono_wave), outdir_dum, 'model'+str(i))
+            elif
+                for w in mono_wave:
+                    hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w, outdir_dum, 'model'+str(i))
         if temp:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
