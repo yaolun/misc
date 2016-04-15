@@ -170,7 +170,7 @@ if extract_only == False:
         else:
             if type(mono_wave) is str:
                 hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', float(mono_wave), outdir_dum, 'model'+str(int(model_num)+i))
-            elif:
+            else:
                 for w in mono_wave:
                     hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', w, outdir_dum, 'model'+str(int(model_num)+i))
         if temp:
@@ -195,7 +195,7 @@ else:
         else:
             if type(mono_wave) is str:
                 hyperion_image(outdir_dum+'model'+str(i)+'.rtout', float(mono_wave), outdir_dum, 'model'+str(i))
-            elif:
+            else:
                 for w in mono_wave:
                     hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w, outdir_dum, 'model'+str(i))
         if temp:
