@@ -1,4 +1,4 @@
-def extract_hyperion(filename,indir=None,outdir=None,dstar=178.0,aperture=None,save=True,filter_func=False,
+def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,save=True,filter_func=False,
     plot_all=False,clean=False,exclude_wl=[],log=True,image=True,obj='BHR71',print_data_w_aper=False):
     """
     filename: The path to Hyperion output file

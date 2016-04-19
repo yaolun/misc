@@ -10,6 +10,11 @@ from temp_hyperion import temp_hyperion
 from hyperion_image import hyperion_image
 import time
 
+# Distance to the object in pc
+dstar = 200.0
+# specify the object onlt for getting the observations when extract
+obj='BHR71'
+
 # Default setting
 run = True
 record = True
@@ -150,7 +155,7 @@ if extract_only == False:
         # fix_params = {'R_min': 0.14}
         m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,home+dict_path['dust_file'],
             plot=True,fast_plot=fast_plot,idl=True,record=record,mono=mono,mono_wave=mono_wave,aperture=aperture,
-            fix_params=fix_params,alma=alma,power=power,better_im=better_im,ellipsoid=ellipsoid,
+            fix_params=fix_params,alma=alma,power=power,better_im=better_im,ellipsoid=ellipsoid, dstar=dstar,
             TSC_dir=home+dict_path['TSC_dir'],IDL_path=dict_path['IDL_path'], image_only=image_only)
         if run == False:
             print 'Hyperion run is skipped. Make sure you have run this model before'
@@ -166,13 +171,16 @@ if extract_only == False:
         print 'Seems finish, lets check out the results'
         if not mono:
             extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=home+dict_path['obs_dir'],
-                             outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
+                             outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj,dstar=dstar,
+                             obj=obj)
         else:
             if type(mono_wave) is str:
-                hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', float(mono_wave), outdir_dum, 'model'+str(int(model_num)+i))
+                hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
+                        float(mono_wave), outdir_dum, 'model'+str(int(model_num)+i),dstar=dstar)
             else:
                 for w in mono_wave:
-                    hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', w, outdir_dum, 'model'+str(int(model_num)+i))
+                    hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', w, outdir_dum,
+                        'model'+str(int(model_num)+i),dstar=dstar)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
@@ -191,12 +199,15 @@ else:
         # the indir here is the dir that contains the observed spectra.
         if not mono:
             extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
-                             outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
+                             outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj,dstar=dstar,
+                             obj=obj)
         else:
             if type(mono_wave) is str:
-                hyperion_image(outdir_dum+'model'+str(i)+'.rtout', float(mono_wave), outdir_dum, 'model'+str(i))
+                hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
+                        float(mono_wave), outdir_dum, 'model'+str(i),dstar=dstar)
             else:
                 for w in mono_wave:
-                    hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w, outdir_dum, 'model'+str(i))
+                    hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w,
+                        outdir_dum, 'model'+str(i),dstar=dstar)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
