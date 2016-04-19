@@ -12,8 +12,6 @@ import time
 
 # Distance to the object in pc
 dstar = 200.0
-# specify the object onlt for getting the observations when extract
-obj='BHR71'
 
 # Default setting
 run = True
@@ -171,8 +169,7 @@ if extract_only == False:
         print 'Seems finish, lets check out the results'
         if not mono:
             extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=home+dict_path['obs_dir'],
-                             outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj,dstar=dstar,
-                             obj=obj)
+                             outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj,dstar=dstar)
         else:
             if type(mono_wave) is str:
                 hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
@@ -199,8 +196,7 @@ else:
         # the indir here is the dir that contains the observed spectra.
         if not mono:
             extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
-                             outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj,dstar=dstar,
-                             obj=obj)
+                             outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj,dstar=dstar)
         else:
             if type(mono_wave) is str:
                 hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
