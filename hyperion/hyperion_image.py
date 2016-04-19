@@ -20,6 +20,8 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=
 
     # Extract the image.
     image = m.get_image(group=group, inclination=0, distance=dstar * pc, units='mJy')
+
+    print np.shape(image.val)
     # Open figure and create axes
     fig = plt.figure(figsize=(8,8))
     ax = fig.add_subplot(111)
@@ -100,8 +102,8 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=
     fig.savefig(plotdir+printname+'_image_'+str(wave)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/model40.rtout'
-# wave = 870
-# plotdir = '/Users/yaolun/test/'
-# hyperion_image(rtout, wave, plotdir, 'BHR71', group=0, marker=0, size=5., convolve=True,
-#         unit=r'$\rm{mJy/beam}$')
+rtout = '/Users/yaolun/bhr71/hyperion/model40.rtout'
+wave = 870
+plotdir = '/Users/yaolun/test/'
+hyperion_image(rtout, wave, plotdir, 'BHR71', group=0, marker=0, size=5., convolve=True,
+        unit=r'$\rm{mJy/beam}$')
