@@ -156,7 +156,7 @@ if extract_only == False:
         m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,
                         home+dict_path['dust_file'],plot=True,fast_plot=fast_plot,
                         idl=True,record=record,mono=mono,mono_wave=mono_wave,
-                        aperture=aperture,fix_params=fix_params,alma=alma,
+                        aperture=aperture,fix_params=fix_params,
                         power=power,better_im=better_im,ellipsoid=ellipsoid,
                         dstar=dstar,TSC_dir=home+dict_path['TSC_dir'],
                         IDL_path=dict_path['IDL_path'], image_only=image_only)
