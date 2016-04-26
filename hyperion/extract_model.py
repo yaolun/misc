@@ -435,7 +435,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
 
     # plot setting
     ax_sed.set_xlabel(r'$\rm{log\,\lambda\,[{\mu}m]}$',fontsize=mag*20)
-    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,[erg\,cm^{-2}\,s^{-1}]}$',fontsize=mag*20)
+    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]}$',fontsize=mag*20)
     [ax_sed.spines[axis].set_linewidth(1.5*mag) for axis in ['top','bottom','left','right']]
     ax_sed.minorticks_on()
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
