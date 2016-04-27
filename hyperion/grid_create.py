@@ -60,15 +60,15 @@ home = os.path.expanduser('~')
 # should run view angle & outflow cavity opening angle
 # list_params = {'view_angle': [20,30,40,50,60],\
 # 			   'theta_cav': [10,15,20,25,30]}
-list_params = {'view_angle': [20,30,40,50,60,70,80,90],\
-		        'theta_cav': [10,15,20,25,30,35,40,45]}
+# list_params = {'view_angle': [20,30,40,50,60,70,80,90],\
+# 		        'theta_cav': [10,15,20,25,30,35,40,45]}
 
 # grid of age and sound speed
 list_params = {'age': [5e3, 1e4, 1.5e4, 2e4, 2.5e4],\
 			   'Cs':  [0.3, 0.4, 0.5]}
 # grid of age and tstar
-list_params = {'age': [1.7e4,1.9e4,2.1e4,2.3e4],
-			   'tstar': [6200,6300] }
+# list_params = {'age': [1.7e4,1.9e4,2.1e4,2.3e4],
+# 			   'tstar': [6200,6300] }
 
 # outdir = '/Users/yaolun/test/'
 outdir = home + '/programs/misc/hyperion/'
