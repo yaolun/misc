@@ -69,11 +69,11 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                            temp_max=2000.)
     # if the min and/or max wavelength fall out of range
     if c/wav_min/1e-4 > dust['nu'].max():
-        print 'minimum wavelength is out of dust model.  The dust model is extrapolated.'
         d.optical_properties.extrapolate_nu(dust['nu'].min(), c/wav_min/1e-4)
+        print 'minimum wavelength is out of dust model.  The dust model is extrapolated.'
     if c/wav_max/1e-4 < dust['nu'].min():
-        print 'maximum wavelength is out of dust model.  The dust model is extrapolated.'
         d.optical_properties.extrapolate_nu(c/wav_max/1e-4, dust['nu'].max())
+        print 'maximum wavelength is out of dust model.  The dust model is extrapolated.'
 
     # try to solve the freq. problem
     d.optical_properties.extrapolate_nu(3.28e15, 4.35e15)
