@@ -50,6 +50,11 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     m = Model()
 
+    # min and max wavelength to compute (need to define them first for checking dust properties)
+    wav_min = 2.0
+    wav_max = 1400.
+    wav_num = 1400
+
     # Create dust properties
     # Hyperion needs nu, albedo, chi, g, p_lin_max
     from hyperion.dust import HenyeyGreensteinDust
@@ -62,6 +67,14 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     d.set_lte_emissivities(n_temp=3000,
                            temp_min=0.1,
                            temp_max=2000.)
+    # if the min and/or max wavelength fall out of range
+    if c/wav_min/1e-4 > dust['nu'].max():
+        print 'minimum wavelength is out of dust model.  The dust model is extrapolated.'
+        d.optical_properties.extrapolate_nu(dust['nu'].min(), c/wav_min/1e-4)
+    if c/wav_max/1e-4 < dust['nu'].min():
+        print 'maximum wavelength is out of dust model.  The dust model is extrapolated.'
+        d.optical_properties.extrapolate_nu(c/wav_max/1e-4, dust['nu'].max())
+
     # try to solve the freq. problem
     d.optical_properties.extrapolate_nu(3.28e15, 4.35e15)
     #
@@ -551,7 +564,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         syn_inf = m.add_peeled_images(image=False)
         # use the index of wavelength array used by the monochromatic radiative transfer
         if mono == False:
-            syn_inf.set_wavelength_range(1400, 2.0, 1400.0)
+            syn_inf.set_wavelength_range(wav_num, wav_min, wav_max)
         syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
         syn_inf.set_uncertainties(True)
         syn_inf.set_output_bytes(8)
@@ -576,7 +589,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             dict_peel_sed[str(index_reduced[i])] = m.add_peeled_images(image=False)
             # use the index of wavelength array used by the monochromatic radiative transfer
             if mono == False:
-                dict_peel_sed[str(index_reduced[i])].set_wavelength_range(1400, 2.0, 1400.0)
+                dict_peel_sed[str(index_reduced[i])].set_wavelength_range(wav_num, wav_min, wav_max)
             dict_peel_sed[str(index_reduced[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
             # aperture should be given in cm and its the radius of the aperture
             dict_peel_sed[str(index_reduced[i])].set_aperture_range(1, aper_dum, aper_dum)
@@ -587,7 +600,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     syn_im = m.add_peeled_images(sed=False)
     # use the index of wavelength array used by the monochromatic radiative transfer
     if mono == False:
-        syn_im.set_wavelength_range(1400, 2.0, 1400.0)
+        syn_im.set_wavelength_range(wav_num, wav_min, wav_max)
     # pixel number
     if not mono:
         pix_num = 300
