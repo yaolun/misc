@@ -12,9 +12,9 @@ def grid_create(list_params, outdir):
 	yr = 3600.*24*365
 
 	# default parameter setup
-	ref = {'age': 2.4e4, 'Cs': 0.5, 'Omega0': 2.5278e-13, 'tstar': 6584., 'R_env_max': 4.1253e4, 'theta_cav': 20., 'rho_cav_center': 5e-19,\
-		   'rho_cav_edge': 40., 'rstar': 3., 'M_disk_dot': 6.5e-7, 'M_disk': 0.075, 'beta': 1.093, 'rho_cav':1e-21, 'h100': 8.123,\
-		   'percentile': 95., 'absolute': 2.0, 'relative': 1.02, 'view_angle': 40., 'cav_power': 2.0}
+	ref = {'age': 1.5e4, 'Cs': 0.5, 'Omega0': 2.5278e-13, 'tstar': 6070., 'R_env_max': 4.1253e4, 'theta_cav': 20., 'rho_cav_center': 5e-19,\
+		   'rho_cav_edge': 60., 'rstar': 3., 'M_disk_dot': 6.5e-7, 'M_disk': 0.075, 'beta': 1.093, 'rho_cav':1e-21, 'h100': 8.123,\
+		   'percentile': 95., 'absolute': 2.0, 'relative': 1.02, 'view_angle': 42., 'cav_power': 2.0}
 	# This is the right order
 	colhead = ('age','Cs','Omega0','tstar','R_env_max','theta_cav','rho_cav_center','rho_cav_edge','rstar','M_disk_dot',\
 				'M_disk','beta','h100','rho_cav','percentile','absolute','relative','view_angle','cav_power')
@@ -60,15 +60,15 @@ home = os.path.expanduser('~')
 # should run view angle & outflow cavity opening angle
 # list_params = {'view_angle': [20,30,40,50,60],\
 # 			   'theta_cav': [10,15,20,25,30]}
-list_params = {'view_angle': [20,30,40,50,60,70,80,90],\
-		        'theta_cav': [10,15,20,25,30,35,40,45]}
+# list_params = {'view_angle': [20,30,40,50,60,70,80,90],\
+# 		        'theta_cav': [10,15,20,25,30,35,40,45]}
 
 # grid of age and sound speed
-list_params = {'age': [1.7e4, 2e4, 2.4e4, 3e4, 4e4],\
-			   'Cs':  [0.3, 0.4, 0.5, 0.6, 0.7]}
+list_params = {'age': [5e3, 1e4, 1.5e4, 2e4, 2.5e4],\
+			   'Cs':  [0.3, 0.4, 0.5]}
 # grid of age and tstar
-list_params = {'age': [1.7e4,1.9e4,2.1e4,2.3e4],
-			   'tstar': [6200,6300] }
+# list_params = {'age': [1.7e4,1.9e4,2.1e4,2.3e4],
+# 			   'tstar': [6200,6300] }
 
 # outdir = '/Users/yaolun/test/'
 outdir = home + '/programs/misc/hyperion/'

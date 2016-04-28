@@ -10,6 +10,9 @@ from temp_hyperion import temp_hyperion
 from hyperion_image import hyperion_image
 import time
 
+# Distance to the object in pc
+dstar = 200.0
+
 # Default setting
 run = True
 record = True
@@ -36,6 +39,8 @@ if 'norecord' in sys.argv:
 if 'mono' in sys.argv:
     mono = True
     image_only = True
+    print 'Monochromatic RT now force "image_only" simulations.'
+    print 'Need to go the code for more options.'
 if 'control' in sys.argv:
     control = True
 if 'extract_only' in sys.argv:
@@ -62,7 +67,7 @@ print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 # require additional input for monochromatic radiative transfer
 if mono:
     mono_wave = raw_input('What are the bands for monochromatic RT?')
-
+    # Here are some pre-set wavelengths
     if mono_wave == 'NIR':
         mono_wave = [1.25, 1.53]
     elif mono_wave == 'IRAC':
@@ -148,10 +153,13 @@ if extract_only == False:
         # calculate the initial dust profile
         # option to fix some parameter
         # fix_params = {'R_min': 0.14}
-        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,home+dict_path['dust_file'],
-            plot=True,fast_plot=fast_plot,idl=True,record=record,mono=mono,mono_wave=mono_wave,aperture=aperture,
-            fix_params=fix_params,alma=alma,power=power,better_im=better_im,ellipsoid=ellipsoid,
-            TSC_dir=home+dict_path['TSC_dir'],IDL_path=dict_path['IDL_path'], image_only=image_only)
+        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,
+                        home+dict_path['dust_file'],plot=True,fast_plot=fast_plot,
+                        idl=True,record=record,mono=mono,mono_wave=mono_wave,
+                        aperture=aperture,fix_params=fix_params,
+                        power=power,better_im=better_im,ellipsoid=ellipsoid,
+                        dstar=dstar,TSC_dir=home+dict_path['TSC_dir'],
+                        IDL_path=dict_path['IDL_path'], image_only=image_only)
         if run == False:
             print 'Hyperion run is skipped. Make sure you have run this model before'
         else:
@@ -165,14 +173,17 @@ if extract_only == False:
         # the indir here is the dir that contains the observed spectra.
         print 'Seems finish, lets check out the results'
         if not mono:
-            extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',indir=home+dict_path['obs_dir'],
-                             outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
+            extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
+                             indir=home+dict_path['obs_dir'],outdir=outdir_dum,
+                             aperture=aperture,filter_func=True,obj=obj,dstar=dstar)
         else:
             if type(mono_wave) is str:
-                hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', float(mono_wave), outdir_dum, 'model'+str(int(model_num)+i))
+                hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
+                        float(mono_wave), outdir_dum, 'model'+str(int(model_num)+i),dstar=dstar)
             else:
                 for w in mono_wave:
-                    hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', w, outdir_dum, 'model'+str(int(model_num)+i))
+                    hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', w, outdir_dum,
+                        'model'+str(int(model_num)+i),dstar=dstar)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 else:
@@ -191,12 +202,15 @@ else:
         # the indir here is the dir that contains the observed spectra.
         if not mono:
             extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
-                             outdir=outdir_dum,aperture=aperture,filter_func=True,obj=obj)
+                             outdir=outdir_dum,aperture=aperture,
+                             filter_func=True,obj=obj,dstar=dstar)
         else:
             if type(mono_wave) is str:
-                hyperion_image(outdir_dum+'model'+str(i)+'.rtout', float(mono_wave), outdir_dum, 'model'+str(i))
+                hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
+                        float(mono_wave), outdir_dum, 'model'+str(i),dstar=dstar)
             else:
                 for w in mono_wave:
-                    hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w, outdir_dum, 'model'+str(i))
+                    hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w,
+                        outdir_dum, 'model'+str(i),dstar=dstar)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)

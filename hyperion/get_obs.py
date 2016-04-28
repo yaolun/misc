@@ -7,14 +7,14 @@ def get_obs(indir, obj='BHR71'):
 
 	# Read in Herschel data
 	# continuum
-	[wl_pacs,flux_pacs] = np.genfromtxt(indir+obj+'_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_continuum.txt',dtype='float',skip_header=1).T
-	[wl_spire,flux_spire] = np.genfromtxt(indir+obj+'_spire_corrected_yly_continuum.txt',dtype='float',skip_header=1).T
+	[wl_pacs,flux_pacs] = np.genfromtxt(indir+obj+'_pacs_weighted_continuum.txt',dtype='float',skip_header=1).T
+	[wl_spire,flux_spire] = np.genfromtxt(indir+obj+'_spire_corrected_continuum.txt',dtype='float',skip_header=1).T
 	# noise spectra
-	# [wl_pacs_noise, flux_pacs_noise,unc_pacs_noise] = np.genfromtxt(indir+obj+'_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_noise_spectrum.txt',dtype='float',skip_header=1).T
+	# [wl_pacs_noise, flux_pacs_noise,unc_pacs_noise] = np.genfromtxt(indir+obj+'_pacs_weighted_noise_spectrum.txt',dtype='float',skip_header=1).T
 	# [wl_spire_noise,flux_spire_noise] = np.genfromtxt(indir+obj+'_spire_corrected_noise_spectrum.txt',dtype='float',skip_header=1).T
 	#
-	[wl_pacs_noise, flux_pacs_noise] = np.genfromtxt(indir+obj+'_centralSpaxel_PointSourceCorrected_CorrectedYES_trim_residual_spectrum.txt',dtype='float',skip_header=1).T
-	[wl_spire_noise,flux_spire_noise] = np.genfromtxt(indir+obj+'_spire_corrected_yly_residual_spectrum.txt',dtype='float',skip_header=1).T
+	[wl_pacs_noise, flux_pacs_noise] = np.genfromtxt(indir+obj+'_pacs_weighted_residual_spectrum.txt',dtype='float',skip_header=1).T
+	[wl_spire_noise,flux_spire_noise] = np.genfromtxt(indir+obj+'_spire_corrected_residual_spectrum.txt',dtype='float',skip_header=1).T
 
 
 	# Read in Spitzer data

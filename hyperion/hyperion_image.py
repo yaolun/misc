@@ -20,6 +20,8 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=
 
     # Extract the image.
     image = m.get_image(group=group, inclination=0, distance=dstar * pc, units='mJy')
+
+    print np.shape(image.val)
     # Open figure and create axes
     fig = plt.figure(figsize=(8,8))
     ax = fig.add_subplot(111)
