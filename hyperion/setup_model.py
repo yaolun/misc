@@ -1,5 +1,5 @@
 def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,plot=False,\
-                low_res=True,flat=True,scale=1,radmc=False,mono=False,mono_wave=None,record=True,dstar=178.,\
+                low_res=True,flat=True,scale=1,radmc=False,mono=False,mono_wave=None,record=True,dstar=200.,\
                 aperture=None,dyn_cav=False,fix_params=None,alma=False,power=2,better_im=False,ellipsoid=False,\
                 TSC_dir='~/programs/misc/TSC/', IDL_path='/Applications/exelis/idl83/bin/idl',auto_disk=0.25,\
                 fast_plot=False, image_only=False):
@@ -537,21 +537,24 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     if not image_only:
         # SED setting
         # Infinite aperture
-        syn_inf = m.add_peeled_images(image=False)
-        # use the index of wavelength array used by the monochromatic radiative transfer
-        if mono == False:
-            syn_inf.set_wavelength_range(1400, 2.0, 1400.0)
-        syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
-        syn_inf.set_uncertainties(True)
-        syn_inf.set_output_bytes(8)
+
+        # syn_inf = m.add_peeled_images(image=False)
+        # # use the index of wavelength array used by the monochromatic radiative transfer
+        # if mono == False:
+        #     syn_inf.set_wavelength_range(1400, 2.0, 1400.0)
+        # syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
+        # syn_inf.set_uncertainties(True)
+        # syn_inf.set_output_bytes(8)
 
         # aperture
         # 7.2 in 10 um scaled by lambda / 10
         # flatten beyond 20 um
         # default aperture
         if aperture == None:
-            aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 1300],\
-                        'aperture': [7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 20.4, 20.4, 20.4, 20.4, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5, 101]}
+            # aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 1300],\
+                        # 'aperture': [7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 20.4, 20.4, 20.4, 20.4, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5, 101]}
+            aperture = {'wave': [870],
+                        'aperture': [0.27/2. * (1/3600.*np.pi/180.)*dstar*pc, 9.09/2. * (1/3600.*np.pi/180.)*dstar*pc]}
         # assign wl_aper and aper from dictionary of aperture
         wl_aper = aperture['wave']
         aper    = aperture['aperture']
@@ -568,7 +571,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                 dict_peel_sed[str(index_reduced[i])].set_wavelength_range(1400, 2.0, 1400.0)
             dict_peel_sed[str(index_reduced[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
             # aperture should be given in cm and its the radius of the aperture
-            dict_peel_sed[str(index_reduced[i])].set_aperture_range(1, aper_dum, aper_dum)
+            print aper[0], aper[1]
+            dict_peel_sed[str(index_reduced[i])].set_aperture_range(10, aper[0], aper[1])
             dict_peel_sed[str(index_reduced[i])].set_uncertainties(True)
             dict_peel_sed[str(index_reduced[i])].set_output_bytes(8)
 
@@ -719,17 +723,17 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     return m
 
-# from input_reader import input_reader_table
-# from pprint import pprint
+from input_reader import input_reader_table
+from pprint import pprint
 # # filename = '/Users/yaolun/programs/misc/hyperion/input_table_control.txt'
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# outdir = '/Users/yaolun/bhr71/hyperion/controlled/'
-# record_dir = '/Users/yaolun/test/'
-# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+outdir = '/Users/yaolun/test/'
+record_dir = '/Users/yaolun/test/'
+dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
 # # # # dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
 # # # # fix_params = {'R_min': 0.14}
-# fix_params = {}
-# setup_model(outdir,record_dir,'model224',params[0],dust_file,plot=True,record=False,\
-#     idl='rhoenv_model224.dat',radmc=False,fix_params=fix_params,ellipsoid=False,tsc=False)
+fix_params = {}
+setup_model(outdir,record_dir,'model_alma3',params[0],dust_file,plot=False,record=False,\
+    idl=True,fix_params=fix_params,ellipsoid=False,fast_plot=True, mono=True, mono_wave='870')
