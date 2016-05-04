@@ -10,8 +10,9 @@ from temp_hyperion import temp_hyperion
 from hyperion_image import hyperion_image
 import time
 
-# Distance to the object in pc
-dstar = 200.0
+# option for high resolution r-grid
+# !!!
+low_res = True
 
 # Default setting
 run = True
@@ -90,6 +91,7 @@ dict_path = {}
 for name, val in zip(path_list[0],path_list[1]):
     dict_path[name] = val
 obj = dict_path['object']
+dstar = float(dist_path['dstar'].data)
 print 'Current path setting --'
 pprint(dict_path)
 #
@@ -156,7 +158,7 @@ if extract_only == False:
         m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,
                         home+dict_path['dust_file'],plot=True,fast_plot=fast_plot,
                         idl=True,record=record,mono=mono,mono_wave=mono_wave,
-                        aperture=aperture,fix_params=fix_params,
+                        aperture=aperture,fix_params=fix_params, low_res=low_res,
                         power=power,better_im=better_im,ellipsoid=ellipsoid,
                         dstar=dstar,TSC_dir=home+dict_path['TSC_dir'],
                         IDL_path=dict_path['IDL_path'], image_only=image_only)

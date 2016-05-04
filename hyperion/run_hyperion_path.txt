@@ -7,3 +7,4 @@ obs_dir			/bhr71/best_calibrated/
 TSC_dir 		/programs/misc/TSC/
 IDL_path 		/opt/local/exelis/idl83/bin/idl
 object          BHR71
+dstar           200.0

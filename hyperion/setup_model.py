@@ -51,6 +51,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     m = Model()
 
     # min and max wavelength to compute (need to define them first for checking dust properties)
+    # !!!
     wav_min = 2.0
     wav_max = 1400.
     wav_num = 1400
@@ -83,12 +84,11 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     plt.clf()
 
     # Grids and Density
-    # Calculation inherited from the script used for RADMC-3D
 
     # Grid Parameters
     nx        = 300L
     if low_res == True:
-        nx    = 400L
+        nx    = 100L
     ny        = 400L
     nz        = 50L
     [nx, ny, nz] = [int(scale*nx), int(scale*ny), int(scale*nz)]
@@ -207,7 +207,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         i = 0
         j = 0
         if 'rho_cav_center' in locals() == False:
-            rho_cav_center = 5.27e-18 # 1.6e-17  # 5.27e-18
+            rho_cav_center = 5e-19
             print 'Use 5.27e-18 as the default value for cavity center'
         if 'rho_cav_edge' in locals() == False:
             rho_cav_edge = 40*AU
@@ -289,7 +289,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     else:
         print 'Calculating the dust density profile with TSC solution...'
         if theta_cav != 0:
-            # c0 = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
             c0 = (1e4*AU)**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
         else:
             c0 = 0
@@ -602,10 +601,12 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     if mono == False:
         syn_im.set_wavelength_range(wav_num, wav_min, wav_max)
     # pixel number
+    # !!!
     if not mono:
         pix_num = 300
     else:
         pix_num = 8000
+    #
     syn_im.set_image_size(pix_num, pix_num)
     syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
     syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
@@ -744,15 +745,11 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
 # from input_reader import input_reader_table
 # from pprint import pprint
-# # # filename = '/Users/yaolun/programs/misc/hyperion/input_table_control.txt'
 # filename = '/Users/yaolun/programs/misc/hyperion/input_table_chi2.txt'
 # params = input_reader_table(filename)
 # pprint(params[0])
 # outdir = '/Users/yaolun/test/'
 # record_dir = '/Users/yaolun/test/'
 # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# # # # # dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
-# # # # # fix_params = {'R_min': 0.14}
-# fix_params = {}
 # setup_model(outdir,record_dir,'model224',params[0],dust_file,plot=True,record=False,\
 #     idl='rhoenv_model224.dat',radmc=False,fix_params=fix_params,ellipsoid=False,tsc=False)
