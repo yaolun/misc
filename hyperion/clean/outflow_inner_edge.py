@@ -7,13 +7,17 @@ def outflow_inner_edge(rho, grid, M_env_dot0, v, theta_cav, R_min, R_max=None):
     R_min in cm
     """
     import numpy as np
+    import astropy.constants as constants
+
+    AU = const.au.cgs.value
+
     (ri, thetai, phii) = grid
     rc           = 0.5*( ri[0:len(ri)-1]     + ri[1:len(ri)] )
     thetac       = 0.5*( thetai[0:len(thetai)-1] + thetai[1:len(thetai)] )
     phic         = 0.5*( phii[0:len(phii)-1]   + phii[1:len(phii)] )
 
     # calculate the enclosed mass in the outflow cavity at different radius
-    c0 = max(ri)**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
+    c0 = (10000.*AU)**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
 
     cavity_mass = np.empty(len(ri)-1)
     # cavity_mass_tot = 0
