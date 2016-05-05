@@ -91,7 +91,7 @@ dict_path = {}
 for name, val in zip(path_list[0],path_list[1]):
     dict_path[name] = val
 obj = dict_path['object']
-dstar = float(dist_path['dstar'].data)
+dstar = float(dict_path['dstar'].data)
 print 'Current path setting --'
 pprint(dict_path)
 #
