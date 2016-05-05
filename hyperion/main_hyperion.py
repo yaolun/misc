@@ -30,6 +30,7 @@ test = False
 ellipsoid = False
 fast_plot = False
 image_only=False
+azimuthal=True
 fix_params = {}
 
 # Get command-line arguments
@@ -188,6 +189,15 @@ if extract_only == False:
                         'model'+str(int(model_num)+i),dstar=dstar)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
+
+        if azimuthal:
+            imgpath = home+obs_dir+'hspireplw1342226633_20pxmp_1431669349619.fits'
+            source_center = dict_path['source_ra']+' '+dict_path['source_dec']
+            aper_reduced = list(set(aperture['aperture']))
+            azimuthal_avg_radial_intensity(500.0, imgpath, source_center,
+                    outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
+                    'model'+str(int(model_num)+i),
+                    annulus_width=10, group=len(aper_reduced)-1, dstar=dstar)
 else:
     print 'You have entered the extract-only mode...'
     num_min = raw_input('What is the number of the first model?')
@@ -216,3 +226,12 @@ else:
                         outdir_dum, 'model'+str(i),dstar=dstar)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
+
+        if azimuthal:
+            imgpath = home+obs_dir+'hspireplw1342226633_20pxmp_1431669349619.fits'
+            source_center = dict_path['source_ra']+' '+dict_path['source_dec']
+            aper_reduced = list(set(aperture['aperture']))
+            azimuthal_avg_radial_intensity(500.0, imgpath, source_center,
+                    outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
+                    'model'+str(int(model_num)+i),
+                    annulus_width=10, group=len(aper_reduced)-1, dstar=dstar)
