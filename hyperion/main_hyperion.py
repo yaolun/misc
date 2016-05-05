@@ -233,6 +233,6 @@ else:
             source_center = dict_path['source_ra']+' '+dict_path['source_dec']
             aper_reduced = list(set(aperture['aperture']))
             azimuthal_avg_radial_intensity(500.0, imgpath, source_center,
-                    outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
-                    'model'+str(int(model_num)+i),
+                    outdir_dum+'model'+str(i)+'.rtout',
+                    'model'+str(i),
                     annulus_width=10, group=len(aper_reduced)-1, dstar=dstar)
