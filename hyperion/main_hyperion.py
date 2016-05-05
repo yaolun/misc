@@ -8,6 +8,7 @@ from input_reader import input_reader_table
 from extract_model import extract_hyperion
 from temp_hyperion import temp_hyperion
 from hyperion_image import hyperion_image
+from azimuthal_avg_radial_intensity import azimuthal_avg_radial_intensity
 import time
 
 # option for high resolution r-grid
