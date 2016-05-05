@@ -198,7 +198,7 @@ if extract_only == False:
             azimuthal_avg_radial_intensity(500.0, imgpath, source_center,
                     outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
                     'model'+str(int(model_num)+i),
-                    annulus_width=10, group=len(aper_reduced)-1, dstar=dstar)
+                    annulus_width=10, group=len(aper_reduced)+1, dstar=dstar)
 else:
     print 'You have entered the extract-only mode...'
     num_min = raw_input('What is the number of the first model?')
@@ -235,4 +235,4 @@ else:
             azimuthal_avg_radial_intensity(500.0, imgpath, source_center,
                     outdir_dum+'model'+str(i)+'.rtout',
                     'model'+str(i),
-                    annulus_width=10, group=len(aper_reduced)-1, dstar=dstar)
+                    annulus_width=10, group=len(aper_reduced)+1, dstar=dstar)
