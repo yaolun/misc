@@ -79,7 +79,7 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     i_sim, = ax.plot(np.log10(r[:-1]*dstar), np.log10(I_sim/I_sim.max()), 'o-', mec='None', markersize=10)
     i, = ax.plot(np.log10(r[:-1]*dstar), np.log10(I/I.max()), 'o-', mec='None', markersize=10)
 
-    ax.legend([i, i_sim], [r'$\rm{500\,\mu m}$', r'$\rm{simulation}$'], fontsize=16, numpoints=1, loc='upper right')
+    ax.legend([i, i_sim], [r'$\rm{observation}$', r'$\rm{simulation}$'], fontsize=16, numpoints=1, loc='upper right')
     [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
     ax.minorticks_on()
     ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=10,length=5)
