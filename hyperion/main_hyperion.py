@@ -197,7 +197,7 @@ if extract_only == False:
             aper_reduced = list(set(aperture['aperture']))
             azimuthal_avg_radial_intensity(500.0, imgpath, source_center,
                     outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
-                    'model'+str(int(model_num)+i),
+                    outdir_dum+'model'+str(int(model_num)+i),
                     annulus_width=10, group=len(aper_reduced)+1, dstar=dstar)
 else:
     print 'You have entered the extract-only mode...'
@@ -234,5 +234,5 @@ else:
             aper_reduced = list(set(aperture['aperture']))
             azimuthal_avg_radial_intensity(500.0, imgpath, source_center,
                     outdir_dum+'model'+str(i)+'.rtout',
-                    'model'+str(i),
+                    outdir_dum+'model'+str(i),
                     annulus_width=10, group=len(aper_reduced)+1, dstar=dstar)

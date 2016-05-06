@@ -87,5 +87,13 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     ax.set_xlabel('log(Radius) [AU]', fontsize=18)
     ax.set_ylabel(r'$\rm{log(I\,/\,I_{max})}$', fontsize=18)
 
+    # fix the tick label font
+    ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=18)
+    for label in ax.get_xticklabels():
+        label.set_fontproperties(ticks_font)
+    for label in ax.get_yticklabels():
+        label.set_fontproperties(ticks_font)
+
+
     fig.savefig(plotname+'_radial_profile_'+str(wave)+'um.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
