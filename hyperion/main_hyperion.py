@@ -192,7 +192,7 @@ if extract_only == False:
             temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 
         if azimuthal:
-            imgpath = home+dict_path['obs_dir']+dict_path['img_name']'.fits'
+            imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
             source_center = dict_path['source_ra']+' '+dict_path['source_dec']
             aper_reduced = list(set(aperture['aperture']))
             azimuthal_avg_radial_intensity(500.0, imgpath, source_center,
@@ -229,7 +229,7 @@ else:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
 
         if azimuthal:
-            imgpath = home+dict_path['obs_dir']+dict_path['img_name']'.fits'
+            imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
             source_center = dict_path['source_ra']+' '+dict_path['source_dec']
             aper_reduced = list(set(aperture['aperture']))
             azimuthal_avg_radial_intensity(500.0, imgpath, source_center,
