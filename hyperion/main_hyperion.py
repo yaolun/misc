@@ -14,6 +14,8 @@ import time
 # option for high resolution r-grid
 # !!!
 low_res = True
+# the wavelength for plotting azimuthal-averaged radial intensity
+azi_wave = 160.0
 
 # Default setting
 run = True
@@ -195,7 +197,7 @@ if extract_only == False:
             imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
             source_center = dict_path['source_ra']+' '+dict_path['source_dec']
             aper_reduced = list(set(aperture['aperture']))
-            azimuthal_avg_radial_intensity(500.0, imgpath, source_center,
+            azimuthal_avg_radial_intensity(azi_wave, imgpath, source_center,
                     outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
                     outdir_dum+'model'+str(int(model_num)+i),
                     annulus_width=10, group=len(aper_reduced)+1, dstar=dstar)
@@ -232,7 +234,7 @@ else:
             imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
             source_center = dict_path['source_ra']+' '+dict_path['source_dec']
             aper_reduced = list(set(aperture['aperture']))
-            azimuthal_avg_radial_intensity(500.0, imgpath, source_center,
+            azimuthal_avg_radial_intensity(azi_wave, imgpath, source_center,
                     outdir_dum+'model'+str(i)+'.rtout',
                     outdir_dum+'model'+str(i),
                     annulus_width=10, group=len(aper_reduced)+1, dstar=dstar)
