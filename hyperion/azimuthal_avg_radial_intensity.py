@@ -2,6 +2,7 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
                                    annulus_width=10, group=8, dstar=200.):
 
     import numpy as np
+    import matplotlib as mpl
     from astropy.io import ascii, fits
     import matplotlib.pyplot as plt
     from photutils import aperture_photometry as ap
