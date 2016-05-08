@@ -33,6 +33,7 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     # annulus_width = 10
     r = np.arange(10, 200, annulus_width, dtype=float)
     I = np.empty_like(r[:-1])
+    I_err = np.empty_lile(r[:-1])
 
     # iteration
     for ir in range(len(r)-1):
@@ -40,6 +41,7 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     #     print aperture.r_in
         phot = ap(im, aperture)
         I[ir] = phot['aperture_sum'].data * factor / aperture.area()
+        I_err[ir] = phot['aperture_sum_err'].data * factor / aperture.area()
         # print r[ir], I[ir]
 
     # read in from RTout
@@ -64,6 +66,7 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     # annulus_width = 10
     r = np.arange(10, 200, annulus_width, dtype=float)
     I_sim = np.empty_like(r[:-1])
+    I_sim_err = np.empty_like(r[:-1])
 
     # iteration
     for ir in range(len(r)-1):
@@ -71,14 +74,23 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     #     print aperture.r_in
         phot = ap(val, aperture)
         I_sim[ir] = phot['aperture_sum'].data / aperture.area()
+        I_sim_err[ir] = phot['aperture_sum_err'].data / aperture.area()
         # print r[ir], I_sim[ir]
 
     # plot
     fig = plt.figure(figsize=(8,6))
     ax = fig.add_subplot(111)
 
-    i_sim, = ax.plot(np.log10(r[:-1]*dstar), np.log10(I_sim/I_sim.max()), 'o-', mec='None', markersize=10)
-    i, = ax.plot(np.log10(r[:-1]*dstar), np.log10(I/I.max()), 'o-', mec='None', markersize=10)
+    I_sim_hi = np.log10((I_sim+I_sim_err)/I_sim.max())-np.log10(I_sim/I_sim.max())
+    I_sim_low = np.log10(I_sim/I_sim.max())-np.log10((I_sim-I_sim_err)/I_sim.max())
+
+    I_hi = np.log10((I+I_err)/I.max())-np.log10(I/I.max())
+    I_low = np.log10(I/I.max())-np.log10((I-I_err)/I.max())
+
+    i_sim = ax.errorbar(np.log10(r[:-1]*dstar), np.log10(I_sim/I_sim.max()),
+                    yerr=(I_sim_low, I_sim_hi), 'o', linestyle='-', mec='None', markersize=10)
+    i = ax.errorbar(np.log10(r[:-1]*dstar), np.log10(I/I.max()),
+                    yerr=(I_low, I_hi), 'o', linestyle='-', mec='None', markersize=10)
 
     ax.legend([i, i_sim], [r'$\rm{observation}$', r'$\rm{simulation}$'], fontsize=16, numpoints=1, loc='upper right')
     [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
@@ -94,7 +106,6 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
         label.set_fontproperties(ticks_font)
     for label in ax.get_yticklabels():
         label.set_fontproperties(ticks_font)
-
 
     fig.savefig(plotname+'_radial_profile_'+str(wave)+'um.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
