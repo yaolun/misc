@@ -33,7 +33,7 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     # annulus_width = 10
     r = np.arange(10, 200, annulus_width, dtype=float)
     I = np.empty_like(r[:-1])
-    I_err = np.empty_lile(r[:-1])
+    I_err = np.empty_like(r[:-1])
 
     # iteration
     for ir in range(len(r)-1):
