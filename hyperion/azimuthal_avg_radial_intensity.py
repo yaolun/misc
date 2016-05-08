@@ -88,9 +88,9 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     I_low = np.log10(I/I.max())-np.log10((I-I_err)/I.max())
 
     i_sim = ax.errorbar(np.log10(r[:-1]*dstar), np.log10(I_sim/I_sim.max()),
-                    yerr=(I_sim_low, I_sim_hi), 'o', linestyle='-', mec='None', markersize=10)
+                    yerr=(I_sim_low, I_sim_hi), marker='o', linestyle='-', mec='None', markersize=10)
     i = ax.errorbar(np.log10(r[:-1]*dstar), np.log10(I/I.max()),
-                    yerr=(I_low, I_hi), 'o', linestyle='-', mec='None', markersize=10)
+                    yerr=(I_low, I_hi), marker='o', linestyle='-', mec='None', markersize=10)
 
     ax.legend([i, i_sim], [r'$\rm{observation}$', r'$\rm{simulation}$'], fontsize=16, numpoints=1, loc='upper right')
     [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
