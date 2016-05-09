@@ -21,6 +21,15 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     # Read in data and set up coversions
     im_hdu = fits.open(imgpath)
     im = im_hdu[1].data
+    # error
+    if (wave < 200.0) & (wave > 70.0):
+        im_err = im_hdu[5].data
+    elif (wave > 200.0) & (wave < 670.0):
+        im_err = im_hdu[5].data
+    else:
+        im_err_exten = raw_input('The extension that includes the image error: ')
+        im_err = im_hdu[int(im_err_exten)].data
+
     w = wcs.WCS(im_hdu[1].header)
 
     coord = SkyCoord(source_center, unit=(u.hourangle, u.deg))
@@ -39,7 +48,7 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     for ir in range(len(r)-1):
         aperture = CircularAnnulus((pixcoord[0],pixcoord[1]), r_in=r[ir]/pix2arcsec, r_out=r[ir+1]/pix2arcsec)
     #     print aperture.r_in
-        phot = ap(im, aperture)
+        phot = ap(im, aperture, error=im_err)
         I[ir] = phot['aperture_sum'].data * factor / aperture.area()
         I_err[ir] = phot['aperture_sum_err'].data * factor / aperture.area()
         # print r[ir], I[ir]
@@ -51,12 +60,13 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     # group = 8
     # wave = 500.0
 
-    im = rtout.get_image(group=group, inclination=0, distance=dstar*pc, units='Jy')
+    im = rtout.get_image(group=group, inclination=0, distance=dstar*pc, units='Jy', uncertainties=True)
 
     # Find the closest wavelength
     iwav = np.argmin(np.abs(wave - im.wav))
     # avoid zero when log, and flip the image
     val = im.val[::-1, :, iwav]
+    unc = im.unc[::-1, :, iwav]
 
     w = np.degrees(max(rtout.get_quantities().r_wall) / im.distance) * 3600
     npix = len(val[:,0])
@@ -72,7 +82,7 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     for ir in range(len(r)-1):
         aperture = CircularAnnulus((npix/2.+0.5, npix/2.+0.5), r_in=r[ir]/pix2arcsec, r_out=r[ir+1]/pix2arcsec)
     #     print aperture.r_in
-        phot = ap(val, aperture)
+        phot = ap(val, aperture, error=unc)
         I_sim[ir] = phot['aperture_sum'].data / aperture.area()
         I_sim_err[ir] = phot['aperture_sum_err'].data / aperture.area()
         # print r[ir], I_sim[ir]
