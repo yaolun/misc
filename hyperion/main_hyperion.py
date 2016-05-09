@@ -25,15 +25,16 @@ mono_wave = None
 control = False
 extract_only = False
 temp = False
-alma=False
+alma = False
 core_num = 20
 better_im = False
 chi2 = False
 test = False
 ellipsoid = False
 fast_plot = False
-image_only=False
-azimuthal=True
+image_only = False
+azimuthal = True
+skip_regular = False
 fix_params = {}
 
 # Get command-line arguments
@@ -52,6 +53,8 @@ if 'extract_only' in sys.argv:
     extract_only = True
 if 'temp' in sys.argv:
     temp = True
+if 'skip_regular' in sys.argv:
+    skip_regular = True
 if 'alma' in sys.argv:
     alma = True
 if '18' in sys.argv:
@@ -215,18 +218,19 @@ else:
         print 'Extracting Model'+str(i)
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
-        if not mono:
-            extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
-                             outdir=outdir_dum,aperture=aperture,
-                             filter_func=True,obj=obj,dstar=dstar)
-        else:
-            if type(mono_wave) is str:
-                hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
-                        float(mono_wave), outdir_dum, 'model'+str(i),dstar=dstar)
+        if not skip_regular:
+            if not mono:
+                extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
+                                 outdir=outdir_dum,aperture=aperture,
+                                 filter_func=True,obj=obj,dstar=dstar)
             else:
-                for w in mono_wave:
-                    hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w,
-                        outdir_dum, 'model'+str(i),dstar=dstar)
+                if type(mono_wave) is str:
+                    hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
+                            float(mono_wave), outdir_dum, 'model'+str(i),dstar=dstar)
+                else:
+                    for w in mono_wave:
+                        hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w,
+                            outdir_dum, 'model'+str(i),dstar=dstar)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
 
