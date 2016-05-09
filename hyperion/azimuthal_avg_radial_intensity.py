@@ -12,6 +12,7 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     from astropy import wcs
     from hyperion.model import ModelOutput
     import astropy.constants as const
+    import os
 
     pc = const.pc.cgs.value
     AU = const.au.cgs.value
@@ -86,6 +87,17 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
         I_sim[ir] = phot['aperture_sum'].data / aperture.area()
         I_sim_err[ir] = phot['aperture_sum_err'].data / aperture.area()
         # print r[ir], I_sim[ir]
+
+    # write the numbers into file
+    foo = open(plotname+'_radial_profile_'+str(wave)+'um.txt', 'w')
+    # print some header info
+    foo.write('# wavelength '+str(wave)+' um \n')
+    foo.write('# image file '+os.path.basename(imgpath)+' \n')
+    # write profiles
+    foo.write('I \t I_err \t I_sim \t I_sim_err \n')
+    for i in range(len(I)):
+        foo.write('%f \t %f \t %f \t %f \n' % (I[i], I_err[i], I_sim[i], I_sim_err[i]))
+    foo.close()
 
     # plot
     fig = plt.figure(figsize=(8,6))
