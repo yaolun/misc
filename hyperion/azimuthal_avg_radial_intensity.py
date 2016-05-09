@@ -96,7 +96,7 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     # write profiles
     foo.write('I \t I_err \t I_sim \t I_sim_err \n')
     for i in range(len(I)):
-        foo.write('%f \t %f \t %f \t %f \n' % (I[i], I_err[i], I_sim[i], I_sim_err[i]))
+        foo.write('%e \t %e \t %e \t %e \n' % (I[i], I_err[i], I_sim[i], I_sim_err[i]))
     foo.close()
 
     # plot
