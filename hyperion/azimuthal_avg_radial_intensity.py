@@ -95,7 +95,7 @@ def azimuthal_avg_radial_intensity(wave, imgpath, source_center, rtout, plotname
     # print some header info
     foo.write('# wavelength '+str(wave)+' um \n')
     foo.write('# image file '+os.path.basename(imgpath)+' \n')
-    foo.write('$ annulus width '+str(annulus_width)+' arcsec \n')
+    foo.write('# annulus width '+str(annulus_width)+' arcsec \n')
     # write profiles
     foo.write('r_in[arcsec] \t I \t I_err \t I_sim \t I_sim_err \n')
     for i in range(len(I)):
