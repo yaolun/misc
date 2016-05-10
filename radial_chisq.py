@@ -3,6 +3,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     import matplotlib.pyplot as plt
     from astropy.io import ascii
     import copy
+    import collections
 
     # function for calculating chisq
     def chisq(obs, sim, r_in=None, rmax=None):
@@ -11,30 +12,30 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
         It is the inner radius of the annulus used in photometry.
 
         rmax is the maximum inner radius that is allowed for chisq calculation.
+
+        The first elements should always be the same
         """
         chi2 = 0
 
         # trim the intensity list if specified
         if (r_in != None) and (rmax != None):
-            obs = obs[r_in <= rmax]
-            sim = sim[r_in <= rmax]
+            ind = r_in <= rmax
 
-        val2 = (obs['I']-sim['I'])**2
-        unc2 = obs['I_err']**2 + sim['I_err']**2
+        val2 = (obs['I'][ind]-sim['I'][ind])**2
+        unc2 = obs['I_err'][ind]**2 + sim['I_err'][ind]**2
 
-        chi2 = np.sum(val2/unc2)
-        n = len(obs)
+        chi2 = np.sum(val2[1:]/unc2[1:])
+        n = len(val2)
 
         return chi2, n
+
+    compare = lambda x, y: collections.Counter(x) == collections.Counter(y)
+
 
     p1 = []
     model_label = []
     chi2 = []
     total_chi2 = []
-
-    # plot the simulation on top of the observation
-    fig = plt.figure(figsize=(8,6))
-    ax_sim = fig.add_subplot(111)
 
     num_file = len(array_list)
     for ifile in range(0,num_file):
@@ -57,20 +58,23 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
         for i in range(0, len(model_num)):
             imod = model_num[i]
             model_dum = ascii.read(datapath+'/model'+str(imod)+filename_ext+'.txt')
-            print model_dum
-            obs = {'I': model_dum['I'].data, 'I_err': model_dum['I_err'].data}
-            sim = {'I': model_dum['I_sim'].data, 'I_err': model_dum['I_sim_err'].data}
-            chi2_dum, n = chisq(obs, sim, r_in=model_dum['r_in[arcsec]'], rmax=rmax)
+            # exclude the first data point (smallest radius), because it is where two profiles
+            # normalized.
+            obs = {'I': model_dum['I'].data/model_dum['I'].data.max(),
+                   'I_err': model_dum['I_err'].data/model_dum['I'].data.max()}
+            sim = {'I': model_dum['I_sim'].data/model_dum['I_sim'].data.max(),
+                   'I_err': model_dum['I_sim_err'].data/model_dum['I_sim'].data.max()}
+            chi2_dum, n = chisq(obs, sim, r_in=model_dum['r_in[arcsec]'].data, rmax=rmax)
 
             reduced_chi2_dum = chi2_dum/(n-2-1)
-            total_chi2.extend(reduced_chi2_dum)
+            total_chi2.append(reduced_chi2_dum)
 
             if ref == None:
                 # read the parameter values
                 p1.extend((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
                 model_label.append(str(imod))
                 # print reduced_chi2_dum
-                chi2.extend(reduced_chi2_dum)
+                chi2.append(reduced_chi2_dum)
             else:
                 # get other parameters of model i
                 dum_params = copy.copy(model_list)
@@ -89,7 +93,39 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
                     model_label.append(str(imod))
 
                     # print reduced_chi2_dum
-                    chi2.extend(reduced_chi2_dum)
+                    chi2.append(reduced_chi2_dum)
+
+    # plot the simulation on top of the observation
+    fig = plt.figure(figsize=(8,6))
+    ax = fig.add_subplot(111)
+
+    p1 = np.array(np.squeeze(p1))/1e4
+    chi2 = np.array(np.squeeze(chi2))
+
+    ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1, markersize=4)
+    ax.set_xlabel(keywords['label'][0], fontsize=18)
+    ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
+
+    ax.axvline(1, color='k', linestyle='--', linewidth=1.5)
+    # ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
+    #            color='b', alpha=0.3)
+
+    # ax.set_yscale('log')
+
+    # if zoom_1d != None:
+    #     ax.set_xlim(zoom_1d)
+    # else:
+    #     # fig.gca().set_xlim(left=0)
+    #     ax.set_xlim([0,10])
+    # ax.set_ylim([1, 50])
+
+    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    ax.minorticks_on()
+    ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+
+    fig.savefig('/Users/yaolun/test/radial_chi2_'+str(keywords['col'][0])+'_1d.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
 
 import numpy as np
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
@@ -97,4 +133,4 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
                'model_num': np.arange(55,67)}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 filename_ext = '_radial_profile_160.0um'
-radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=140.0, ref=61)
+radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=50.0, ref=61)
