@@ -14,6 +14,8 @@ import time
 # option for high resolution r-grid
 # !!!
 low_res = True
+# the angular range at whcih the azimuthal averaged radial intensity will perform.
+rrange = [10, 200]
 
 # Default setting
 run = True
