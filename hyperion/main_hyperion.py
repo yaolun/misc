@@ -14,8 +14,6 @@ import time
 # option for high resolution r-grid
 # !!!
 low_res = True
-# the wavelength for plotting azimuthal-averaged radial intensity
-azi_wave = 160.0
 
 # Default setting
 run = True
@@ -197,13 +195,24 @@ if extract_only == False:
             temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 
         if azimuthal:
-            imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
-            source_center = dict_path['source_ra']+' '+dict_path['source_dec']
+            # the wavelength for plotting azimuthal-averaged radial intensity
+            azi_wave = dict_path['azi_wave'].split('_')
+
+            if 'img_name' not in dict_path.keys():
+                obs_azi = None
+            else:
+                imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
+                source_center = dict_path['source_ra']+' '+dict_path['source_dec']
+                obs_azi = {'imgpath': imgpath, 'source_center': source_center}
+
             aper_reduced = list(set(aperture['aperture']))
-            azimuthal_avg_radial_intensity(azi_wave, imgpath, source_center,
-                    outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
-                    outdir_dum+'model'+str(int(model_num)+i),
-                    annulus_width=10, group=len(aper_reduced)+1, dstar=dstar)
+
+            for azi_w in azi_wave:
+                azimuthal_avg_radial_intensity(float(azi_w),
+                        outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
+                        outdir_dum+'model'+str(int(model_num)+i), dstar
+                        annulus_width=10, group=len(aper_reduced)+1,
+                        obs=obs_azi, rrange=rrange)
 else:
     print 'You have entered the extract-only mode...'
     num_min = raw_input('What is the number of the first model?')
@@ -235,10 +244,21 @@ else:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
 
         if azimuthal:
-            imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
-            source_center = dict_path['source_ra']+' '+dict_path['source_dec']
+            # the wavelength for plotting azimuthal-averaged radial intensity
+            azi_wave = dict_path['azi_wave'].split()
+
+            if 'img_name' not in dict_path.keys():
+                obs_azi = None
+            else:
+                imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
+                source_center = dict_path['source_ra']+' '+dict_path['source_dec']
+                obs_azi = {'imgpath': imgpath, 'source_center': source_center}
+
             aper_reduced = list(set(aperture['aperture']))
-            azimuthal_avg_radial_intensity(azi_wave, imgpath, source_center,
-                    outdir_dum+'model'+str(i)+'.rtout',
-                    outdir_dum+'model'+str(i),
-                    annulus_width=10, group=len(aper_reduced)+1, dstar=dstar)
+
+            for azi_w in azi_wave:
+                azimuthal_avg_radial_intensity(float(azi_w),
+                        outdir_dum+'model'+str(i)+'.rtout',
+                        outdir_dum+'model'+str(i), dstar,
+                        annulus_width=10, group=len(aper_reduced)+1,
+                        obs=obs_azi, rrange=rrange)

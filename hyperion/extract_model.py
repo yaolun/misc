@@ -239,7 +239,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
                 fil_name = None
 
             if fil_name != None:
-                filter_func = phot_filter(fil_name)
+                filter_func = phot_filter(fil_name, indir)
                 # Simulated SED should have enough wavelength coverage for applying photometry filters.
                 f = interp1d(wav_sort, flux_dum)
                 f_unc = interp1d(wav_sort, unc_dum)
@@ -339,7 +339,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
                 fil_name = None
 
             if fil_name != None:
-                filter_func = phot_filter(fil_name)
+                filter_func = phot_filter(fil_name, indir)
                 # Observed SED needs to be trimmed before applying photometry filters
                 filter_func = filter_func[(filter_func['wave']/1e4 >= min(wl_tot))*\
                                           ((filter_func['wave']/1e4 >= 54.8)+(filter_func['wave']/1e4 <= 36.0853))*\
