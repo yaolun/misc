@@ -307,7 +307,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                 rc_idl = rc[0:ind_infall+1]
             else:
                 rc_idl = rc[rc < max(ri)]
-            idl.pro('tsc_run', outdir=outdir, rc=rc_idl, thetac=thetac, time=t,
+            idl.pro('tsc_run', indir=TSC_dir, outdir=outdir, rc=rc_idl, thetac=thetac, time=t,
                     c_s=cs, omega=omega, renv_min=R_env_min)
             file_idl = 'rhoenv.dat'
         else:

@@ -8,11 +8,14 @@ from input_reader import input_reader_table
 from extract_model import extract_hyperion
 from temp_hyperion import temp_hyperion
 from hyperion_image import hyperion_image
+from azimuthal_avg_radial_intensity import azimuthal_avg_radial_intensity
 import time
 
 # option for high resolution r-grid
 # !!!
 low_res = True
+# the wavelength for plotting azimuthal-averaged radial intensity
+azi_wave = 160.0
 
 # Default setting
 run = True
@@ -22,14 +25,16 @@ mono_wave = None
 control = False
 extract_only = False
 temp = False
-alma=False
+alma = False
 core_num = 20
 better_im = False
 chi2 = False
 test = False
 ellipsoid = False
 fast_plot = False
-image_only=False
+image_only = False
+azimuthal = True
+skip_regular = False
 fix_params = {}
 
 # Get command-line arguments
@@ -48,6 +53,8 @@ if 'extract_only' in sys.argv:
     extract_only = True
 if 'temp' in sys.argv:
     temp = True
+if 'skip_regular' in sys.argv:
+    skip_regular = True
 if 'alma' in sys.argv:
     alma = True
 if '18' in sys.argv:
@@ -188,6 +195,15 @@ if extract_only == False:
                         'model'+str(int(model_num)+i),dstar=dstar)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
+
+        if azimuthal:
+            imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
+            source_center = dict_path['source_ra']+' '+dict_path['source_dec']
+            aper_reduced = list(set(aperture['aperture']))
+            azimuthal_avg_radial_intensity(azi_wave, imgpath, source_center,
+                    outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
+                    outdir_dum+'model'+str(int(model_num)+i),
+                    annulus_width=10, group=len(aper_reduced)+1, dstar=dstar)
 else:
     print 'You have entered the extract-only mode...'
     num_min = raw_input('What is the number of the first model?')
@@ -202,17 +218,27 @@ else:
         print 'Extracting Model'+str(i)
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
-        if not mono:
-            extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
-                             outdir=outdir_dum,aperture=aperture,
-                             filter_func=True,obj=obj,dstar=dstar)
-        else:
-            if type(mono_wave) is str:
-                hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
-                        float(mono_wave), outdir_dum, 'model'+str(i),dstar=dstar)
+        if not skip_regular:
+            if not mono:
+                extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
+                                 outdir=outdir_dum,aperture=aperture,
+                                 filter_func=True,obj=obj,dstar=dstar)
             else:
-                for w in mono_wave:
-                    hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w,
-                        outdir_dum, 'model'+str(i),dstar=dstar)
+                if type(mono_wave) is str:
+                    hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
+                            float(mono_wave), outdir_dum, 'model'+str(i),dstar=dstar)
+                else:
+                    for w in mono_wave:
+                        hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w,
+                            outdir_dum, 'model'+str(i),dstar=dstar)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
+
+        if azimuthal:
+            imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
+            source_center = dict_path['source_ra']+' '+dict_path['source_dec']
+            aper_reduced = list(set(aperture['aperture']))
+            azimuthal_avg_radial_intensity(azi_wave, imgpath, source_center,
+                    outdir_dum+'model'+str(i)+'.rtout',
+                    outdir_dum+'model'+str(i),
+                    annulus_width=10, group=len(aper_reduced)+1, dstar=dstar)

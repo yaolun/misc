@@ -291,9 +291,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
 
         if zoom_1d != None:
             ax.set_xlim(zoom_1d)
-        else:
-            # fig.gca().set_xlim(left=0)
-            ax.set_xlim([0,10])
+        # else:
+        #     # fig.gca().set_xlim(left=0)
+        #     ax.set_xlim([0,10])
         ax.set_ylim([1, 50])
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
@@ -477,8 +477,8 @@ obs = '/Users/yaolun/bhr71/best_calibrated/'
 # For fitting the best age for p25 dust opactity
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/',
-               'model_num': np.arange(55,67)}]
+               'model_num': np.arange(71,79)}]
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
-keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
-# keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[0,5])
+# keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True)
