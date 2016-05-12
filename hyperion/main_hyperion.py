@@ -212,7 +212,7 @@ if extract_only == False:
             for azi_w in azi_wave:
                 azimuthal_avg_radial_intensity(float(azi_w),
                         outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
-                        outdir_dum+'model'+str(int(model_num)+i), dstar
+                        outdir_dum+'model'+str(int(model_num)+i), dstar,
                         annulus_width=10, group=len(aper_reduced)+1,
                         obs=obs_azi, rrange=rrange)
 else:
@@ -247,7 +247,7 @@ else:
 
         if azimuthal:
             # the wavelength for plotting azimuthal-averaged radial intensity
-            azi_wave = dict_path['azi_wave'].split()
+            azi_wave = dict_path['azi_wave'].split('_')
 
             if 'img_name' not in dict_path.keys():
                 obs_azi = None

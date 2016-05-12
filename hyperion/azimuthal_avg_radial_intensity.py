@@ -24,7 +24,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
     AU = const.au.cgs.value
 
     # radial grid in arcsec
-    r = np.arange(rrange[10], rrange[200], annulus_width, dtype=float)
+    r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float)
 
     # source_center = '12 01 36.3 -65 08 53.0'
 
@@ -106,7 +106,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         foo.write('# annulus width '+str(annulus_width)+' arcsec \n')
         # write profiles
         foo.write('r_in[arcsec] \t I_sim \t I_sim_err \n')
-        for i in range(len(I)):
+        for i in range(len(I_sim)):
             foo.write('%f \t %e \t %e \n' % (r[i], I_sim[i], I_sim_err[i]))
         foo.close()
 
