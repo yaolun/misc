@@ -299,6 +299,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             import pidly
             idl = pidly.IDL(IDL_path)
             idl('.r '+TSC_dir+'tsc.pro')
+            idl('.r '+TSC_dir+'tsc_run.pro')
             #
             # only run TSC calculation within infall radius
             # modify the rc array
