@@ -45,6 +45,7 @@ if 'norecord' in sys.argv:
 if 'mono' in sys.argv:
     mono = True
     image_only = True
+    azimuthal = False
     print 'Monochromatic RT now force "image_only" simulations.'
     print 'Need to go the code for more options.'
 if 'control' in sys.argv:
