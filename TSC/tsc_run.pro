@@ -1,4 +1,4 @@
-pro tsc_run, outdir=outdir, rc=rc, thetac=thetac, time=time, c_s=c_s, omega=omega, renv_min=renv_min;, rstar=rstar, renv_min=renv_min, renv_max=renv_max;, r_inf=r_inf
+pro tsc_run, indir=indir, outdir=outdir, rc=rc, thetac=thetac, time=time, c_s=c_s, omega=omega, renv_min=renv_min;, rstar=rstar, renv_min=renv_min, renv_max=renv_max;, r_inf=r_inf
 	; Script for executing the tsc calculation
 	; Constants setup
 	c         = 2.998e10
@@ -19,7 +19,7 @@ pro tsc_run, outdir=outdir, rc=rc, thetac=thetac, time=time, c_s=c_s, omega=omeg
 	; nz = double(grid[2])
 
 	; variable setup for tsc.pro
-	; modeltime = 32815.0   
+	; modeltime = 32815.0
 	; c_s = 0.505957626614 * 1e5  ; 0.35 km/s from Terebey 1984
 	; Omega_0 = 2.62836312414e-13   ; Terebey 1984
 	modeltime = time
@@ -62,11 +62,11 @@ pro tsc_run, outdir=outdir, rc=rc, thetac=thetac, time=time, c_s=c_s, omega=omeg
 	; rc           = 0.5*( ri[0:nx-1]     + ri[1:nx] )
 	; thetac       = 0.5*( thetai[0:ny-1] + thetai[1:ny] )
 	; phic         = 0.5*( phii[0:nz-1]   + phii[1:nz] )
-	
+
 	; truncate the r-grid if R_inf > R_max
-	
-	
-	indir = '~/programs/misc/TSC/'
+
+
+	; indir = '~/programs/misc/TSC/'
 	if not keyword_set(outdir) then outdir = indir
 
 	; Compile

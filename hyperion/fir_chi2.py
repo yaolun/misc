@@ -28,7 +28,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     c = const.c.cgs.value
     LS = const.L_sun.cgs.value
     pc = const.pc.cgs.value
-    dstar = 178.0
+    dstar = 200.0
 
     # chi2 function
     def fir_chi2(obs, sim, wave=[70.,100.,160.,250.,350.,500.], log=False, robust_est=False):
@@ -291,9 +291,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
 
         if zoom_1d != None:
             ax.set_xlim(zoom_1d)
-        else:
-            # fig.gca().set_xlim(left=0)
-            ax.set_xlim([0,10])
+        # else:
+        #     # fig.gca().set_xlim(left=0)
+        #     ax.set_xlim([0,10])
         ax.set_ylim([1, 50])
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
@@ -418,7 +418,7 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.tx
 #                  {'col':['view_angle','theta_cav'], 'label': [r'$\rm{\theta_{incl}\,[deg.]}$', r'$\rm{\theta_{cav}\,[deg.]}$']}]
 # keywords_list = [{'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
 keywords_list = [{'col':['theta_cav','view_angle'], 'label': [r'$\rm{\theta_{cav}\,[deg.]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
-obs = '/Users/yaolun/bhr71/obs_for_radmc/'
+obs = '/Users/yaolun/bhr71/best_calibrated/'
 
 # for tstar & age
 # keywords_list = [{'col':['tstar','age'], 'label': [r'$\rm{T_{\star}\,[K]}$', r'$\rm{age\,[10^{4}\,yr]}$']}]
@@ -475,10 +475,10 @@ obs = '/Users/yaolun/bhr71/obs_for_radmc/'
 # fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[0,5])
 
 # For fitting the best age for p25 dust opactity
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/test/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/test/',
-               'model_num': np.arange(63,94)}]
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/',
+               'model_num': np.arange(71,79)}]
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
-keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
-# keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[0,5])
+# keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True)

@@ -71,9 +71,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
 
     # Read in the observation data and calculate the noise & variance
     if indir == None:
-        indir = '/Users/yaolun/bhr71/'
+        indir = raw_input('Path to the observation data: ')
     if outdir == None:
-        outdir = '/Users/yaolun/bhr71/hyperion/'
+        outdir = raw_input('Path for the output: ')
 
     # assign the file name from the input file
     print_name = os.path.splitext(os.path.basename(filename))[0]
@@ -239,7 +239,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
                 fil_name = None
 
             if fil_name != None:
-                filter_func = phot_filter(fil_name)
+                filter_func = phot_filter(fil_name, indir)
                 # Simulated SED should have enough wavelength coverage for applying photometry filters.
                 f = interp1d(wav_sort, flux_dum)
                 f_unc = interp1d(wav_sort, unc_dum)
@@ -339,7 +339,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
                 fil_name = None
 
             if fil_name != None:
-                filter_func = phot_filter(fil_name)
+                filter_func = phot_filter(fil_name, indir)
                 # Observed SED needs to be trimmed before applying photometry filters
                 filter_func = filter_func[(filter_func['wave']/1e4 >= min(wl_tot))*\
                                           ((filter_func['wave']/1e4 >= 54.8)+(filter_func['wave']/1e4 <= 36.0853))*\
@@ -350,8 +350,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
                 f_unc = interp1d(wl_tot, fnu2fl*unc_tot)
                 obs_aper_flux[i] = np.trapz(f(filter_func['wave']/1e4)*filter_func['transmission'], x=filter_func['wave']/1e4)/\
                                    np.trapz(filter_func['transmission'], x=filter_func['wave']/1e4)
-                # obs_aper_flux_unc[i] = abs(np.trapz((filter_func['wave']/1e4)**2, (f_unc(filter_func['wave']/1e4)*filter_func['transmission'])**2))**0.5 / abs(np.trapz(filter_func['wave']/1e4, filter_func['transmission']))
-                # fix a bug
                 obs_aper_unc[i] = unc_spectrophoto(filter_func['wave']/1e4, f_unc(filter_func['wave']/1e4), filter_func['transmission'])
             else:
                 # use a rectangle function the average the simulated SED
@@ -457,6 +455,8 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
         # Package for matching the colorbar
         from mpl_toolkits.axes_grid1 import make_axes_locatable, ImageGrid
 
+        # Users may change the unit: mJy, Jy, MJy/sr, ergs/cm^2/s, ergs/cm^2/s/Hz
+        # !!!
         image = m.get_image(group=len(aper_reduced)+1, inclination=0,
                             distance=dstar*pc, units='MJy/sr')
 
@@ -466,8 +466,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
                          add_all=True,label_mode='1',share_all=True,
                          cbar_location='right',cbar_mode='single',
                          cbar_size='3%',cbar_pad=0)
-
-        # fig, axarr = plt.subplots(3, 3, sharex='col', sharey='row',figsize=(13.5,12))
 
         for i, wav in enumerate([3.6, 8.0, 9.7, 24, 40, 100, 250, 500, 1000]):
 
@@ -505,9 +503,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
                 label.set_fontproperties(ticks_font)
 
             # Colorbar setting
-            # create an axes on the right side of ax. The width of cax will be 5%
-            # of ax and the padding between cax and ax will be fixed at 0.05 inch.
-
             cb = ax.cax.colorbar(im)
             cb.solids.set_edgecolor('face')
             cb.ax.minorticks_on()
@@ -519,7 +514,6 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
                 label.set_fontproperties(ticks_font)
 
             ax.tick_params(axis='both', which='major', labelsize=16)
-            # ax.set_adjustable('box-forced')
             ax.text(0.7,0.88,str(wav) + r'$\rm{\,\mu m}$',fontsize=16,color='white', transform=ax.transAxes)
 
         fig.savefig(outdir+print_name+'_image_gridplot.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -528,11 +522,9 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
 # indir = '/Users/yaolun/bhr71/best_calibrated/'
 # outdir = '/Users/yaolun/bhr71/hyperion/'
 # import numpy as np
+# # from astropy.io import ascii
+# # aperture = ascii.read(indir+'aperture.txt')
 # wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
 # aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# extract_hyperion('/Users/yaolun/bhr71/hyperion/model28.rtout',indir=indir,outdir='/Users/yaolun/test/',\
-#                  aperture=aperture,filter_func=True,plot_all=False,clean=True,image=True,print_data_w_aper=True)
-# extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra3opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
-#                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
-# extract_hyperion('/Users/yaolun/test/model_test_1e4_ics_gra2opc.rtout',indir=indir,outdir='/Users/yaolun/test/',\
-#                  wl_aper=wl_aper,filter_func=True,plot_all=False,clean=True)
+# extract_hyperion('/Users/yaolun/bhr71/hyperion/model79.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+#     aperture=aperture,filter_func=True,plot_all=False,clean=True,image=True,print_data_w_aper=True)

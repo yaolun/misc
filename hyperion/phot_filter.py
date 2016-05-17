@@ -1,9 +1,10 @@
-def phot_filter(fil_name):
+def phot_filter(fil_name, filter_dir):
     import numpy as np
     from astropy.io import ascii
     from pprint import pprint
     import os
-    filename = os.path.expanduser('~')+'/programs/spectra_analysis/allfilters.dat'
+    # filename = os.path.expanduser('~')+'/programs/spectra_analysis/allfilters.dat'
+    filename = filter_dir+'allfilters.dat'
     foo = open(filename, 'r')
     index = []
     filter_name = []

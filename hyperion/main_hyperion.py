@@ -8,10 +8,14 @@ from input_reader import input_reader_table
 from extract_model import extract_hyperion
 from temp_hyperion import temp_hyperion
 from hyperion_image import hyperion_image
+from azimuthal_avg_radial_intensity import azimuthal_avg_radial_intensity
 import time
 
-# Distance to the object in pc
-dstar = 200.0
+# option for high resolution r-grid
+# !!!
+low_res = True
+# the angular range at whcih the azimuthal averaged radial intensity will perform.
+rrange = [10, 200]
 
 # Default setting
 run = True
@@ -21,14 +25,16 @@ mono_wave = None
 control = False
 extract_only = False
 temp = False
-alma=False
+alma = False
 core_num = 20
 better_im = False
 chi2 = False
 test = False
 ellipsoid = False
 fast_plot = False
-image_only=False
+image_only = False
+azimuthal = True
+skip_regular = False
 fix_params = {}
 
 # Get command-line arguments
@@ -39,6 +45,7 @@ if 'norecord' in sys.argv:
 if 'mono' in sys.argv:
     mono = True
     image_only = True
+    azimuthal = False
     print 'Monochromatic RT now force "image_only" simulations.'
     print 'Need to go the code for more options.'
 if 'control' in sys.argv:
@@ -47,6 +54,8 @@ if 'extract_only' in sys.argv:
     extract_only = True
 if 'temp' in sys.argv:
     temp = True
+if 'skip_regular' in sys.argv:
+    skip_regular = True
 if 'alma' in sys.argv:
     alma = True
 if '18' in sys.argv:
@@ -90,6 +99,7 @@ dict_path = {}
 for name, val in zip(path_list[0],path_list[1]):
     dict_path[name] = val
 obj = dict_path['object']
+dstar = float(dict_path['dstar'].data)
 print 'Current path setting --'
 pprint(dict_path)
 #
@@ -156,7 +166,7 @@ if extract_only == False:
         m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,
                         home+dict_path['dust_file'],plot=True,fast_plot=fast_plot,
                         idl=True,record=record,mono=mono,mono_wave=mono_wave,
-                        aperture=aperture,fix_params=fix_params,
+                        aperture=aperture,fix_params=fix_params, low_res=low_res,
                         power=power,better_im=better_im,ellipsoid=ellipsoid,
                         dstar=dstar,TSC_dir=home+dict_path['TSC_dir'],
                         IDL_path=dict_path['IDL_path'], image_only=image_only)
@@ -186,6 +196,26 @@ if extract_only == False:
                         'model'+str(int(model_num)+i),dstar=dstar)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
+
+        if azimuthal:
+            # the wavelength for plotting azimuthal-averaged radial intensity
+            azi_wave = dict_path['azi_wave'].split('_')
+
+            if 'img_name' not in dict_path.keys():
+                obs_azi = None
+            else:
+                imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
+                source_center = dict_path['source_ra']+' '+dict_path['source_dec']
+                obs_azi = {'imgpath': imgpath, 'source_center': source_center}
+
+            aper_reduced = list(set(aperture['aperture']))
+
+            for azi_w in azi_wave:
+                azimuthal_avg_radial_intensity(float(azi_w),
+                        outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
+                        outdir_dum+'model'+str(int(model_num)+i), dstar,
+                        annulus_width=10, group=len(aper_reduced)+1,
+                        obs=obs_azi, rrange=rrange)
 else:
     print 'You have entered the extract-only mode...'
     num_min = raw_input('What is the number of the first model?')
@@ -200,17 +230,38 @@ else:
         print 'Extracting Model'+str(i)
         # Extract the results
         # the indir here is the dir that contains the observed spectra.
-        if not mono:
-            extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
-                             outdir=outdir_dum,aperture=aperture,
-                             filter_func=True,obj=obj,dstar=dstar)
-        else:
-            if type(mono_wave) is str:
-                hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
-                        float(mono_wave), outdir_dum, 'model'+str(i),dstar=dstar)
+        if not skip_regular:
+            if not mono:
+                extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
+                                 outdir=outdir_dum,aperture=aperture,
+                                 filter_func=True,obj=obj,dstar=dstar)
             else:
-                for w in mono_wave:
-                    hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w,
-                        outdir_dum, 'model'+str(i),dstar=dstar)
+                if type(mono_wave) is str:
+                    hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
+                            float(mono_wave), outdir_dum, 'model'+str(i),dstar=dstar)
+                else:
+                    for w in mono_wave:
+                        hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w,
+                            outdir_dum, 'model'+str(i),dstar=dstar)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
+
+        if azimuthal:
+            # the wavelength for plotting azimuthal-averaged radial intensity
+            azi_wave = dict_path['azi_wave'].split('_')
+
+            if 'img_name' not in dict_path.keys():
+                obs_azi = None
+            else:
+                imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
+                source_center = dict_path['source_ra']+' '+dict_path['source_dec']
+                obs_azi = {'imgpath': imgpath, 'source_center': source_center}
+
+            aper_reduced = list(set(aperture['aperture']))
+
+            for azi_w in azi_wave:
+                azimuthal_avg_radial_intensity(float(azi_w),
+                        outdir_dum+'model'+str(i)+'.rtout',
+                        outdir_dum+'model'+str(i), dstar,
+                        annulus_width=10, group=len(aper_reduced)+1,
+                        obs=obs_azi, rrange=rrange)

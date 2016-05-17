@@ -50,6 +50,12 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     m = Model()
 
+    # min and max wavelength to compute (need to define them first for checking dust properties)
+    # !!!
+    wav_min = 2.0
+    wav_max = 1400.
+    wav_num = 1400
+
     # Create dust properties
     # Hyperion needs nu, albedo, chi, g, p_lin_max
     from hyperion.dust import HenyeyGreensteinDust
@@ -62,6 +68,14 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     d.set_lte_emissivities(n_temp=3000,
                            temp_min=0.1,
                            temp_max=2000.)
+    # if the min and/or max wavelength fall out of range
+    if c/wav_min/1e-4 > dust['nu'].max():
+        d.optical_properties.extrapolate_nu(dust['nu'].min(), c/wav_min/1e-4)
+        print 'minimum wavelength is out of dust model.  The dust model is extrapolated.'
+    if c/wav_max/1e-4 < dust['nu'].min():
+        d.optical_properties.extrapolate_nu(c/wav_max/1e-4, dust['nu'].max())
+        print 'maximum wavelength is out of dust model.  The dust model is extrapolated.'
+
     # try to solve the freq. problem
     d.optical_properties.extrapolate_nu(3.28e15, 4.35e15)
     #
@@ -70,12 +84,11 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     plt.clf()
 
     # Grids and Density
-    # Calculation inherited from the script used for RADMC-3D
 
     # Grid Parameters
     nx        = 300L
     if low_res == True:
-        nx    = 400L
+        nx    = 100L
     ny        = 400L
     nz        = 50L
     [nx, ny, nz] = [int(scale*nx), int(scale*ny), int(scale*nz)]
@@ -194,7 +207,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         i = 0
         j = 0
         if 'rho_cav_center' in locals() == False:
-            rho_cav_center = 5.27e-18 # 1.6e-17  # 5.27e-18
+            rho_cav_center = 5e-19
             print 'Use 5.27e-18 as the default value for cavity center'
         if 'rho_cav_edge' in locals() == False:
             rho_cav_edge = 40*AU
@@ -276,7 +289,6 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     else:
         print 'Calculating the dust density profile with TSC solution...'
         if theta_cav != 0:
-            # c0 = R_env_max**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
             c0 = (1e4*AU)**(-0.5)*np.sqrt(1/np.sin(np.radians(theta_cav))**3-1/np.sin(np.radians(theta_cav)))
         else:
             c0 = 0
@@ -287,6 +299,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             import pidly
             idl = pidly.IDL(IDL_path)
             idl('.r '+TSC_dir+'tsc.pro')
+            idl('.r '+TSC_dir+'tsc_run.pro')
             #
             # only run TSC calculation within infall radius
             # modify the rc array
@@ -295,7 +308,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                 rc_idl = rc[0:ind_infall+1]
             else:
                 rc_idl = rc[rc < max(ri)]
-            idl.pro('tsc_run', outdir=outdir, rc=rc_idl, thetac=thetac, time=t,
+            idl.pro('tsc_run', indir=TSC_dir, outdir=outdir, rc=rc_idl, thetac=thetac, time=t,
                     c_s=cs, omega=omega, renv_min=R_env_min)
             file_idl = 'rhoenv.dat'
         else:
@@ -551,7 +564,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         syn_inf = m.add_peeled_images(image=False)
         # use the index of wavelength array used by the monochromatic radiative transfer
         if mono == False:
-            syn_inf.set_wavelength_range(1400, 2.0, 1400.0)
+            syn_inf.set_wavelength_range(wav_num, wav_min, wav_max)
         syn_inf.set_viewing_angles([dict_params['view_angle']], [0.0])
         syn_inf.set_uncertainties(True)
         syn_inf.set_output_bytes(8)
@@ -576,7 +589,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             dict_peel_sed[str(index_reduced[i])] = m.add_peeled_images(image=False)
             # use the index of wavelength array used by the monochromatic radiative transfer
             if mono == False:
-                dict_peel_sed[str(index_reduced[i])].set_wavelength_range(1400, 2.0, 1400.0)
+                dict_peel_sed[str(index_reduced[i])].set_wavelength_range(wav_num, wav_min, wav_max)
             dict_peel_sed[str(index_reduced[i])].set_viewing_angles([dict_params['view_angle']], [0.0])
             # aperture should be given in cm and its the radius of the aperture
             dict_peel_sed[str(index_reduced[i])].set_aperture_range(1, aper_dum, aper_dum)
@@ -587,12 +600,14 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     syn_im = m.add_peeled_images(sed=False)
     # use the index of wavelength array used by the monochromatic radiative transfer
     if mono == False:
-        syn_im.set_wavelength_range(1400, 2.0, 1400.0)
+        syn_im.set_wavelength_range(wav_num, wav_min, wav_max)
     # pixel number
+    # !!!
     if not mono:
         pix_num = 300
     else:
         pix_num = 8000
+    #
     syn_im.set_image_size(pix_num, pix_num)
     syn_im.set_image_limits(-R_env_max, R_env_max, -R_env_max, R_env_max)
     syn_im.set_viewing_angles([dict_params['view_angle']], [0.0])
@@ -731,15 +746,11 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
 # from input_reader import input_reader_table
 # from pprint import pprint
-# # # filename = '/Users/yaolun/programs/misc/hyperion/input_table_control.txt'
 # filename = '/Users/yaolun/programs/misc/hyperion/input_table_chi2.txt'
 # params = input_reader_table(filename)
 # pprint(params[0])
 # outdir = '/Users/yaolun/test/'
 # record_dir = '/Users/yaolun/test/'
 # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# # # # # dust_file = '/Users/yaolun/Copy/dust_model/Ormel2011/hyperion/(ic-sil,gra)3opc.txt'
-# # # # # fix_params = {'R_min': 0.14}
-# fix_params = {}
 # setup_model(outdir,record_dir,'model224',params[0],dust_file,plot=True,record=False,\
 #     idl='rhoenv_model224.dat',radmc=False,fix_params=fix_params,ellipsoid=False,tsc=False)

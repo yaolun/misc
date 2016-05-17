@@ -3,7 +3,6 @@ def phot_filter(fil_name):
     from astropy.io import ascii
     from pprint import pprint
     import os
-    # path to filter data
     filename = os.path.expanduser('~')+'/programs/spectra_analysis/allfilters.dat'
     foo = open(filename, 'r')
     index = []
