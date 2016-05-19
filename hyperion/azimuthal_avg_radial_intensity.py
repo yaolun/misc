@@ -104,7 +104,8 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         foo.write('# image file '+os.path.basename(imgpath)+' \n')
         foo.write('# annulus width '+str(annulus_width)+' arcsec \n')
         # write profiles
-        foo.write('r_in[arcsec] \t I \t I_err \t I_sim \t I_sim_err \n')
+        foo.write('r_in \t I \t I_err \t I_sim \t I_sim_err \n')
+        foo.write('# [arcsec] \t [Jy/pixel] \t [Jy/pixel] \t [Jy/pixel] \t [Jy/pixel] \n')
         for i in range(len(I)):
             foo.write('%f \t %e \t %e \t %e \t %e \n' % (r[i], I[i], I_err[i], I_sim[i], I_sim_err[i]))
         foo.close()
@@ -115,7 +116,8 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         foo.write('# wavelength '+str(wave)+' um \n')
         foo.write('# annulus width '+str(annulus_width)+' arcsec \n')
         # write profiles
-        foo.write('r_in[arcsec] \t I_sim \t I_sim_err \n')
+        foo.write('r_in \t I_sim \t I_sim_err \n')
+        foo.write('# [arcsec] \t [Jy/pixel] \t [Jy/pixel] \n')
         for i in range(len(I_sim)):
             foo.write('%f \t %e \t %e \n' % (r[i], I_sim[i], I_sim_err[i]))
         foo.close()
