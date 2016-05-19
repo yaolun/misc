@@ -1,4 +1,4 @@
-def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=0,
+def hyperion_image(rtout, wave, plotdir, printname, dstar=200., group=0, marker=0,
                     size='full', convolve=False, unit=None):
     # to avoid X server error
     import matplotlib as mpl
@@ -19,9 +19,9 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=
     m = ModelOutput(rtout)
 
     # Extract the image.
-    image = m.get_image(group=group, inclination=0, distance=dstar * pc, units='mJy')
+    image = m.get_image(group=group, inclination=0, distance=dstar * pc, units='MJy/sr')
 
-    print np.shape(image.val)
+    # print np.shape(image.val)
     # Open figure and create axes
     fig = plt.figure(figsize=(8,8))
     ax = fig.add_subplot(111)
@@ -57,11 +57,11 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=
     # the min and max levels for the colorscale (remove for default values).
     # cmap = sns.cubehelix_palette(start=0.1, rot=-0.7, gamma=0.2, as_cmap=True)
     cmap = plt.cm.CMRmap
-    # im = ax.imshow(np.log10(val), vmin= -20, vmax= -15,
-    #           cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
     im = ax.imshow(val,
-              cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
-    print val.max()
+            norm=mpl.colors.LogNorm(vmin=1.515e-01, vmax=4.118e+01),
+            cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
+    # im = ax.imshow(val
+    #           cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
     # plot the marker for center position by default or user input offset
     ax.plot([0],[-marker], '+', color='ForestGreen', markersize=10, mew=2)
@@ -102,8 +102,8 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=178., group=0, marker=
     fig.savefig(plotdir+printname+'_image_'+str(wave)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/model40.rtout'
-# wave = 870
-# plotdir = '/Users/yaolun/test/'
-# hyperion_image(rtout, wave, plotdir, 'BHR71', group=0, marker=0, size=5., convolve=True,
-#         unit=r'$\rm{mJy/beam}$')
+rtout = '/Users/yaolun/bhr71/hyperion/controlled/model2.rtout'
+wave = 3.6
+plotdir = '/Users/yaolun/bhr71/hyperion/controlled/'
+hyperion_image(rtout, wave, plotdir, 'model2', group=0, dstar=200., marker=0, size='full', convolve=False,
+        unit=r'$\rm{MJy/sr}$')
