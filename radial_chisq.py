@@ -24,7 +24,16 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
         val2 = (obs['I'][ind]-sim['I'][ind])**2
         unc2 = obs['I_err'][ind]**2 + sim['I_err'][ind]**2
 
-        chi2 = np.sum(val2[1:]/unc2[1:])
+        # log version
+        # import numpy as np
+        # unc2_obs = (np.log10(obs['I'][ind]+obs['I_err'][ind])-np.log10(obs['I'][ind])) * (np.log10(obs['I'][ind])-np.log10(obs['I'][ind]-obs['I_err'][ind]))
+        # unc2_sim = (np.log10(sim['I'][ind]+sim['I_err'][ind])-np.log10(sim['I'][ind])) * (np.log10(sim['I'][ind])-np.log10(sim['I'][ind]-sim['I_err'][ind]))
+        # unc2 = unc2_obs + unc2_sim
+        #
+        # val2 = (np.log10(obs['I'][ind])-np.log10(sim['I'][ind]))**2
+        #
+
+        chi2 = np.nansum(val2[1:]/unc2[1:])
         n = len(val2)
 
         return chi2, n
