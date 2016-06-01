@@ -48,8 +48,18 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         coord = SkyCoord(source_center, unit=(u.hourangle, u.deg))
         pixcoord = w.wcs_world2pix(coord.ra.degree, coord.dec.degree, 1)
         pix2arcsec = abs(im_hdu[1].header['CDELT1'])*3600.
-        # convert intensity unit from MJy/sr to Jy/pixel
-        factor = 1e6/4.25e10*abs(im_hdu[1].header['CDELT1']*im_hdu[1].header['CDELT2'])*3600**2
+
+        # determine whether need to convert the unit
+        factor = 1
+        print 'Image unit is ', im_hdu[1].header['BUNIT']
+        if im_hdu[1].header['BUNIT'] != 'Jy/pixel':
+            print 'Image unit is ', im_hdu[1].header['BUNIT']
+
+            if im_hdu[1].header['BUNIT'] == 'MJy/sr':
+                # convert intensity unit from MJy/sr to Jy/pixel
+                factor = 1e6/4.25e10*abs(im_hdu[1].header['CDELT1']*im_hdu[1].header['CDELT2'])*3600**2
+            else:
+                factor = raw_input('What is the conversion factor to Jy/pixel?')
 
         I = np.empty_like(r[:-1])
         I_err = np.empty_like(r[:-1])
@@ -94,7 +104,8 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         foo.write('# image file '+os.path.basename(imgpath)+' \n')
         foo.write('# annulus width '+str(annulus_width)+' arcsec \n')
         # write profiles
-        foo.write('r_in[arcsec] \t I \t I_err \t I_sim \t I_sim_err \n')
+        foo.write('r_in \t I \t I_err \t I_sim \t I_sim_err \n')
+        foo.write('# [arcsec] \t [Jy/pixel] \t [Jy/pixel] \t [Jy/pixel] \t [Jy/pixel] \n')
         for i in range(len(I)):
             foo.write('%f \t %e \t %e \t %e \t %e \n' % (r[i], I[i], I_err[i], I_sim[i], I_sim_err[i]))
         foo.close()
@@ -105,7 +116,8 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         foo.write('# wavelength '+str(wave)+' um \n')
         foo.write('# annulus width '+str(annulus_width)+' arcsec \n')
         # write profiles
-        foo.write('r_in[arcsec] \t I_sim \t I_sim_err \n')
+        foo.write('r_in \t I_sim \t I_sim_err \n')
+        foo.write('# [arcsec] \t [Jy/pixel] \t [Jy/pixel] \n')
         for i in range(len(I_sim)):
             foo.write('%f \t %e \t %e \n' % (r[i], I_sim[i], I_sim_err[i]))
         foo.close()
