@@ -64,7 +64,7 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=200., group=0, marker=
     #           cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
     # plot the marker for center position by default or user input offset
-    ax.plot([0],[-marker], '+', color='ForestGreen', markersize=10, mew=2)
+    ax.plot([0],[-marker], '+', color='lime', markersize=10, mew=2)
     ax.set_xlim([-w,w])
     ax.set_ylim([-w,w])
     # ax.plot([0],[-10], '+', color='m', markersize=10, mew=2)
@@ -85,7 +85,9 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=200., group=0, marker=
     cb = fig.colorbar(im, cax=cax)
     cb.solids.set_edgecolor("face")
     cb.ax.minorticks_on()
-    cb.ax.set_ylabel(unit,fontsize=18)
+    cb.ax.set_ylabel(r'$\rm{Intensity\,['+unit+']}$',fontsize=18)
+    cb.ax.tick_params('both', width=1.5, which='major', length=3)
+    cb.ax.tick_params('both', width=1.5, which='minor', length=2)
     cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
     plt.setp(cb_obj,fontsize=14)
     # fix the tick label font
@@ -93,17 +95,23 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=200., group=0, marker=
     for label in cb.ax.get_yticklabels():
         label.set_fontproperties(ticks_font)
 
-    ax.set_xlabel(r'$\rm{RA\,Offset\,(arcsec)}$', fontsize=18)
-    ax.set_ylabel(r'$\rm{Dec\,Offset\,(arcsec)}$', fontsize=18)
+    ax.set_xlabel(r'$\rm{RA\,Offset\,[arcsec]}$', fontsize=18)
+    ax.set_ylabel(r'$\rm{Dec\,Offset\,[arcsec]}$', fontsize=18)
 
-    ax.tick_params(axis='both', which='major', labelsize=18)
+    # set the frame color
+    ax.spines['bottom'].set_color('white')
+    ax.spines['top'].set_color('white')
+    ax.spines['left'].set_color('white')
+    ax.spines['right'].set_color('white')
+
+    ax.tick_params(axis='both', which='major', width=1.5, labelsize=18, color='white', length=5)
     ax.text(0.7,0.88,str(wave) + r'$\rm{\,\mu m}$',fontsize=20,color='white', transform=ax.transAxes)
 
     fig.savefig(plotdir+printname+'_image_'+str(wave)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/controlled/model2.rtout'
-# wave = 3.6
-# plotdir = '/Users/yaolun/bhr71/hyperion/controlled/'
-# hyperion_image(rtout, wave, plotdir, 'model2', group=0, dstar=200., marker=0, size='full', convolve=False,
-#         unit=r'$\rm{MJy/sr}$')
+rtout = '/Users/yaolun/bhr71/hyperion/controlled/model2.rtout'
+wave = 3.6
+plotdir = '/Users/yaolun/bhr71/hyperion/controlled/'
+hyperion_image(rtout, wave, plotdir, 'model2', group=0, dstar=200., marker=0, size=100, convolve=False,
+        unit='MJy\,sr^{-1}')
