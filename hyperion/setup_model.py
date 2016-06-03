@@ -77,7 +77,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         print 'maximum wavelength is out of dust model.  The dust model is extrapolated.'
 
     # try to solve the freq. problem
-    d.optical_properties.extrapolate_nu(3.28e15, 4.35e15)
+    d.optical_properties.extrapolate_nu(3.28e15, 5e15)
     #
     d.write(outdir+os.path.basename(dust_file).split('.')[0]+'.hdf5')
     d.plot(outdir+os.path.basename(dust_file).split('.')[0]+'.png')
