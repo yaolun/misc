@@ -101,8 +101,8 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
             if cc != 0:
                 ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
     if row > 1:
-        fig.text(0.5, 0 , r'$age\,[yr]\,(5\times 10^{3},\,1\times 10^{4},\,2.5\times 10^{4},\,5\times 10^{4},\,7.5\times 10^{4})$', fontsize=20, ha='center')
-        fig.text(0, 0.5, r'$sound\,speed\,[km\,s^{-1}]\,(0.6,\,0.5,\,0.38,\,0.2)$', fontsize=20, va='center', rotation='vertical')
+        fig.text(0.5, 0 , r'$t_{\rm col}\,[yr]\,(5\times 10^{3},\,1\times 10^{4},\,2.5\times 10^{4},\,5\times 10^{4},\,7.5\times 10^{4})$', fontsize=20, ha='center')
+        fig.text(0, 0.5, r'$c_{\rm s}\,[km\,s^{-1}]\,(0.57,\,0.47,\,0.37,\,0.27)$', fontsize=20, va='center', rotation='vertical')
 
     fig.subplots_adjust(hspace=0,wspace=0)
     fig.savefig(outdir+'sed_cs_age.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -1551,15 +1551,14 @@ def cs_age_behavior(indir, array, outdir, obs=None):
 
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
-outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
-outdir = '/Users/yaolun/test/updated_bhr71/BHR71_ult/'
+outdir = '/Users/yaolun/test/updated_bhr71/Jun16/'
 obs = '/Users/yaolun/bhr71/best_calibrated/'
 
 # grid of cs and age
-array = np.array([[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20]])
-cslist = [0.2,0.38,0.5,0.6]
+array = np.array([[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24]])
+cslist = [0.27,0.37,0.47,0.57]
 agelist = [5e3,1e4,2.5e4,5e4,7.5e4]
-sed_grid_cs_age(indir+'cycle6/', array, outdir, cslist, agelist, obs= None)
+sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
 # # for presentation, show only one sound speed bin
 # array = np.array([[17,18,19,20,49]])
@@ -1576,108 +1575,90 @@ sed_grid_cs_age(indir+'cycle6/', array, outdir, cslist, agelist, obs= None)
 # sed_five('/Users/yaolun/bhr71/hyperion/cycle8/', array, outdir, xlabel, plotname, obs=obs, compact=compact, obs_color='Red')
 
 # grid of Omega0
-array = np.array([23,22,21])
-sed_omega(indir+'cycle6/', array, outdir, obs=None, compact=True, addname='_1e4')
-array = np.array([26,25,24])
-sed_omega(indir+'cycle6/', array, outdir, obs=None, compact=True, addname='_7.5e4')
+array = np.array([27,26,25])
+sed_omega(indir, array, outdir, obs=None, compact=True, addname='_1e4')
+array = np.array([30,29,28])
+sed_omega(indir, array, outdir, obs=None, compact=True, addname='_7.5e4')
 
 # grid of disk parameters
 # disk mass
-array = np.array([28,29,30])
+array = np.array([32,33,34])
 xlabel = r'$M_{disk}\,[M_{\odot}]\,(0.025,\,0.075,\,0.25)$'
 compact = [r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$']
 plotname = 'disk_mdisk'
-sed_five(indir+'cycle6/', array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # flare power
-array = np.array([31,32,33,34,35])
+array = np.array([35,36,37,38,39])
 xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
 compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
 plotname = 'disk_beta'
-sed_five(indir+'cycle6/', array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # scale height
-array = np.array([36,37,38,39,40])
+array = np.array([40,41,42,43,44])
 xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
 compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
 plotname = 'disk_h100'
-sed_five(indir+'cycle6/', array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
+sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
 # all disk parameter
-array = np.array([[28,39,30,0,0],[31,32,33,34,35],[36,37,38,39,40]])
+array = np.array([[32,33,34,0,0],[35,36,37,38,39],[40,41,42,43,44]])
 compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
            [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
            [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
-disk_summary(indir+'cycle6/', array, outdir, compact=compact)
+disk_summary(indir, array, outdir, compact=compact)
 
 
 # grid of theta_cav and incl.
-array = np.array([[242,243,244,245,246],[247,248,249,250,251],[252,253,254,255,256]])
-sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
-# only for incl. = 40
-# array = np.array([58,59,60,104,105])
-# xlabel = r'$\theta_{cav}\,[deg.]\,(10^{\circ}, 15^{\circ}, 20^{\circ}, 25^{\circ}, 30^{\circ})$'
-# plotname = 'theta_cav_incl40'
-# compact = [r'$\theta_{cav}=10^{\circ}$',r'$\theta_{cav}=15^{\circ}$',r'$\theta_{cav}=20^{\circ}$',\
-#            r'$\theta_{cav}=25^{\circ}$',r'$\theta_{cav}=30^{\circ}$']
-# sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
+# array = np.array([[242,243,244,245,246],[247,248,249,250,251],[252,253,254,255,256]])
+# sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 
 # grid of rho_cav_center and sed_rho_cav_edge
-array = np.array([[257,258,259,260],[261,262,263,264],[265,266,267,268]])
-# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
-sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
+# array = np.array([[257,258,259,260],[261,262,263,264],[265,266,267,268]])
+# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # disk & no disk
 # late: yes & no; early: yes & no
-array = np.array([27,29,67,84])
-disk_exist_com(indir+'cycle6/', array, outdir, obs=None)
+# array = np.array([27,29,67,84])
+# disk_exist_com(indir+'cycle6/', array, outdir, obs=None)
 
-# grid of tstar
-# array = np.array([73,74,75])
-# sed_tstar(indir, array, outdir, obs=obs)
-
-# grid of rstar
-# array = np.array([72,73,74])
-# sed_rstar(indir, array, outdir, obs=obs)
 
 # grid of R_env_max
-array = np.array([272,273,274])
-xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
-compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
-plotname = 'r_max'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5])
+# array = np.array([272,273,274])
+# xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
+# compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
+# plotname = 'r_max'
+# sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5])
 
 # grid of continuous cavity power law
 # power = 2, 1.5, const+r-2, and uniform
-array = {'r-2': [234,236], 'r-1.5': [238,240], 'const+r-2': [224], 'uniform': [232]}
-sed_cav_struc_com(indir, array, outdir, obs=obs)
-
-array = {'r-2': [234,236], 'r-1.5': [238,240], 'const+r-2': [224], 'uniform': [232]}
-sed_cav_struc_com(indir, array, outdir, obs=None)
+# array = {'r-2': [234,236], 'r-1.5': [238,240], 'const+r-2': [224], 'uniform': [232]}
+# sed_cav_struc_com(indir, array, outdir, obs=obs)
+#
+# array = {'r-2': [234,236], 'r-1.5': [238,240], 'const+r-2': [224], 'uniform': [232]}
+# sed_cav_struc_com(indir, array, outdir, obs=None)
 
 
 # grid of tstar with the same lstar
-array = np.array([269,270,271])
-sed_lum(indir, array, outdir)
+# array = np.array([269,270,271])
+# sed_lum(indir, array, outdir)
 
-array = np.array([[20,18,16],[6,11,16]])
-cs_age_behavior(indir+'cycle6/', array, outdir)
+array = np.array([[24,22,20],[5,15,20]])
+cs_age_behavior(indir, array, outdir)
 
-model_vs_obs('model41', '/Users/yaolun/bhr71/hyperion/', '/Users/yaolun/test/', obs=obs)
+model_vs_obs('model3', '/Users/yaolun/bhr71/hyperion/controlled/', outdir, obs=obs)
 
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
-               '/Users/yaolun/bhr71/hyperion/controlled/model225',\
-               '/Users/yaolun/bhr71/hyperion/controlled/model224'],\
-               '/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
-               [r'$\rm{Kristensen\,et.\,al.\,2012}$', \
-               r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',\
-               r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
+# models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
+#                '/Users/yaolun/bhr71/hyperion/controlled/model225',\
+#                '/Users/yaolun/bhr71/hyperion/controlled/model224'],\
+#                '/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
+#                [r'$\rm{Kristensen\,et.\,al.\,2012}$', \
+#                r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',\
+#                r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
+#
+# models_vs_obs(['/Users/yaolun/test/updated_bhr71/BHR71_ult/model154',\
+#                '/Users/yaolun/test/updated_bhr71/BHR71_ult/model154_nontsc'],\
+#                '/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
+#                [r'$\rm{full\,TSC}$',r'$\rm{infall-only\,TSC}$'], obs)
 
-models_vs_obs(['/Users/yaolun/test/updated_bhr71/BHR71_ult/model154',\
-               '/Users/yaolun/test/updated_bhr71/BHR71_ult/model154_nontsc'],\
-               '/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
-               [r'$\rm{full\,TSC}$',r'$\rm{infall-only\,TSC}$'], obs)
-
-# models_vs_obs(['/Users/yaolun/bhr71/hyperion/three_models/model3','/Users/yaolun/bhr71/hyperion/three_models/model4','/Users/yaolun/bhr71/hyperion/three_models/model1'],\
-    # '/Users/yaolun/test/',\
-    # [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
 
 # full TSC vs infall-only TSC model
 # models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle9/model1','/Users/yaolun/bhr71/hyperion/cycle9/model1_ulrich'],\
