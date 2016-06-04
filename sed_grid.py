@@ -1123,11 +1123,11 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
 
 
     # plot the observed photometry data
-    photometry, = ax_sed.plot(np.log10(wave_phot),np.log10(c/(wave_phot*1e-4)*flux_phot),'s',mfc='DimGray',mec='k',markersize=8)
+    photometry, = ax_sed.plot(np.log10(wave_phot),np.log10(c/(wave_phot*1e-4)*flux_phot),'s',mfc='DimGray',mec='DimGray',markersize=8)
     ax_sed.errorbar(np.log10(wave_phot),np.log10(c/(wave_phot*1e-4)*flux_phot),\
         yerr=[np.log10(c/(wave_phot*1e-4)*flux_phot)-np.log10(c/(wave_phot*1e-4)*(flux_phot-flux_sig_phot)),\
               np.log10(c/(wave_phot*1e-4)*(flux_phot+flux_sig_phot))-np.log10(c/(wave_phot*1e-4)*flux_phot)],\
-        fmt='s',mfc='DimGray',mec='k',markersize=8)
+        fmt='s',mfc='DimGray',mec='DimGray',markersize=8, ecolor='DimGray', elinewidth=1.5, barsabove=True, linewidth=1.5, markeredgewidth=1.5)
 
     # perform the same procedure of flux extraction of aperture flux with observed spectra
     wl_aper = np.array(wl_aper)
