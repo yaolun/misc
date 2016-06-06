@@ -124,7 +124,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             fil_name = None
 
         if fil_name != None:
-            filter_func = phot_filter(fil_name)
+            filter_func = phot_filter(fil_name, '/Users/yaolun/programs/misc/hyperion/')
             # Observed SED needs to be trimmed before applying photometry filters
             filter_func = filter_func[(filter_func['wave']/1e4 >= min(wave_obs))*\
                                       ((filter_func['wave']/1e4 >= 54.8)+(filter_func['wave']/1e4 <= 36.0853))*\
@@ -153,9 +153,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 f_unc = interp1d(wave_obs, sed_obs_noise)
                 obs_aper_sed[i] = f(wl_aper[i])
                 obs_aper_sed_noise[i] = f_unc(wl_aper[i])
-    # if 1300. in wl_aper:
-    #     obs_aper_sed.append(3.8)
-    #     obs_aper_sed_noise.append(0.57)
+    if 1300. in wl_aper:
+        np.append(obs_aper_sed, 3.8)
+        np.append(obs_aper_sed_noise, 0.57)
     # calculate Chi2 from simulated SED
     p1 = []
     p2 = []
@@ -475,10 +475,10 @@ obs = '/Users/yaolun/bhr71/best_calibrated/'
 # fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[0,5])
 
 # For fitting the best age for p25 dust opactity
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/',
-               'model_num': np.arange(71,79)}]
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
+               'model_num': np.arange(89,147)}]
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
-# keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
-keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True)
+keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+# keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, ref=114)
