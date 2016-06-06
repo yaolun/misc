@@ -73,7 +73,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
                    'I_err': model_dum['I_err'].data/model_dum['I'].data.max()}
             sim = {'I': model_dum['I_sim'].data/model_dum['I_sim'].data.max(),
                    'I_err': model_dum['I_sim_err'].data/model_dum['I_sim'].data.max()}
-            chi2_dum, n = chisq(obs, sim, r_in=model_dum['r_in[arcsec]'].data, rmax=rmax)
+            chi2_dum, n = chisq(obs, sim, r_in=model_dum['r_in'].data, rmax=rmax)
 
             reduced_chi2_dum = chi2_dum/(n-2-1)
             total_chi2.append(reduced_chi2_dum)
@@ -111,6 +111,8 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     p1 = np.array(np.squeeze(p1))/1e4
     chi2 = np.array(np.squeeze(chi2))
 
+    print chi2
+
     ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1, markersize=4)
     ax.set_xlabel(keywords['label'][0], fontsize=18)
     ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
@@ -137,9 +139,9 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     fig.clf()
 
 import numpy as np
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/',
-               'model_num': np.arange(55,67)}]
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
+               'model_num': np.arange(89,147)}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 filename_ext = '_radial_profile_160.0um'
-radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=50.0, ref=61)
+radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=50.0, ref=114)

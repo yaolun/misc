@@ -412,7 +412,7 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                      [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
 
         # label setup
-        label = [ r'$\theta_{incl.}=80^{\circ}$', r'$\theta_{incl.}=40^{\circ}$',\
+        label = [ r'$\theta_{incl.}=80^{\circ}$', r'$\theta_{incl.}=45^{\circ}$',\
                   r'$\theta_{incl.}=30^{\circ}$']
 
         fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(12,2.7))
@@ -577,7 +577,7 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
                 if cc == col-1:
                     ax.legend(loc='lower right', numpoints=1,framealpha=0.3,fontsize=12)
 
-            ax.set_ylim([-14,-8])
+            ax.set_ylim([-13,-8])
             ax.set_xlim([0.4,2])
             ax.set_xticks([0.4,0.8,1.2,1.6,2.0])
             # ax.locator_params(axis='x', nbins=5)
@@ -1608,12 +1608,12 @@ disk_summary(indir, array, outdir, compact=compact)
 
 
 # grid of theta_cav and incl.
-# array = np.array([[242,243,244,245,246],[247,248,249,250,251],[252,253,254,255,256]])
-# sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
+array = np.array([[56,57,58,59,60],[61,62,63,64,65],[66,67,68,69,70]])
+sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 
 # grid of rho_cav_center and sed_rho_cav_edge
-# array = np.array([[257,258,259,260],[261,262,263,264],[265,266,267,268]])
-# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
+array = np.array([[71,72,73,74],[75,76,77,78],[79,80,81,82]])
+sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # disk & no disk
 # late: yes & no; early: yes & no
@@ -1622,24 +1622,24 @@ disk_summary(indir, array, outdir, compact=compact)
 
 
 # grid of R_env_max
-# array = np.array([272,273,274])
-# xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
-# compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
-# plotname = 'r_max'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5])
+array = np.array([86,87,88])
+xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
+compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
+plotname = 'r_max'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5])
 
 # grid of continuous cavity power law
 # power = 2, 1.5, const+r-2, and uniform
-# array = {'r-2': [234,236], 'r-1.5': [238,240], 'const+r-2': [224], 'uniform': [232]}
-# sed_cav_struc_com(indir, array, outdir, obs=obs)
+array = {'r-2': [48,50], 'r-1.5': [52,54], 'const+r-2': [114], 'uniform': [46]}
+sed_cav_struc_com(indir, array, outdir, obs=obs)
 #
-# array = {'r-2': [234,236], 'r-1.5': [238,240], 'const+r-2': [224], 'uniform': [232]}
-# sed_cav_struc_com(indir, array, outdir, obs=None)
+array = {'r-2': [48,50], 'r-1.5': [52,54], 'const+r-2': [114], 'uniform': [46]}
+sed_cav_struc_com(indir, array, outdir, obs=None)
 
 
 # grid of tstar with the same lstar
-# array = np.array([269,270,271])
-# sed_lum(indir, array, outdir)
+array = np.array([83,84,85])
+sed_lum(indir, array, outdir)
 
 array = np.array([[24,22,20],[5,15,20]])
 cs_age_behavior(indir, array, outdir)
