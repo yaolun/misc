@@ -141,7 +141,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
 import numpy as np
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
-               'model_num': np.arange(89,147)}]
+               'model_num': np.arange(89,152)}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 filename_ext = '_radial_profile_160.0um'
-radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=50.0, ref=114)
+radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=100.0, ref=114)
