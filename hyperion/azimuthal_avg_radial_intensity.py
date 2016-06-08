@@ -86,7 +86,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
             # uncertainty
             im_dum = np.where((grid_dist < r[ir+1]/pix2arcsec) & (grid_dist >= r[ir]/pix2arcsec), im, np.nan)
             # I_err[ir] = phot['aperture_sum_err'].data * factor / aperture.area()
-            I_err[ir] = np.nanstd(im_dum) * factor / aperture.area()
+            I_err[ir] = (np.nanstd(im_dum)**2+phot['aperture_sum_err'].data**2)**0.5 * factor / aperture.area()
 
     # read in from RTout
     rtout = ModelOutput(rtout)
@@ -108,13 +108,13 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
 
     # for calculating the uncertainty from the variation within each annulus
     # construct the x- and y-matrix
-    grid_x, grid_y = np.meshgrid(np.linspace(0,len(im[0,:])-1,len(im[0,:])),
-                                 np.linspace(0,len(im[:,0])-1,len(im[:,0])))
+    grid_x, grid_y = np.meshgrid(np.linspace(0,npix-1,npix),
+                                 np.linspace(0,npix-1,npix))
 
-    dist_x = abs(grid_x - (len(im[:,0]-1)/2.))
-    dist_y = abs(grid_y - (len(im[0,:]-1)/2.))
+    dist_x = abs(grid_x - ((npix-1)/2.))
+    dist_y = abs(grid_y - ((npix-1)/2.))
 
-    grid_dist = ((grid_x-pixcoord[0])**2+(grid_y-pixcoord[1])**2)**0.5
+    grid_dist = (dist_x**2+dist_y**2)**0.5
 
     # iteration
     for ir in range(len(r)-1):
@@ -123,9 +123,9 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         I_sim[ir] = phot['aperture_sum'].data / aperture.area()
 
         # uncertainty
-        im_dum = np.where((grid_dist < r[ir+1]/pix2arcsec) & (grid_dist >= r[ir]/pix2arcsec), im, np.nan)
+        im_dum = np.where((grid_dist < r[ir+1]/pix2arcsec) & (grid_dist >= r[ir]/pix2arcsec), val, np.nan)
         # I_sim_err[ir] = phot['aperture_sum_err'].data / aperture.area()
-        I_sim_err[ir] = np.nanstd(im_dum) * factor / aperture.area()
+        I_sim_err[ir] = (np.nanstd(im_dum)**2+phot['aperture_sum_err'].data**2)**0.5 * factor / aperture.area()
 
     if obs != None:
         # write the numbers into file
@@ -189,3 +189,8 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
 
     fig.savefig(plotname+'_radial_profile_'+str(wave)+'um.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
+
+obs_azi = {'imgpath': '/Users/yaolun/test/hpacs1342224922_20hpppmapr_00_1431606963820.fits',
+          'source_center': '12:01:36.81 -65:08:49.22'}
+azimuthal_avg_radial_intensity(160.0, '/Users/yaolun/bhr71/hyperion/controlled/model144.rtout',
+                               '/Users/yaolun/test/model144', 200.0, obs=obs_azi)
