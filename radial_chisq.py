@@ -111,8 +111,6 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     p1 = np.array(np.squeeze(p1))/1e4
     chi2 = np.array(np.squeeze(chi2))
 
-    print chi2
-
     ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1, markersize=4)
     ax.set_xlabel(keywords['label'][0], fontsize=18)
     ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
@@ -128,7 +126,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     # else:
     #     # fig.gca().set_xlim(left=0)
     #     ax.set_xlim([0,10])
-    ax.set_ylim([50, 300])
+    ax.set_ylim([30, 300])
 
     [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
     ax.minorticks_on()

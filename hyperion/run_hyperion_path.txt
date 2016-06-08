@@ -11,7 +11,7 @@ dstar           200.0
 source_ra       12:01:36.81
 source_dec      -65:08:49.22
 # 500 um
-# img_name        hspireplw1342226633_20pxmp_1431669349619
+img_name        hspireplw1342226633_20pxmp_1431669349619
 # 160 um
-img_name        hpacs1342224922_20hpppmapr_00_1431606963820
-azi_wave        160
+# img_name        hpacs1342224922_20hpppmapr_00_1431606963820
+azi_wave        500
