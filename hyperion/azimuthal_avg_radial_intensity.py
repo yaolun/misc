@@ -64,12 +64,29 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         I = np.empty_like(r[:-1])
         I_err = np.empty_like(r[:-1])
 
+        # for calculating the uncertainty from the variation within each annulus
+        # construct the x- and y-matrix
+        grid_x, grid_y = np.meshgrid(np.linspace(0,len(im[0,:])-1,len(im[0,:])),
+                                     np.linspace(0,len(im[:,0])-1,len(im[:,0])))
+
+        dist_x = abs(grid_x - (len(im[:,0]-1)/2.))
+        dist_y = abs(grid_y - (len(im[0,:]-1)/2.))
+
+        grid_dist = ((grid_x-pixcoord[0])**2+(grid_y-pixcoord[1])**2)**0.5
+
+        for ir in range(len(r)-1):
+            im_dum = np.where((grid_dist < r[ir+1]/pix2arcsec) & (grid_dist >= r[ir]/pix2arcsec), im, np.nan)
+
         # iteration
         for ir in range(len(r)-1):
             aperture = CircularAnnulus((pixcoord[0],pixcoord[1]), r_in=r[ir]/pix2arcsec, r_out=r[ir+1]/pix2arcsec)
             phot = ap(im, aperture, error=im_err)
             I[ir] = phot['aperture_sum'].data * factor / aperture.area()
-            I_err[ir] = phot['aperture_sum_err'].data * factor / aperture.area()
+
+            # uncertainty
+            im_dum = np.where((grid_dist < r[ir+1]/pix2arcsec) & (grid_dist >= r[ir]/pix2arcsec), im, np.nan)
+            # I_err[ir] = phot['aperture_sum_err'].data * factor / aperture.area()
+            I_err[ir] = np.nanstd(im_dum) * factor / aperture.area()
 
     # read in from RTout
     rtout = ModelOutput(rtout)
@@ -89,12 +106,29 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
     I_sim = np.empty_like(r[:-1])
     I_sim_err = np.empty_like(r[:-1])
 
+    # for calculating the uncertainty from the variation within each annulus
+    # construct the x- and y-matrix
+    grid_x, grid_y = np.meshgrid(np.linspace(0,len(im[0,:])-1,len(im[0,:])),
+                                 np.linspace(0,len(im[:,0])-1,len(im[:,0])))
+
+    dist_x = abs(grid_x - (len(im[:,0]-1)/2.))
+    dist_y = abs(grid_y - (len(im[0,:]-1)/2.))
+
+    grid_dist = ((grid_x-pixcoord[0])**2+(grid_y-pixcoord[1])**2)**0.5
+
+    for ir in range(len(r)-1):
+
+
     # iteration
     for ir in range(len(r)-1):
         aperture = CircularAnnulus((npix/2.+0.5, npix/2.+0.5), r_in=r[ir]/pix2arcsec, r_out=r[ir+1]/pix2arcsec)
         phot = ap(val, aperture, error=unc)
         I_sim[ir] = phot['aperture_sum'].data / aperture.area()
-        I_sim_err[ir] = phot['aperture_sum_err'].data / aperture.area()
+
+        # uncertainty
+        im_dum = np.where((grid_dist < r[ir+1]/pix2arcsec) & (grid_dist >= r[ir]/pix2arcsec), im, np.nan)
+        # I_sim_err[ir] = phot['aperture_sum_err'].data / aperture.area()
+        I_sim_err[ir] = np.nanstd(im_dum) * factor / aperture.area()
 
     if obs != None:
         # write the numbers into file
