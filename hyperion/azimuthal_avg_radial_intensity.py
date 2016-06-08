@@ -159,13 +159,13 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
 
     I_sim_hi = np.log10((I_sim+I_sim_err)/I_sim.max())-np.log10(I_sim/I_sim.max())
     I_sim_low = np.log10(I_sim/I_sim.max())-np.log10((I_sim-I_sim_err)/I_sim.max())
-    i_sim = ax.errorbar(np.log10(r[:-1]*dstar), np.log10(I_sim/I_sim.max()),
+    i_sim = ax.errorbar(np.log10(r[:-1]*dstar), np.log10(I_sim/I_sim.max()), color='b',
                     yerr=(I_sim_low, I_sim_hi), marker='o', linestyle='-', mec='None', markersize=10)
 
     if obs != None:
         I_hi = np.log10((I+I_err)/I.max())-np.log10(I/I.max())
         I_low = np.log10(I/I.max())-np.log10((I-I_err)/I.max())
-        i = ax.errorbar(np.log10(r[:-1]*dstar), np.log10(I/I.max()),
+        i = ax.errorbar(np.log10(r[:-1]*dstar), np.log10(I/I.max()), color='g',
                         yerr=(I_low, I_hi), marker='o', linestyle='-', mec='None', markersize=10)
 
         ax.legend([i, i_sim], [r'$\rm{observation}$', r'$\rm{simulation}$'],
