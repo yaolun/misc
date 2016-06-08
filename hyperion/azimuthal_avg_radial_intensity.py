@@ -116,9 +116,6 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
 
     grid_dist = ((grid_x-pixcoord[0])**2+(grid_y-pixcoord[1])**2)**0.5
 
-    for ir in range(len(r)-1):
-
-
     # iteration
     for ir in range(len(r)-1):
         aperture = CircularAnnulus((npix/2.+0.5, npix/2.+0.5), r_in=r[ir]/pix2arcsec, r_out=r[ir+1]/pix2arcsec)
