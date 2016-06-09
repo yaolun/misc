@@ -39,6 +39,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
             im_err = im_hdu[5].data
         elif (wave > 200.0) & (wave < 670.0):
             im_err = im_hdu[2].data
+            print im_err
         else:
             im_err_exten = raw_input('The extension that includes the image error: ')
             im_err = im_hdu[int(im_err_exten)].data
