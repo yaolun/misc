@@ -38,8 +38,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         if (wave < 200.0) & (wave > 70.0):
             im_err = im_hdu[5].data
         elif (wave > 200.0) & (wave < 670.0):
-            im_err = im_hdu[2].data
-            print im_err
+            im_err = im_hdu[6].data
         else:
             im_err_exten = raw_input('The extension that includes the image error: ')
             im_err = im_hdu[int(im_err_exten)].data
@@ -70,12 +69,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         grid_x, grid_y = np.meshgrid(np.linspace(0,len(im[0,:])-1,len(im[0,:])),
                                      np.linspace(0,len(im[:,0])-1,len(im[:,0])))
 
-        dist_x = abs(grid_x - (len(im[:,0]-1)/2.))
-        dist_y = abs(grid_y - (len(im[0,:]-1)/2.))
-
-        grid_dist = ((dist_x-pixcoord[0])**2+(dist_y-pixcoord[1])**2)**0.5
-
-        print im_err
+        grid_dist = ((grid_x-pixcoord[0])**2+(grid_y-pixcoord[1])**2)**0.5
 
         # iteration
         for ir in range(len(r)-1):
