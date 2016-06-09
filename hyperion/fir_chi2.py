@@ -278,7 +278,10 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1, markersize=4)
         ax.set_xlabel(keywords['label'][0], fontsize=18)
         ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
-        # mark the region where the chi-squared ranging from lowest possible value to double
+
+        # ax.axvline(1, color='k', linestyle='--', linewidth=1)
+
+        # # mark the region where the chi-squared ranging from lowest possible value to double
         if ref != None:
             ax.axhspan(chi2[p1*1e4 == ref_p1], 2*chi2[p1*1e4 == ref_p1], color='grey', alpha=0.3)
         # make vertical lines to show the uncertainty with a certain chi-square criteria
@@ -481,4 +484,4 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.t
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 # keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, ref=114, zoom_1d=[0,3])
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, ref=114, zoom_1d=[0,4])

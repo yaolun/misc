@@ -115,7 +115,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     ax.set_xlabel(keywords['label'][0], fontsize=18)
     ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
 
-    ax.axvline(1, color='k', linestyle='--', linewidth=1.5)
+    ax.axvline(1, color='k', linestyle='--', linewidth=1)
     # ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
     #            color='b', alpha=0.3)
 
