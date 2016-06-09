@@ -80,7 +80,8 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
             # uncertainty
             im_dum = np.where((grid_dist < r[ir+1]/pix2arcsec) & (grid_dist >= r[ir]/pix2arcsec), im, np.nan)
             # I_err[ir] = phot['aperture_sum_err'].data * factor / aperture.area()
-            I_err[ir] = (np.nanstd(im_dum)**2+phot['aperture_sum_err'].data**2)**0.5 * factor / aperture.area()
+            # I_err[ir] = (np.nanstd(im_dum)**2+phot['aperture_sum_err'].data**2)**0.5 * factor / aperture.area()
+            I_err[ir] = I[ir]*0.05
 
     # read in from RTout
     rtout = ModelOutput(rtout)
