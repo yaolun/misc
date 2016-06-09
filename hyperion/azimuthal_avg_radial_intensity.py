@@ -72,10 +72,9 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         dist_x = abs(grid_x - (len(im[:,0]-1)/2.))
         dist_y = abs(grid_y - (len(im[0,:]-1)/2.))
 
-        grid_dist = ((grid_x-pixcoord[0])**2+(grid_y-pixcoord[1])**2)**0.5
+        grid_dist = ((dist_x-pixcoord[0])**2+(dist_y-pixcoord[1])**2)**0.5
 
-        for ir in range(len(r)-1):
-            im_dum = np.where((grid_dist < r[ir+1]/pix2arcsec) & (grid_dist >= r[ir]/pix2arcsec), im, np.nan)
+        print im_err
 
         # iteration
         for ir in range(len(r)-1):
