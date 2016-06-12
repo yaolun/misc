@@ -101,7 +101,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
                         ref_p1 = float((model_list[keywords['col'][0]][model_list['Model#'] == 'Model'+str(imod)]).data)
                     model_label.append(str(imod))
 
-                    # print reduced_chi2_dum
+                    print p1[-1], reduced_chi2_dum
                     chi2.append(reduced_chi2_dum)
 
     # plot the simulation on top of the observation
@@ -126,7 +126,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     # else:
     #     # fig.gca().set_xlim(left=0)
     #     ax.set_xlim([0,10])
-    ax.set_ylim([30, 300])
+    ax.set_ylim([0, 50])
 
     [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
     ax.minorticks_on()
@@ -139,7 +139,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
 import numpy as np
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
-               'model_num': np.arange(89,159)}]
+               'model_num': np.arange(159,207)}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 filename_ext = '_radial_profile_160.0um'
-radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=100.0, ref=114, zoom_1d=[0,4])
+radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=100.0, ref=174, zoom_1d=[0,7])
