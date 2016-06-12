@@ -1,5 +1,5 @@
 def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, spitzer_only=False, \
-    herschel_only=False, plot_model=True, zoom_1d=None):
+    herschel_only=False, plot_model=True, zoom_1d=None, shade=True):
     """
     array_list: contains dictionaries, each dictionary represents a location of 'model_list.txt', and the model numbers within.
     """
@@ -279,16 +279,19 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         ax.set_xlabel(keywords['label'][0], fontsize=18)
         ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
 
-        # ax.axvline(1, color='k', linestyle='--', linewidth=1)
+        ax.axvline(1, color='k', linestyle='--', linewidth=1)
 
-        # # mark the region where the chi-squared ranging from lowest possible value to double
-        if ref != None:
-            ax.axhspan(chi2[p1*1e4 == ref_p1], 2*chi2[p1*1e4 == ref_p1], color='grey', alpha=0.3)
-        # make vertical lines to show the uncertainty with a certain chi-square criteria
-        print min(p1[chi2 <= min(chi2)*2])*1e4, max(p1[chi2 <= min(chi2)*2])*1e4
+        if shade:
+            if ref != None:
+                # mark the region where the chi-squared ranging from lowest possible value to double
+                ax.axhspan(chi2[p1*1e4 == ref_p1], 2*chi2[p1*1e4 == ref_p1], color='grey', alpha=0.3)
+                # make vertical lines to show the uncertainty with a certain chi-square criteria
+                ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
+                           color='b', alpha=0.3)
+
+        # print min(p1[chi2 <= min(chi2)*2])*1e4, max(p1[chi2 <= min(chi2)*2])*1e4
         print chi2
-        ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
-                   color='b', alpha=0.3)
+
 
         # ax.set_yscale('log')
 
@@ -297,7 +300,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         # else:
         #     # fig.gca().set_xlim(left=0)
         #     ax.set_xlim([0,10])
-        ax.set_ylim([5, 15])
+        ax.set_ylim([0, 50])
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on()
@@ -480,8 +483,8 @@ obs = '/Users/yaolun/bhr71/best_calibrated/'
 # For fitting the best age for p25 dust opactity
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
-               'model_num': np.arange(89,159)}]
+               'model_num': np.arange(159,207)}]
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 # keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, ref=114, zoom_1d=[0,4])
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, ref=174, zoom_1d=[0,7], shade=False)
