@@ -24,7 +24,8 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
     AU = const.au.cgs.value
 
     # radial grid in arcsec
-    r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float)
+    # make the annulus center on
+    r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float) - annulus_width/2.
 
     # source_center = '12 01 36.3 -65 08 53.0'
 
@@ -62,6 +63,8 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
                 factor = raw_input('What is the conversion factor to Jy/pixel?')
 
         I = np.empty_like(r[:-1])
+        I_low = np.empty_like(r[:-1])
+        I_hi = np.empty_like(r[:-1])
         I_err = np.empty_like(r[:-1])
 
         # for calculating the uncertainty from the variation within each annulus
@@ -81,7 +84,21 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
             im_dum = np.where((grid_dist < r[ir+1]/pix2arcsec) & (grid_dist >= r[ir]/pix2arcsec), im, np.nan)
             # I_err[ir] = phot['aperture_sum_err'].data * factor / aperture.area()
             # I_err[ir] = (np.nanstd(im_dum)**2+phot['aperture_sum_err'].data**2)**0.5 * factor / aperture.area()
-            I_err[ir] = I[ir]*0.05
+
+            # estimate the uncertainty by offsetting the annulus by +/- 1 pixel
+            offset = -1
+            aperture = CircularAnnulus((pixcoord[0],pixcoord[1]),
+                                r_in=r[ir]/pix2arcsec + offset, r_out=r[ir+1]/pix2arcsec + offset)
+            phot = ap(im, aperture, error=im_err)
+            I_low[ir] = phot['aperture_sum'].data * factor / aperture.area()
+
+            offset = 1
+            aperture = CircularAnnulus((pixcoord[0],pixcoord[1]),
+                                r_in=r[ir]/pix2arcsec + offset, r_out=r[ir+1]/pix2arcsec + offset)
+            phot = ap(im, aperture, error=im_err)
+            I_hi[ir] = phot['aperture_sum'].data * factor / aperture.area()
+
+        I_err = ((I_low - I)**2 + (I_hi - I)**2)**0.5
 
     # read in from RTout
     rtout = ModelOutput(rtout)
@@ -99,6 +116,8 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
     pix2arcsec = 2*w/npix
 
     I_sim = np.empty_like(r[:-1])
+    I_sim_hi = np.empty_like(r[:-1])
+    I_sim_low = np.empty_like(r[:-1])
     I_sim_err = np.empty_like(r[:-1])
 
     # for calculating the uncertainty from the variation within each annulus
@@ -113,14 +132,30 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
 
     # iteration
     for ir in range(len(r)-1):
-        aperture = CircularAnnulus((npix/2.+0.5, npix/2.+0.5), r_in=r[ir]/pix2arcsec, r_out=r[ir+1]/pix2arcsec)
+        aperture = CircularAnnulus((npix/2.+0.5, npix/2.+0.5),
+                            r_in=r[ir]/pix2arcsec, r_out=r[ir+1]/pix2arcsec)
         phot = ap(val, aperture, error=unc)
         I_sim[ir] = phot['aperture_sum'].data / aperture.area()
 
         # uncertainty
         im_dum = np.where((grid_dist < r[ir+1]/pix2arcsec) & (grid_dist >= r[ir]/pix2arcsec), val, np.nan)
         # I_sim_err[ir] = phot['aperture_sum_err'].data / aperture.area()
-        I_sim_err[ir] = (np.nanstd(im_dum)**2+phot['aperture_sum_err'].data**2)**0.5 * factor / aperture.area()
+        # I_sim_err[ir] = (np.nanstd(im_dum)**2+phot['aperture_sum_err'].data**2)**0.5 * factor / aperture.area()
+
+        offset = -1
+        aperture = CircularAnnulus((npix/2.+0.5, npix/2.+0.5),
+                            r_in=r[ir]/pix2arcsec + offset, r_out=r[ir+1]/pix2arcsec + offset)
+        phot = ap(val, aperture, error=unc)
+        I_sim_low[ir] = phot['aperture_sum'].data * factor / aperture.area()
+
+        offset = 1
+        aperture = CircularAnnulus((npix/2.+0.5, npix/2.+0.5),
+                            r_in=r[ir]/pix2arcsec + offset, r_out=r[ir+1]/pix2arcsec + offset)
+        phot = ap(val, aperture, error=unc)
+        I_sim_hi[ir] = phot['aperture_sum'].data * factor / aperture.area()
+
+    I_sim_err = ((I_sim_low - I_sim)**2 + (I_sim_hi - I_sim)**2)**0.5
+
 
     if obs != None:
         # write the numbers into file
@@ -133,7 +168,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         foo.write('r_in \t I \t I_err \t I_sim \t I_sim_err \n')
         foo.write('# [arcsec] \t [Jy/pixel] \t [Jy/pixel] \t [Jy/pixel] \t [Jy/pixel] \n')
         for i in range(len(I)):
-            foo.write('%f \t %e \t %e \t %e \t %e \n' % (r[i], I[i], I_err[i], I_sim[i], I_sim_err[i]))
+            foo.write('%f \t %e \t %e \t %e \t %e \n' % (r[i]+annulus_width/2., I[i], I_err[i], I_sim[i], I_sim_err[i]))
         foo.close()
     else:
         # write the numbers into file
@@ -145,7 +180,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         foo.write('r_in \t I_sim \t I_sim_err \n')
         foo.write('# [arcsec] \t [Jy/pixel] \t [Jy/pixel] \n')
         for i in range(len(I_sim)):
-            foo.write('%f \t %e \t %e \n' % (r[i], I_sim[i], I_sim_err[i]))
+            foo.write('%f \t %e \t %e \n' % (r[i]+annulus_width/2., I_sim[i], I_sim_err[i]))
         foo.close()
 
     # plot
@@ -184,7 +219,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
 
     fig.savefig(plotname+'_radial_profile_'+str(wave)+'um.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
-#
+
 # obs_azi = {'imgpath': '/Users/yaolun/test/hpacs1342224922_20hpppmapr_00_1431606963820.fits',
 #           'source_center': '12:01:36.81 -65:08:49.22'}
 # azimuthal_avg_radial_intensity(160.0, '/Users/yaolun/bhr71/hyperion/controlled/model144.rtout',
