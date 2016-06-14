@@ -75,7 +75,8 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
                    'I_err': model_dum['I_sim_err'].data/model_dum['I_sim'].data.max()}
             chi2_dum, n = chisq(obs, sim, r_in=model_dum['r_in'].data, rmax=rmax)
 
-            reduced_chi2_dum = chi2_dum/(n-2-1)
+            # reduced_chi2_dum = chi2_dum/(n-2-1)
+            reduced_chi2_dum = chi2_dum / (n-1)
             total_chi2.append(reduced_chi2_dum)
 
             if ref == None:
@@ -116,6 +117,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
 
     ax.axvline(1, color='k', linestyle='--', linewidth=1)
+    ax.axhline(1, color='k')
     # ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
     #            color='b', alpha=0.3)
 
@@ -126,7 +128,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     # else:
     #     # fig.gca().set_xlim(left=0)
     #     ax.set_xlim([0,10])
-    ax.set_ylim([0, 50])
+    ax.set_ylim([0, 10])
 
     [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
     ax.minorticks_on()
