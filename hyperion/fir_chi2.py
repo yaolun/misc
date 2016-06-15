@@ -481,10 +481,11 @@ obs = '/Users/yaolun/bhr71/best_calibrated/'
 # fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[0,5])
 
 # For fitting the best age for p25 dust opactity
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
-               'model_num': np.arange(159,207)}]
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/',
+               'model_num': np.arange(114,117)}]
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
-keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+# keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+keywords = {'col':['view_angle'], 'label':[r'$\rm{\theta_{incl.}\,[deg.]}$']}
 # keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, ref=174, zoom_1d=[0,7], shade=False)
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=False, ref=114, shade=False)
