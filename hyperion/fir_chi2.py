@@ -407,7 +407,7 @@ import numpy as np
 #                'model_num': np.arange(39,49)}]
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
-               'model_num': np.arange(1,9)}]
+               'model_num': np.arange(1,26)}]
 
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
@@ -422,17 +422,17 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.tx
 # keywords_list = [{'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{cav}\,[deg.]}$']},\
 #                  {'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']},\
 #                  {'col':['view_angle','theta_cav'], 'label': [r'$\rm{\theta_{incl}\,[deg.]}$', r'$\rm{\theta_{cav}\,[deg.]}$']}]
-# keywords_list = [{'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
-keywords_list = [{'col':['theta_cav','view_angle'], 'label': [r'$\rm{\theta_{cav}\,[deg.]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
+keywords_list = [{'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
+# keywords_list = [{'col':['theta_cav','view_angle'], 'label': [r'$\rm{\theta_{cav}\,[deg.]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
 obs = '/Users/yaolun/bhr71/best_calibrated/'
 
 # for tstar & age
 # keywords_list = [{'col':['tstar','age'], 'label': [r'$\rm{T_{\star}\,[K]}$', r'$\rm{age\,[10^{4}\,yr]}$']}]
 #
-# for keywords in keywords_list:
-#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=1, plot_model=False, herschel_only=True)
-#     for i in range(len(p1)):
-#         print p1[i], p2[i], chi2[i]
+for keywords in keywords_list:
+    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=19, plot_model=False, herschel_only=False)
+    for i in range(len(p1)):
+        print p1[i], p2[i], chi2[i]
     # fir_chi2_2d(array_list, keywords, obs)
 
 # # 1-D rho_cav_center

@@ -12,7 +12,7 @@ def grid_create(list_params, outdir):
 	yr = 3600.*24*365
 
 	# default parameter setup
-	ref = {'age': 1.5e4, 'Cs': 0.5, 'Omega0': 2.5278e-13, 'tstar': 7100., 'R_env_max': 4.1253e4, 'theta_cav': 20., 'rho_cav_center': 5e-19,\
+	ref = {'age': 1.5e4, 'Cs': 0.37, 'Omega0': 2.5278e-13, 'tstar': 7100., 'R_env_max': 4.1253e4, 'theta_cav': 20., 'rho_cav_center': 5e-19,\
 		   'rho_cav_edge': 40., 'rstar': 3., 'M_disk_dot': 6.5e-7, 'M_disk': 0.075, 'beta': 1.093, 'rho_cav':1e-21, 'h100': 8.123,\
 		   'percentile': 95., 'absolute': 2.0, 'relative': 1.02, 'view_angle': 42., 'cav_power': 2.0}
 	# This is the right order
