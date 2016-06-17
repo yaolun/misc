@@ -98,7 +98,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
             phot = ap(im, aperture, error=im_err)
             I_hi[ir] = phot['aperture_sum'].data * factor / aperture.area()
 
-        I_err = ((I_low - I)**2 + (I_hi - I)**2)**0.5
+        I_err = (abs(I_low - I) + abs(I_hi - I))/2.
 
     # read in from RTout
     rtout = ModelOutput(rtout)
@@ -154,7 +154,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         phot = ap(val, aperture, error=unc)
         I_sim_hi[ir] = phot['aperture_sum'].data * factor / aperture.area()
 
-    I_sim_err = ((I_sim_low - I_sim)**2 + (I_sim_hi - I_sim)**2)**0.5
+    I_sim_err = (abs(I_sim_low - I_sim)+ abs(I_sim_hi - I_sim))/2.
 
 
     if obs != None:

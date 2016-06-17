@@ -109,7 +109,11 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     fig = plt.figure(figsize=(8,6))
     ax = fig.add_subplot(111)
 
-    p1 = np.array(np.squeeze(p1))/1e4
+    if keywords['col'] == 'age':
+        p1 = np.array(np.squeeze(p1))/1e4
+    else:
+        p1 = np.array(np.squeeze(p1))
+
     chi2 = np.array(np.squeeze(chi2))
 
     ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1, markersize=4)
@@ -139,9 +143,13 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     fig.clf()
 
 import numpy as np
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
-               'model_num': np.arange(159,207)}]
-keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
+#                'model_num': np.arange(159,207)}]
+# keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/',
+               'model_num': np.arange(96,103)}]
+keywords = {'col':['view_angle'], 'label': [r'$\rm{\theta_{incl.}\,[deg.]}$']}
 filename_ext = '_radial_profile_160.0um'
-radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=100.0, ref=174, zoom_1d=[0,7])
+radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=100.0, ref=96, zoom_1d=[50,60])
