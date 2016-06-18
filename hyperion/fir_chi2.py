@@ -358,6 +358,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         ax.set_xticks(np.linspace(0, 1, 5))
         ax.set_xticklabels(np.linspace(min(p1), max(p1), 5))
         ax.set_yticks(np.linspace(0, 1, 5))
+        #
+        # p2 = 0.3 *pc/10e5 / np.tan(np.radians(p2)) / (3600.*24*365) / 1e4
+        #
         ax.set_yticklabels(np.linspace(min(p2), max(p2), 5))
 
         divider = make_axes_locatable(ax)
@@ -373,9 +376,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             ori_data = ax.scatter(p1_norm,p2_norm, marker='o',c='b',s=5)
 
         # print the model number near the points
-        # for i in range(len(model_label)):
-            # print model_label[i]
-            # ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
+        for i in range(len(model_label)):
+            print model_label[i]
+            ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
 
         ax.set_xlabel(keywords['label'][0], fontsize=20)
         ax.set_ylabel(keywords['label'][1], fontsize=20)
