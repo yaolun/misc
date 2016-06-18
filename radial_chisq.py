@@ -109,7 +109,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     fig = plt.figure(figsize=(8,6))
     ax = fig.add_subplot(111)
 
-    if keywords['col'] == 'age':
+    if keywords['col'][0] == 'age':
         p1 = np.array(np.squeeze(p1))/1e4
     else:
         p1 = np.array(np.squeeze(p1))
@@ -120,7 +120,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     ax.set_xlabel(keywords['label'][0], fontsize=18)
     ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
 
-    ax.axvline(1, color='k', linestyle='--', linewidth=1)
+    ax.axvline(2.9353, color='k', linestyle='--', linewidth=1)
     ax.axhline(1, color='k')
     # ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
     #            color='b', alpha=0.3)
@@ -143,13 +143,13 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     fig.clf()
 
 import numpy as np
-# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
-#                'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
-#                'model_num': np.arange(159,207)}]
-# keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/',
-               'model_num': np.arange(96,103)}]
-keywords = {'col':['view_angle'], 'label': [r'$\rm{\theta_{incl.}\,[deg.]}$']}
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
+               'model_num': np.arange(159,207)}]
+keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/',
+#                'model_num': np.arange(96,103)}]
+# keywords = {'col':['view_angle'], 'label': [r'$\rm{\theta_{incl.}\,[deg.]}$']}
 filename_ext = '_radial_profile_160.0um'
-radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=100.0, ref=96, zoom_1d=[50,60])
+radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=100.0, ref=182, zoom_1d=[0,7])
