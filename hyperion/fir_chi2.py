@@ -61,7 +61,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     # setup the aperture size
     if wl_aper == None:
         # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-        wl_aper = [3.6, 4.5, 8.5, 9, 9.7, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500]
+        # wl_aper = [3.6, 4.5, 8.5, 9, 9.7, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500]
+        wl_aper = [3.6, 4.5, 8.5, 9, 9.7, 10, 16, 20, 24, 30, 70, 100, 160, 250, 350, 500]
+
         # wl_aper = [70., 100., 160., 250., 350., 500.]
     if spitzer_only:
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35]
@@ -289,10 +291,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
                            color='b', alpha=0.3)
 
-        # print min(p1[chi2 <= min(chi2)*2])*1e4, max(p1[chi2 <= min(chi2)*2])*1e4
-        print chi2
-
-
         # ax.set_yscale('log')
 
         if zoom_1d != None:
@@ -311,6 +309,14 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         fig.clf()
 
     else:
+
+        # write out the chi2
+        foo = open('/Users/yaolun/bhr71/hyperion/chi2_grid/chi2-2d.txt', 'w')
+        foo.write('{} \t {} \t {} \n'.format('chisq', keywords['col'][0], keywords['col'][1]))
+        for i in range(len(chi2)):
+            foo.write('{} \t {} \t {} \n'.format(chi2[i], p1[i], p2[i]))
+        foo.close()
+
         # rebin the data and plot 2D contour
         from scipy.interpolate import griddata
         from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -432,11 +438,11 @@ obs = '/Users/yaolun/bhr71/best_calibrated/'
 # for tstar & age
 # keywords_list = [{'col':['tstar','age'], 'label': [r'$\rm{T_{\star}\,[K]}$', r'$\rm{age\,[10^{4}\,yr]}$']}]
 #
-# for keywords in keywords_list:
-#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=19, plot_model=False, herschel_only=False)
-#     for i in range(len(p1)):
-#         print p1[i], p2[i], chi2[i]
-    # fir_chi2_2d(array_list, keywords, obs)
+for keywords in keywords_list:
+    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=19, plot_model=False, herschel_only=False)
+    for i in range(len(p1)):
+        print p1[i], p2[i], chi2[i]
+    fir_chi2_2d(array_list, keywords, obs)
 
 # # 1-D rho_cav_center
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
