@@ -116,6 +116,8 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
 
     chi2 = np.array(np.squeeze(chi2))
 
+    print p1[chi2 == chi2.min()]
+
     ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1, markersize=4)
     ax.set_xlabel(keywords['label'][0], fontsize=18)
     ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
@@ -145,11 +147,11 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
 import numpy as np
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
-               'model_num': np.arange(239,268)}]
+               'model_num': np.arange(268,303)}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/',
 #                'model_num': np.arange(96,103)}]
 # keywords = {'col':['view_angle'], 'label': [r'$\rm{\theta_{incl.}\,[deg.]}$']}
 filename_ext = '_radial_profile_160.0um'
-radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=100.0, ref=249, zoom_1d=[0,7])
+radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=100.0, ref=285, zoom_1d=[0,7])
