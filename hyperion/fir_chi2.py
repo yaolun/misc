@@ -383,7 +383,6 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
 
         # print the model number near the points
         for i in range(len(model_label)):
-            print model_label[i]
             ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
 
         ax.set_xlabel(keywords['label'][0], fontsize=20)
@@ -492,9 +491,9 @@ for keywords in keywords_list:
 # For fitting the best age for p25 dust opactity
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
-               'model_num': np.arange(239,268)}]
+               'model_num': np.arange(268,303)}]
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 # keywords = {'col':['view_angle'], 'label':[r'$\rm{\theta_{incl.}\,[deg.]}$']}
 # keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, ref=249, shade=False)
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, ref=285, shade=False)
