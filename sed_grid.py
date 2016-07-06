@@ -1109,7 +1109,7 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     l_bol_obs = l_bol(wl_tot,flux_tot*1e23, dstar)
 
     if wl_aper == None:
-        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 30, 70, 100, 160, 250, 350, 500, 850]
 
     # Create the plot
     mag = 1.5
@@ -1644,7 +1644,7 @@ sed_lum(indir, array, outdir)
 array = np.array([[24,22,20],[5,15,20]])
 cs_age_behavior(indir, array, outdir)
 
-model_vs_obs('model3', '/Users/yaolun/bhr71/hyperion/controlled/', outdir, obs=obs)
+model_vs_obs('model158', '/Users/yaolun/bhr71/hyperion/', outdir, obs=obs)
 
 # models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
 #                '/Users/yaolun/bhr71/hyperion/controlled/model225',\
