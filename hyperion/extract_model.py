@@ -519,12 +519,12 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
         fig.savefig(outdir+print_name+'_image_gridplot.pdf', format='pdf', dpi=300, bbox_inches='tight')
         fig.clf()
 
-indir = '/Users/yaolun/bhr71/best_calibrated/'
-outdir = '/Users/yaolun/bhr71/hyperion/'
-import numpy as np
+# indir = '/Users/yaolun/bhr71/best_calibrated/'
+# outdir = '/Users/yaolun/bhr71/hyperion/'
+# import numpy as np
 # # from astropy.io import ascii
 # # aperture = ascii.read(indir+'aperture.txt')
-wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
-aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-extract_hyperion('/Volumes/SD-Mac/model158.rtout',indir=indir,outdir='/Users/yaolun/test/',\
-    aperture=aperture,filter_func=True,plot_all=False,clean=True,image=True,print_data_w_aper=True)
+# wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
+# aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
+# extract_hyperion('/Volumes/SD-Mac/model158.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+#     aperture=aperture,filter_func=True,plot_all=False,clean=True,image=True,print_data_w_aper=True)
