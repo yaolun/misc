@@ -1,5 +1,5 @@
 def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, spitzer_only=False, \
-    herschel_only=False, plot_model=True, zoom_1d=None, shade=True):
+    herschel_only=False, plot_model=False, zoom_1d=None, shade=True):
     """
     array_list: contains dictionaries, each dictionary represents a location of 'model_list.txt', and the model numbers within.
     """
@@ -382,8 +382,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             ori_data = ax.scatter(p1_norm,p2_norm, marker='o',c='b',s=5)
 
         # print the model number near the points
-        for i in range(len(model_label)):
-            ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
+        # for i in range(len(model_label)):
+        #     ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
 
         ax.set_xlabel(keywords['label'][0], fontsize=20)
         ax.set_ylabel(keywords['label'][1], fontsize=20)

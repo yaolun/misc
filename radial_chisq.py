@@ -122,7 +122,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     ax.set_xlabel(keywords['label'][0], fontsize=18)
     ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
 
-    ax.axvline(2.3059, color='k', linestyle='--', linewidth=1)
+    ax.axvline(2.2362, color='k', linestyle='--', linewidth=1)
     ax.axhline(1, color='k')
     # ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
     #            color='b', alpha=0.3)
@@ -145,8 +145,8 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     fig.clf()
 
 import numpy as np
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
+array_list = [{'listpath': '/Volumes/SD-Mac/hyperion/controlled/cycle8/model_list.txt',
+               'datapath': '/Volumes/SD-Mac/hyperion/controlled/cycle8/',
                'model_num': np.arange(268,303)}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
