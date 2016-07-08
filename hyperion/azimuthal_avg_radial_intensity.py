@@ -201,8 +201,11 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         ax.legend([i, i_sim], [r'$\rm{observation}$', r'$\rm{simulation}$'],
                   fontsize=16, numpoints=1, loc='upper right')
     else:
-        ax.legend([i_sim], [r'$\rm{simulation}$'], fontsize=16, numpoints=1, loc='upper right')
+        ax.legend([i_sim], [r'$\rm{simulation}$'], fontsize=16, numpoints=1, loc='best')
 
+    # limit radius
+    ax.axvline([np.log10(100*dstar)], color='k', linestyle='--', linewidth=1)
+    #
     [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
     ax.minorticks_on()
     ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=10,length=5)
@@ -220,7 +223,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
     fig.savefig(plotname+'_radial_profile_'+str(wave)+'um.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# obs_azi = {'imgpath': '/Users/yaolun/test/hpacs1342224922_20hpppmapr_00_1431606963820.fits',
-#           'source_center': '12:01:36.81 -65:08:49.22'}
-# azimuthal_avg_radial_intensity(160.0, '/Users/yaolun/bhr71/hyperion/controlled/model144.rtout',
-#                                '/Users/yaolun/test/model144', 200.0, obs=obs_azi)
+obs_azi = {'imgpath': '/Users/yaolun/test/hpacs1342224922_20hpppmapr_00_1431606963820.fits',
+          'source_center': '12:01:36.81 -65:08:49.22'}
+azimuthal_avg_radial_intensity(160.0, '/Volumes/SD-Mac/model158.rtout',
+                               '/Users/yaolun/test/model158', 200.0, obs=obs_azi)
