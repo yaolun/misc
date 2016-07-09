@@ -1551,11 +1551,11 @@ def cs_age_behavior(indir, array, outdir, obs=None):
 
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
-outdir = '/Users/yaolun/test/updated_bhr71/Jun16/'
+outdir = '/Users/yaolun/test/updated_bhr71/Jul16/'
 obs = '/Users/yaolun/bhr71/best_calibrated/'
 
 # grid of cs and age
-array = np.array([[5,6,7,8,9],[10,11,12,13,14],[15,16,17,18,19],[20,21,22,23,24]])
+array = np.array([[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20],[21,22,23,24,25]])
 cslist = [0.27,0.37,0.47,0.57]
 agelist = [5e3,1e4,2.5e4,5e4,7.5e4]
 sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
@@ -1575,45 +1575,45 @@ sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 # sed_five('/Users/yaolun/bhr71/hyperion/cycle8/', array, outdir, xlabel, plotname, obs=obs, compact=compact, obs_color='Red')
 
 # grid of Omega0
-array = np.array([27,26,25])
+array = np.array([28,27,26])
 sed_omega(indir, array, outdir, obs=None, compact=True, addname='_1e4')
-array = np.array([30,29,28])
+array = np.array([31,30,29])
 sed_omega(indir, array, outdir, obs=None, compact=True, addname='_7.5e4')
 
 # grid of disk parameters
 # disk mass
-array = np.array([32,33,34])
-xlabel = r'$M_{disk}\,[M_{\odot}]\,(0.025,\,0.075,\,0.25)$'
-compact = [r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$']
-plotname = 'disk_mdisk'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# array = np.array([32,33,34])
+# xlabel = r'$M_{disk}\,[M_{\odot}]\,(0.025,\,0.075,\,0.25)$'
+# compact = [r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$']
+# plotname = 'disk_mdisk'
+# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # flare power
-array = np.array([35,36,37,38,39])
-xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
-compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
-plotname = 'disk_beta'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# array = np.array([35,36,37,38,39])
+# xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
+# compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
+# plotname = 'disk_beta'
+# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # scale height
-array = np.array([40,41,42,43,44])
-xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
-compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
-plotname = 'disk_h100'
-sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
+# array = np.array([40,41,42,43,44])
+# xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
+# compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
+# plotname = 'disk_h100'
+# sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
 # all disk parameter
-array = np.array([[32,33,34,0,0],[35,36,37,38,39],[40,41,42,43,44]])
-compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
-           [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
-           [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
-disk_summary(indir, array, outdir, compact=compact)
+# array = np.array([[32,33,34,0,0],[35,36,37,38,39],[40,41,42,43,44]])
+# compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
+#            [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
+#            [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
+# disk_summary(indir, array, outdir, compact=compact)
 
 
 # grid of theta_cav and incl.
-array = np.array([[56,57,58,59,60],[61,62,63,64,65],[66,67,68,69,70]])
-sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
+# array = np.array([[56,57,58,59,60],[61,62,63,64,65],[66,67,68,69,70]])
+# sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 
 # grid of rho_cav_center and sed_rho_cav_edge
-array = np.array([[71,72,73,74],[75,76,77,78],[79,80,81,82]])
-sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
+# array = np.array([[71,72,73,74],[75,76,77,78],[79,80,81,82]])
+# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # disk & no disk
 # late: yes & no; early: yes & no
@@ -1622,27 +1622,27 @@ sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 
 # grid of R_env_max
-array = np.array([86,87,88])
-xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
-compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
-plotname = 'r_max'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5])
+# array = np.array([86,87,88])
+# xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
+# compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
+# plotname = 'r_max'
+# sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5])
 
 # grid of continuous cavity power law
 # power = 2, 1.5, const+r-2, and uniform
-array = {'r-2': [48,50], 'r-1.5': [52,54], 'const+r-2': [114], 'uniform': [46]}
-sed_cav_struc_com(indir, array, outdir, obs=obs)
+# array = {'r-2': [48,50], 'r-1.5': [52,54], 'const+r-2': [114], 'uniform': [46]}
+# sed_cav_struc_com(indir, array, outdir, obs=obs)
 #
-array = {'r-2': [48,50], 'r-1.5': [52,54], 'const+r-2': [114], 'uniform': [46]}
-sed_cav_struc_com(indir, array, outdir, obs=None)
+# array = {'r-2': [48,50], 'r-1.5': [52,54], 'const+r-2': [114], 'uniform': [46]}
+# sed_cav_struc_com(indir, array, outdir, obs=None)
 
 
 # grid of tstar with the same lstar
-array = np.array([83,84,85])
-sed_lum(indir, array, outdir)
+# array = np.array([83,84,85])
+# sed_lum(indir, array, outdir)
 
-array = np.array([[24,22,20],[5,15,20]])
-cs_age_behavior(indir, array, outdir)
+# array = np.array([[24,22,20],[5,15,20]])
+# cs_age_behavior(indir, array, outdir)
 
 model_vs_obs('model158', '/Users/yaolun/bhr71/hyperion/', outdir, obs=obs)
 
