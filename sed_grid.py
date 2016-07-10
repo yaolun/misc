@@ -1582,29 +1582,29 @@ sed_omega(indir, array, outdir, obs=None, compact=True, addname='_7.5e4')
 
 # grid of disk parameters
 # disk mass
-# array = np.array([32,33,34])
-# xlabel = r'$M_{disk}\,[M_{\odot}]\,(0.025,\,0.075,\,0.25)$'
-# compact = [r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$']
-# plotname = 'disk_mdisk'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+array = np.array([36,37,38])
+xlabel = r'$M_{disk}\,[M_{\odot}]\,(0.025,\,0.075,\,0.25)$'
+compact = [r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$']
+plotname = 'disk_mdisk'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # flare power
-# array = np.array([35,36,37,38,39])
-# xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
-# compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
-# plotname = 'disk_beta'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+array = np.array([39,40,41,42,43])
+xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
+compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
+plotname = 'disk_beta'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
 # scale height
-# array = np.array([40,41,42,43,44])
-# xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
-# compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
-# plotname = 'disk_h100'
-# sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
+array = np.array([44,45,46,47,48])
+xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
+compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
+plotname = 'disk_h100'
+sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
 # all disk parameter
-# array = np.array([[32,33,34,0,0],[35,36,37,38,39],[40,41,42,43,44]])
-# compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
-#            [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
-#            [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
-# disk_summary(indir, array, outdir, compact=compact)
+array = np.array([[36,37,38,0,0],[39,40,41,42,43],[44,45,46,47,48]])
+compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
+           [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
+           [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
+disk_summary(indir, array, outdir, compact=compact)
 
 
 # grid of theta_cav and incl.
@@ -1617,8 +1617,8 @@ sed_omega(indir, array, outdir, obs=None, compact=True, addname='_7.5e4')
 
 # disk & no disk
 # late: yes & no; early: yes & no
-# array = np.array([27,29,67,84])
-# disk_exist_com(indir+'cycle6/', array, outdir, obs=None)
+array = np.array([34,35,32,33])
+disk_exist_com(indir, array, outdir, obs=None)
 
 
 # grid of R_env_max
