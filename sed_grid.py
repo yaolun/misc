@@ -440,7 +440,7 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                 if cc == 0:
                     ax.legend(loc='upper left', numpoints=1,framealpha=0.3,fontsize=10)
 
-            ax.set_ylim([-14,-8])
+            ax.set_ylim([-13,-7])
             ax.set_xlim([0.4,2])
             ax.set_xticks([0.4,0.8,1.2,1.6,2.0])
             # ax.locator_params(axis='x', nbins=4)
@@ -942,38 +942,38 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
     fig, axarr = plt.subplots(3, 1, sharex='col', sharey='row', figsize=(8,18))
     # plot r-2 profile with two density offsets
     (wave_r21, sed_r21, sed_unc_r21) = np.genfromtxt(indir+'/model'+str(array['r-2'][0])+'_sed_w_aperture.txt', skip_header=1).T
-    r21, = axarr[0].plot(np.log10(wave_r21), np.log10(sed_r21), 'o', linestyle='-', mfc='Magenta',mec='Magenta',\
-            markersize=7,markeredgewidth=1,color='Magenta', linewidth=1.5)
+    r21, = axarr[0].plot(np.log10(wave_r21), np.log10(sed_r21), 'o', linestyle='-', mfc='None',mec='Magenta',\
+            markersize=7,markeredgewidth=1,color='Magenta', linewidth=1)
     (wave_r22, sed_r22, sed_unc_r22) = np.genfromtxt(indir+'/model'+str(array['r-2'][1])+'_sed_w_aperture.txt', skip_header=1).T
-    r22, = axarr[0].plot(np.log10(wave_r22), np.log10(sed_r22), 'o', linestyle='--', mfc='Magenta',mec='Magenta',\
-            markersize=7,markeredgewidth=1,color='Magenta', linewidth=1.5)
+    r22, = axarr[0].plot(np.log10(wave_r22), np.log10(sed_r22), 'x', linestyle='--', mfc='Magenta',mec='Magenta',\
+            markersize=7,markeredgewidth=1,color='Magenta', linewidth=1)
     axarr[0].legend([r21, r22], \
-        [r'$\rm{\rho_{\circ}=5\times 10^{-16}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$'],\
+        [r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-21}\,g\,cm^{-3}}$'],\
         fontsize=14, numpoints=1, framealpha=0.5)
     axarr[0].text(0.1,0.9, r'$\rm{\rho(r) \propto r^{-2}}$', fontsize=18,color='k', transform=axarr[0].transAxes)
     # additional embedded axis for density
     den_r2 = plt.axes([0.45 ,0.67, 0.2, 0.08], frameon=True)
-    den_r2.plot(np.log10(rc), np.log10(5e-16*d2),'-',color='k',linewidth=1)
-    den_r2.plot(np.log10(rc), np.log10(5e-18*d2),'--',color='k',linewidth=1)
+    den_r2.plot(np.log10(rc), np.log10(5e-18*d2),'-',color='k',linewidth=1)
+    den_r2.plot(np.log10(rc), np.log10(5e-21*d2),'--',color='k',linewidth=1)
     den_r2.set_xlim([-1,5])
     den_r2.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
     den_r2.set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$')
     #
     # plot r-1.5 profile with two density offsets
     (wave_r151, sed_r151, sed_unc_r151) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][0])+'_sed_w_aperture.txt', skip_header=1).T
-    r151, = axarr[1].plot(np.log10(wave_r151), np.log10(sed_r151), 'o', linestyle='-', mfc='Red',mec='Red',\
-            markersize=7,markeredgewidth=1,color='Red', linewidth=1.5)
+    r151, = axarr[1].plot(np.log10(wave_r151), np.log10(sed_r151), 'o', linestyle='-', mfc='None',mec='Red',\
+            markersize=7,markeredgewidth=1,color='Red', linewidth=1)
     (wave_r152, sed_r152, sed_unc_r152) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][1])+'_sed_w_aperture.txt', skip_header=1).T
-    r152, = axarr[1].plot(np.log10(wave_r152), np.log10(sed_r152), 'o', linestyle='--', mfc='Red',mec='Red',\
-            markersize=7,markeredgewidth=1,color='Red', linewidth=1.5)
+    r152, = axarr[1].plot(np.log10(wave_r152), np.log10(sed_r152), 'x', linestyle='--', mfc='Red',mec='Red',\
+            markersize=7,markeredgewidth=1,color='Red', linewidth=1)
     axarr[1].legend([r151, r152], \
-        [r'$\rm{\rho_{\circ}=5\times 10^{-16}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$'],\
+        [r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-21}\,g\,cm^{-3}}$'],\
         fontsize=14, numpoints=1, framealpha=0.5)
     axarr[1].text(0.1,0.9, r'$\rm{\rho(r) \propto r^{-1.5}}$', fontsize=18,color='k', transform=axarr[1].transAxes)
     # additional embedded axis for density
     den_r15 = plt.axes([0.45 ,0.4, 0.2, 0.08], frameon=True)
-    den_r15.plot(np.log10(rc), np.log10(5e-16*d15),'-',color='k',linewidth=1)
-    den_r15.plot(np.log10(rc), np.log10(5e-18*d15),'--',color='k',linewidth=1)
+    den_r15.plot(np.log10(rc), np.log10(5e-18*d15),'-',color='k',linewidth=1)
+    den_r15.plot(np.log10(rc), np.log10(5e-21*d15),'--',color='k',linewidth=1)
     den_r15.set_xlim([-1,5])
     den_r15.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
     den_r15.set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$')
@@ -993,10 +993,10 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
         fontsize=14, numpoints=1, framealpha=0.5)
     # additional embedded axis for density
     den_b = plt.axes([0.45 ,0.13, 0.2, 0.08], frameon=True)
-    den_b.plot(np.log10(rc), np.log10(5e-16*d2),'-',color='Magenta',linewidth=1)
-    den_b.plot(np.log10(rc), np.log10(5e-16*d15),'-',color='Red',linewidth=1)
-    den_b.plot(np.log10(rc), np.log10(5e-19*db), '-', color='Blue',linewidth=1)
-    den_b.plot(np.log10(rc), np.log10(rc*0+1e-20), '-', color='Green',linewidth=1)
+    den_b.plot(np.log10(rc), np.log10(5e-18*d2),'-',color='Magenta',linewidth=1)
+    den_b.plot(np.log10(rc), np.log10(5e-18*d15),'-',color='Red',linewidth=1)
+    den_b.plot(np.log10(rc), np.log10(5e-20*db), '-', color='Blue',linewidth=1)
+    den_b.plot(np.log10(rc), np.log10(rc*0+1e-21), '-', color='Green',linewidth=1)
     den_b.set_xlim([-1,5])
     den_b.set_ylim([-28,-14])
     den_b.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
@@ -1449,7 +1449,7 @@ def disk_summary(indir, array, outdir, obs=None, compact=None, inf=False, obs_co
 
             ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
         ax.text(0.05, 0.85, title[i], fontsize=20, transform=ax.transAxes)
-        ax.set_ylim([-11,-8])
+        ax.set_ylim([-14,-8])
         ax.set_xlim([0.4,2])
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
@@ -1606,14 +1606,20 @@ compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{
            [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
 disk_summary(indir, array, outdir, compact=compact)
 
+# disks in early stage
+array = np.array([[93,94,95,0,0],[96,97,98,99,100],[101,102,103,104,105]])
+compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
+           [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
+           [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
+disk_summary(indir, array, outdir, compact=compact)
 
 # grid of theta_cav and incl.
-# array = np.array([[56,57,58,59,60],[61,62,63,64,65],[66,67,68,69,70]])
-# sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
+array = np.array([[60,61,62,63,64],[65,66,67,68,69],[70,71,72,73,74]])
+sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 
 # grid of rho_cav_center and sed_rho_cav_edge
-# array = np.array([[71,72,73,74],[75,76,77,78],[79,80,81,82]])
-# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
+array = np.array([[75,76,77,78],[79,80,81,82],[83,84,85,86]])
+sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # disk & no disk
 # late: yes & no; early: yes & no
@@ -1622,27 +1628,27 @@ disk_exist_com(indir, array, outdir, obs=None)
 
 
 # grid of R_env_max
-# array = np.array([86,87,88])
-# xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
-# compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
-# plotname = 'r_max'
-# sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5])
+array = np.array([90,91,92])
+xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
+compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
+plotname = 'r_max'
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5])
 
 # grid of continuous cavity power law
 # power = 2, 1.5, const+r-2, and uniform
 # array = {'r-2': [48,50], 'r-1.5': [52,54], 'const+r-2': [114], 'uniform': [46]}
 # sed_cav_struc_com(indir, array, outdir, obs=obs)
 #
-# array = {'r-2': [48,50], 'r-1.5': [52,54], 'const+r-2': [114], 'uniform': [46]}
-# sed_cav_struc_com(indir, array, outdir, obs=None)
+array = {'r-2': [52,54], 'r-1.5': [55,58], 'const+r-2': [80], 'uniform': [51]}
+sed_cav_struc_com(indir, array, outdir, obs=None)
 
 
 # grid of tstar with the same lstar
-# array = np.array([83,84,85])
-# sed_lum(indir, array, outdir)
+array = np.array([87,88,89])
+sed_lum(indir, array, outdir)
 
-# array = np.array([[24,22,20],[5,15,20]])
-# cs_age_behavior(indir, array, outdir)
+array = np.array([[25,23,21],[6,16,21]])
+cs_age_behavior(indir, array, outdir)
 
 model_vs_obs('model158', '/Users/yaolun/bhr71/hyperion/', outdir, obs=obs)
 
