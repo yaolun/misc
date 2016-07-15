@@ -46,7 +46,7 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20, labelpad=-140, color='grey')
     ax.tick_params(labelsize=16)
     ax.tick_params(axis='y', colors='grey')
-    ax.set_yticks(np.arange(0,int(R_env_max/AU/10000.)*10000, 10000))
+    ax.set_yticks(np.arange(0,int(max(rc)/AU/10000.)*10000, 10000))
 
     ax.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
                             r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
@@ -115,6 +115,6 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     fig.savefig(outdir+print_name+'_temp_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/controlled/model224.rtout'
-# outdir = '/Users/yaolun/bhr71/hyperion/controlled/'
+# rtout = '/Volumes/SD-Mac/model158.rtout'
+# outdir = '/Users/yaolun/test/'
 # temp_hyperion(rtout, outdir, bb_dust=True)

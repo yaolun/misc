@@ -522,7 +522,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
 # indir = '/Users/yaolun/bhr71/best_calibrated/'
 # outdir = '/Users/yaolun/bhr71/hyperion/'
 # import numpy as np
-# # from astropy.io import ascii
+# from astropy.io import ascii
 # # aperture = ascii.read(indir+'aperture.txt')
 # wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
 # aperture = {'wave': wl_aper, 'aperture': aper_arcsec}

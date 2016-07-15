@@ -179,7 +179,7 @@ def sed_omega(indir, array, outdir, obs=None, compact=False, addname=''):
                      [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
                      [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
 
-        label = [r'$\Omega_{\circ}=1\times 10^{-14}\,s^{-1}$',r'$\Omega_{\circ}=1\times 10^{-13}\,s^{-1}$',r'$\Omega_{\circ}=1\times 10^{-12}\,s^{-1}$']
+        label = [r'$\Omega_{\circ}=5\times 10^{-14}\,s^{-1}$',r'$\Omega_{\circ}=1\times 10^{-13}\,s^{-1}$',r'$\Omega_{\circ}=5\times 10^{-13}\,s^{-1}$']
         fig = plt.figure(figsize=(8,6))
         ax = fig.add_subplot(111)
 
@@ -1577,7 +1577,7 @@ sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 # grid of Omega0
 array = np.array([28,27,26])
 sed_omega(indir, array, outdir, obs=None, compact=True, addname='_1e4')
-array = np.array([31,30,29])
+array = np.array([108,107,106])
 sed_omega(indir, array, outdir, obs=None, compact=True, addname='_7.5e4')
 
 # grid of disk parameters
@@ -1641,24 +1641,25 @@ sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=c
 #
 array = {'r-2': [52,54], 'r-1.5': [55,58], 'const+r-2': [80], 'uniform': [51]}
 sed_cav_struc_com(indir, array, outdir, obs=None)
-
+array = {'r-2': [54,54], 'r-1.5': [58,58], 'const+r-2': [80], 'uniform': [51]}
+sed_cav_struc_com(indir, array, outdir, obs=obs)
 
 # grid of tstar with the same lstar
 array = np.array([87,88,89])
 sed_lum(indir, array, outdir)
 
-array = np.array([[25,23,21],[6,16,21]])
+array = np.array([[6,16,21],[25,23,21]])
 cs_age_behavior(indir, array, outdir)
 
 model_vs_obs('model158', '/Users/yaolun/bhr71/hyperion/', outdir, obs=obs)
 
-# models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
-#                '/Users/yaolun/bhr71/hyperion/controlled/model225',\
-#                '/Users/yaolun/bhr71/hyperion/controlled/model224'],\
-#                '/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
-#                [r'$\rm{Kristensen\,et.\,al.\,2012}$', \
-#                r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',\
-#                r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model5',\
+               '/Users/yaolun/bhr71/hyperion/controlled/model3',\
+               '/Users/yaolun/bhr71/hyperion/controlled/model80'],\
+               outdir,\
+               [r'$\rm{Kristensen\,et.\,al.\,(2012)}$', \
+               r'$\rm{geometry\,from\,B97}$',\
+               r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
 #
 # models_vs_obs(['/Users/yaolun/test/updated_bhr71/BHR71_ult/model154',\
 #                '/Users/yaolun/test/updated_bhr71/BHR71_ult/model154_nontsc'],\
@@ -1667,6 +1668,6 @@ model_vs_obs('model158', '/Users/yaolun/bhr71/hyperion/', outdir, obs=obs)
 
 
 # full TSC vs infall-only TSC model
-# models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle9/model1','/Users/yaolun/bhr71/hyperion/cycle9/model1_ulrich'],\
-#     '/Users/yaolun/test/',\
-#     [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model63_tsc_com')
+models_vs_obs(['/Users/yaolun/test/model158','/Users/yaolun/test/model158_nontsc'],\
+    outdir,\
+    [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model158_tsc_com')
