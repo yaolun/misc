@@ -508,17 +508,18 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mmw/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mmw/mh)
 
             ax_env.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
-            ax_env.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20, labelpad=-140)
+            ax_env.set_ylabel('',fontsize=20, labelpad=-140)
             ax_env.tick_params(labelsize=18)
-            ax_env.set_yticks(np.arange(0,int(R_env_max/AU/10000.)*10000, 10000))
+            ax_env.set_yticks(np.hstack((np.arange(0,(int(R_env_max/AU/10000.)+1)*10000, 10000),R_env_max/AU)))
             ax_env.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
                                     r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
+            ax_env.set_yticklabels([])
             # fix the tick label font
             ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=20)
             for label in ax_env.get_yticklabels():
                 label.set_fontproperties(ticks_font)
 
-            ax_env.grid(True)
+            ax_env.grid(True, color='LightGray', linewidth=1)
             cb = fig.colorbar(img_env, pad=0.1)
             cb.ax.set_ylabel(r'$\rm{Averaged\,Gas\,Density\,(cm^{-3})}$',fontsize=20)
             cb.set_ticks([1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9])
@@ -801,7 +802,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 # from input_reader import input_reader_table
 # from pprint import pprint
 # import numpy as np
-# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
 # params = input_reader_table(filename)
 # pprint(params[0])
 # outdir = '/Users/yaolun/test/'
@@ -810,5 +811,5 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 # wl_aper, aper_arcsec = np.genfromtxt('/Users/yaolun/bhr71/best_calibrated/aperture.txt',
 #                                      skip_header=1, dtype=float).T
 # aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# setup_model(outdir,record_dir,'model158_nontsc',params[0],dust_file,plot=True,record=False,\
-#     aperture=aperture,idl='rhoenv_model158.dat',radmc=False,tsc=True, tsc_com=True)
+# setup_model(outdir,record_dir,'model158',params[0],dust_file,plot=True,record=False,\
+#     aperture=aperture,idl='rhoenv_model158.dat',radmc=False,tsc=True)

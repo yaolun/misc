@@ -43,10 +43,13 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     im.set_edgecolor('face')
 
     ax.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
-    ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20, labelpad=-140, color='grey')
+    # ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20, labelpad=-140, color='grey')
+    ax.set_ylabel('',fontsize=20, labelpad=-140, color='grey')
     ax.tick_params(labelsize=16)
     ax.tick_params(axis='y', colors='grey')
-    ax.set_yticks(np.arange(0,int(max(rc)/AU/10000.)*10000, 10000))
+    ax.set_yticks(np.hstack((np.arange(0,(int(max(rc)/AU/10000.)+1)*10000, 10000),max(rc)/AU)))
+    ax.set_yticklabels([])
+    ax.grid(True, color='LightGray', linewidth=1)
 
     ax.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
                             r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
