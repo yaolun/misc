@@ -237,7 +237,6 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
 
             # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1)
             if obs != None:
-
                 from get_obs import get_obs
 
                 bhr71 = get_obs(obs)  # in um and Jy
@@ -249,7 +248,12 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=3,markeredgewidth=1,linewidth=1.2)
 
             if inf == True:
-                ax.plot(np.log10(wave_inf), np.log10(sed_inf), '--',mfc='b',mec='b',markersize=3,markeredgewidth=1,linewidth=1.2)
+                from ConvolveSimulation import ConvolveSimulation
+                conv_wl = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 30, 70, 100, 160, 250, 350, 500, 1300]
+                filter_dir = '/Users/yaolun/programs/misc/hyperion/'
+                conv = ConvolveSimulation((wave_inf, sed_inf, sed_inf_unc), conv_wl, filter_dir, filter_func=True)
+
+                ax.plot(np.log10(conv[0]), np.log10(conv[1]), '--',mfc='b',mec='b',markersize=3,markeredgewidth=1,linewidth=1.2)
 
             if tbol == True:
                  ax.text(0.4, 0.1, r'$T_{bol}= %4.1f\,K$' % t_bol(wave, sed*wave*1e-4/c), fontsize=12, transform=ax.transAxes)
@@ -309,10 +313,17 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             # sed with apertures
             (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
-            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i])
+            # ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],
+            #         color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i])
 
             if inf == True:
-              ax.plot(np.log10(wave_inf), np.log10(sed_inf), '--',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2)
+                from ConvolveSimulation import ConvolveSimulation
+                conv_wl = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 30, 70, 100, 160, 250, 350, 500, 1300]
+                filter_dir = '/Users/yaolun/programs/misc/hyperion/'
+                conv = ConvolveSimulation((wave_inf, sed_inf, sed_inf_unc), conv_wl, filter_dir, filter_func=True)
+
+                ax.plot(np.log10(conv[0]), np.log10(conv[1]), 'o-',mfc=color_list[i],mec=color_list[i],
+                      color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i])
 
             ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
         ax.set_xlabel(r'$log(wavelength)\,[\mu m]$', fontsize=18)
@@ -1249,7 +1260,7 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
     if len(modelname) == 2:
         color_list = ['Blue','Blue']
         style = ['-','--']
-        plotname = 'tsc_vs_nontsc'
+        # plotname = plotname+'tsc_vs_nontsc'
 
     # Read in the observation data and calculate the noise & variance
     if outdir == None:
@@ -1632,7 +1643,7 @@ array = np.array([90,91,92])
 xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
 compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
 plotname = 'r_max'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5])
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5], inf=True)
 
 # grid of continuous cavity power law
 # power = 2, 1.5, const+r-2, and uniform
@@ -1671,3 +1682,11 @@ models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model5',\
 models_vs_obs(['/Users/yaolun/test/model158','/Users/yaolun/test/model158_nontsc'],\
     outdir,\
     [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model158_tsc_com')
+# early age
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/model159','/Users/yaolun/bhr71/hyperion/model159_nontsc'],\
+    outdir,\
+    [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model159_tsc_com')
+# smaller inclination
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/model160','/Users/yaolun/bhr71/hyperion/model160_nontsc'],\
+    outdir,\
+    [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model160_tsc_com')
