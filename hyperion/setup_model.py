@@ -3,7 +3,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                 record=True,dstar=200.,aperture=None,dyn_cav=False,fix_params=None,
                 power=2,better_im=False,ellipsoid=False,TSC_dir='~/programs/misc/TSC/',
                 IDL_path='/Applications/exelis/idl83/bin/idl',auto_disk=0.25,fast_plot=False,
-                image_only=False):
+                image_only=False, tsc_com=False):
     """
     params = dictionary of the model parameters
     'alma' keyword is obsoleted
@@ -180,6 +180,35 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     rc           = 0.5*( ri[0:nx]     + ri[1:nx+1] )
     thetac       = 0.5*( thetai[0:ny] + thetai[1:ny+1] )
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
+
+    # for non-TSC model
+    if tsc_com:
+        import hyperion as hp
+        from hyperion.model import AnalyticalYSOModel
+
+        non_tsc = AnalyticalYSOModel()
+
+        # Define the luminsoity source
+        nt_source = non_tsc.add_spherical_source()
+        nt_source.luminosity = (4*PI*rstar**2)*sigma*(tstar**4)  # [ergs/s]
+        nt_source.radius = rstar  # [cm]
+        nt_source.temperature = tstar  # [K]
+        nt_source.position = (0., 0., 0.)
+        nt_source.mass = mstar
+
+        # Envelope structure
+        #
+        nt_envelope = non_tsc.add_ulrich_envelope()
+        nt_envelope.mdot = M_env_dot    # Infall rate
+        nt_envelope.rmin = rin          # Inner radius
+        nt_envelope.rc   = R_cen        # Centrifugal radius
+        nt_envelope.rmax = R_env_max    # Outer radius
+        nt_envelope.star = nt_source
+
+        nt_grid = hp.grid.SphericalPolarGrid(ri, thetai, phii)
+
+        rho_env_ulrich = nt_envelope.density(nt_grid).T
+        rho_env_ulrich2d = np.sum(rho_env_ulrich**2,axis=2)/np.sum(rho_env_ulrich,axis=2)
 
     # Make the dust density model
     # Make the density profile of the envelope
@@ -365,6 +394,11 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         #
         rho_disk = np.zeros([len(rc),len(thetac),len(phic)])
         rho      = np.zeros([len(rc),len(thetac),len(phic)])
+
+        # non-TSC option
+        if tsc_com:
+            rho_ulrich = np.zeros([len(rc),len(thetac),len(phic)])
+
         # Calculate the disk scale height by the normalization of h100
         def f(w,z,beta,rstar,h100):
             f = 2*PI*w*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/(w**beta*h100/100**beta))**2)
@@ -406,15 +440,23 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                                     rho_cav_edge = R_env_min
                                 if (rc[ir] <= rho_cav_edge) & (rc[ir] >= R_env_min):
                                     rho_env[ir,itheta,iphi] = g2d * rho_cav_center#*((rc[ir]/AU)**2)
+                                    if tsc_com:
+                                        rho_env_ulrich[ir,itheta,iphi] = rho_env[ir,itheta,iphi]
                                 else:
                                     rho_env[ir,itheta,iphi] = g2d * rho_cav_center*discont*(rho_cav_edge/rc[ir])**power
+                                    if tsc_com:
+                                        rho_env_ulrich[ir,itheta,iphi] = rho_env[ir,itheta,iphi]
                                 i += 1
                             else:
                                 # condition for the inner ellipsoid
                                 if (2*(w/b_in)**2 + ((abs(z)-z_in)/a_in)**2) > 1:
                                     rho_env[ir,itheta,iphi] = rho_cav_out
+                                    if tsc_com:
+                                        rho_env_ulrich[ir,itheta,iphi] = rho_env[ir,itheta,iphi]
                                 else:
                                     rho_env[ir,itheta,iphi] = rho_cav_in
+                                    if tsc_com:
+                                        rho_env_ulrich[ir,itheta,iphi] = rho_env[ir,itheta,iphi]
                                 i +=1
 
                         # Disk profile
@@ -423,13 +465,19 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                             rho_disk[ir,itheta,iphi] = rho_0*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/h)**2)
                         # Combine envelope and disk
                         rho[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env[ir,itheta,iphi]
+                        if tsc_com:
+                            rho_ulrich[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env_ulrich[ir,itheta,iphi]
                     else:
                         rho[ir,itheta,iphi] = 1e-40
+                        if tsc_com:
+                            rho[ir,itheta,iphi] = 1e-40
                     # add the dust mass into the total count
                     cell_mass = rho[ir, itheta, iphi] * (1/3.)*(ri[ir+1]**3 - ri[ir]**3) * (phii[iphi+1]-phii[iphi]) * -(np.cos(thetai[itheta+1])-np.cos(thetai[itheta]))
                     total_mass = total_mass + cell_mass
     # apply gas-to-dust ratio of 100
     rho_dust = rho/g2d
+    if tsc_com:
+        rho_ulrich_dust = rho_ulrich/g2d
     total_mass_dust = total_mass/MS/g2d
     print 'Total dust mass = %f Solar mass' % total_mass_dust
 
@@ -443,6 +491,9 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         # rho2d is the 2-D projection of gas density
         # take the weighted average
         rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
+
+        if tsc_com:
+            rho2d = np.sum(rho_ulrich**2,axis=2)/np.sum(rho_ulrich,axis=2)
 
         if fast_plot == False:
             # Plot the azimuthal averaged density
@@ -521,6 +572,9 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     m.set_spherical_polar_grid(ri, thetai, phii)
 
     m.add_density_grid(rho_dust.T, d)
+    # for non-TSC option
+    if tsc_com:
+        m.add_density_grid(rho_ulrich_dust.T, d)
 
     # Define the luminsoity source
     source = m.add_spherical_source()
@@ -574,7 +628,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         # flatten beyond 20 um
         # default aperture (should always specify a set of apertures)
         if aperture == None:
-            aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 1300],\
+            aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 30, 70, 100, 160, 250, 350, 500, 1300],\
                         'aperture': [7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 20.4, 20.4, 20.4, 20.4, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5, 101]}
         # assign wl_aper and aper from dictionary of aperture
         wl_aper = aperture['wave']
@@ -746,11 +800,15 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
 # from input_reader import input_reader_table
 # from pprint import pprint
-# filename = '/Users/yaolun/programs/misc/hyperion/input_table_chi2.txt'
+# import numpy as np
+# filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
 # params = input_reader_table(filename)
 # pprint(params[0])
 # outdir = '/Users/yaolun/test/'
 # record_dir = '/Users/yaolun/test/'
 # dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# setup_model(outdir,record_dir,'model224',params[0],dust_file,plot=True,record=False,\
-#     idl='rhoenv_model224.dat',radmc=False,fix_params=fix_params,ellipsoid=False,tsc=False)
+# wl_aper, aper_arcsec = np.genfromtxt('/Users/yaolun/bhr71/best_calibrated/aperture.txt',
+#                                      skip_header=1, dtype=float).T
+# aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
+# setup_model(outdir,record_dir,'model158_nontsc',params[0],dust_file,plot=True,record=False,\
+#     aperture=aperture,idl='rhoenv_model158.dat',radmc=False,tsc=True, tsc_com=True)
