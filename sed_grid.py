@@ -950,7 +950,7 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
             db[i] = (rc[i]/40.)**-2
 
     # different style for maybe better illustration
-    fig, axarr = plt.subplots(3, 1, sharex='col', sharey='row', figsize=(8,18))
+    fig, axarr = plt.subplots(1, 3, sharex='col', sharey='row', figsize=(20,8))
     # plot r-2 profile with two density offsets
     (wave_r21, sed_r21, sed_unc_r21) = np.genfromtxt(indir+'/model'+str(array['r-2'][0])+'_sed_w_aperture.txt', skip_header=1).T
     r21, = axarr[0].plot(np.log10(wave_r21), np.log10(sed_r21), 'o', linestyle='-', mfc='None',mec='Magenta',\
@@ -963,7 +963,7 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
         fontsize=14, numpoints=1, framealpha=0.5)
     axarr[0].text(0.1,0.9, r'$\rm{\rho(r) \propto r^{-2}}$', fontsize=18,color='k', transform=axarr[0].transAxes)
     # additional embedded axis for density
-    den_r2 = plt.axes([0.45 ,0.67, 0.2, 0.08], frameon=True)
+    den_r2 = plt.axes([0.22 ,0.2, 0.1, 0.2], frameon=True)
     den_r2.plot(np.log10(rc), np.log10(5e-18*d2),'-',color='k',linewidth=1)
     den_r2.plot(np.log10(rc), np.log10(5e-21*d2),'--',color='k',linewidth=1)
     den_r2.set_xlim([-1,5])
@@ -982,7 +982,7 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
         fontsize=14, numpoints=1, framealpha=0.5)
     axarr[1].text(0.1,0.9, r'$\rm{\rho(r) \propto r^{-1.5}}$', fontsize=18,color='k', transform=axarr[1].transAxes)
     # additional embedded axis for density
-    den_r15 = plt.axes([0.45 ,0.4, 0.2, 0.08], frameon=True)
+    den_r15 = plt.axes([0.48 ,0.2, 0.1, 0.2], frameon=True)
     den_r15.plot(np.log10(rc), np.log10(5e-18*d15),'-',color='k',linewidth=1)
     den_r15.plot(np.log10(rc), np.log10(5e-21*d15),'--',color='k',linewidth=1)
     den_r15.set_xlim([-1,5])
@@ -1003,7 +1003,7 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
         [r'$\rho(r)\propto\,r^{-2}$', r'$\rho(r)\propto\,r^{-1.5}$',r'$uniform$',r'$const.+r^{-2}$'],\
         fontsize=14, numpoints=1, framealpha=0.5)
     # additional embedded axis for density
-    den_b = plt.axes([0.45 ,0.13, 0.2, 0.08], frameon=True)
+    den_b = plt.axes([0.74 ,0.2, 0.1, 0.2], frameon=True)
     den_b.plot(np.log10(rc), np.log10(5e-18*d2),'-',color='Magenta',linewidth=1)
     den_b.plot(np.log10(rc), np.log10(5e-18*d15),'-',color='Red',linewidth=1)
     den_b.plot(np.log10(rc), np.log10(5e-20*db), '-', color='Blue',linewidth=1)
@@ -1023,6 +1023,8 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
         ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=20)
         ax.set_ylim([-13,-7.5])
 
+    # plt.setp([a.get_yticklabels() for a in axarr[1:]], visible=False)
+    [a.set_ylabel('') for a in axarr[1:]]
 
     fig.subplots_adjust(hspace=0,wspace=0)
     fig.savefig(outdir+'sed_cav_struc_com_sty2.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -1560,13 +1562,110 @@ def cs_age_behavior(indir, array, outdir, obs=None):
     fig.savefig(outdir+'sed_cs_age_behavior.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
+def radial_grid(indir, array, outdir, wave, obs=False):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from astropy.io import ascii
+
+    # create figure
+    fig = plt.figure(figsize=(8,6))
+    ax = fig.add_subplot(111)
+
+    # set colormap
+    cmap = plt.cm.viridis
+    color_array = np.linspace(0, 0.9, len(array))
+
+    for imod in range(len(array)):
+        data_dum = ascii.read(indir+'model'+str(array[imod])+'_radial_profile_'+wave+'um.txt')
+        sim, = ax.plot(np.log10(data_dum['r_in']), np.log10(data_dum['I_sim']/data_dum['I_sim'].max()), 'o-',
+                       color=cmap(color_array[imod]), mfc=cmap(color_array[imod]), mec='None', markersize=4, linewidth=1.2)
+    if obs:
+        obs_plot, = ax.plot(np.log10(data_dum['r_in']), np.log10(data_dum['I']/data_dum['I'].max()), 'o-',
+                            color='k', mfc='k', mec='None', markersize=4, linewidth=1.2)
+
+    ax.legend([obs_plot], [r'$\rm{observation}$'],
+              loc='best', fontsize=16, numpoints=1)
+
+    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    ax.minorticks_on()
+    ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+
+    ax.set_xlabel(r'$log(radius)\,[AU]$', fontsize=18)
+    ax.set_ylabel(r'$log(I/I_{\rm max})$', fontsize=18)
+
+    fig.savefig(outdir+'radial_profiles.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
+
+def radial_grid_incl(indir, array_list, outdir, wave, cmap, labels, obs=False):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from astropy.io import ascii
+
+    # create figure
+    fig = plt.figure(figsize=(8,6))
+    ax = fig.add_subplot(111)
+
+    for i in range(len(array_list)):
+        # set colormap
+        cmap_dum = plt.get_cmap(cmap[i])
+        color_array = np.linspace(0, 0.9, len(array_list[i]))
+
+        for imod in range(len(array_list[i])):
+            data_dum = ascii.read(indir+'model'+str(array_list[i][imod])+'_radial_profile_'+wave+'um.txt')
+            ax.plot(np.log10(data_dum['r_in']), np.log10(data_dum['I_sim']/data_dum['I_sim'].max())-i, 'o-',
+                    color=cmap_dum(color_array[imod]), mfc=cmap_dum(color_array[imod]), mec='None',
+                    markersize=4, linewidth=1.2)
+
+    # # set colormap
+    # cmap_dum = plt.get_cmap('viridis')
+    # color_array = np.linspace(0, 0.9, len(array_list[0]))
+    #
+    # for imod in range(len(array_list[0])):
+    #     data1 = ascii.read(indir+'model'+str(array_list[0][imod])+'_radial_profile_'+wave+'um.txt')
+    #     data2 = ascii.read(indir+'model'+str(array_list[1][imod])+'_radial_profile_'+wave+'um.txt')
+    #
+    #     ax.plot(np.log10(data1['r_in']), np.log10((data1['I_sim']/data1['I_sim'].max())/(data2['I_sim']/data2['I_sim'].max())), 'o-',
+    #             color=cmap_dum(color_array[imod]), mfc=cmap_dum(color_array[imod]), mec='None',
+    #             markersize=4, linewidth=1.2)
+
+    # if obs:
+    #     obs_plot, = ax.plot(np.log10(data_dum['r_in']), np.log10(data_dum['I']/data_dum['I'].max()), 'o-',
+    #                         color='k', mfc='k', mec='None', markersize=4, linewidth=1.2)
+    #
+    #     ax.legend([obs_plot], [r'$\rm{observation}$'],
+    #               loc='best', fontsize=16, numpoints=1)
+
+    # for legend
+    cmap_dum = plt.get_cmap(cmap[0])
+    color_array = np.linspace(0, 0.9, len(array_list[0]))
+    incl1, = ax.plot([], [], 'o-', color=cmap_dum(color_array[-15]), mfc=cmap_dum(color_array[-15]), mec='None',
+                     markersize=4, linewidth=1.2)
+
+    cmap_dum = plt.get_cmap(cmap[1])
+    color_array = np.linspace(0, 0.9, len(array_list[1]))
+    incl2, = ax.plot([], [], 'o-', color=cmap_dum(color_array[-15]), mfc=cmap_dum(color_array[-15]), mec='None',
+                     markersize=4, linewidth=1.2)
+    ax.legend([incl1, incl2], labels, loc='best', fontsize=16, numpoints=1)
+
+    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    ax.minorticks_on()
+    ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+
+    ax.set_xlabel(r'$log(radius)\,[AU]$', fontsize=18)
+    ax.set_ylabel(r'$log(I/I_{\rm max})$', fontsize=18)
+
+    fig.savefig(outdir+'radial_profiles_incl.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
+
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
 outdir = '/Users/yaolun/test/updated_bhr71/Jul16/'
 obs = '/Users/yaolun/bhr71/best_calibrated/'
 
 # grid of cs and age
-array = np.array([[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20],[21,22,23,24,25]])
+array = np.array([[3,4,5,6,7],[8,9,10,11,12],[13,14,15,16,17],[18,19,20,21,22]])
 cslist = [0.27,0.37,0.47,0.57]
 agelist = [5e3,1e4,2.5e4,5e4,7.5e4]
 sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
@@ -1586,87 +1685,100 @@ sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 # sed_five('/Users/yaolun/bhr71/hyperion/cycle8/', array, outdir, xlabel, plotname, obs=obs, compact=compact, obs_color='Red')
 
 # grid of Omega0
-array = np.array([28,27,26])
-sed_omega(indir, array, outdir, obs=None, compact=True, addname='_1e4')
-array = np.array([108,107,106])
-sed_omega(indir, array, outdir, obs=None, compact=True, addname='_7.5e4')
+# array = np.array([28,27,26])
+# sed_omega(indir, array, outdir, obs=None, compact=True, addname='_1e4')
+# array = np.array([108,107,106])
+# sed_omega(indir, array, outdir, obs=None, compact=True, addname='_7.5e4')
 
 # grid of disk parameters
 # disk mass
-array = np.array([36,37,38])
-xlabel = r'$M_{disk}\,[M_{\odot}]\,(0.025,\,0.075,\,0.25)$'
-compact = [r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$']
-plotname = 'disk_mdisk'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
-# flare power
-array = np.array([39,40,41,42,43])
-xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
-compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
-plotname = 'disk_beta'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
-# scale height
-array = np.array([44,45,46,47,48])
-xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
-compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
-plotname = 'disk_h100'
-sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
-# all disk parameter
-array = np.array([[36,37,38,0,0],[39,40,41,42,43],[44,45,46,47,48]])
-compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
-           [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
-           [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
-disk_summary(indir, array, outdir, compact=compact)
+# array = np.array([36,37,38])
+# xlabel = r'$M_{disk}\,[M_{\odot}]\,(0.025,\,0.075,\,0.25)$'
+# compact = [r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$']
+# plotname = 'disk_mdisk'
+# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# # flare power
+# array = np.array([39,40,41,42,43])
+# xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
+# compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
+# plotname = 'disk_beta'
+# sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# # scale height
+# array = np.array([44,45,46,47,48])
+# xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
+# compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
+# plotname = 'disk_h100'
+# sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
+# # all disk parameter
+# array = np.array([[36,37,38,0,0],[39,40,41,42,43],[44,45,46,47,48]])
+# compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
+#            [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
+#            [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
+# disk_summary(indir, array, outdir, compact=compact)
 
 # disks in early stage
-array = np.array([[93,94,95,0,0],[96,97,98,99,100],[101,102,103,104,105]])
-compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
-           [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
-           [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
-disk_summary(indir, array, outdir, compact=compact)
+# array = np.array([[93,94,95,0,0],[96,97,98,99,100],[101,102,103,104,105]])
+# compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
+#            [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
+#            [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
+# disk_summary(indir, array, outdir, compact=compact)
 
 # grid of theta_cav and incl.
-array = np.array([[60,61,62,63,64],[65,66,67,68,69],[70,71,72,73,74]])
+array = np.array([[34,35,36,37,38],[39,40,41,42,43],[44,45,46,47,48]])
 sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
 
 # grid of rho_cav_center and sed_rho_cav_edge
-array = np.array([[75,76,77,78],[79,80,81,82],[83,84,85,86]])
-sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
+# array = np.array([[75,76,77,78],[79,80,81,82],[83,84,85,86]])
+# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # disk & no disk
 # late: yes & no; early: yes & no
-array = np.array([34,35,32,33])
-disk_exist_com(indir, array, outdir, obs=None)
+# array = np.array([34,35,32,33])
+# disk_exist_com(indir, array, outdir, obs=None)
 
 
 # grid of R_env_max
-array = np.array([90,91,92])
-xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
-compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
-plotname = 'r_max'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5], inf=True)
+# array = np.array([90,91,92])
+# xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
+# compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
+# plotname = 'r_max'
+# sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5], inf=True)
 
 # grid of continuous cavity power law
 # power = 2, 1.5, const+r-2, and uniform
 # array = {'r-2': [48,50], 'r-1.5': [52,54], 'const+r-2': [114], 'uniform': [46]}
 # sed_cav_struc_com(indir, array, outdir, obs=obs)
 #
-array = {'r-2': [52,54], 'r-1.5': [55,58], 'const+r-2': [80], 'uniform': [51]}
+array = {'r-2': [52,55], 'r-1.5': [56,59], 'const+r-2': [80], 'uniform': [51]}
+sed_cav_struc_com(indir+'cycle9/', array, outdir, obs=None)
+array = {'r-2': [55,55], 'r-1.5': [59,59], 'const+r-2': [80], 'uniform': [51]}
+sed_cav_struc_com(indir+'cycle9/', array, outdir, obs=obs)
+
+array = {'r-2': [26,29], 'r-1.5': [30,33], 'const+r-2': [54], 'uniform': [25]}
 sed_cav_struc_com(indir, array, outdir, obs=None)
-array = {'r-2': [54,54], 'r-1.5': [58,58], 'const+r-2': [80], 'uniform': [51]}
+array = {'r-2': [29,29], 'r-1.5': [33,33], 'const+r-2': [54], 'uniform': [25]}
 sed_cav_struc_com(indir, array, outdir, obs=obs)
 
 # grid of tstar with the same lstar
-array = np.array([87,88,89])
-sed_lum(indir, array, outdir)
+# array = np.array([87,88,89])
+# sed_lum(indir, array, outdir)
 
-array = np.array([[6,16,21],[25,23,21]])
+array = np.array([[3,13,18],[22,20,18]])
 cs_age_behavior(indir, array, outdir)
 
-model_vs_obs('model158', '/Users/yaolun/bhr71/hyperion/', outdir, obs=obs)
+array = np.arange(268,303)
+wave = '160.0'
+radial_grid('/Volumes/SD-Mac/hyperion/controlled/cycle8/', array, outdir, wave, obs=True)
+array_list = [np.arange(268,303), np.arange(207,239)]
+labels = [r'$\rm{\theta_{incl}=53^{\circ}}$', r'$\rm{\theta_{incl}=61^{\circ}}$']
+cmap = ['viridis', 'inferno']
+radial_grid_incl('/Volumes/SD-Mac/hyperion/controlled/cycle8/', array_list, outdir, wave, cmap, labels, obs=False)
 
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model5',\
-               '/Users/yaolun/bhr71/hyperion/controlled/model3',\
-               '/Users/yaolun/bhr71/hyperion/controlled/model80'],\
+model_vs_obs('model54', '/Users/yaolun/bhr71/hyperion/', outdir, obs=obs)
+
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model2',\
+               '/Users/yaolun/bhr71/hyperion/controlled/model1',\
+               '/Users/yaolun/bhr71/hyperion/controlled/model54'],\
                outdir,\
                [r'$\rm{Kristensen\,et.\,al.\,(2012)}$', \
                r'$\rm{geometry\,from\,B97}$',\
