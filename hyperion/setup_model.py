@@ -799,17 +799,17 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     return m
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# import numpy as np
-# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# outdir = '/Users/yaolun/test/'
-# record_dir = '/Users/yaolun/test/'
-# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# wl_aper, aper_arcsec = np.genfromtxt('/Users/yaolun/bhr71/best_calibrated/aperture.txt',
-#                                      skip_header=1, dtype=float).T
-# aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# setup_model(outdir,record_dir,'model54_nontsc',params[0],dust_file,plot=True,record=False,\
-#     aperture=aperture,idl='rhoenv_model54.dat',radmc=False,tsc=True)
+from input_reader import input_reader_table
+from pprint import pprint
+import numpy as np
+filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+outdir = '/Users/yaolun/test/'
+record_dir = '/Users/yaolun/test/'
+dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+wl_aper, aper_arcsec = np.genfromtxt('/Users/yaolun/bhr71/best_calibrated/aperture.txt',
+                                     skip_header=1, dtype=float).T
+aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
+setup_model(outdir,record_dir,'model54_nontsc',params[0],dust_file,plot=True,record=False,\
+    aperture=aperture,idl='rhoenv_model54.dat',radmc=False,tsc=False)
