@@ -57,7 +57,7 @@ fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(111)
 
 for imod in range(len(array)):
-    m = ModelOutput(indir+'model'+str(array[imod])+'.rtout')
+    m = ModelOutput(indir+'model'+str(array[imod])+'/'+'model'+str(array[imod])+'.rtout')
     image = m.get_image(group=8, inclination=0, distance=200 * pc, units='MJy/sr')
     n, s = OutflowIntensity(image, wave)
     ax.plot(view_angle[imod], s/n, 'bo', mec='None')
