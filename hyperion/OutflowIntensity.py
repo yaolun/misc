@@ -1,12 +1,15 @@
-def OutflowIntensity(image, wave):
+def OutflowIntensity(model, dstar, group, wave):
     import numpy as np
     import matplotlib.pyplot as plt
     from hyperion.model import ModelOutput
     from photutils import aperture_photometry as ap
     from photutils import CircularAperture
+    import astropy.constants as const
+
+    pc = const.pc.cgs.value
 
     # m = ModelOutput('/Volumes/SD-Mac/model131.rtout')
-    # image = m.get_image(group=8, inclination=0, distance=dstar * pc, units='MJy/sr')
+    image = m.get_image(group=group, inclination=0, distance=dstar * pc, units='MJy/sr')
 
     # The radius of the aperture in arcsec
     radius = 10
@@ -16,7 +19,6 @@ def OutflowIntensity(image, wave):
 
     if wave != list:
         wave = [wave]
-
 
     iwav = np.argmin(np.abs(wave - image.wav))
     # Image in the unit of MJy/sr, change it into erg/s/cm2/Hz/sr
@@ -58,10 +60,18 @@ ax = fig.add_subplot(111)
 
 for imod in range(len(array)):
     m = ModelOutput(indir+'model'+str(array[imod])+'/'+'model'+str(array[imod])+'.rtout')
-    image = m.get_image(group=8, inclination=0, distance=200 * pc, units='MJy/sr')
-    n, s = OutflowIntensity(image, wave)
+    # image = m.get_image(group=8, inclination=0, distance=200 * pc, units='MJy/sr')
+    n, s = OutflowIntensity(m, 200.0, 8, wave)
     ax.plot(view_angle[imod], s/n, 'bo', mec='None')
 
+# fix the tick label font
+ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=18)
+for label in ax.get_xticklabels():
+    label.set_fontproperties(ticks_font)
+for label in ax.get_yticklabels():
+    label.set_fontproperties(ticks_font)
+
+ax.set_xlim([15,95])
 ax.set_xlabel(r'$\rm{Inclination\,Angle\,[deg.]}$',fontsize=20)
 ax.set_ylabel(r'$\rm{F_{south}/F_{north}}$',fontsize=20)
 [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
