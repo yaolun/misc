@@ -41,6 +41,9 @@ def OutflowIntensity(image, wave):
 
 import numpy as np
 from hyperion.model import ModelOutput
+# to avoid X server error
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import astropy.constants as const
 pc = const.pc.cgs.value
