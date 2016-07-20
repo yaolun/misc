@@ -15,7 +15,7 @@ def OutflowIntensity(image, wave):
     offset = 10
 
     if wave != list:
-        wave = list(wave)
+        wave = [wave]
 
 
     iwav = np.argmin(np.abs(wave - image.wav))
