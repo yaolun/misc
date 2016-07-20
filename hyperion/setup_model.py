@@ -357,7 +357,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         rho_env_tsc = np.zeros([len(rc), len(thetac)])
         for irc in range(len(rc)):
             if rc[irc] in rc_idl:
-                rho_env_tsc[irc,:] = rho_env_tsc_idl[np.where(rc_idl == rc[irc]),:]
+                rho_env_tsc[irc,:] = rho_env_tsc_idl[np.squeeze(np.where(rc_idl == rc[irc])),:]
 
         # extrapolate for the NaN values at the outer radius, usually at radius beyond the infall radius
         # using r^-2 profile at radius greater than infall radius
@@ -811,5 +811,5 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 # wl_aper, aper_arcsec = np.genfromtxt('/Users/yaolun/bhr71/best_calibrated/aperture.txt',
 #                                      skip_header=1, dtype=float).T
 # aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# setup_model(outdir,record_dir,'model158',params[0],dust_file,plot=True,record=False,\
-#     aperture=aperture,idl='rhoenv_model158.dat',radmc=False,tsc=True)
+# setup_model(outdir,record_dir,'model54_nontsc',params[0],dust_file,plot=True,record=False,\
+#     aperture=aperture,idl='rhoenv_model54.dat',radmc=False,tsc=True)
