@@ -91,6 +91,9 @@ if mono:
         mono_wave = [1.6]
 
     print 'Simulations will be performed at the following wavelengths: ', mono_wave
+
+    unit = 'MJy\,sr^{-1}'
+    print 'Image unit is set to be MJy/sr'
 # path setting version 1.1
 # The path file "run_hyperion_path.txt" has to be placed at the same directory as main_hyperion.py
 home = os.path.expanduser('~')
@@ -189,11 +192,11 @@ if extract_only == False:
         else:
             if type(mono_wave) is str:
                 hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
-                        float(mono_wave), outdir_dum, 'model'+str(int(model_num)+i),dstar=dstar)
+                        float(mono_wave), outdir_dum, 'model'+str(int(model_num)+i),dstar=dstar, unit=unit)
             else:
                 for w in mono_wave:
                     hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout', w, outdir_dum,
-                        'model'+str(int(model_num)+i),dstar=dstar)
+                        'model'+str(int(model_num)+i),dstar=dstar, unit=unit)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',outdir=outdir_dum)
 
@@ -238,11 +241,11 @@ else:
             else:
                 if type(mono_wave) is str:
                     hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
-                            float(mono_wave), outdir_dum, 'model'+str(i),dstar=dstar)
+                            float(mono_wave), outdir_dum, 'model'+str(i),dstar=dstar, unit=unit)
                 else:
                     for w in mono_wave:
                         hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w,
-                            outdir_dum, 'model'+str(i),dstar=dstar)
+                            outdir_dum, 'model'+str(i),dstar=dstar, unit=unit)
         if temp:
             temp_hyperion(outdir_dum+'model'+str(i)+'.rtout',outdir=outdir_dum)
 
