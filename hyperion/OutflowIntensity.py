@@ -50,7 +50,7 @@ import matplotlib.pyplot as plt
 import astropy.constants as const
 pc = const.pc.cgs.value
 
-indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/cycle9/'
+indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/'
 array = np.array([70,71,72,73,74])
 view_angle = np.array([90,80,70,60,50])
 wave = 3.6
