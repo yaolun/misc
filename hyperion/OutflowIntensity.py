@@ -65,7 +65,7 @@ for imod in range(len(array)):
     n, s = OutflowIntensity(m, 200.0, 0, wave)
     ax.plot(view_angle[imod], s/n, 'bo', mec='None')
 
-ax.axhline(ref, '--', color='k', linewidth=1.2)
+ax.axhline(ref, linestyle='--', color='k', linewidth=1.2)
 
 # fix the tick label font
 ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=18)
