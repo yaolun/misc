@@ -61,7 +61,7 @@ ax = fig.add_subplot(111)
 for imod in range(len(array)):
     m = ModelOutput(indir+'model'+str(array[imod])+'/'+'model'+str(array[imod])+'.rtout')
     # image = m.get_image(group=8, inclination=0, distance=200 * pc, units='MJy/sr')
-    n, s = OutflowIntensity(m, 200.0, 8, wave)
+    n, s = OutflowIntensity(m, 200.0, 0, wave)
     ax.plot(view_angle[imod], s/n, 'bo', mec='None')
 
 # fix the tick label font
