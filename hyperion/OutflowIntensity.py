@@ -50,9 +50,9 @@ import matplotlib.pyplot as plt
 import astropy.constants as const
 pc = const.pc.cgs.value
 
-indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/'
-array = np.array([36,41,46])
-view_angle = np.array([80,45,30])
+indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/cycle9/'
+array = np.array([1,2])
+view_angle = np.array([53, 84])
 wave = 3.6
 
 fig = plt.figure(figsize=(8,6))
