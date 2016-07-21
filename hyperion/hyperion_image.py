@@ -14,7 +14,7 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=200., group=0, marker=
     pc = const.pc.cgs.value
 
     if unit == None:
-        unit = r'$\rm{log(I_{\nu})\,[erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}]}$'
+        unit = 'erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}'
 
     m = ModelOutput(rtout)
 
