@@ -12,10 +12,13 @@ def OutflowIntensity(model, dstar, group, wave):
     image = m.get_image(group=group, inclination=0, distance=dstar * pc, units='MJy/sr')
 
     # The radius of the aperture in arcsec
-    radius = 10
-    aper_size = np.pi*radius**2 / 4.25e10 # in sr
+    # radius = 10
+    x = 100
+    y = 100
+    # area = np.pi*radius**2 / 4.25e10 # in sr
+    area = x*y / 4.25e10
     # The offset to the center
-    offset = 10
+    offset = 50
 
     if wave != list:
         wave = [wave]
@@ -33,11 +36,15 @@ def OutflowIntensity(model, dstar, group, wave):
     pos_n = (len(val[0,:])/2.-1,len(val[0,:])/2.-1 + offset*len(val[0,:])/2/w)
     pos_s = (len(val[0,:])/2.-1,len(val[0,:])/2.-1 - offset*len(val[0,:])/2/w)
 
-    aper_n = CircularAperture(pos_n, r=radius * len(val[0,:])/2/w )
-    aper_s = CircularAperture(pos_s, r=radius * len(val[0,:])/2/w )
+    # aper_n = CircularAperture(pos_n, r=radius * len(val[0,:])/2/w )
+    # aper_s = CircularAperture(pos_s, r=radius * len(val[0,:])/2/w )
+
+    aper_n = RectangularAperture(pos_n, w=x, h=y, theta=0)
+    aper_s = RectangularAperture(pos_s, w=x, h=y, theta=0)
+
     # multiply the aperture size in sr and convert to Jy
-    phot_n = ap(val, aper_n)['aperture_sum'].data * aper_size * 1e23
-    phot_s = ap(val, aper_s)['aperture_sum'].data * aper_size * 1e23
+    phot_n = ap(val, aper_n)['aperture_sum'].data * area * 1e23
+    phot_s = ap(val, aper_s)['aperture_sum'].data * area * 1e23
 
     return phot_n, phot_s
 
