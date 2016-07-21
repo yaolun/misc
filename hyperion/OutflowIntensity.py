@@ -51,8 +51,8 @@ import astropy.constants as const
 pc = const.pc.cgs.value
 
 indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/cycle9/'
-array = np.array([1,2])
-view_angle = np.array([53, 84])
+array = np.array([70,71,72,73,74])
+view_angle = np.array([90,80,70,60,50])
 wave = 3.6
 ref = 14.0
 
