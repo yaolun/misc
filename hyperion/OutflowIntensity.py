@@ -54,6 +54,7 @@ indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/cycle9/'
 array = np.array([1,2])
 view_angle = np.array([53, 84])
 wave = 3.6
+ref = 14.0
 
 fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(111)
@@ -63,6 +64,8 @@ for imod in range(len(array)):
     # image = m.get_image(group=8, inclination=0, distance=200 * pc, units='MJy/sr')
     n, s = OutflowIntensity(m, 200.0, 0, wave)
     ax.plot(view_angle[imod], s/n, 'bo', mec='None')
+
+ax.axhline(ref, '--', color='k', linewidth=1.2)
 
 # fix the tick label font
 ticks_font = mpl.font_manager.FontProperties(family='STIXGeneral',size=18)
