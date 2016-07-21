@@ -75,6 +75,7 @@ for label in ax.get_yticklabels():
     label.set_fontproperties(ticks_font)
 
 ax.set_xlim([15,95])
+ax.set_ylim([0, ref+0.5])
 ax.set_xlabel(r'$\rm{Inclination\,Angle\,[deg.]}$',fontsize=20)
 ax.set_ylabel(r'$\rm{F_{south}/F_{north}}$',fontsize=20)
 [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
