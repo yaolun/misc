@@ -38,9 +38,12 @@ def OutflowIntensity(model, dstar, group, wave):
 
     # aper_n = CircularAperture(pos_n, r=radius * len(val[0,:])/2/w )
     # aper_s = CircularAperture(pos_s, r=radius * len(val[0,:])/2/w )
+    print val[3999, 3900:4100]
+    print pos_n
+    print pos_s
 
-    aper_n = RectangularAperture(pos_n, w=x, h=y, theta=0)
-    aper_s = RectangularAperture(pos_s, w=x, h=y, theta=0)
+    aper_n = RectangularAperture(pos_n, w=x*len(val[0,:])/2/w, h=y*len(val[0,:])/2/w, theta=0)
+    aper_s = RectangularAperture(pos_s, w=x*len(val[0,:])/2/w, h=y*len(val[0,:])/2/w, theta=0)
 
     # multiply the aperture size in sr and convert to Jy
     phot_n = ap(val, aper_n)['aperture_sum'].data * area * 1e23
@@ -57,9 +60,13 @@ import matplotlib.pyplot as plt
 import astropy.constants as const
 pc = const.pc.cgs.value
 
-indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/'
-array = np.array([70,71,72,73,74])
-view_angle = np.array([90,80,70,60,50])
+# indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/'
+# array = np.array([70,71,72,73,74])
+# view_angle = np.array([90,80,70,60,50])
+indir = '/Volumes/SD-Mac/'
+array = np.array([70,74])
+view_angle = np.array([90,50])
+
 wave = 3.6
 ref = 14.0
 
@@ -67,8 +74,9 @@ fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(111)
 
 for imod in range(len(array)):
-    m = ModelOutput(indir+'model'+str(array[imod])+'/'+'model'+str(array[imod])+'.rtout')
-    # image = m.get_image(group=8, inclination=0, distance=200 * pc, units='MJy/sr')
+    # m = ModelOutput(indir+'model'+str(array[imod])+'/'+'model'+str(array[imod])+'.rtout')
+    m = ModelOutput(indir+'model'+str(array[imod])+'.rtout')
+
     n, s = OutflowIntensity(m, 200.0, 0, wave)
     ax.plot(view_angle[imod], s/n, 'bo', mec='None')
 
@@ -90,4 +98,5 @@ ax.minorticks_on()
 ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
 ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-fig.savefig('/home/bettyjo/yaolun/NS_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
+# fig.savefig('/home/bettyjo/yaolun/NS_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
+fig.savefig('/Users/yaolun/test/NS_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')

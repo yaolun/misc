@@ -60,6 +60,19 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=200., group=0, marker=
     im = ax.imshow(val,
             norm=mpl.colors.LogNorm(vmin=1.515e-01, vmax=4.118e+01),
             cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
+
+    # draw the flux extraction regions
+    x = 100
+    y = 100
+    area = x*y / 4.25e10
+    offset = 50
+
+    pos_n = (len(val[0,:])/2.-1,len(val[0,:])/2.-1 + offset*len(val[0,:])/2/w)
+    pos_s = (len(val[0,:])/2.-1,len(val[0,:])/2.-1 - offset*len(val[0,:])/2/w)
+
+    import matplotlib.patches as patches
+    ax.add_patch(patches.Rectangle((-x/2, -y), x, y, fill=False, edgecolor='lime'))
+    ax.add_patch(patches.Rectangle((-x/2, 0), x, y, fill=False, edgecolor='lime'))
     # im = ax.imshow(val
     #           cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
@@ -110,8 +123,8 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=200., group=0, marker=
     fig.savefig(plotdir+printname+'_image_'+str(wave)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Users/yaolun/bhr71/hyperion/controlled/model2.rtout'
+# rtout = '/Volumes/SD-Mac/model70.rtout'
 # wave = 3.6
 # plotdir = '/Users/yaolun/bhr71/hyperion/controlled/'
-# hyperion_image(rtout, wave, plotdir, 'model2', group=0, dstar=200., marker=0, size=100, convolve=False,
+# hyperion_image(rtout, wave, plotdir, 'model70', group=0, dstar=200., marker=0, size=300, convolve=False,
 #         unit='MJy\,sr^{-1}')
