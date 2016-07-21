@@ -3,7 +3,7 @@ def OutflowIntensity(model, dstar, group, wave):
     import matplotlib.pyplot as plt
     from hyperion.model import ModelOutput
     from photutils import aperture_photometry as ap
-    from photutils import CircularAperture
+    from photutils import CircularAperture, RectangularAperture
     import astropy.constants as const
 
     pc = const.pc.cgs.value
