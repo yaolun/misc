@@ -35,12 +35,22 @@ def OutflowIntensity(model, dstar, group, wave):
 
     pos_n = (len(val[0,:])/2.-1,len(val[0,:])/2.-1 + offset*len(val[0,:])/2/w)
     pos_s = (len(val[0,:])/2.-1,len(val[0,:])/2.-1 - offset*len(val[0,:])/2/w)
-
     # aper_n = CircularAperture(pos_n, r=radius * len(val[0,:])/2/w )
     # aper_s = CircularAperture(pos_s, r=radius * len(val[0,:])/2/w )
-    print val[3999, 3900:4100]
-    print pos_n
-    print pos_s
+
+    # # plot to make sure the selection is correct
+    # from astropy.convolution import Gaussian1DKernel, convolve
+    # g = Gaussian1DKernel(stddev=20)
+    #
+    # fig = plt.figure(figsize=(8,6))
+    # ax = fig.add_subplot(111)
+    #
+    # ax.plot(np.arange(-w, w, 2*w/len(val[0,:])), convolve(np.sum(val[len(val[0,:])/2.-11:len(val[0,:])/2.+9,:], axis=0), g, boundary='extend'), color='b')
+    # ax.plot(np.arange(-w, w, 2*w/len(val[0,:])), convolve(np.sum(val[:,len(val[0,:])/2.-11:len(val[0,:])/2.+9], axis=1), g, boundary='extend'), color='r')
+    # # ax.set_xscale('log')
+    #
+    # fig.savefig('/Users/yaolun/test/im_test.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    # fig.clf()
 
     aper_n = RectangularAperture(pos_n, w=x*len(val[0,:])/2/w, h=y*len(val[0,:])/2/w, theta=0)
     aper_s = RectangularAperture(pos_s, w=x*len(val[0,:])/2/w, h=y*len(val[0,:])/2/w, theta=0)
@@ -64,8 +74,8 @@ pc = const.pc.cgs.value
 # array = np.array([70,71,72,73,74])
 # view_angle = np.array([90,80,70,60,50])
 indir = '/Volumes/SD-Mac/'
-array = np.array([70,74])
-view_angle = np.array([90,50])
+array = np.array([70,71,72,73,74,75,76,77])
+view_angle = np.array([90,80,70,60,50,40,30,20])
 
 wave = 3.6
 ref = 14.0
