@@ -18,7 +18,7 @@ def OutflowIntensity(model, dstar, group, wave):
     # area = np.pi*radius**2 / 4.25e10 # in sr
     area = x*y / 4.25e10
     # The offset to the center
-    offset = 50
+    offset = 60
 
     if wave != list:
         wave = [wave]
