@@ -70,10 +70,10 @@ import matplotlib.pyplot as plt
 import astropy.constants as const
 pc = const.pc.cgs.value
 
-# indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/'
+indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/'
 # array = np.array([70,71,72,73,74])
 # view_angle = np.array([90,80,70,60,50])
-indir = '/Volumes/SD-Mac/'
+# indir = '/Volumes/SD-Mac/'
 array = np.array([70,71,72,73,74,75,76,77])
 view_angle = np.array([90,80,70,60,50,40,30,20])
 
@@ -84,8 +84,8 @@ fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(111)
 
 for imod in range(len(array)):
-    # m = ModelOutput(indir+'model'+str(array[imod])+'/'+'model'+str(array[imod])+'.rtout')
-    m = ModelOutput(indir+'model'+str(array[imod])+'.rtout')
+    m = ModelOutput(indir+'model'+str(array[imod])+'/'+'model'+str(array[imod])+'.rtout')
+    # m = ModelOutput(indir+'model'+str(array[imod])+'.rtout')
 
     n, s = OutflowIntensity(m, 200.0, 0, wave)
     ax.plot(view_angle[imod], s/n, 'bo', mec='None')
@@ -108,5 +108,5 @@ ax.minorticks_on()
 ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
 ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-# fig.savefig('/home/bettyjo/yaolun/NS_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
-fig.savefig('/Users/yaolun/test/NS_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
+fig.savefig('/home/bettyjo/yaolun/NS_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
+# fig.savefig('/Users/yaolun/test/NS_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
