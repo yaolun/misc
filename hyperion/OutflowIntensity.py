@@ -79,7 +79,7 @@ view_angle = np.array([90,80,70,60,50,40,30,20])
 
 wave = 3.6
 # ref = 14.0
-ref = 1.97
+ref = 3.2
 
 fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(111)
