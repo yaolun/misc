@@ -115,8 +115,13 @@ ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 fig.savefig('/home/bettyjo/yaolun/NS_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
 # fig.savefig('/Users/yaolun/test/NS_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
 
+
 # interpolate the best inclination angle
 trimmer = view_angle >= 30.
 ratio = np.array(ratio)
+print ratio
+print view_angle
+print np.shape(ratio), np.shape(view_angle)
+
 f = interp1d(ratio[trimmer], view_angle[trimmer])
 print f(ref)
