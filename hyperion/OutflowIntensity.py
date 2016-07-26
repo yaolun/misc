@@ -118,7 +118,7 @@ fig.savefig('/home/bettyjo/yaolun/NS_comparison.pdf', format='pdf', dpi=300, bbo
 
 # interpolate the best inclination angle
 trimmer = view_angle >= 30.
-ratio = np.array(ratio)
+ratio = np.squeeze(np.array(ratio))
 print ratio
 print view_angle
 print np.shape(ratio), np.shape(view_angle)
