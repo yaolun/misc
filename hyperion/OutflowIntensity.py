@@ -68,6 +68,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 import astropy.constants as const
+from scipy.interpolate import interp1d
 pc = const.pc.cgs.value
 
 indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/'
@@ -80,6 +81,7 @@ view_angle = np.array([90,80,70,60,50,40,30,20])
 wave = 3.6
 # ref = 14.0
 ref = 3.2
+ratio = []
 
 fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(111)
@@ -89,6 +91,7 @@ for imod in range(len(array)):
     # m = ModelOutput(indir+'model'+str(array[imod])+'.rtout')
 
     n, s = OutflowIntensity(m, 200.0, 0, wave)
+    ratio.append(s/n)
     ax.plot(view_angle[imod], s/n, 'bo', mec='None')
 
 ax.axhline(ref, linestyle='--', color='k', linewidth=1.2)
@@ -111,3 +114,9 @@ ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
 fig.savefig('/home/bettyjo/yaolun/NS_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
 # fig.savefig('/Users/yaolun/test/NS_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
+
+# interpolate the best inclination angle
+trimmer = view_angle >= 30.
+ratio = np.array(ratio)
+f = interp1d(ratio[trimmer], view_angle[trimmer])
+print f(ref)
