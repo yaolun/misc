@@ -209,7 +209,7 @@ if extract_only == False:
             else:
                 imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
                 source_center = dict_path['source_ra']+' '+dict_path['source_dec']
-                obs_azi = {'imgpath': imgpath, 'source_center': source_center}
+                obs_azi = [{'imgpath': imgpath, 'source_center': source_center}]
 
             aper_reduced = list(set(aperture['aperture']))
 
@@ -258,7 +258,7 @@ else:
             else:
                 imgpath = home+dict_path['obs_dir']+dict_path['img_name']+'.fits'
                 source_center = dict_path['source_ra']+' '+dict_path['source_dec']
-                obs_azi = {'imgpath': imgpath, 'source_center': source_center}
+                obs_azi = [{'imgpath': imgpath, 'source_center': source_center}]
 
             aper_reduced = list(set(aperture['aperture']))
 
