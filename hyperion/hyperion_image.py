@@ -127,8 +127,8 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=200., group=0, marker=
     fig.savefig(plotdir+printname+'_image_'+str(wave)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-rtout = '/Volumes/SD-Mac/model2.rtout'
-wave = 3.6
-plotdir = '/Users/yaolun/bhr71/hyperion/controlled/'
-hyperion_image(rtout, wave, plotdir, 'model2', group=0, dstar=200., marker=0, size=100, convolve=False,
-        unit='MJy\,sr^{-1}', scalebar=30)
+# rtout = '/Volumes/SD-Mac/model2.rtout'
+# wave = 3.6
+# plotdir = '/Users/yaolun/bhr71/hyperion/controlled/'
+# hyperion_image(rtout, wave, plotdir, 'model2', group=0, dstar=200., marker=0, size=100, convolve=False,
+#         unit='MJy\,sr^{-1}', scalebar=30)
