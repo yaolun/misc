@@ -261,7 +261,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
     ax.minorticks_on()
     ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=10,length=5)
     ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=10,length=2.5)
-    ax.set_xlabel(r'$\rm{log(Radius)\,[AU]}$', fontsize=18)
+    ax.set_xlabel(r'$\rm{log(\it{b})\,[AU]}$', fontsize=18)
     ax.set_ylabel(r'$\rm{log(I\,/\,I_{max})}$', fontsize=18)
 
     # fix the tick label font
@@ -275,10 +275,10 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
     fig.clf()
 
 # obs_azi = [{'imgpath': '/Users/yaolun/test/hpacs1342224922_20hpppmapr_00_1431606963820.fits',
-#           'source_center': '12:01:36.81 -65:08:49.22'},
-#           {'imgpath': '/Users/yaolun/test/extdPLW_jypx.fits',
-#            'source_center': '12:01:36.81 -65:08:49.22',
-#            'label': r'$\rm{SPIRE\,500\,\mu m}$', 'plot_color':'k', 'plot_linestyle':'-',
-#            'rrange': [10,200], 'annulus_width': 10}]
-# azimuthal_avg_radial_intensity(160.0, '/Volumes/SD-Mac/model158.rtout',
-#                                '/Users/yaolun/test/model158', 200.0, obs=obs_azi)
+#           'source_center': '12:01:36.81 -65:08:49.22'}]#,
+        #   {'imgpath': '/Users/yaolun/test/extdPLW_jypx.fits',
+        #    'source_center': '12:01:36.81 -65:08:49.22',
+        #    'label': r'$\rm{SPIRE\,500\,\mu m}$', 'plot_color':'k', 'plot_linestyle':'-',
+        #    'rrange': [10,200], 'annulus_width': 10}]
+# azimuthal_avg_radial_intensity(160.0, '/Volumes/SD-Mac/model30_nontsc.rtout',
+#                                '/Users/yaolun/bhr71/hyperion/model30_nontsc', 200.0, obs=obs_azi)
