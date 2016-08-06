@@ -261,7 +261,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
     ax.minorticks_on()
     ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=10,length=5)
     ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=10,length=2.5)
-    ax.set_xlabel(r'$\rm{log(\it{b})\,[AU]}$', fontsize=18)
+    ax.set_xlabel(r'$\rm{log(\it{b})\,[\rm{AU}]}$', fontsize=18)
     ax.set_ylabel(r'$\rm{log(I\,/\,I_{max})}$', fontsize=18)
 
     # fix the tick label font
