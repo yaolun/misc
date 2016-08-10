@@ -171,7 +171,7 @@ if extract_only == False:
                         idl=True,record=record,mono=mono,mono_wave=mono_wave,
                         aperture=aperture,fix_params=fix_params, low_res=low_res,
                         power=power,better_im=better_im,ellipsoid=ellipsoid,
-                        dstar=dstar,TSC_dir=home+dict_path['TSC_dir'], auto_disk=None
+                        dstar=dstar,TSC_dir=home+dict_path['TSC_dir'], auto_disk=None,
                         IDL_path=dict_path['IDL_path'], image_only=image_only)
         if run == False:
             print 'Hyperion run is skipped. Make sure you have run this model before'
