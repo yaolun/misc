@@ -75,7 +75,7 @@ indir = '/home/bettyjo/yaolun/hyperion/bhr71/controlled/'
 # array = np.array([70,71,72,73,74])
 # view_angle = np.array([90,80,70,60,50])
 # indir = '/Volumes/SD-Mac/'
-array = np.array([70,71,72,73,74,75,76,77])
+array = np.array([133,134,135,136,137,138,139,140])
 view_angle = np.array([90,80,70,60,50,40,30,20])
 
 wave = 3.6
