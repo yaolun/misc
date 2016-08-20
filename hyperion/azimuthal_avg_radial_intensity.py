@@ -39,7 +39,8 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         from photutils import aperture_photometry as ap
         from photutils import CircularAperture, CircularAnnulus
 
-        r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float) - annulus_width/2.
+        # r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float) - annulus_width*0.5
+        r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float) - annulus_width*0.4
 
         imgpath = obs['imgpath']
         source_center = obs['source_center']
@@ -274,11 +275,11 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
     fig.savefig(plotname+'_radial_profile_'+str(wave)+'um.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# obs_azi = [{'imgpath': '/Users/yaolun/test/hpacs1342224922_20hpppmapr_00_1431606963820.fits',
-#           'source_center': '12:01:36.81 -65:08:49.22'}]#,
+obs_azi = [{'imgpath': '/Users/yaolun/test/hpacs1342224922_20hpppmapr_00_1431606963820.fits',
+          'source_center': '12:01:36.81 -65:08:49.22'}]#,
         #   {'imgpath': '/Users/yaolun/test/extdPLW_jypx.fits',
         #    'source_center': '12:01:36.81 -65:08:49.22',
         #    'label': r'$\rm{SPIRE\,500\,\mu m}$', 'plot_color':'k', 'plot_linestyle':'-',
         #    'rrange': [10,200], 'annulus_width': 10}]
-# azimuthal_avg_radial_intensity(160.0, '/Volumes/SD-Mac/model30_nontsc.rtout',
-#                                '/Users/yaolun/bhr71/hyperion/model30_nontsc', 200.0, obs=obs_azi)
+azimuthal_avg_radial_intensity(160.0, '/Volumes/SD-Mac/model32_nontsc.rtout',
+                               '/Users/yaolun/bhr71/hyperion/model32_nontsc', 200.0, obs=obs_azi)
