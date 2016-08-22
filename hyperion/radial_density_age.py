@@ -21,7 +21,7 @@ fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(111)
 
 for i in range(len(model)):
-    m = ModelOutput(model[i])
+    m = ModelOutput('/bettyjo/home/yaolun/hyperion/bhr71/controlled/model'+model[i]+'/model'+model[i]+'.rtout')
     q = m.get_quantities()
     r = q.r_wall
     rc = 0.5*(r[0:len(r)-1]+r[1:len(r)])
