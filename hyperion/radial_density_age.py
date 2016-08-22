@@ -12,7 +12,7 @@ mmw = 2.37
 mh = const.m_p.cgs.value + const.m_e.cgs.value
 AU = const.au.cgs.value
 
-model = np.arange(99,133)
+model = np.arange(99,133).astype('str')
 # color map
 cmap = plt.cm.viridis
 color_array = [cmap(np.linspace(0, 0.9, len(model))[i]) for i in range(len(model))]
