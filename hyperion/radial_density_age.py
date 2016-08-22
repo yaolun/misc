@@ -27,7 +27,7 @@ for i in range(len(model)):
     rc = 0.5*(r[0:len(r)-1]+r[1:len(r)])
     rho = q['density'][0].array
     rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
-    plt.plot(np.log10(rc/AU), np.log10(rho2d[rc > 0.14*AU,i]/g2d/mmw/mh), '-',
+    plt.plot(np.log10(rc[rc > 0.14*AU]/AU), np.log10(rho2d[rc > 0.14*AU,199]/g2d/mmw/mh), '-',
              color=color_array[i], linewidth=2.5)
 ax.set_xlabel(r'$\rm{log(Radius)\,(AU)}$',fontsize=20)
 ax.set_ylabel(r'$\rm{log(Dust\,Density)\,(cm^{-3})}$',fontsize=20)
