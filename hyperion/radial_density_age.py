@@ -21,7 +21,7 @@ fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(111)
 
 for i in range(len(model)):
-    m = ModelOutput('/bettyjo/home/yaolun/hyperion/bhr71/controlled/model'+model[i]+'/model'+model[i]+'.rtout')
+    m = ModelOutput('/home/bettyjo/yaolun/hyperion/bhr71/controlled/model'+model[i]+'/model'+model[i]+'.rtout')
     q = m.get_quantities()
     r = q.r_wall
     rc = 0.5*(r[0:len(r)-1]+r[1:len(r)])
@@ -45,5 +45,5 @@ for label in ax.get_yticklabels():
 
 ax.set_ylim([0,11])
 fig.gca().set_xlim(left=np.log10(0.05))
-fig.savefig('/bettyjo/home/yaolun/gas_radial_age.pdf',format='pdf',dpi=300,bbox_inches='tight')
+fig.savefig('/home/bettyjo/yaolun/gas_radial_age.pdf',format='pdf',dpi=300,bbox_inches='tight')
 fig.clf()
