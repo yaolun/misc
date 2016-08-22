@@ -29,6 +29,7 @@ for i in range(len(model)):
     rho2d = np.sum(rho**2,axis=0)/np.sum(rho,axis=0)
     plt.plot(np.log10(rc[rc > 0.14*AU]/AU), np.log10(rho2d[199,rc > 0.14*AU]/g2d/mmw/mh)-0.1*i, '-',
              color=color_array[i], linewidth=1)
+ax.set_ylim([-2,9])
 ax.set_xlabel(r'$\rm{log(Radius)\,(AU)}$',fontsize=20)
 ax.set_ylabel(r'$\rm{log(Dust\,Density)\,(cm^{-3})}$',fontsize=20)
 [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
