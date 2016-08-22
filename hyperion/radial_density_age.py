@@ -25,7 +25,7 @@ for i in range(len(model)):
     q = m.get_quantities()
     r = q.r_wall
     rc = 0.5*(r[0:len(r)-1]+r[1:len(r)])
-    rho = q['density']
+    rho = q['density'][0].array
     rho2d = np.sum(rho**2,axis=2)/np.sum(rho,axis=2)
     plt.plot(np.log10(rc/AU), np.log10(rho2d[rc > 0.14*AU,i]/g2d/mmw/mh), '-',
              color=color_array[i], linewidth=2.5)
