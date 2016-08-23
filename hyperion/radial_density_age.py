@@ -44,7 +44,6 @@ for label in ax.get_xticklabels():
 for label in ax.get_yticklabels():
     label.set_fontproperties(ticks_font)
 
-ax.set_ylim([0,11])
 fig.gca().set_xlim(left=np.log10(0.05))
 fig.savefig('/home/bettyjo/yaolun/gas_radial_age.pdf',format='pdf',dpi=300,bbox_inches='tight')
 fig.clf()
