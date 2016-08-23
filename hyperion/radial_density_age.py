@@ -15,7 +15,7 @@ AU = const.au.cgs.value
 model = np.arange(99,133).astype('str')
 # color map
 cmap = plt.cm.viridis
-color_array = [cmap(np.linspace(0.9, 0, len(model))[i]) for i in range(len(model))]
+color_array = [cmap(np.linspace(0, 0.9, len(model))[i]) for i in range(len(model))]
 
 fig = plt.figure(figsize=(8,6))
 ax = fig.add_subplot(111)
@@ -44,7 +44,6 @@ for label in ax.get_xticklabels():
 for label in ax.get_yticklabels():
     label.set_fontproperties(ticks_font)
 
-ax.set_ylim([0,11])
 fig.gca().set_xlim(left=np.log10(0.05))
 fig.savefig('/home/bettyjo/yaolun/gas_radial_age.pdf',format='pdf',dpi=300,bbox_inches='tight')
 fig.clf()
