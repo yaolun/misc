@@ -28,7 +28,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
     # radial grid in arcsec
     # make the annulus center on
     # r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float) - annulus_width*0.5
-    r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float) - annulus_width*0.52
+    r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float) - annulus_width*0.55
 
     # source_center = '12 01 36.3 -65 08 53.0'
 
@@ -41,7 +41,7 @@ def azimuthal_avg_radial_intensity(wave, rtout, plotname, dstar,
         from photutils import CircularAperture, CircularAnnulus
 
         # r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float) - annulus_width*0.5
-        r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float) - annulus_width*0.52
+        r = np.arange(rrange[0], rrange[1], annulus_width, dtype=float) - annulus_width*0.55
 
         imgpath = obs['imgpath']
         source_center = obs['source_center']
