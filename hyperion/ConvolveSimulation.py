@@ -1,7 +1,8 @@
 def ConvolveSimulation(spec, conv_wl, filter_dir, filter_func=True):
     """
-    spec = [wave_grid, flux, unc]
+    spec = [wave_grid, vSv, unc_vSv]
     conv_wl = a list of wavelength channels for convolution
+    output: wl, vSv, unc_vSv
     """
     import numpy as np
     from scipy.interpolate import interp1d
@@ -90,6 +91,14 @@ def ConvolveSimulation(spec, conv_wl, filter_dir, filter_func=True):
                 # Simulated SED should have enough wavelength coverage for applying photometry filters.
                 f = interp1d(wav_sort, flux_dum)
                 f_unc = interp1d(wav_sort, unc_dum)
+
+                if (filter_func['wave'].min() < wav_sort.min()*1e4):
+                    print fil_name, 'has wavelength smaller than input spectrum.  The filter function is trimmed.'
+                    filter_func = filter_func[filter_func['wave']/1e4 >= wav_sort.min()]
+                if (filter_func['wave'].max() > wav_sort.max()*1e4):
+                    print fil_name, 'has wavelength greater than input spectrum.  The filter function is trimmed.'
+                    filter_func = filter_func[filter_func['wave']/1e4 <= wav_sort.max()]
+
                 conv_flux[i] = np.trapz(f(filter_func['wave']/1e4)*\
                                           filter_func['transmission'],x=filter_func['wave']/1e4 )/\
                                np.trapz(filter_func['transmission'], x=filter_func['wave']/1e4)
