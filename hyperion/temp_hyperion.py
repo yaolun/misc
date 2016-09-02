@@ -132,6 +132,6 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     fig.savefig(outdir+print_name+'_temp_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-rtout = '/Volumes/SD-Mac/model65.rtout'
-outdir = '/Users/yaolun/test/'
-temp_hyperion(rtout, outdir, bb_dust=True)
+# rtout = '/Volumes/SD-Mac/model65.rtout'
+# outdir = '/Users/yaolun/test/'
+# temp_hyperion(rtout, outdir, bb_dust=True)
