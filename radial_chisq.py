@@ -124,6 +124,7 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
 
     ax.axvline(2.2362, color='k', linestyle='--', linewidth=1)
     ax.axhline(1, color='k')
+    ax.axhline(2, color='k', linestyle=':')
     # ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
     #            color='b', alpha=0.3)
 
@@ -141,17 +142,17 @@ def radial_chisq(array_list, keywords, filename_ext, plotpath, rmax=None, ref=No
     ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
     ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
 
-    fig.savefig('/Users/yaolun/test/radial_chi2_'+str(keywords['col'][0])+'_1d_52deg.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.savefig('/Users/yaolun/test/radial_chi2_'+str(keywords['col'][0])+'_1d.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
 import numpy as np
-array_list = [{'listpath': '/Volumes/SD-Mac/hyperion/controlled/cycle8/model_list.txt',
-               'datapath': '/Volumes/SD-Mac/hyperion/controlled/cycle8/',
-               'model_num': np.arange(268,303)}]
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
+               'model_num': np.arange(99,133)}]
 keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/',
 #                'model_num': np.arange(96,103)}]
 # keywords = {'col':['view_angle'], 'label': [r'$\rm{\theta_{incl.}\,[deg.]}$']}
 filename_ext = '_radial_profile_160.0um'
-radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=100.0, ref=285, zoom_1d=[0,7])
+radial_chisq(array_list, keywords, filename_ext, '/Users/yaolun/test/', rmax=99.0, ref=115, zoom_1d=[0,7])

@@ -83,9 +83,9 @@ def tsc_com(params_table, plot=True, disk=False):
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
 
     if disk == False:
-        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv_tsccom.dat').T
+        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/model32_rhoenv.dat').T
     else:
-        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv_model158.dat').T
+        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/model32_rhoenv.dat').T
 
     rc_idl = rc[(rc < min([R_inf,max(ri)]))]
 
@@ -293,5 +293,5 @@ def tsc_com(params_table, plot=True, disk=False):
 
     return rho_tsc/100, rho_ulrich/100
 
-params_table = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+params_table = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
 tsc_com(params_table, disk=True)

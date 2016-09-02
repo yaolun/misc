@@ -255,6 +255,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                             if z_cav == 0:
                                 z_cav = R_env_max
                             cav_con = abs(z) > abs(z_cav)
+                            if theta_cav == 90:
+                                cav_con = True
                         else:
                             # condition for the outer ellipsoid
                             cav_con = (2*(w/b_out)**2 + ((abs(z)-z_out)/a_out)**2) < 1
@@ -501,11 +503,12 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             ax_env  = fig.add_subplot(111,projection='polar')
 
             zmin = 1e-22/mmw/mh
+            zmin = 1e-1
             cmap = plt.cm.CMRmap
             rho2d_exp = np.hstack((rho2d,rho2d,rho2d[:,0:1]))
             thetac_exp = np.hstack((thetac-PI/2, thetac+PI/2, thetac[0]-PI/2))
             # plot the gas density
-            img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mmw/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e9)) # np.nanmax(rho2d_exp/mmw/mh)
+            img_env = ax_env.pcolormesh(thetac_exp,rc/AU,rho2d_exp/mmw/mh,cmap=cmap,norm=LogNorm(vmin=zmin,vmax=1e6)) # np.nanmax(rho2d_exp/mmw/mh)
 
             ax_env.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
             ax_env.set_ylabel('',fontsize=20, labelpad=-140)
@@ -522,9 +525,14 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             ax_env.grid(True, color='LightGray', linewidth=1)
             cb = fig.colorbar(img_env, pad=0.1)
             cb.ax.set_ylabel(r'$\rm{Averaged\,Gas\,Density\,(cm^{-3})}$',fontsize=20)
-            cb.set_ticks([1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9])
-            cb.set_ticklabels([r'$\rm{10^{2}}$',r'$\rm{10^{3}}$',r'$\rm{10^{4}}$',r'$\rm{10^{5}}$',r'$\rm{10^{6}}$',\
-                               r'$\rm{10^{7}}$',r'$\rm{10^{8}}$',r'$\rm{\geq 10^{9}}$'])
+            # cb.set_ticks([1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9])
+            # cb.set_ticklabels([r'$\rm{10^{2}}$',r'$\rm{10^{3}}$',r'$\rm{10^{4}}$',r'$\rm{10^{5}}$',r'$\rm{10^{6}}$',\
+            #                    r'$\rm{10^{7}}$',r'$\rm{10^{8}}$',r'$\rm{\geq 10^{9}}$'])
+            # lower density ticks
+            cb.set_ticks([1e-1,1e0,1e1,1e2,1e3,1e4,1e5,1e6])
+            cb.set_ticklabels([r'$\rm{10^{-1}}$',r'$\rm{10^{0}}$',r'$\rm{10^{1}}$',r'$\rm{10^{2}}$',r'$\rm{10^{3}}$',
+                               r'$\rm{10^{4}}$',r'$\rm{10^{5}}$',r'$\rm{\geq 10^{6}}$'])
+
             cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
             plt.setp(cb_obj,fontsize=20)
             fig.savefig(outdir+outname+'_gas_density.png', format='png', dpi=300, bbox_inches='tight')
@@ -799,17 +807,17 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     return m
 
-# from input_reader import input_reader_table
-# from pprint import pprint
-# import numpy as np
-# filename = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
-# params = input_reader_table(filename)
-# pprint(params[0])
-# outdir = '/Users/yaolun/test/'
-# record_dir = '/Users/yaolun/test/'
-# dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
-# wl_aper, aper_arcsec = np.genfromtxt('/Users/yaolun/bhr71/best_calibrated/aperture.txt',
-#                                      skip_header=1, dtype=float).T
-# aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# setup_model(outdir,record_dir,'model54_nontsc',params[0],dust_file,plot=True,record=False,\
-#     aperture=aperture,idl='rhoenv_model54.dat',radmc=False,tsc=False)
+from input_reader import input_reader_table
+from pprint import pprint
+import numpy as np
+filename = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+params = input_reader_table(filename)
+pprint(params[0])
+outdir = '/Users/yaolun/test/'
+record_dir = '/Users/yaolun/test/'
+dust_file = '/Users/yaolun/programs/misc/oh5_hyperion.txt'
+wl_aper, aper_arcsec = np.genfromtxt('/Users/yaolun/bhr71/best_calibrated/aperture.txt',
+                                     skip_header=1, dtype=float).T
+aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
+setup_model(outdir,record_dir,'model_powerlaw',params[0],dust_file,plot=True,record=False,\
+    aperture=aperture,idl='model32_nontsc.dat',radmc=False,tsc=False)

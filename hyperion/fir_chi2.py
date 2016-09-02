@@ -281,7 +281,8 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         ax.set_xlabel(keywords['label'][0], fontsize=18)
         ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
 
-        ax.axvline(2.3059, color='k', linestyle='--', linewidth=1)
+        if keywords['col'][i] == 'age':
+            ax.axvline(2.46, color='k', linestyle='--', linewidth=1)
 
         if shade:
             if ref != None:
@@ -413,9 +414,9 @@ import numpy as np
 #               {'listpath': '/Users/yaolun/bhr71/hyperion/cycle6/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/cycle6',
 #                'model_num': np.arange(39,49)}]
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
-               'model_num': np.arange(1,26)}]
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
+#                'model_num': np.arange(1,26)}]
 
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
@@ -437,11 +438,11 @@ obs = '/Users/yaolun/bhr71/best_calibrated/'
 # for tstar & age
 # keywords_list = [{'col':['tstar','age'], 'label': [r'$\rm{T_{\star}\,[K]}$', r'$\rm{age\,[10^{4}\,yr]}$']}]
 #
-for keywords in keywords_list:
-    p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=19, plot_model=False, herschel_only=False)
-    for i in range(len(p1)):
-        print p1[i], p2[i], chi2[i]
-    fir_chi2_2d(array_list, keywords, obs)
+# for keywords in keywords_list:
+#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=19, plot_model=False, herschel_only=False)
+#     for i in range(len(p1)):
+#         print p1[i], p2[i], chi2[i]
+#     fir_chi2_2d(array_list, keywords, obs)
 
 # # 1-D rho_cav_center
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
@@ -489,11 +490,12 @@ for keywords in keywords_list:
 # fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, zoom_1d=[0,5])
 
 # For fitting the best age for p25 dust opactity
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
-               'model_num': np.arange(268,303)}]
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/',
+               'model_num': np.arange(23,29)}]
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
-keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
+# keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
 # keywords = {'col':['view_angle'], 'label':[r'$\rm{\theta_{incl.}\,[deg.]}$']}
 # keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True, ref=285, shade=False)
+keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav\,\circ}\,[g\,cm^{-1}]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=False, ref=27, shade=False)
