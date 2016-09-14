@@ -39,22 +39,22 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
 
     # cmap = sns.cubehelix_palette(light=1, as_cmap=True)
     cmap = plt.cm.CMRmap
-    # im = ax.pcolormesh(thetac_exp, rc/AU, temp2d_exp, cmap=cmap, norm=LogNorm(vmin=5, vmax=100))
+    im = ax.pcolormesh(thetac_exp, rc/AU, temp2d_exp, cmap=cmap, norm=LogNorm(vmin=5, vmax=100))
     #
-    cmap = plt.cm.RdBu_r
-    im = ax.pcolormesh(thetac_exp, np.log10(rc/AU), temp2d_exp/24.6, cmap=cmap, norm=LogNorm(vmin=0.1, vmax=10))
+    # cmap = plt.cm.RdBu_r
+    # im = ax.pcolormesh(thetac_exp, np.log10(rc/AU), temp2d_exp/10, cmap=cmap, norm=LogNorm(vmin=0.1, vmax=10))
     #
     print temp2d_exp.min(), temp2d_exp.max()
     im.set_edgecolor('face')
 
     ax.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
-    # ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20, labelpad=-140, color='grey')
-    ax.set_ylabel('',fontsize=20, labelpad=-140, color='grey')
+    ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20, labelpad=-140, color='grey')
+    # ax.set_ylabel('',fontsize=20, labelpad=-140, color='grey')
     ax.tick_params(labelsize=16)
     ax.tick_params(axis='y', colors='grey')
-    # ax.set_yticks(np.hstack((np.arange(0,(int(max(rc)/AU/10000.)+1)*10000, 10000),max(rc)/AU)))
+    ax.set_yticks(np.hstack((np.arange(0,(int(max(rc)/AU/10000.)+1)*10000, 10000),max(rc)/AU)))
     #
-    ax.set_yticks(np.log10(np.array([1, 10, 100, 1000, 10000, max(rc)/AU])))
+    # ax.set_yticks(np.log10(np.array([1, 10, 100, 1000, 10000, max(rc)/AU])))
     #
     ax.set_yticklabels([])
     # ax.grid(True, color='LightGray', linewidth=1)
@@ -63,13 +63,13 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     ax.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
                             r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
     cb = fig.colorbar(im, pad=0.1)
-    # cb.ax.set_ylabel(r'$\rm{Averaged\,Temperature\,(K)}$',fontsize=20)
-    # cb.set_ticks([5,10,20,30,40,50,60,70,80,90,100])
-    # cb.set_ticklabels([r'$\rm{5}$',r'$\rm{10}$',r'$\rm{20}$',r'$\rm{30}$',r'$\rm{40}$',r'$\rm{50}$',r'$\rm{60}$',r'$\rm{70}$',r'$\rm{80}$',r'$\rm{90}$',r'$\rm{>100}$'])
+    cb.ax.set_ylabel(r'$\rm{Averaged\,Temperature\,(K)}$',fontsize=20)
+    cb.set_ticks([5,10,20,30,40,50,60,70,80,90,100])
+    cb.set_ticklabels([r'$\rm{5}$',r'$\rm{10}$',r'$\rm{20}$',r'$\rm{30}$',r'$\rm{40}$',r'$\rm{50}$',r'$\rm{60}$',r'$\rm{70}$',r'$\rm{80}$',r'$\rm{90}$',r'$\rm{>100}$'])
     #
-    cb.ax.set_ylabel(r'$\rm{log(T/24.6)}$',fontsize=20)
-    cb.set_ticks([0.1, 10**-0.5, 1, 10**0.5, 10])
-    cb.set_ticklabels([r'$\rm{-1}$',r'$\rm{-0.5}$',r'$\rm{0}$',r'$\rm{0.5}$',r'$\rm{\geq 1}$'])
+    # cb.ax.set_ylabel(r'$\rm{log(T/10)}$',fontsize=20)
+    # cb.set_ticks([0.1, 10**-0.5, 1, 10**0.5, 10])
+    # cb.set_ticklabels([r'$\rm{-1}$',r'$\rm{-0.5}$',r'$\rm{0}$',r'$\rm{0.5}$',r'$\rm{\geq 1}$'])
     #
     cb_obj = plt.getp(cb.ax.axes, 'yticklabels')
     plt.setp(cb_obj,fontsize=20)
@@ -79,7 +79,7 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     for label in ax.get_yticklabels():
         label.set_fontproperties(ticks_font)
 
-    fig.savefig(outdir+print_name+'_temperature_test.png', format='png', dpi=300, bbox_inches='tight')
+    fig.savefig(outdir+print_name+'_temperature_10K.png', format='png', dpi=300, bbox_inches='tight')
     fig.clf()
 
     # Plot the radial temperature profile
