@@ -1,5 +1,5 @@
 def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, spitzer_only=False, \
-    herschel_only=False, plot_model=True, zoom_1d=None):
+    herschel_only=False, plot_model=False, zoom_1d=None, shade=True):
     """
     array_list: contains dictionaries, each dictionary represents a location of 'model_list.txt', and the model numbers within.
     """
@@ -61,7 +61,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
     # setup the aperture size
     if wl_aper == None:
         # wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
-        wl_aper = [3.6, 4.5, 8.5, 9, 9.7, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500]
+        # wl_aper = [3.6, 4.5, 8.5, 9, 9.7, 10, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500]
+        wl_aper = [3.6, 4.5, 8.5, 9, 9.7, 10, 16, 20, 24, 30, 70, 100, 160, 250, 350, 500]
+
         # wl_aper = [70., 100., 160., 250., 350., 500.]
     if spitzer_only:
         wl_aper = [5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35]
@@ -124,7 +126,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
             fil_name = None
 
         if fil_name != None:
-            filter_func = phot_filter(fil_name)
+            filter_func = phot_filter(fil_name, '/Users/yaolun/programs/misc/hyperion/')
             # Observed SED needs to be trimmed before applying photometry filters
             filter_func = filter_func[(filter_func['wave']/1e4 >= min(wave_obs))*\
                                       ((filter_func['wave']/1e4 >= 54.8)+(filter_func['wave']/1e4 <= 36.0853))*\
@@ -153,9 +155,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
                 f_unc = interp1d(wave_obs, sed_obs_noise)
                 obs_aper_sed[i] = f(wl_aper[i])
                 obs_aper_sed_noise[i] = f_unc(wl_aper[i])
-    # if 1300. in wl_aper:
-    #     obs_aper_sed.append(3.8)
-    #     obs_aper_sed_noise.append(0.57)
+    if 1300. in wl_aper:
+        np.append(obs_aper_sed, 3.8)
+        np.append(obs_aper_sed_noise, 0.57)
     # calculate Chi2 from simulated SED
     p1 = []
     p2 = []
@@ -278,23 +280,26 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         ax.plot(p1[np.argsort(p1)], chi2[np.argsort(p1)], 'o-', mec='None', color='Green', linewidth=1, markersize=4)
         ax.set_xlabel(keywords['label'][0], fontsize=18)
         ax.set_ylabel(r'$\rm{\chi^{2}_{reduced}}$', fontsize=18)
-        # mark the region where the chi-squared ranging from lowest possible value to double
-        if ref != None:
-            ax.axhspan(chi2[p1*1e4 == ref_p1], 2*chi2[p1*1e4 == ref_p1], color='grey', alpha=0.3)
-        # make vertical lines to show the uncertainty with a certain chi-square criteria
-        print min(p1[chi2 <= min(chi2)*2])*1e4, max(p1[chi2 <= min(chi2)*2])*1e4
-        print chi2
-        ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
-                   color='b', alpha=0.3)
 
-        ax.set_yscale('log')
+        if keywords['col'][i] == 'age':
+            ax.axvline(2.46, color='k', linestyle='--', linewidth=1)
+
+        if shade:
+            if ref != None:
+                # mark the region where the chi-squared ranging from lowest possible value to double
+                ax.axhspan(chi2[p1*1e4 == ref_p1], 2*chi2[p1*1e4 == ref_p1], color='grey', alpha=0.3)
+                # make vertical lines to show the uncertainty with a certain chi-square criteria
+                ax.axvspan(min(p1[chi2 <= min(chi2)*2]), max(p1[chi2 <= min(chi2)*2]),
+                           color='b', alpha=0.3)
+
+        # ax.set_yscale('log')
 
         if zoom_1d != None:
             ax.set_xlim(zoom_1d)
         # else:
         #     # fig.gca().set_xlim(left=0)
         #     ax.set_xlim([0,10])
-        ax.set_ylim([1, 50])
+        # ax.set_ylim([0, 50])
 
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
         ax.minorticks_on()
@@ -305,6 +310,14 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         fig.clf()
 
     else:
+
+        # write out the chi2
+        foo = open('/Users/yaolun/bhr71/hyperion/chi2_grid/chi2-2d.txt', 'w')
+        foo.write('{} \t {} \t {} \n'.format('chisq', keywords['col'][0], keywords['col'][1]))
+        for i in range(len(chi2)):
+            foo.write('{} \t {} \t {} \n'.format(chi2[i], p1[i], p2[i]))
+        foo.close()
+
         # rebin the data and plot 2D contour
         from scipy.interpolate import griddata
         from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -352,6 +365,9 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         ax.set_xticks(np.linspace(0, 1, 5))
         ax.set_xticklabels(np.linspace(min(p1), max(p1), 5))
         ax.set_yticks(np.linspace(0, 1, 5))
+        #
+        # p2 = 0.3 *pc/10e5 / np.tan(np.radians(p2)) / (3600.*24*365) / 1e4
+        #
         ax.set_yticklabels(np.linspace(min(p2), max(p2), 5))
 
         divider = make_axes_locatable(ax)
@@ -368,8 +384,7 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
 
         # print the model number near the points
         # for i in range(len(model_label)):
-            # print model_label[i]
-            # ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
+        #     ax.annotate(model_label[i], (p1_norm[i], p2_norm[i]))
 
         ax.set_xlabel(keywords['label'][0], fontsize=20)
         ax.set_ylabel(keywords['label'][1], fontsize=20)
@@ -399,9 +414,9 @@ import numpy as np
 #               {'listpath': '/Users/yaolun/bhr71/hyperion/cycle6/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/cycle6',
 #                'model_num': np.arange(39,49)}]
-array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
-               'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
-               'model_num': np.arange(1,9)}]
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/chi2_grid',
+#                'model_num': np.arange(1,26)}]
 
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
 #                'datapath': '/Users/yaolun/bhr71/hyperion/controlled',
@@ -416,18 +431,18 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/chi2_grid/model_list.tx
 # keywords_list = [{'col':['age','theta_cav'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{cav}\,[deg.]}$']},\
 #                  {'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']},\
 #                  {'col':['view_angle','theta_cav'], 'label': [r'$\rm{\theta_{incl}\,[deg.]}$', r'$\rm{\theta_{cav}\,[deg.]}$']}]
-# keywords_list = [{'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
-keywords_list = [{'col':['theta_cav','view_angle'], 'label': [r'$\rm{\theta_{cav}\,[deg.]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
+keywords_list = [{'col':['age','view_angle'], 'label': [r'$\rm{age\,[10^{4}\,yr]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
+# keywords_list = [{'col':['theta_cav','view_angle'], 'label': [r'$\rm{\theta_{cav}\,[deg.]}$', r'$\rm{\theta_{incl}\,[deg.]}$']}]
 obs = '/Users/yaolun/bhr71/best_calibrated/'
 
 # for tstar & age
 # keywords_list = [{'col':['tstar','age'], 'label': [r'$\rm{T_{\star}\,[K]}$', r'$\rm{age\,[10^{4}\,yr]}$']}]
 #
 # for keywords in keywords_list:
-#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=1, plot_model=False, herschel_only=True)
+#     p1, p2, chi2 = fir_chi2_2d(array_list, keywords, obs, ref=19, plot_model=False, herschel_only=False)
 #     for i in range(len(p1)):
 #         print p1[i], p2[i], chi2[i]
-    # fir_chi2_2d(array_list, keywords, obs)
+#     fir_chi2_2d(array_list, keywords, obs)
 
 # # 1-D rho_cav_center
 # array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/cycle9/model_list.txt',
@@ -477,8 +492,10 @@ obs = '/Users/yaolun/bhr71/best_calibrated/'
 # For fitting the best age for p25 dust opactity
 array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
                'datapath': '/Users/yaolun/bhr71/hyperion/',
-               'model_num': np.arange(71,79)}]
+               'model_num': np.arange(23,29)}]
             #    'model_num':np.hstack((17,np.arange(19,34)))}]
 # keywords = {'col':['age'], 'label': [r'$\rm{t_{col}\,[10^{4}\,year]}$']}
-keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
-fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=True)
+# keywords = {'col':['view_angle'], 'label':[r'$\rm{\theta_{incl.}\,[deg.]}$']}
+# keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
+keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav\,\circ}\,[g\,cm^{-1}]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=False, ref=27, shade=False)

@@ -1,4 +1,4 @@
-def tsc_com(plot=True, disk=False):
+def tsc_com(params_table, plot=True, disk=False):
     import numpy as np
     import matplotlib as mpl
     import matplotlib.pyplot as plt
@@ -29,10 +29,10 @@ def tsc_com(plot=True, disk=False):
     mh        = const.m_p.cgs.value + const.m_e.cgs.value
 
     # read parameter from input_table
-    params_table = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
+    # params_table = '/Users/yaolun/programs/misc/hyperion/test_input.txt'
     params = input_reader_table(params_table)[0]
     # force omega = 4.1e-13 to emphasize the difference
-    params['Omega0'] = 4.1e-13
+    # params['Omega0'] = 4.1e-13
     #
     rstar     = params['rstar'] * RS
     tstar     = params['tstar']
@@ -83,9 +83,9 @@ def tsc_com(plot=True, disk=False):
     phic         = 0.5*( phii[0:nz]   + phii[1:nz+1] )
 
     if disk == False:
-        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/rhoenv_tsccom.dat').T
+        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/model32_rhoenv.dat').T
     else:
-        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/bhr71/hyperion/cycle9/rhoenv_disk.dat').T
+        rho_env_tsc_idl = np.genfromtxt('/Users/yaolun/test/model32_rhoenv.dat').T
 
     rc_idl = rc[(rc < min([R_inf,max(ri)]))]
 
@@ -235,8 +235,8 @@ def tsc_com(plot=True, disk=False):
                         rho_disk[ir,itheta,iphi] = rho_0*(1-np.sqrt(rstar/w))*(rstar/w)**(beta+1)*np.exp(-0.5*(z/h)**2)
 
                     # Combine envelope and disk
-                    rho_tsc[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env_tsc[ir,itheta,iphi]
-                    rho_ulrich[ir,itheta,iphi] = rho_disk[ir,itheta,iphi] + rho_env_ulrich[ir,itheta,iphi]# rho_env_ulrich[ir,itheta,iphi]
+                    rho_tsc[ir,itheta,iphi] = rho_disk[ir,itheta,iphi]*0 + rho_env_tsc[ir,itheta,iphi]
+                    rho_ulrich[ir,itheta,iphi] = rho_disk[ir,itheta,iphi]*0 + rho_env_ulrich[ir,itheta,iphi]# rho_env_ulrich[ir,itheta,iphi]
                 else:
                     rho_tsc[ir,itheta,iphi] = 1e-40
                     rho_ulrich[ir,itheta,iphi] = 1e-40
@@ -255,7 +255,6 @@ def tsc_com(plot=True, disk=False):
     # print min(rc)/AU, max(rc)/AU
 
     if plot == True:
-
         # make plots
 
         fig = plt.figure(figsize=(8,6))
@@ -293,4 +292,6 @@ def tsc_com(plot=True, disk=False):
         fig.savefig('/Users/yaolun/test/tsc_comparison.pdf', format='pdf', dpi=300, bbox_inches='tight')
 
     return rho_tsc/100, rho_ulrich/100
-tsc_com(disk=False)
+
+params_table = '/Users/yaolun/programs/misc/hyperion/input_table.txt'
+tsc_com(params_table, disk=True)

@@ -101,8 +101,8 @@ def sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs=None):
             if cc != 0:
                 ax.xaxis.set_major_locator(MaxNLocator(nbins=x_nbins, prune='lower'))
     if row > 1:
-        fig.text(0.5, 0 , r'$age\,[yr]\,(5\times 10^{3},\,1\times 10^{4},\,2.5\times 10^{4},\,5\times 10^{4},\,7.5\times 10^{4})$', fontsize=20, ha='center')
-        fig.text(0, 0.5, r'$sound\,speed\,[km\,s^{-1}]\,(0.6,\,0.5,\,0.38,\,0.2)$', fontsize=20, va='center', rotation='vertical')
+        fig.text(0.5, 0 , r'$t_{\rm col}\,[yr]\,(5\times 10^{3},\,1\times 10^{4},\,2.5\times 10^{4},\,5\times 10^{4},\,7.5\times 10^{4})$', fontsize=20, ha='center')
+        fig.text(0, 0.5, r'$c_{\rm s}\,[km\,s^{-1}]\,(0.57,\,0.47,\,0.37,\,0.27)$', fontsize=20, va='center', rotation='vertical')
 
     fig.subplots_adjust(hspace=0,wspace=0)
     fig.savefig(outdir+'sed_cs_age.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -179,7 +179,7 @@ def sed_omega(indir, array, outdir, obs=None, compact=False, addname=''):
                      [0.5687505862870377, 0.3322661256969763, 0.516976691731939],\
                      [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
 
-        label = [r'$\Omega_{\circ}=1\times 10^{-14}\,s^{-1}$',r'$\Omega_{\circ}=1\times 10^{-13}\,s^{-1}$',r'$\Omega_{\circ}=1\times 10^{-12}\,s^{-1}$']
+        label = [r'$\Omega_{\circ}=5\times 10^{-14}\,s^{-1}$',r'$\Omega_{\circ}=1\times 10^{-13}\,s^{-1}$',r'$\Omega_{\circ}=5\times 10^{-13}\,s^{-1}$']
         fig = plt.figure(figsize=(8,6))
         ax = fig.add_subplot(111)
 
@@ -237,7 +237,6 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
 
             # ax.plot(np.log10(wave_inf), np.log10(sed_inf), color='k', linewidth=1)
             if obs != None:
-
                 from get_obs import get_obs
 
                 bhr71 = get_obs(obs)  # in um and Jy
@@ -249,7 +248,12 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc='b',mec='b',markersize=3,markeredgewidth=1,linewidth=1.2)
 
             if inf == True:
-                ax.plot(np.log10(wave_inf), np.log10(sed_inf), '--',mfc='b',mec='b',markersize=3,markeredgewidth=1,linewidth=1.2)
+                from ConvolveSimulation import ConvolveSimulation
+                conv_wl = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 30, 70, 100, 160, 250, 350, 500, 1300]
+                filter_dir = '/Users/yaolun/programs/misc/hyperion/'
+                conv = ConvolveSimulation((wave_inf, sed_inf, sed_inf_unc), conv_wl, filter_dir, filter_func=True)
+
+                ax.plot(np.log10(conv[0]), np.log10(conv[1]), '--',mfc='b',mec='b',markersize=3,markeredgewidth=1,linewidth=1.2)
 
             if tbol == True:
                  ax.text(0.4, 0.1, r'$T_{bol}= %4.1f\,K$' % t_bol(wave, sed*wave*1e-4/c), fontsize=12, transform=ax.transAxes)
@@ -309,10 +313,17 @@ def sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=False, tbol=
             # sed with apertures
             (wave, sed, sed_unc) = np.genfromtxt(indir+'/model'+str(array[i])+'_sed_w_aperture.txt', skip_header=1).T
 
-            ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i])
+            # ax.plot(np.log10(wave), np.log10(sed), 'o-',mfc=color_list[i],mec=color_list[i],
+            #         color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i])
 
             if inf == True:
-              ax.plot(np.log10(wave_inf), np.log10(sed_inf), '--',mfc=color_list[i],mec=color_list[i],color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2)
+                from ConvolveSimulation import ConvolveSimulation
+                conv_wl = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 30, 70, 100, 160, 250, 350, 500, 1300]
+                filter_dir = '/Users/yaolun/programs/misc/hyperion/'
+                conv = ConvolveSimulation((wave_inf, sed_inf, sed_inf_unc), conv_wl, filter_dir, filter_func=True)
+
+                ax.plot(np.log10(conv[0]), np.log10(conv[1]), 'o-',mfc=color_list[i],mec=color_list[i],
+                      color=color_list[i],markersize=7,markeredgewidth=1,linewidth=2,label=compact[i])
 
             ax.legend(loc='lower right', numpoints=1, framealpha=0.3, fontsize=16)
         ax.set_xlabel(r'$log(wavelength)\,[\mu m]$', fontsize=18)
@@ -412,7 +423,7 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                      [0.1750865648952205, 0.11840023306916837, 0.24215989137836502]]
 
         # label setup
-        label = [ r'$\theta_{incl.}=80^{\circ}$', r'$\theta_{incl.}=40^{\circ}$',\
+        label = [ r'$\theta_{incl.}=80^{\circ}$', r'$\theta_{incl.}=45^{\circ}$',\
                   r'$\theta_{incl.}=30^{\circ}$']
 
         fig, axarr = plt.subplots(row, col, sharex='col', sharey='row', figsize=(12,2.7))
@@ -440,7 +451,7 @@ def sed_grid_theta_cav_incl(indir, array, outdir, obs=None, compact=False):
                 if cc == 0:
                     ax.legend(loc='upper left', numpoints=1,framealpha=0.3,fontsize=10)
 
-            ax.set_ylim([-14,-8])
+            ax.set_ylim([-13,-7])
             ax.set_xlim([0.4,2])
             ax.set_xticks([0.4,0.8,1.2,1.6,2.0])
             # ax.locator_params(axis='x', nbins=4)
@@ -577,7 +588,7 @@ def sed_grid_rho_cav_centeredge(indir, array, outdir, obs=None, compact=False):
                 if cc == col-1:
                     ax.legend(loc='lower right', numpoints=1,framealpha=0.3,fontsize=12)
 
-            ax.set_ylim([-14,-8])
+            ax.set_ylim([-13,-8])
             ax.set_xlim([0.4,2])
             ax.set_xticks([0.4,0.8,1.2,1.6,2.0])
             # ax.locator_params(axis='x', nbins=5)
@@ -939,41 +950,41 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
             db[i] = (rc[i]/40.)**-2
 
     # different style for maybe better illustration
-    fig, axarr = plt.subplots(3, 1, sharex='col', sharey='row', figsize=(8,18))
+    fig, axarr = plt.subplots(1, 3, sharex='col', sharey='row', figsize=(20,8))
     # plot r-2 profile with two density offsets
     (wave_r21, sed_r21, sed_unc_r21) = np.genfromtxt(indir+'/model'+str(array['r-2'][0])+'_sed_w_aperture.txt', skip_header=1).T
-    r21, = axarr[0].plot(np.log10(wave_r21), np.log10(sed_r21), 'o', linestyle='-', mfc='Magenta',mec='Magenta',\
-            markersize=7,markeredgewidth=1,color='Magenta', linewidth=1.5)
+    r21, = axarr[0].plot(np.log10(wave_r21), np.log10(sed_r21), 'o', linestyle='-', mfc='None',mec='Magenta',\
+            markersize=7,markeredgewidth=1,color='Magenta', linewidth=1)
     (wave_r22, sed_r22, sed_unc_r22) = np.genfromtxt(indir+'/model'+str(array['r-2'][1])+'_sed_w_aperture.txt', skip_header=1).T
-    r22, = axarr[0].plot(np.log10(wave_r22), np.log10(sed_r22), 'o', linestyle='--', mfc='Magenta',mec='Magenta',\
-            markersize=7,markeredgewidth=1,color='Magenta', linewidth=1.5)
+    r22, = axarr[0].plot(np.log10(wave_r22), np.log10(sed_r22), 'x', linestyle='--', mfc='Magenta',mec='Magenta',\
+            markersize=7,markeredgewidth=1,color='Magenta', linewidth=1)
     axarr[0].legend([r21, r22], \
-        [r'$\rm{\rho_{\circ}=5\times 10^{-16}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$'],\
+        [r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-21}\,g\,cm^{-3}}$'],\
         fontsize=14, numpoints=1, framealpha=0.5)
     axarr[0].text(0.1,0.9, r'$\rm{\rho(r) \propto r^{-2}}$', fontsize=18,color='k', transform=axarr[0].transAxes)
     # additional embedded axis for density
-    den_r2 = plt.axes([0.45 ,0.67, 0.2, 0.08], frameon=True)
-    den_r2.plot(np.log10(rc), np.log10(5e-16*d2),'-',color='k',linewidth=1)
-    den_r2.plot(np.log10(rc), np.log10(5e-18*d2),'--',color='k',linewidth=1)
+    den_r2 = plt.axes([0.22 ,0.2, 0.1, 0.2], frameon=True)
+    den_r2.plot(np.log10(rc), np.log10(5e-18*d2),'-',color='k',linewidth=1)
+    den_r2.plot(np.log10(rc), np.log10(5e-21*d2),'--',color='k',linewidth=1)
     den_r2.set_xlim([-1,5])
     den_r2.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
     den_r2.set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$')
     #
     # plot r-1.5 profile with two density offsets
     (wave_r151, sed_r151, sed_unc_r151) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][0])+'_sed_w_aperture.txt', skip_header=1).T
-    r151, = axarr[1].plot(np.log10(wave_r151), np.log10(sed_r151), 'o', linestyle='-', mfc='Red',mec='Red',\
-            markersize=7,markeredgewidth=1,color='Red', linewidth=1.5)
+    r151, = axarr[1].plot(np.log10(wave_r151), np.log10(sed_r151), 'o', linestyle='-', mfc='None',mec='Red',\
+            markersize=7,markeredgewidth=1,color='Red', linewidth=1)
     (wave_r152, sed_r152, sed_unc_r152) = np.genfromtxt(indir+'/model'+str(array['r-1.5'][1])+'_sed_w_aperture.txt', skip_header=1).T
-    r152, = axarr[1].plot(np.log10(wave_r152), np.log10(sed_r152), 'o', linestyle='--', mfc='Red',mec='Red',\
-            markersize=7,markeredgewidth=1,color='Red', linewidth=1.5)
+    r152, = axarr[1].plot(np.log10(wave_r152), np.log10(sed_r152), 'x', linestyle='--', mfc='Red',mec='Red',\
+            markersize=7,markeredgewidth=1,color='Red', linewidth=1)
     axarr[1].legend([r151, r152], \
-        [r'$\rm{\rho_{\circ}=5\times 10^{-16}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$'],\
+        [r'$\rm{\rho_{\circ}=5\times 10^{-18}\,g\,cm^{-3}}$', r'$\rm{\rho_{\circ}=5\times 10^{-21}\,g\,cm^{-3}}$'],\
         fontsize=14, numpoints=1, framealpha=0.5)
     axarr[1].text(0.1,0.9, r'$\rm{\rho(r) \propto r^{-1.5}}$', fontsize=18,color='k', transform=axarr[1].transAxes)
     # additional embedded axis for density
-    den_r15 = plt.axes([0.45 ,0.4, 0.2, 0.08], frameon=True)
-    den_r15.plot(np.log10(rc), np.log10(5e-16*d15),'-',color='k',linewidth=1)
-    den_r15.plot(np.log10(rc), np.log10(5e-18*d15),'--',color='k',linewidth=1)
+    den_r15 = plt.axes([0.48 ,0.2, 0.1, 0.2], frameon=True)
+    den_r15.plot(np.log10(rc), np.log10(5e-18*d15),'-',color='k',linewidth=1)
+    den_r15.plot(np.log10(rc), np.log10(5e-21*d15),'--',color='k',linewidth=1)
     den_r15.set_xlim([-1,5])
     den_r15.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
     den_r15.set_ylabel(r'$\rm{log(dust\,density)\,[g\,cm^{-3}]}$')
@@ -992,11 +1003,11 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
         [r'$\rho(r)\propto\,r^{-2}$', r'$\rho(r)\propto\,r^{-1.5}$',r'$uniform$',r'$const.+r^{-2}$'],\
         fontsize=14, numpoints=1, framealpha=0.5)
     # additional embedded axis for density
-    den_b = plt.axes([0.45 ,0.13, 0.2, 0.08], frameon=True)
-    den_b.plot(np.log10(rc), np.log10(5e-16*d2),'-',color='Magenta',linewidth=1)
-    den_b.plot(np.log10(rc), np.log10(5e-16*d15),'-',color='Red',linewidth=1)
-    den_b.plot(np.log10(rc), np.log10(5e-19*db), '-', color='Blue',linewidth=1)
-    den_b.plot(np.log10(rc), np.log10(rc*0+1e-20), '-', color='Green',linewidth=1)
+    den_b = plt.axes([0.74 ,0.2, 0.1, 0.2], frameon=True)
+    den_b.plot(np.log10(rc), np.log10(5e-18*d2),'-',color='Magenta',linewidth=1)
+    den_b.plot(np.log10(rc), np.log10(5e-18*d15),'-',color='Red',linewidth=1)
+    den_b.plot(np.log10(rc), np.log10(5e-20*db), '-', color='Blue',linewidth=1)
+    den_b.plot(np.log10(rc), np.log10(rc*0+1e-21), '-', color='Green',linewidth=1)
     den_b.set_xlim([-1,5])
     den_b.set_ylim([-28,-14])
     den_b.set_xlabel(r'$\rm{log(radius)\,[AU]}$')
@@ -1012,6 +1023,8 @@ def sed_cav_struc_com(indir, array, outdir, obs=None, ver=None):
         ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=20)
         ax.set_ylim([-13,-7.5])
 
+    # plt.setp([a.get_yticklabels() for a in axarr[1:]], visible=False)
+    [a.set_ylabel('') for a in axarr[1:]]
 
     fig.subplots_adjust(hspace=0,wspace=0)
     fig.savefig(outdir+'sed_cav_struc_com_sty2.pdf', format='pdf', dpi=300, bbox_inches='tight')
@@ -1067,12 +1080,12 @@ def sed_lum(indir, array, outdir, obs=None):
     ax.set_ylabel(r'$log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]$', fontsize=16)
     ax.set_ylim([-13,-7.5])
 
-    plt.legend([r1, r2, r3], [r'$6084\,K$', r'$6584\,K$',r'$7084\,K$'], numpoints=1, loc='lower right', fontsize=16)
+    plt.legend([r1, r2, r3], [r'$6450\,K$', r'$6950\,K$',r'$7450\,K$'], numpoints=1, loc='lower right', fontsize=16)
 
     fig.savefig(outdir+'sed_lstar.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=False):
+def model_vs_obs(modelname,indir,outdir,obs=None,dstar=200.0,wl_aper=None,rtout=False):
     import matplotlib.pyplot as plt
     import numpy as np
     import os
@@ -1109,7 +1122,7 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     l_bol_obs = l_bol(wl_tot,flux_tot*1e23, dstar)
 
     if wl_aper == None:
-        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850]
+        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 30, 70, 100, 160, 250, 350, 500, 850]
 
     # Create the plot
     mag = 1.5
@@ -1123,11 +1136,11 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
 
 
     # plot the observed photometry data
-    photometry, = ax_sed.plot(np.log10(wave_phot),np.log10(c/(wave_phot*1e-4)*flux_phot),'s',mfc='DimGray',mec='k',markersize=8)
+    photometry, = ax_sed.plot(np.log10(wave_phot),np.log10(c/(wave_phot*1e-4)*flux_phot),'s',mfc='DimGray',mec='DimGray',markersize=8)
     ax_sed.errorbar(np.log10(wave_phot),np.log10(c/(wave_phot*1e-4)*flux_phot),\
         yerr=[np.log10(c/(wave_phot*1e-4)*flux_phot)-np.log10(c/(wave_phot*1e-4)*(flux_phot-flux_sig_phot)),\
               np.log10(c/(wave_phot*1e-4)*(flux_phot+flux_sig_phot))-np.log10(c/(wave_phot*1e-4)*flux_phot)],\
-        fmt='s',mfc='DimGray',mec='k',markersize=8)
+        fmt='s',mfc='DimGray',mec='DimGray',markersize=8, ecolor='DimGray', elinewidth=1.5, barsabove=True, linewidth=1.5, markeredgewidth=1.5)
 
     # perform the same procedure of flux extraction of aperture flux with observed spectra
     wl_aper = np.array(wl_aper)
@@ -1210,8 +1223,8 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
 
     # plot setting
-    ax_sed.set_xlabel(r'$\rm{log\,\lambda\,({\mu}m)}$',fontsize=mag*20)
-    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg\,s^{-1}\,cm^{-2})}$',fontsize=mag*20)
+    ax_sed.set_xlabel(r'$\rm{log\,\lambda\,[{\mu}m]}$',fontsize=mag*20)
+    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]}$',fontsize=mag*20)
     [ax_sed.spines[axis].set_linewidth(1.5*mag) for axis in ['top','bottom','left','right']]
     ax_sed.minorticks_on()
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
@@ -1229,7 +1242,7 @@ def model_vs_obs(modelname,indir,outdir,obs=None,dstar=178.0,wl_aper=None,rtout=
     fig.savefig(outdir+modelname+'_sed.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtout=False,color_list=None,style=None,plotname=None,stretch=False):
+def models_vs_obs(modelname,outdir,label, obs=None,dstar=200.0,wl_aper=None,rtout=False,color_list=None,style=None,plotname=None,stretch=False):
     import matplotlib.pyplot as plt
     import numpy as np
     import os
@@ -1245,10 +1258,12 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
     if len(modelname) == 3:
         color_list = ['Magenta','Green','Blue']
         style = [':','--','-']
+        fmt = ['o','o','o']
         plotname = 'three_models_vs_obs_sed'
     if len(modelname) == 2:
-        color_list = ['Blue','Blue']
+        color_list = ['Blue','k']
         style = ['-','--']
+        fmt = ['o','D']
         plotname = 'tsc_vs_nontsc'
 
     # Read in the observation data and calculate the noise & variance
@@ -1266,15 +1281,17 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
     flux_sig_phot = flux_sig_phot*1e-23
 
     # Print the observed L_bol
-    wl_tot = np.hstack((wave_obs,wave_phot))
-    flux_tot = np.hstack((flux_obs,flux_phot))
-    flux_tot = flux_tot[np.argsort(wl_tot)]
-    wl_tot = wl_tot[np.argsort(wl_tot)]
-    l_bol_obs = l_bol(wl_tot,flux_tot*1e23, dstar)
+    # wl_tot = np.hstack((wave_obs,wave_phot))
+    # flux_tot = np.hstack((flux_obs,flux_phot))
+    # flux_tot = flux_tot[np.argsort(wl_tot)]
+    # unc_tot = np.hstack((noise_obs, flux_sig_phot))
+    # unc_tot = unc_tot[np.argsort(wl_tot)]
+    # wl_tot = wl_tot[np.argsort(wl_tot)]
+    # l_bol_obs = l_bol(wl_tot,flux_tot*1e23, dstar)
 
 
     if wl_aper == None:
-        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 1300]
+        wl_aper = [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 30, 70, 100, 160, 250, 350, 500, 1300]
 
     # Create the plot
     mag = 1.5
@@ -1292,40 +1309,53 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
     ax_sed.errorbar(np.log10(wave_phot),np.log10(c/(wave_phot*1e-4)*flux_phot),\
         yerr=[np.log10(c/(wave_phot*1e-4)*flux_phot)-np.log10(c/(wave_phot*1e-4)*(flux_phot-flux_sig_phot)),\
               np.log10(c/(wave_phot*1e-4)*(flux_phot+flux_sig_phot))-np.log10(c/(wave_phot*1e-4)*flux_phot)],\
-        fmt='s',mfc='DimGray',mec='k',markersize=8)
+        fmt='s',mfc='DimGray',mec='k',markersize=8, ecolor='DimGray', elinewidth=1.5, barsabove=True)
 
     # perform the same procedure of flux extraction of aperture flux with observed spectra
     wl_aper = np.array(wl_aper)
     obs_aper_wl = wl_aper[(wl_aper >= min(wave_obs)) & (wl_aper <= max(wave_obs))]
-    obs_aper_sed = np.empty_like(obs_aper_wl)
-    sed_tot = c/(wl_tot*1e-4)*flux_tot
+    # obs_aper_sed = np.empty_like(obs_aper_wl)
+    # obs_aper_sed_unc = np.empty_like(obs_aper_wl)
+    # sed_tot = c/(wl_tot*1e-4)*flux_tot
+    # sed_unc_tot = c/(wl_tot*1e-4)*unc_tot
     # wl_tot and flux_tot are already hstacked and sorted by wavelength
-    for i in range(0, len(obs_aper_wl)):
-        if (obs_aper_wl[i] < 50.) & (obs_aper_wl[i] >= 5):
-            res = 60.
-        elif obs_aper_wl[i] < 5:
-            res = 10.
-        else:
-            res = 1000.
-        ind = np.where((wl_tot < obs_aper_wl[i]*(1+1./res)) & (wl_tot > obs_aper_wl[i]*(1-1./res)))
-        if len(ind[0]) != 0:
-            obs_aper_sed[i] = np.mean(sed_tot[ind])
-        else:
-            f = interp1d(wl_tot, sed_tot)
-            obs_aper_sed[i] = f(wl_aper[i])
-    aper_obs, = ax_sed.plot(np.log10(obs_aper_wl),np.log10(obs_aper_sed), 's-', mec='None', mfc='r', color='r',markersize=10, linewidth=1.5, label=r'$\rm{F_{aper,obs}}$')
+
+    # convolve with filters or monochromatic
+    filter_dir = '/Users/yaolun/programs/misc/hyperion/'
+    from ConvolveSimulation import ConvolveSimulation
+    obs_aper_wl, obs_aper_sed, obs_aper_sed_unc = ConvolveSimulation([wave_obs, c/(wave_obs*1e-4)*flux_obs, c/(wave_obs*1e-4)*noise_obs], obs_aper_wl, filter_dir, filter_func=True)
+
+    # for i in range(0, len(obs_aper_wl)):
+    #     if (obs_aper_wl[i] < 50.) & (obs_aper_wl[i] >= 5):
+    #         res = 60.
+    #     elif obs_aper_wl[i] < 5:
+    #         res = 10.
+    #     else:
+    #         res = 1000.
+    #     ind = np.where((wl_tot < obs_aper_wl[i]*(1+1./res)) & (wl_tot > obs_aper_wl[i]*(1-1./res)))
+    #     if len(ind[0]) != 0:
+    #         obs_aper_sed[i] = np.mean(sed_tot[ind])
+    #     else:
+    #         f = interp1d(wl_tot, sed_tot)
+    #         obs_aper_sed[i] = f(wl_aper[i])
+
+    aper_obs = ax_sed.errorbar(np.log10(obs_aper_wl), np.log10(obs_aper_sed),\
+            yerr=[np.log10(obs_aper_sed)-np.log10(obs_aper_sed-obs_aper_sed_unc), np.log10(obs_aper_sed+obs_aper_sed_unc)-np.log10(obs_aper_sed)],\
+            fmt='s', mec='None', mfc='r', markersize=10, linewidth=1.5, label=r'$\rm{F_{aper,obs}}$', ecolor='r', elinewidth=1.5, barsabove=True)
 
     # iterate through three models, best-fit, Kristensen 2012, and Bourke 1997 geometry
     for mod in modelname:
 
         # read in the raw output from hyperion and then save the extraction results in text file, otherwise read the text files instead.
         if rtout == True:
+            print 'There might be some bugs here.'
             # Open the model
             m = ModelOutput(mod+'.rtout')
 
             sed_inf = m.get_sed(group=0, inclination=0, aperture=-1, distance=dstar * pc)
             flux_aper = np.empty_like(wl_aper)
             unc_aper = np.empty_like(wl_aper)
+
             for i in range(0, len(wl_aper)):
                 sed_dum = m.get_sed(group=i+1, inclination=0, aperture=-1, distance=dstar * pc)
                 # use a rectangle function the average the simulated SED
@@ -1367,9 +1397,12 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
             (wl_aper, flux_aper, unc_aper) = np.genfromtxt(mod+'_sed_w_aperture.txt', skip_header=1).T
             print max(wl_aper)
 
-        aper, = ax_sed.plot(np.log10(wl_aper),np.log10(flux_aper),'o', linestyle=style[modelname.index(mod)],\
+        aper = ax_sed.errorbar(np.log10(wl_aper),np.log10(flux_aper),
+                            yerr=[np.log10(flux_aper)-np.log10(flux_aper-unc_aper), np.log10(flux_aper+unc_aper)-np.log10(flux_aper)],
+                            fmt=fmt[modelname.index(mod)], linestyle=style[modelname.index(mod)],\
                             mec=color_list[modelname.index(mod)], mfc='None', color=color_list[modelname.index(mod)],\
-                            markersize=12, markeredgewidth=3, linewidth=1.7, label=label[modelname.index(mod)])
+                            markersize=12, markeredgewidth=3, linewidth=1.7, label=label[modelname.index(mod)],
+                            ecolor=color_list[modelname.index(mod)], elinewidth=1.5, barsabove=True)
 
         # aper = ax_sed.errorbar(np.log10(wl_aper),np.log10(flux_aper),\
             # yerr=[np.log10(flux_aper)-np.log10(flux_aper-unc_aper), np.log10(flux_aper+unc_aper)-np.log10(flux_aper)],\
@@ -1381,8 +1414,8 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
         print 'Bolometric luminosity of simulated spectrum: %5.2f lsun' % l_bol_sim
 
     # plot setting
-    ax_sed.set_xlabel(r'$\rm{log\,\lambda\,({\mu}m)}$',fontsize=mag*20)
-    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,(erg\,s^{-1}\,cm^{-2})}$',fontsize=mag*20)
+    ax_sed.set_xlabel(r'$\rm{log\,\lambda\,[{\mu}m]}$',fontsize=mag*20)
+    ax_sed.set_ylabel(r'$\rm{log\,\nu S_{\nu}\,[erg\,s^{-1}\,cm^{-2}]}$',fontsize=mag*20)
     [ax_sed.spines[axis].set_linewidth(1.5*mag) for axis in ['top','bottom','left','right']]
     ax_sed.minorticks_on()
     ax_sed.tick_params('both',labelsize=mag*18,width=1.5*mag,which='major',pad=15,length=5*mag)
@@ -1394,7 +1427,7 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=178.0,wl_aper=None,rtou
         ax_sed.set_ylim([-13, -7.5])
     ax_sed.set_xlim([0.3,3.3])
 
-    lg_data = ax_sed.legend(loc='lower right',fontsize=12*mag,numpoints=1,framealpha=0.3)
+    lg_data = ax_sed.legend(loc='lower center',fontsize=12*mag,numpoints=1,framealpha=0.3)
 
     # Write out the plot
     fig.savefig(outdir+plotname+'.pdf',format='pdf',dpi=300,bbox_inches='tight')
@@ -1549,17 +1582,146 @@ def cs_age_behavior(indir, array, outdir, obs=None):
     fig.savefig(outdir+'sed_cs_age_behavior.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
+def radial_grid(indir, array, outdir, wave, dstar, obs=False, color_array=None, label_list=None):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from astropy.io import ascii
+
+    # create figure
+    fig = plt.figure(figsize=(8,6))
+    ax = fig.add_subplot(111)
+
+    # set colormap
+    if color_array == None:
+        cmap = plt.cm.viridis
+        color_array = [cmap(np.linspace(0, 0.9, len(array))[i]) for i in range(len(array))]
+
+    sim_plots = []
+
+    for imod in range(len(array)):
+        data_dum = ascii.read(indir+'model'+str(array[imod])+'_radial_profile_'+wave+'um.txt')
+
+        I_sim_hi = np.log10((data_dum['I_sim']+data_dum['I_sim_err'])/data_dum['I_sim'].max())-np.log10(data_dum['I_sim']/data_dum['I_sim'].max())
+        I_sim_low = np.log10(data_dum['I_sim']/data_dum['I_sim'].max())-np.log10((data_dum['I_sim']-data_dum['I_sim_err'])/data_dum['I_sim'].max())
+
+        # sim = ax.errorbar(np.log10(data_dum['r_in']*dstar), np.log10(data_dum['I_sim']/data_dum['I_sim'].max()),
+        #                    yerr=[I_sim_low, I_sim_hi], fmt='o', linestyle='-',
+        #                    color=color_array[imod], mfc=color_array[imod], mec='None', markersize=2, linewidth=1.2,
+        #                    elinewidth=1.2, capthick=1.2, barsabove=True)
+        # no errorbar version
+        sim, = ax.plot(np.log10(data_dum['r_in']*dstar), np.log10(data_dum['I_sim']/data_dum['I_sim'].max()),
+                       'o', linestyle='-', color=color_array[imod], mfc=color_array[imod], mec='None',
+                       markersize=5, linewidth=1.2)
+
+        sim_plots.append(sim)
+    if obs:
+        I_hi = np.log10((data_dum['I']+data_dum['I_err'])/data_dum['I'].max())-np.log10(data_dum['I']/data_dum['I'].max())
+        I_low = np.log10(data_dum['I']/data_dum['I'].max())-np.log10((data_dum['I']-data_dum['I_err'])/data_dum['I'].max())
+
+        # obs_plot = ax.errorbar(np.log10(data_dum['r_in']*dstar), np.log10(data_dum['I']/data_dum['I'].max()),
+        #                         yerr=[I_low, I_hi], fmt='o', linestyle='-',
+        #                         color='k', mfc='k', mec='None', markersize=2, linewidth=1.2,
+        #                         elinewidth=1.2, capthick=1.2, barsabove=True)
+        # no errorbar version
+        obs_plot, = ax.plot(np.log10(data_dum['r_in']*dstar), np.log10(data_dum['I']/data_dum['I'].max()),
+                            'o', linestyle='-', color='k', mfc='k', mec='None', markersize=5,
+                            linewidth=1.2)
+
+    if label_list == None:
+        ax.legend([obs_plot], [r'$\rm{observation}$'],
+                  loc='best', fontsize=16, numpoints=1)
+    else:
+        ax.legend([obs_plot]+sim_plots, [r'$\rm{observation}$']+label_list,
+                  loc='best', fontsize=16, numpoints=1)
+
+    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    ax.minorticks_on()
+    ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+
+    ax.set_xlabel(r'$\rm{log({\it b})\,[{\rm AU}]}$', fontsize=18)
+    ax.set_ylabel(r'$log(I/I_{\rm max})$', fontsize=18)
+
+    fig.savefig(outdir+'radial_profiles.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
+
+def radial_grid_incl(indir, array_list, outdir, wave, cmap, labels, dstar, obs=False):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from astropy.io import ascii
+
+    # create figure
+    fig = plt.figure(figsize=(8,6))
+    ax = fig.add_subplot(111)
+
+    for i in range(len(array_list)):
+        # set colormap
+        cmap_dum = plt.get_cmap(cmap[i])
+        color_array = np.linspace(0, 0.9, len(array_list[i]))
+
+        for imod in range(len(array_list[i])):
+            data_dum = ascii.read(indir+'model'+str(array_list[i][imod])+'_radial_profile_'+wave+'um.txt')
+            ax.plot(np.log10(data_dum['r_in']*dstar), np.log10(data_dum['I_sim']/data_dum['I_sim'].max())-i, 'o-',
+                    color=cmap_dum(color_array[imod]), mfc=cmap_dum(color_array[imod]), mec='None',
+                    markersize=4, linewidth=1.2)
+
+    # # set colormap
+    # cmap_dum = plt.get_cmap('viridis')
+    # color_array = np.linspace(0, 0.9, len(array_list[0]))
+    #
+    # for imod in range(len(array_list[0])):
+    #     data1 = ascii.read(indir+'model'+str(array_list[0][imod])+'_radial_profile_'+wave+'um.txt')
+    #     data2 = ascii.read(indir+'model'+str(array_list[1][imod])+'_radial_profile_'+wave+'um.txt')
+    #
+    #     ax.plot(np.log10(data1['r_in']), np.log10((data1['I_sim']/data1['I_sim'].max())/(data2['I_sim']/data2['I_sim'].max())), 'o-',
+    #             color=cmap_dum(color_array[imod]), mfc=cmap_dum(color_array[imod]), mec='None',
+    #             markersize=4, linewidth=1.2)
+
+    # if obs:
+    #     obs_plot, = ax.plot(np.log10(data_dum['r_in']), np.log10(data_dum['I']/data_dum['I'].max()), 'o-',
+                            # color='k', mfc='k', mec='None', markersize=4, linewidth=1.2)
+
+        # ax.legend([obs_plot], [r'$\rm{observation}$'],
+        #           loc='best', fontsize=16, numpoints=1)
+
+    # for legend
+    cmap_dum = plt.get_cmap(cmap[0])
+    color_array = np.linspace(0, 0.9, len(array_list[0]))
+    incl1, = ax.plot([], [], 'o-', color=cmap_dum(color_array[-15]), mfc=cmap_dum(color_array[-15]), mec='None',
+                     markersize=4, linewidth=1.2)
+
+    cmap_dum = plt.get_cmap(cmap[1])
+    color_array = np.linspace(0, 0.9, len(array_list[1]))
+    incl2, = ax.plot([], [], 'o-', color=cmap_dum(color_array[-15]), mfc=cmap_dum(color_array[-15]), mec='None',
+                     markersize=4, linewidth=1.2)
+    if not obs:
+        ax.legend([incl1, incl2], labels, loc='best', fontsize=16, numpoints=1)
+    else:
+        # print labels
+        # print labels.append('$\\rm{observations}$')
+        ax.legend([incl1, incl2, obs_plot], labels.append('$\\rm{observations}$'), loc='best', fontsize=16, numpoints=1)
+
+    [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
+    ax.minorticks_on()
+    ax.tick_params('both',labelsize=18,width=1.5,which='major',pad=15,length=5)
+    ax.tick_params('both',labelsize=18,width=1.5,which='minor',pad=15,length=2.5)
+
+    ax.set_xlabel(r'$\rm{log({\it b})\,{\rm [AU]}}$', fontsize=18)
+    ax.set_ylabel(r'$log(I/I_{\rm max})$', fontsize=18)
+
+    fig.savefig(outdir+'radial_profiles_incl.pdf', format='pdf', dpi=300, bbox_inches='tight')
+    fig.clf()
+
 import numpy as np
 indir = '/Users/yaolun/bhr71/hyperion/controlled/'
-outdir = '/Users/yaolun/Copy/Papers/yaolun/bhr71/figures/'
-outdir = '/Users/yaolun/test/updated_bhr71/BHR71_ult/'
+outdir = '/Users/yaolun/test/updated_bhr71/Aug16/'
 obs = '/Users/yaolun/bhr71/best_calibrated/'
 
 # grid of cs and age
-array = np.array([[1,2,3,4,5],[6,7,8,9,10],[11,12,13,14,15],[16,17,18,19,20]])
-cslist = [0.2,0.38,0.5,0.6]
+array = np.array([[4,5,6,7,8],[9,10,11,12,13],[14,15,16,17,18],[19,20,21,22,23]])
+cslist = [0.27,0.37,0.47,0.57]
 agelist = [5e3,1e4,2.5e4,5e4,7.5e4]
-sed_grid_cs_age(indir+'cycle6/', array, outdir, cslist, agelist, obs= None)
+sed_grid_cs_age(indir, array, outdir, cslist, agelist, obs= None)
 
 # # for presentation, show only one sound speed bin
 # array = np.array([[17,18,19,20,49]])
@@ -1576,110 +1738,129 @@ sed_grid_cs_age(indir+'cycle6/', array, outdir, cslist, agelist, obs= None)
 # sed_five('/Users/yaolun/bhr71/hyperion/cycle8/', array, outdir, xlabel, plotname, obs=obs, compact=compact, obs_color='Red')
 
 # grid of Omega0
-array = np.array([23,22,21])
-sed_omega(indir+'cycle6/', array, outdir, obs=None, compact=True, addname='_1e4')
 array = np.array([26,25,24])
-sed_omega(indir+'cycle6/', array, outdir, obs=None, compact=True, addname='_7.5e4')
+sed_omega(indir, array, outdir, obs=None, compact=True, addname='_36e3')
+array = np.array([29,28,27])
+sed_omega(indir, array, outdir, obs=None, compact=True, addname='_75e3')
 
 # grid of disk parameters
 # disk mass
-array = np.array([28,29,30])
+array = np.array([34,35,36])
 xlabel = r'$M_{disk}\,[M_{\odot}]\,(0.025,\,0.075,\,0.25)$'
 compact = [r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$']
 plotname = 'disk_mdisk'
-sed_five(indir+'cycle6/', array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
-# flare power
-array = np.array([31,32,33,34,35])
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# # flare power
+array = np.array([37,38,39,40,41])
 xlabel = r'$\beta\,(1.0,\,1.2,\,1.4,\,1.6,\,1.8)$'
 compact = [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$']
 plotname = 'disk_beta'
-sed_five(indir+'cycle6/', array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
-# scale height
-array = np.array([36,37,38,39,40])
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, zoom=True, compact=compact, yrange=[-13,-8])
+# # scale height
+array = np.array([42,43,44,45,46])
 xlabel = r'$h_{100}\,[AU]\,(6,\,8,\,10\,,12,\,14)$'
 compact = [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']
 plotname = 'disk_h100'
-sed_five(indir+'cycle6/', array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
-# all disk parameter
-array = np.array([[28,39,30,0,0],[31,32,33,34,35],[36,37,38,39,40]])
+sed_five(indir, array, outdir, xlabel, plotname, obs=None, zoom=True, compact=compact, yrange=[-13,-8])
+# # all disk parameter
+array = np.array([[34,35,36,0,0],[37,38,39,40,41],[42,43,44,45,46]])
 compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
            [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
            [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
-disk_summary(indir+'cycle6/', array, outdir, compact=compact)
+disk_summary(indir, array, outdir, compact=compact)
 
+# disks in early stage
+# array = np.array([[93,94,95,0,0],[96,97,98,99,100],[101,102,103,104,105]])
+# compact = [[r'$M_{disk}=0.025\,M_{\odot}$',r'$M_{disk}=0.075\,M_{\odot}$',r'$M_{disk}=0.25\,M_{\odot}$'],\
+#            [r'$\beta=1.0$',r'$\beta=1.2$',r'$\beta=1.4$',r'$\beta=1.6$',r'$\beta=1.8$'],\
+#            [r'$h_{100}=6\,AU$',r'$h_{100}=8\,AU$',r'$h_{100}=10\,AU$',r'$h_{100}=12\,AU$',r'$h_{100}=14\,AU$']]
+# disk_summary(indir, array, outdir, compact=compact)
 
 # grid of theta_cav and incl.
-array = np.array([[242,243,244,245,246],[247,248,249,250,251],[252,253,254,255,256]])
+array = np.array([[58,59,60,61,62],[63,64,65,66,67],[68,69,70,71,72]])
 sed_grid_theta_cav_incl(indir, array, outdir, obs= None, compact=True)
-# only for incl. = 40
-# array = np.array([58,59,60,104,105])
-# xlabel = r'$\theta_{cav}\,[deg.]\,(10^{\circ}, 15^{\circ}, 20^{\circ}, 25^{\circ}, 30^{\circ})$'
-# plotname = 'theta_cav_incl40'
-# compact = [r'$\theta_{cav}=10^{\circ}$',r'$\theta_{cav}=15^{\circ}$',r'$\theta_{cav}=20^{\circ}$',\
-#            r'$\theta_{cav}=25^{\circ}$',r'$\theta_{cav}=30^{\circ}$']
-# sed_five(indir, array, outdir, xlabel, plotname, obs=None, compact=compact)
 
 # grid of rho_cav_center and sed_rho_cav_edge
-array = np.array([[257,258,259,260],[261,262,263,264],[265,266,267,268]])
-# sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None)
+array = np.array([[73,74,75,76],[77,78,79,80],[81,82,83,84]])
 sed_grid_rho_cav_centeredge(indir, array, outdir, obs= None, compact=True)
 
 # disk & no disk
 # late: yes & no; early: yes & no
-array = np.array([27,29,67,84])
-disk_exist_com(indir+'cycle6/', array, outdir, obs=None)
+array = np.array([32,33,30,31])
+disk_exist_com(indir, array, outdir, obs=None)
 
-# grid of tstar
-# array = np.array([73,74,75])
-# sed_tstar(indir, array, outdir, obs=obs)
-
-# grid of rstar
-# array = np.array([72,73,74])
-# sed_rstar(indir, array, outdir, obs=obs)
 
 # grid of R_env_max
-array = np.array([272,273,274])
+array = np.array([88,89,90])
 xlabel = r'$R_{env,max}\,[AU]\,(7.5\times 10^{3},\,4.0\times 10^{4},\,6.0\times 10^{4})$'
 compact = [r'$R_{env,max}=7.5\times 10^{3}\,AU$',r'$R_{env,max}=4.0\times 10^{4}\,AU$',r'$R_{env,max}=6.0\times 10^{4}\,AU$']
 plotname = 'r_max'
-sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5])
+sed_five(indir, array, outdir, xlabel, plotname, obs= None, tbol=True, compact=compact, yrange=[-13,-7.5], inf=True)
 
 # grid of continuous cavity power law
 # power = 2, 1.5, const+r-2, and uniform
-array = {'r-2': [234,236], 'r-1.5': [238,240], 'const+r-2': [224], 'uniform': [232]}
+# array = {'r-2': [48,50], 'r-1.5': [52,54], 'const+r-2': [114], 'uniform': [46]}
+# sed_cav_struc_com(indir, array, outdir, obs=obs)
+
+# array = {'r-2': [52,55], 'r-1.5': [56,59], 'const+r-2': [80], 'uniform': [51]}
+# sed_cav_struc_com(indir+'cycle9/', array, outdir, obs=None)
+# array = {'r-2': [55,55], 'r-1.5': [59,59], 'const+r-2': [80], 'uniform': [51]}
+# sed_cav_struc_com(indir+'cycle9/', array, outdir, obs=obs)
+
+array = {'r-2': [50,53], 'r-1.5': [54,57], 'const+r-2': [65], 'uniform': [49]}
+sed_cav_struc_com(indir, array, outdir, obs=None)
+array = {'r-2': [52,52], 'r-1.5': [56,56], 'const+r-2': [65], 'uniform': [49]}
 sed_cav_struc_com(indir, array, outdir, obs=obs)
 
-array = {'r-2': [234,236], 'r-1.5': [238,240], 'const+r-2': [224], 'uniform': [232]}
-sed_cav_struc_com(indir, array, outdir, obs=None)
-
-
 # grid of tstar with the same lstar
-array = np.array([269,270,271])
+array = np.array([85,86,87])
 sed_lum(indir, array, outdir)
 
-array = np.array([[20,18,16],[6,11,16]])
-cs_age_behavior(indir+'cycle6/', array, outdir)
+array = np.array([[4,14,19],[23,21,19]])
+cs_age_behavior(indir, array, outdir)
 
-model_vs_obs('model41', '/Users/yaolun/bhr71/hyperion/', '/Users/yaolun/test/', obs=obs)
+# array = np.arange(99, 133)
+# wave = '160.0'
+# radial_grid('/Users/yaolun/bhr71/hyperion/controlled/', array, outdir, wave, 200, obs=True)
 
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model141',\
-               '/Users/yaolun/bhr71/hyperion/controlled/model225',\
-               '/Users/yaolun/bhr71/hyperion/controlled/model224'],\
-               '/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
-               [r'$\rm{Kristensen\,et.\,al.\,2012}$', \
-               r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',\
+# compare TSC and non-TSC radial profiles
+# array = np.arange(268,303)
+wave = '160.0'
+radial_grid('/Users/yaolun/bhr71/hyperion/', np.array(['32', '32_nontsc']), outdir, wave, 200, obs=False,
+            color_array=['b','r'], label_list=[r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'])
+
+
+array_list = [np.arange(99,133), np.arange(141,175)]
+labels = [r'$\rm{\theta_{incl}=50^{\circ}}$', r'$\rm{\theta_{incl}=65^{\circ}}$']
+cmap = ['viridis', 'inferno']
+radial_grid_incl('/Users/yaolun/bhr71/hyperion/controlled/', array_list, outdir,
+                 wave, cmap, labels, 200, obs=False)
+#
+model_vs_obs('model65', '/Users/yaolun/bhr71/hyperion/controlled/', outdir, obs=obs)
+#
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model175',
+               '/Users/yaolun/bhr71/hyperion/controlled/model3',
+               '/Users/yaolun/bhr71/hyperion/controlled/model65'],
+               outdir,
+               [r'$\rm{Kristensen\,et.\,al.\,(2012)}$',
+               r'$\rm{geometry\,from\,B97}$',
                r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
-
-models_vs_obs(['/Users/yaolun/test/updated_bhr71/BHR71_ult/model154',\
-               '/Users/yaolun/test/updated_bhr71/BHR71_ult/model154_nontsc'],\
-               '/Users/yaolun/test/updated_bhr71/BHR71_ult/',\
+#
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/model32',
+               '/Users/yaolun/bhr71/hyperion/model32_nontsc'],
+               '/Users/yaolun/test/updated_bhr71/Aug16/',
                [r'$\rm{full\,TSC}$',r'$\rm{infall-only\,TSC}$'], obs)
 
-# models_vs_obs(['/Users/yaolun/bhr71/hyperion/three_models/model3','/Users/yaolun/bhr71/hyperion/three_models/model4','/Users/yaolun/bhr71/hyperion/three_models/model1'],\
-    # '/Users/yaolun/test/',\
-    # [r'$\rm{Kristensen\,et.\,al.\,2012}$', r'$\rm{geometry\,from\,Bourke\,et.\,al.\,1997}$',r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
 
 # full TSC vs infall-only TSC model
-# models_vs_obs(['/Users/yaolun/bhr71/hyperion/cycle9/model1','/Users/yaolun/bhr71/hyperion/cycle9/model1_ulrich'],\
-#     '/Users/yaolun/test/',\
-#     [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model63_tsc_com')
+# models_vs_obs(['/Users/yaolun/bhr71/hyperion/model30','/Users/yaolun/bhr71/hyperion/model30_nontsc'],\
+#     outdir,\
+#     [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model30_tsc_com')
+# early age
+# models_vs_obs(['/Users/yaolun/bhr71/hyperion/model159','/Users/yaolun/bhr71/hyperion/model159_nontsc'],\
+#     outdir,\
+#     [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model159_tsc_com')
+# # smaller inclination
+# models_vs_obs(['/Users/yaolun/bhr71/hyperion/model160','/Users/yaolun/bhr71/hyperion/model160_nontsc'],\
+#     outdir,\
+#     [r'$\rm{full\,TSC}$', r'$\rm{infall-only\,TSC}$'], obs, color_list=['b','b'], style=['-','--'], plotname='model160_tsc_com')

@@ -90,7 +90,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
     flux_sig_phot = flux_sig_phot*1e-23
 
     if aperture == None:
-        aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 35, 70, 100, 160, 250, 350, 500, 850],\
+        aperture = {'wave': [3.6, 4.5, 5.8, 8.0, 8.5, 9, 9.7, 10, 10.5, 11, 16, 20, 24, 30, 70, 100, 160, 250, 350, 500, 850],\
                     'aperture': [7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 20.4, 20.4, 20.4, 20.4, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5, 24.5]}
     # assign wl_aper and aper from dictionary of aperture
     wl_aper = aperture['wave']
@@ -522,9 +522,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
 # indir = '/Users/yaolun/bhr71/best_calibrated/'
 # outdir = '/Users/yaolun/bhr71/hyperion/'
 # import numpy as np
-# # from astropy.io import ascii
-# # aperture = ascii.read(indir+'aperture.txt')
 # wl_aper, aper_arcsec = np.genfromtxt(indir+'aperture.txt', skip_header=1, dtype=float).T
 # aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
-# extract_hyperion('/Users/yaolun/bhr71/hyperion/model79.rtout',indir=indir,outdir='/Users/yaolun/test/',\
+# extract_hyperion('/Volumes/SD-Mac/model32_nontsc.rtout',indir=indir,outdir=outdir,\
 #     aperture=aperture,filter_func=True,plot_all=False,clean=True,image=True,print_data_w_aper=True)
