@@ -70,7 +70,7 @@
         write (7,*)' used old data file=:'
         write (7,'(a)') oldfile
         end if
-! 
+!
 ! input parameters
         print *,' non-dim  xrmin=?,xrmax=?,delxr=?'
 !       write(0,'("non-dim xrmin=?,xrmax=?,delxr=?")')
@@ -93,7 +93,7 @@
         open(unit=9,file=outfile,status='new')
         write(9,802) nvmax,vmin,vmax,delv,tau,ninc,(aid(ni),ni=1,ninc)
         do 80 nv=1,nvmax
-            v= vmin +float(nv-1)*delv   
+            v= vmin +float(nv-1)*delv
             vlos(nv)=v
             do 70 ni=1,ninc
               data(nv,ni)=data(nv,ni)/delv
@@ -133,6 +133,7 @@
         do 10 l=1,lcol
           print *,l,m
           read(lun,*,end=900) (dd((m-1)*lcol+l),m=1,mcol)
+          error=.false.
 !         print *,dd((m-1)*lcol+l),m,mcol
 10      continue
 !
@@ -166,10 +167,10 @@
         data d2/-3.52E-4/
 !
         p2(ang)= 1. -1.5*(sin(ang)**2)
-! 
+!
         time=tau
         tsq= tau*tau
-! set up 
+! set up
         nrmax=(xrmax-xrmin)/delxr +1.0
         delr=delxr
         thetamin=0.
@@ -189,14 +190,14 @@
         if(xrmin.eq.0.) nrmin=2
         nskip=0
         do 600 nr=nrmin,nrmax
-          xr= xrmin +float(nr-1)*delxr  
+          xr= xrmin +float(nr-1)*delxr
 ! related to volume element
           if(nr.eq.nrmax) then
             delr=abs(xrmax-xr)
             write(7,*)' last step nr,xr,xrmax,delr',nr,xr,xrmax,delr
           end if
           const= xr**2 *delth*delph*delr
-! loop over angle theta 
+! loop over angle theta
           do 500 nt= 1,ntmax
             theta=thetamin +float(nt-1)*delth
             ang1=theta
@@ -228,7 +229,7 @@
 !       calculate inner solution
                 if (xr.lt.tsq) then
                   call cassen(tau,ang1,xr,ro,ur,utheta,uphi)
-                else    
+                else
                   if (lp.eq.0) then
                       ro=0.
                       ur=0.
@@ -270,9 +271,9 @@
             end if
 ! calculate velocity channel appropriate to velocity vz
             nv=nint( (vz(ni)-vmin)/delv +1.0 )
-! calculate velocity at left hand side of channel 
+! calculate velocity at left hand side of channel
             vl= vmin +(float(nv-1)-0.5)*delv
-! calculate velocity at right hand side of channel 
+! calculate velocity at right hand side of channel
             vu= vl+delv
             if (nv.ge. 1 .and. nv.le. npoints) then
 ! put mass element into velocity profile for inclination ai(ni)
@@ -308,9 +309,9 @@
           if(nt.eq.1 .and. thetamin.eq.0.) goto500
 ! if theta=2pi then only do phi=0 iteration
           if(nt.eq.ntmax) goto500
-! end loop through volume 
+! end loop through volume
 !         write(7,800) vz(ni),delm,xr,theta,phi,ro,ur,utheta,uphi,dvol
-400         continue    
+400         continue
 500       continue
           write(7,800) vz(ni),delm,xr,theta,phi,ro,ur,utheta,uphi,dvol
 600     continue
@@ -419,7 +420,7 @@
                 uphi=0.
                 ro=0.
                 return
-        end if  
+        end if
 !
         fv= - sqrt(xmo/xr)
 !
@@ -458,7 +459,7 @@
 !       print *,' ur',ur
 ! Utheta------------------------------------------
 30      continue
-        if(theta.eq.0. .or. abs(theta/pi-1.).le.1e-5)then 
+        if(theta.eq.0. .or. abs(theta/pi-1.).le.1e-5)then
          utheta=0.
         else
          utheta= f3(theta,thetao)*fv*f1(theta,thetao)
@@ -466,7 +467,7 @@
 !       print *,' utheta',utheta
 ! Uphi--------------------------------------------
 40      continue
-        if(theta.eq.0. .or. abs(theta/pi-1.).le.1e-5)then 
+        if(theta.eq.0. .or. abs(theta/pi-1.).le.1e-5)then
          uphi=0.
         else
          uphi= -fv*sin(thetao)/sin(theta) * f2(theta,thetao)
@@ -492,11 +493,11 @@
 !       uz= ur*cos(theta) -utheta*sin(theta)
 !       v= uz
 !
-        return  
+        return
         end
         subroutine method1(azeta,atheta,athetao)
 !----------------------------------------------------------
-!  solve transcendental equation 
+!  solve transcendental equation
 !  derived by Cassen and Moosman for parabolic trajectories
 !  zeta * sin**2(thetao) = 1 - cos(theta)/cos(thetao)
 !  given zeta, theta  solve for thetao
@@ -517,14 +518,14 @@
                 return
         end if
         if ( abs(atheta/pi-1.).le. 1.d-5 ) then
-                athetao= pi 
+                athetao= pi
 !               type 10, azeta,atheta,athetao
                 return
         end if
         pi2=pi/2.0d0
         if ( abs(atheta/pi2-1.).le. 1.d-5 ) then
                 if(azeta.le.1.) then
-                 athetao= pi2 
+                 athetao= pi2
                 else
                  athetao= -100.
                 end if
@@ -540,7 +541,7 @@
         b(2)= 0.
         b(3)= 1.- zeta
         b(4)= - costheta
-        xone= 1. 
+        xone= 1.
 !
 ! find roots of cubic equation, put result into array x
         call cubesolv(b,x,mtype)
@@ -581,10 +582,10 @@
 ! double precison to single precision
         athetao= thetao
         return
-        end     
+        end
         subroutine vzpvect(ai,theta,phi,vr,vtheta,vphi,vzp)
 !-------------------------------------------
-! given spherical velocity vector vr,vtheta,vph 
+! given spherical velocity vector vr,vtheta,vph
 ! spherical coordinates theta,phi and inclination ai (in radians)
 ! then find the line of sight velocity component vzp
 !-------------------------------------------
@@ -602,7 +603,7 @@
         vzp=terma +termb +termc
 !       print *,' vz,terma,b,c',vz,terma,termb,termc
 !
-        return 
+        return
         end
         subroutine cubesolv(ab,ax,mtype)
 !--------------------------------------------------
@@ -688,7 +689,7 @@
 !      ind is an error flag, ind =0 for error
 !      x in ascending order; n .ge. 3
 !      xlo,xup in interval [x(1),x(n)]
-!   
+!
 !--------------------------------------------------
 !
 !       implicit real*8 (a-h,o-z)
