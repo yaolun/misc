@@ -19,7 +19,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     """
     import numpy as np
     import astropy.constants as const
-    import astropy.ascii as ascii
+    import astropy.io as ascii
     import scipy as sci
     # to avoid X server error
     import matplotlib as mpl
