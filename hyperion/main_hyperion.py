@@ -175,7 +175,7 @@ if extract_only == False:
                         power=power,better_im=better_im,ellipsoid=ellipsoid,
                         dstar=dstar,TSC_dir=home+dict_path['TSC_dir'],
                         IDL_path=dict_path['IDL_path'], image_only=image_only,
-                        ext_source=dict_path['ext_source'])
+                        ext_source=home+dict_path['ext_source'])
         if run == False:
             print 'Hyperion run is skipped. Make sure you have run this model before'
         else:
