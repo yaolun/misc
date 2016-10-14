@@ -1,0 +1,17 @@
+# All paths are related to home directory, except for IDL_path
+input_table		/programs/misc/hyperion/
+outdir 			/hyperion/bhr71/
+# dust_file		/dust_model/Ormel2011/hyperion/ic-sil+gra3opc.txt
+dust_file		/programs/misc/oh5_hyperion.txt
+obs_dir			/bhr71/best_calibrated/
+TSC_dir 		/programs/misc/TSC/
+IDL_path 		/opt/local/exelis/idl83/bin/idl
+object          BHR71
+dstar           200.0
+source_ra       12:01:36.81
+source_dec      -65:08:49.22
+# 500 um
+# img_name        hspireplw1342226633_20pxmp_1431669349619
+# 160 um
+img_name        hpacs1342224922_20hpppmapr_00_1431606963820
+azi_wave        160
