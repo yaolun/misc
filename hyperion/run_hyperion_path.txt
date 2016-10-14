@@ -15,3 +15,4 @@ source_dec      -65:08:49.22
 # 160 um
 img_name        hpacs1342224922_20hpppmapr_00_1431606963820
 azi_wave        160
+ext_source      /programs/misc/hyperion/mmp83.txt

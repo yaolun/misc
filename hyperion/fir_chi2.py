@@ -1,5 +1,5 @@
 def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, spitzer_only=False, \
-    herschel_only=False, plot_model=False, zoom_1d=None, shade=True):
+    herschel_only=False, plot_model=False, zoom_1d=None, shade=True, write_out=False):
     """
     array_list: contains dictionaries, each dictionary represents a location of 'model_list.txt', and the model numbers within.
     """
@@ -309,14 +309,22 @@ def fir_chi2_2d(array_list, keywords, obs, wl_aper=None, fixed=False, ref=None, 
         fig.savefig('/Users/yaolun/test/chi2_'+str(keywords['col'][0])+'_1d.pdf', format='pdf', dpi=300, bbox_inches='tight')
         fig.clf()
 
-    else:
+        if write_out:
+            # write out the chi2
+            foo = open('/Users/yaolun/test/chi2-1d.txt', 'w')
+            foo.write('{} \t {} \n'.format('chisq', keywords['col'][0]))
+            for i in range(len(chi2)):
+                foo.write('{} \t {} \n'.format(chi2[i], p1[i]))
+            foo.close()
 
-        # write out the chi2
-        foo = open('/Users/yaolun/bhr71/hyperion/chi2_grid/chi2-2d.txt', 'w')
-        foo.write('{} \t {} \t {} \n'.format('chisq', keywords['col'][0], keywords['col'][1]))
-        for i in range(len(chi2)):
-            foo.write('{} \t {} \t {} \n'.format(chi2[i], p1[i], p2[i]))
-        foo.close()
+    else:
+        if write_out:
+            # write out the chi2
+            foo = open('/Users/yaolun/test/chi2-2d.txt', 'w')
+            foo.write('{} \t {} \t {} \n'.format('chisq', keywords['col'][0], keywords['col'][1]))
+            for i in range(len(chi2)):
+                foo.write('{} \t {} \t {} \n'.format(chi2[i], p1[i], p2[i]))
+            foo.close()
 
         # rebin the data and plot 2D contour
         from scipy.interpolate import griddata
@@ -499,3 +507,34 @@ array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/model_list.txt',
 # keywords = {'col':['tstar'], 'label': [r'$\rm{T_{\star}\,[K]}$']}
 keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav\,\circ}\,[g\,cm^{-1}]}$']}
 fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=False, ref=27, shade=False)
+
+
+# for plotting chisq with different cavity density profiles
+# # uniform
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
+#                'model_num': np.arange(47,50)}]
+# keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav\,\circ}\,[g\,cm^{-1}]}$']}
+# fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=False,
+#             ref=47, shade=False, write_out=True)
+# # # r^-2
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
+#                'model_num': np.arange(50,54)}]
+# keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav\,\circ}\,[g\,cm^{-1}]}$']}
+# fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=False,
+#             ref=50, shade=False, write_out=True)
+# # r^-1.5
+# array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+#                'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
+#                'model_num': np.arange(54,58)}]
+# keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav\,\circ}\,[g\,cm^{-1}]}$']}
+# fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=False,
+#             ref=54, shade=False, write_out=True)
+# const+r^-2
+array_list = [{'listpath': '/Users/yaolun/bhr71/hyperion/controlled/model_list.txt',
+               'datapath': '/Users/yaolun/bhr71/hyperion/controlled/',
+               'model_num': np.hstack((np.array([65]), np.arange(77,81)))}]
+keywords = {'col':['rho_cav_center'], 'label': [r'$\rm{\rho_{cav\,\circ}\,[g\,cm^{-1}]}$']}
+fir_chi2_2d(array_list, keywords, obs, fixed=True, herschel_only=False,
+            ref=77, shade=False, write_out=True)
