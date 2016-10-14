@@ -261,11 +261,11 @@ def tsc_com(params_table, plot=True, disk=False):
         ax = fig.add_subplot(111)
 
         plot_grid = [199]
+        # alpha = np.linspace(0.3,1.0,len(plot_grid))
         alpha = [1]
-        rind = (rc >= d_sub)
         for i in plot_grid:
-            tsc, = ax.plot(np.log10(rc[rind]/AU), np.log10(rho_env_tsc2d[rind,i]/mh), alpha=alpha[plot_grid.index(i)], color='b', linewidth=2)
-            ulrich, = ax.plot(np.log10(rc[rind]/AU), np.log10(rho_env_ulrich2d[rind,i]/mh), alpha=alpha[plot_grid.index(i)], color='r', linewidth=2)
+            tsc, = ax.plot(np.log10(rc/AU), np.log10(rho_env_tsc2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='b', linewidth=2)
+            ulrich, = ax.plot(np.log10(rc/AU), np.log10(rho_env_ulrich2d[:,i]/mh), alpha=alpha[plot_grid.index(i)], color='r', linewidth=2)
 
         rinf = ax.axvline(np.log10(R_inf/AU), linestyle='--', color='k', linewidth=1.5)
         cen_r = ax.axvline(np.log10(R_cen/AU), linestyle=':', color='k', linewidth=1.5)
@@ -275,8 +275,6 @@ def tsc_com(params_table, plot=True, disk=False):
 
         ax.set_ylim([0, 15])
         ax.set_xlim(left=np.log10(d_sub/AU))
-        # ax.set_xlim([np.log10(0.1), np.log10(10)])
-        # ax.axvline(np.log10(0.131582344615))
         ax.set_xlabel(r'$\rm{log(radius)\,[AU]}$', fontsize=18)
         ax.set_ylabel(r'$\rm{log(gas\,density)\,[g\,cm^{-3}]}$', fontsize=18)
         [ax.spines[axis].set_linewidth(1.5) for axis in ['top','bottom','left','right']]
