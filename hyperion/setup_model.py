@@ -165,6 +165,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     #
     ri           = rin * (rout/rin)**(np.arange(nx+1).astype(dtype='float')/float(nx))
     ri           = np.hstack((0.0, ri))
+    if ext_source:
+        ri = np.hstack((ri, ri.max()+AU))
     thetai       = PI*np.arange(ny+1).astype(dtype='float')/float(ny)
     phii         = PI*2.0*np.arange(nz+1).astype(dtype='float')/float(nz)
 
