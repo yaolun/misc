@@ -613,6 +613,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         s_isrf.radius = R_env_max
         s_isrf.spectrum = (isrf_nu, isrf_jnu)
         s_isrf.luminosity = PI * s_isrf.radius**2 * FOUR_PI_JNU
+        print R_env_max
+        print ri.max(), rc.max()
 
     m.set_raytracing(True)
     # option of using more photons for imaging
