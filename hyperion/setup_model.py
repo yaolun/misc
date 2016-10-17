@@ -166,7 +166,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     ri           = rin * (rout/rin)**(np.arange(nx+1).astype(dtype='float')/float(nx))
     ri           = np.hstack((0.0, ri))
     if ext_source != None:
-        ri = np.hstack((ri, ri.max()+AU))
+        ri = np.hstack((ri, ri.max()*1.001))
+        print 'max ri: ', ri.max()/AU
     thetai       = PI*np.arange(ny+1).astype(dtype='float')/float(ny)
     phii         = PI*2.0*np.arange(nz+1).astype(dtype='float')/float(nz)
 
@@ -609,7 +610,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             FOUR_PI_JNU = raw_input('What is the FOUR_PI_JNU value?')
 
         s_isrf = m.add_external_spherical_source()
-        s_isrf.radius = 0.3*pc
+        s_isrf.radius = R_env_max
         s_isrf.spectrum = (isrf_nu, isrf_jnu)
         s_isrf.luminosity = PI * s_isrf.radius**2 * FOUR_PI_JNU
 
