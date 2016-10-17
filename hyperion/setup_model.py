@@ -166,7 +166,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     ri           = rin * (rout/rin)**(np.arange(nx+1).astype(dtype='float')/float(nx))
     ri           = np.hstack((0.0, ri))
     if ext_source != None:
-        ri = np.hstack((ri, ri.max()*1.001))
+        ri = np.hstack((ri, ri.max()*1.01))
         print 'max ri: ', ri.max()/AU
     thetai       = PI*np.arange(ny+1).astype(dtype='float')/float(ny)
     phii         = PI*2.0*np.arange(nz+1).astype(dtype='float')/float(nz)
@@ -613,6 +613,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         s_isrf.radius = R_env_max
         s_isrf.spectrum = (isrf_nu, isrf_jnu)
         s_isrf.luminosity = PI * s_isrf.radius**2 * FOUR_PI_JNU
+        print R_env_max
+        print ri.max(), rc.max()
 
     m.set_raytracing(True)
     # option of using more photons for imaging
