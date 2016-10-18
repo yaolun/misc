@@ -610,7 +610,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             FOUR_PI_JNU = raw_input('What is the FOUR_PI_JNU value?')
 
         s_isrf = m.add_external_spherical_source()
-        s_isrf.radius = R_env_max
+        s_isrf.radius = rc.max()
         s_isrf.spectrum = (isrf_nu, isrf_jnu)
         s_isrf.luminosity = PI * s_isrf.radius**2 * FOUR_PI_JNU
         print R_env_max
