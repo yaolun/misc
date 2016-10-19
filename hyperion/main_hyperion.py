@@ -103,6 +103,8 @@ for name, val in zip(path_list[0],path_list[1]):
     dict_path[name] = val
 obj = dict_path['object']
 dstar = float(dict_path['dstar'].data)
+if 'ext_source' not in path_list[0]:
+    dict_path['ext_source'] = None
 print 'Current path setting --'
 pprint(dict_path)
 #
@@ -172,7 +174,8 @@ if extract_only == False:
                         aperture=aperture,fix_params=fix_params, low_res=low_res,
                         power=power,better_im=better_im,ellipsoid=ellipsoid,
                         dstar=dstar,TSC_dir=home+dict_path['TSC_dir'],
-                        IDL_path=dict_path['IDL_path'], image_only=image_only)
+                        IDL_path=dict_path['IDL_path'], image_only=image_only,
+                        ext_source=home+dict_path['ext_source'])
         if run == False:
             print 'Hyperion run is skipped. Make sure you have run this model before'
         else:
