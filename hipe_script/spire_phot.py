@@ -11,31 +11,9 @@ from java.lang.Math import PI
 
 ############################### Setup #####################################
 
-def getPhotObsidsForFts(id):
-    """
-    Get a list of photometer obsids that a given FTS obsid is contained in.
-    Input:
-        id FTS obsid as a number
-    Output:
-        list of photometer obsids that overlap with the FTS one
-    """
-    if not globals().has_key("photObsidForFts"):
-        hcssDir = Configuration.getProperty("var.hcss.dir")
-        restore(hcssDir+"/data/spire/ia/pipeline/scripts/merging/photObsidsForFts.ser")
-    key = "0x%X"%id
-    if globals().has_key("photObsidForFts"):
-        if photObsidForFts.has_key(key):
-            return photObsidForFts[key]
-        else:
-            print "No photometer observations found for 0x%X"%id
-            return []
-    print "Cannot find photObsidForFts"
-    return []
-pass
 
 # Loading an observation (Gamma Draconis) from the HSA
 obsidFTS = 1342248249 # main obsid
-obsidFTS = 1342253652
 obs = getObservation(obsid=obsidFTS, useHsa=True)
 spec = obs.refs['level2'].product.refs['HR_spectrum_point_apod'].product
 # spec = fitsReader(file = '/Users/yaolun/bhr71/calibration_testing/data/1342248249/level2/HR_spectrum_point_apod/hspirespectrometer1342248249_a1060001_spgApod_HR_20spss_1454323899152.fits')
@@ -43,37 +21,18 @@ spec = obs.refs['level2'].product.refs['HR_spectrum_point_apod'].product
 outdir = '/Users/yaolun/bhr71/best_calibrated/'
 outdir = '/Users/yaolun/test/B335/'
 
-# Run SECT to correct the point-source calibrated spectra
-cal = spireCal(pool="spire_cal_14_3")
-
-sect_spec = semiExtendedCorrector(spectrum=spec, doPlots=False, calibration=cal,
-	optimiseDiameter=True, sourceModel=SemiExtendedSourceModelShape("gaussian", 30.0, 0.0, 0.0, 0.0, 0.0, 1.0, 257, 257))
-
-fitted_size = sect_spec.meta['sourceDiameter'].double
-
-correctedSpectrum = semiExtendedCorrector(spectrum=spec, calibration=cal, optimiseDiameter=True, doPlots=False,\
- gaussRefBeamDiam=fitted_size, sourceModel=SemiExtendedSourceModelShape("gaussian", fitted_size, 0.0, 0.0, 0.0, 0.0, 1.0, 257, 257))
-
-# write to ASCII file
-spire_spec = convertWavescale(ds=spireProduct2SimpleSpectrum(input=correctedSpectrum),
-                                to='micrometer', referenceUnit='kHz')
-exportSpectrumToAscii(ds=spire_spec,file=outdir+'spire_sect.txt',meta=False)
-
 ra  = spec.meta["ra"].value
 dec = spec.meta["dec"].value
 # For a source with spectrum S(nu) proportional to S^alpha
 # SPIRE default pipeline assumes alpha = -1
 # For BHR71
 alpha = [2.04, 2.35, 2.59]
-# For B335
-alpha = [1.55, 1.97, 2.30]
 
 # beta =1.0
 # tempK =16.0
 
 # Run for an individual SPIRE band
 array = ["PSW", "PMW","PLW"]  # SPIRE Array Bands: "PSW", "PMW", "PLW"
-
 
 ############################ Import Data ##################################
 # Loading an observation of Gamma Dra from the HSA
@@ -110,19 +69,16 @@ kCorrPsrcTable = cal.phot.colorCorrKList.refs[0].product
 beamAreaPSW  = beamCorrTable.meta["beamPipeline"+array[0].title()+"Arc"].double
 beamCorrPSW  = beamCorrTable.getAlphaCorrection(alpha[0], array[0])
 kCorrPsrcPSW = kCorrPsrcTable.getAlphaCorrection(alpha[0], array[0])
-# kCorrPsrcPSW = kCorrPsrcTable.getTempBetaCorrection(tempK, beta, array[0])
 aperCorrPSW  = aperCorrTable.getApertColorCorrection(alpha[0], array[0])
 
 beamAreaPMW  = beamCorrTable.meta["beamPipeline"+array[1].title()+"Arc"].double
 beamCorrPMW  = beamCorrTable.getAlphaCorrection(alpha[1], array[1])
 kCorrPsrcPMW = kCorrPsrcTable.getAlphaCorrection(alpha[1], array[1])
-# kCorrPsrcPMW = kCorrPsrcTable.getTempBetaCorrection(tempK, beta, array[1])
 aperCorrPMW  = aperCorrTable.getApertColorCorrection(alpha[1], array[1])
 
 beamAreaPLW  = beamCorrTable.meta["beamPipeline"+array[2].title()+"Arc"].double
 beamCorrPLW  = beamCorrTable.getAlphaCorrection(alpha[2], array[2])
 kCorrPsrcPLW = kCorrPsrcTable.getAlphaCorrection(alpha[2], array[2])
-# kCorrPsrcPLW = kCorrPsrcTable.getTempBetaCorrection(tempK, beta, array[2])
 aperCorrPLW  = aperCorrTable.getApertColorCorrection(alpha[2], array[2])
 
 print "beamCorrPSW = ",beamCorrPSW
@@ -247,53 +203,3 @@ tds.addColumn("aperture(arcsec)",Column(aperture))
 asciiTableWriter(file=outdir+"phot_sect.txt",table=tds, writeMetadata=False)
 ############################### End of script ##################################
 ################################################################################
-
-wv = Float1d([250,350,500])
-freq = c/wv/1000.0
-print freq
-
-phot=  Double1d([fluxAperPSW,fluxAperPMW,fluxAperPLW])
-photErr=  Double1d([errorAperPSW,errorAperPMW,errorAperPLW])
-
-############################### Plotting #####################################
-# SECT corrected spectrum and photometry
-plt = PlotXY()
-l1 = LayerXY(spec.getDefault()["SSWD4"].wave,spec.getDefault()["SSWD4"].flux)
-l1.setName('SSWD4')
-l1.setColor(java.awt.Color.BLUE)
-l2 = LayerXY(spec.getDefault()["SLWC3"].wave,spec.getDefault()["SLWC3"].flux)
-l2.setName('SLWC3')
-l2.setColor(java.awt.Color.CYAN)
-
-l3 = LayerXY(correctedSpectrum.getDefault()["SSWD4"].wave,correctedSpectrum.getDefault()["SSWD4"].flux)
-l3.setName('SSWD4 Corrected')
-l3.setColor(java.awt.Color.RED)
-l4 = LayerXY(correctedSpectrum.getDefault()["SLWC3"].wave,correctedSpectrum.getDefault()["SLWC3"].flux)
-l4.setName('SLWC3 Corrected')
-l4.setColor(java.awt.Color.ORANGE)
-
-l5 = LayerXY(freq,phot)
-l5.setLine(Style.NONE)
-l5.setSymbol(Style.FTRIANGLE)
-l5.setErrorY(photErr,photErr)
-l5.setName("Photometry from maps")
-l5.setColor(java.awt.Color.BLACK)
-
-plt.addLayer(l1)
-plt.addLayer(l2)
-plt.addLayer(l3)
-plt.addLayer(l4)
-plt.addLayer(l5)
-
-plt.xaxis.range = [400.0,1600.0]
-#plt.yaxis.range = [0.0,160.0]
-
-plt.xaxis.title.text = 'Frequency (GHz)'
-plt.yaxis.title.text = 'Flux [Jy]'
-plt.getLegend().setVisible(True)
-plt.title.text = spec.meta["object"].string + '  ( source diameter = ' + str(correctedSpectrum.meta["sourceDiameter"].value) + ')'
-plt.subtitle.text = "0x%x (%i)"%(spec.meta["obsid"].long, spec.meta["obsid"].long)
-
-#savedir = '/mnt/user_archive/Makiwa/Work_January_2016/'
-
-#plt.saveAsPDF(savedir+"CompareSECT_Phot_%i_pointNew.pdf"%(spec.meta["obsid"].long))
