@@ -169,12 +169,16 @@ for obsidFTS in Obsid:
     ############################ Import Data ##################################
     # Loading an observation of Gamma Dra from the HSA
     phot_obs = phot_list[Obsid.index(obsidFTS)]
+    wave = []
     phot = []
-    alpha_data = asciiTableReader(file=indir+str(obsidFTS)+'_alpha.txt', tableType='SPACES')
+    error = []
+    phot_aper = []
+    alpha_data = asciiTableReader(file=indir+obsidFTS+'_alpha.txt', tableType='SPACES')
     alpha = [float(alpha_data[0].data[1]), float(alpha_data[1].data[1]), float(alpha_data[2].data[1])]
-    cal = spireCal(calTree="spire_cal_14_3")
 
-    phot_obs = [phot_obs[0]]
+    if phot_obs = '0':
+        print 'No photometry data found for ', obj_list[Obsid.index(obsidFTS)]
+        continue
 
     for phot_o in phot_obs:
         obs     = getObservation(phot_o, useHsa=True, instrument='SPIRE')
@@ -321,18 +325,28 @@ for obsidFTS in Obsid:
 
         print format%('Flux Error from Aperture Photometry: PSW', errorAperPSW)
         print format%('Flux Error from Aperture Photometry: PMW', errorAperPMW)
-        print format%('Flux Error from Aperture Photometry: PLW', errorAperPLW)\
+        print format%('Flux Error from Aperture Photometry: PLW', errorAperPLW)
 
-        # Write to ASCII table
-        tds = TableDataset()
-        wave = Float1d([250, 350, 500])
-        flux = Float1d([fluxAperPSW, fluxAperPMW, fluxAperPLW])
-        err =  Float1d([errorAperPSW, errorAperPMW, errorAperPLW])
-        aperture = Float1d([2*rPSW, 2*rPMW, 2*rPLW])
-        tds.addColumn("wavelength(um)",Column(wave))
-        tds.addColumn("flux(Jy)",Column(flux))
-        tds.addColumn("uncertainty(Jy)",Column(err))
-        tds.addColumn("aperture(arcsec)",Column(aperture))
-        asciiTableWriter(file=outdir+obj_list[Obsid.index(obsidFTS)]+"_spire_phot.txt",table=tds, writeMetadata=False)
+        wave.extend([250,350,500])
+        phot.extend([fluxAperPSW, fluxAperPMW, fluxAperPLW])
+        error.extend([errorAperPSW, errorAperPMW, errorAperPLW])
+        phot_aper.extend([2*rPSW, 2*rPMW, 2*rPLW])
+
+    # Write to ASCII table
+    wave = Float1d(wave)
+    phot = Float1d(phot)
+    error = Float1d(error)
+    phot_aper = Float1d(phot_aper)
+    phot_obsidForwrite = []
+    for o in phot_obs:
+        phot_obsidForwrite.extend([o,o,o])
+    #
+    tds = TableDataset()
+    tds.addColumn("OBSID", Column(phot_obsidForwrite))
+    tds.addColumn("wavelength(um)",Column(wave))
+    tds.addColumn("flux(Jy)",Column(flux))
+    tds.addColumn("uncertainty(Jy)",Column(err))
+    tds.addColumn("aperture(arcsec)",Column(aperture))
+    asciiTableWriter(file=outdir+obj_list[Obsid.index(obsidFTS)]+"_spire_phot.txt",table=tds, writeMetadata=False)
     ############################### End of script ##################################
     ################################################################################
