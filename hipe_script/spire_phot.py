@@ -170,9 +170,11 @@ for obsidFTS in Obsid:
     # Loading an observation of Gamma Dra from the HSA
     phot_obs = phot_list[Obsid.index(obsidFTS)]
     phot = []
-    alpha_data = asciiTableReader(file=indir+obsidFTS+'_alpha.txt', tableType='SPACES')
+    alpha_data = asciiTableReader(file=indir+str(obsidFTS)+'_alpha.txt', tableType='SPACES')
     alpha = [float(alpha_data[0].data[1]), float(alpha_data[1].data[1]), float(alpha_data[2].data[1])]
+    cal = spireCal(calTree="spire_cal_14_3")
 
+    phot_obs = [phot_obs[0]]
 
     for phot_o in phot_obs:
         obs     = getObservation(phot_o, useHsa=True, instrument='SPIRE')
@@ -319,20 +321,18 @@ for obsidFTS in Obsid:
 
         print format%('Flux Error from Aperture Photometry: PSW', errorAperPSW)
         print format%('Flux Error from Aperture Photometry: PMW', errorAperPMW)
-        print format%('Flux Error from Aperture Photometry: PLW', errorAperPLW)
+        print format%('Flux Error from Aperture Photometry: PLW', errorAperPLW)\
 
-        phot.append([fluxAperPSW, fluxAperPMW, fluxAperPLW, errorAperPSW, errorAperPMW, errorAperPLW])
-
-    # Write to ASCII table
-    tds = TableDataset()
-    wave = Float1d([250, 350, 500])
-    flux = Float1d([fluxAperPSW, fluxAperPMW, fluxAperPLW])
-    err =  Float1d([errorAperPSW, errorAperPMW, errorAperPLW])
-    aperture = Float1d([2*rPSW, 2*rPMW, 2*rPLW])
-    tds.addColumn("wavelength(um)",Column(wave))
-    tds.addColumn("flux(Jy)",Column(flux))
-    tds.addColumn("uncertainty(Jy)",Column(err))
-    tds.addColumn("aperture(arcsec)",Column(aperture))
-    asciiTableWriter(file=outdir+obj_list[Obsid.index(obsidFTS)]+"_spire_phot.txt",table=tds, writeMetadata=False)
+        # Write to ASCII table
+        tds = TableDataset()
+        wave = Float1d([250, 350, 500])
+        flux = Float1d([fluxAperPSW, fluxAperPMW, fluxAperPLW])
+        err =  Float1d([errorAperPSW, errorAperPMW, errorAperPLW])
+        aperture = Float1d([2*rPSW, 2*rPMW, 2*rPLW])
+        tds.addColumn("wavelength(um)",Column(wave))
+        tds.addColumn("flux(Jy)",Column(flux))
+        tds.addColumn("uncertainty(Jy)",Column(err))
+        tds.addColumn("aperture(arcsec)",Column(aperture))
+        asciiTableWriter(file=outdir+obj_list[Obsid.index(obsidFTS)]+"_spire_phot.txt",table=tds, writeMetadata=False)
     ############################### End of script ##################################
     ################################################################################
