@@ -173,10 +173,10 @@ for obsidFTS in Obsid:
     phot = []
     error = []
     phot_aper = []
-    alpha_data = asciiTableReader(file=indir+obsidFTS+'_alpha.txt', tableType='SPACES')
+    alpha_data = asciiTableReader(file=indir+str(obsidFTS)+'_alpha.txt', tableType='SPACES')
     alpha = [float(alpha_data[0].data[1]), float(alpha_data[1].data[1]), float(alpha_data[2].data[1])]
 
-    if phot_obs = '0':
+    if phot_obs == 0:
         print 'No photometry data found for ', obj_list[Obsid.index(obsidFTS)]
         continue
 
@@ -340,13 +340,14 @@ for obsidFTS in Obsid:
     phot_obsidForwrite = []
     for o in phot_obs:
         phot_obsidForwrite.extend([o,o,o])
+    phot_obsidForwrite = String1d(phot_obsidForwrite)
     #
     tds = TableDataset()
     tds.addColumn("OBSID", Column(phot_obsidForwrite))
     tds.addColumn("wavelength(um)",Column(wave))
-    tds.addColumn("flux(Jy)",Column(flux))
-    tds.addColumn("uncertainty(Jy)",Column(err))
-    tds.addColumn("aperture(arcsec)",Column(aperture))
+    tds.addColumn("flux(Jy)",Column(phot))
+    tds.addColumn("uncertainty(Jy)",Column(error))
+    tds.addColumn("aperture(arcsec)",Column(phot_aper))
     asciiTableWriter(file=outdir+obj_list[Obsid.index(obsidFTS)]+"_spire_phot.txt",table=tds, writeMetadata=False)
     ############################### End of script ##################################
     ################################################################################
