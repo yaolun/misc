@@ -429,7 +429,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             for itheta in range(0,len(thetac)):
                 for iphi in range(0,len(phic)):
                     # for external heating option
-                    if (rc[ir] > R_env_min) & (rc[ir] <= R_env_max):
+                    if (rc[ir] > R_env_min):
                         # Envelope profile
                         w = abs(rc[ir]*np.cos(np.pi/2 - thetac[itheta]))
                         z = rc[ir]*np.sin(np.pi/2 - thetac[itheta])
