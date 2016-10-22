@@ -163,11 +163,13 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     # Make the Coordinates
     #
+    if ext_source != None:
+        rout = R_env_max*1.1
     ri           = rin * (rout/rin)**(np.arange(nx+1).astype(dtype='float')/float(nx))
     ri           = np.hstack((0.0, ri))
-    if ext_source != None:
-        ri = np.hstack((ri, ri.max()*1.01, R_env_max))
-        print 'max ri: ', ri.max()/AU
+    # if ext_source != None:
+    #     ri = np.hstack((ri, ri.max()*1.01, R_env_max))
+    #     print 'max ri: ', ri.max()/AU
     thetai       = PI*np.arange(ny+1).astype(dtype='float')/float(ny)
     phii         = PI*2.0*np.arange(nz+1).astype(dtype='float')/float(nz)
 
@@ -426,7 +428,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         for ir in range(0,len(rc)):
             for itheta in range(0,len(thetac)):
                 for iphi in range(0,len(phic)):
-                    if rc[ir] > R_env_min:
+                    # for external heating option
+                    if (rc[ir] > R_env_min) & (rc[ir] <= R_env_max):
                         # Envelope profile
                         w = abs(rc[ir]*np.cos(np.pi/2 - thetac[itheta]))
                         z = rc[ir]*np.sin(np.pi/2 - thetac[itheta])
@@ -610,9 +613,9 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
             FOUR_PI_JNU = raw_input('What is the FOUR_PI_JNU value?')
 
         s_isrf = m.add_external_spherical_source()
-        s_isrf.radius = rc.max()
+        s_isrf.radius = R_env_max
         s_isrf.spectrum = (isrf_nu, isrf_jnu)
-        s_isrf.luminosity = PI * rc.max()**2 * FOUR_PI_JNU
+        s_isrf.luminosity = PI * R_env_max**2 * FOUR_PI_JNU
 
     m.set_raytracing(True)
     # option of using more photons for imaging
