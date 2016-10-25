@@ -176,7 +176,8 @@ for obsidFTS in Obsid:
     alpha_data = asciiTableReader(file=indir+str(obsidFTS)+'_alpha.txt', tableType='SPACES')
     alpha = [float(alpha_data[0].data[1]), float(alpha_data[1].data[1]), float(alpha_data[2].data[1])]
 
-    if phot_obs == '0':
+    if phot_obs == 0:
+
         print 'No photometry data found for ', obj_list[Obsid.index(obsidFTS)]
         continue
 
