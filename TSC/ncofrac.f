@@ -50,14 +50,20 @@
         else
           print *,' vmin=?,vmax=?,delv=?'
 !         write(0,'("vmin=?,vmax=?,delv=?")')
-          read(*,*,end=999) vmin,vmax,delv
+!         YLY: not sure the "end=999" is needed here
+!         read(*,*,end=999) vmin,vmax,delv
+          read(*,*) vmin,vmax,delv
           nvmax= (vmax-vmin)/delv +1.0
           print *,' inclination angle: #=?, angle 1,2,...=?(degrees)'
 !         write(0,'("inclination angle: #=?, angle 1,2,...=?(degrees)")')
-          read(*,*,end=999) ninc,(aid(ni),ni=1,ninc)
+!         YLY: not sure the "end=999" is needed here
+!         read(*,*,end=999) ninc,(aid(ni),ni=1,ninc)
+          read(*,*) ninc,(aid(ni),ni=1,ninc)
         print *,' nondimensional time tau=?'
 !       write(0,'("nondimensional time tau=?")')
-        read (*,*,end=999) tau
+!       YLY: not sure the "end=999" is needed here
+!       read (*,*,end=999) tau
+        read (*,*) tau
         end if
 !
         write (7,*) 'input data file=:(grid.plt:N)'
@@ -88,6 +94,10 @@
         do 40 ni=1,ninc
           ai(ni)=aid(ni)*pi/180.
 40      continue
+
+!       YLY: for debug
+        open(unit=11,file='ncollapse_debug',status='new')
+!
         call ncollapse(tau)
 !
         open(unit=9,file=outfile,status='new')
@@ -133,6 +143,7 @@
         do 10 l=1,lcol
           print *,l,m
           read(lun,*,end=900) (dd((m-1)*lcol+l),m=1,mcol)
+!         add by YLY
           error=.false.
 !         print *,dd((m-1)*lcol+l),m,mcol
 10      continue
@@ -165,8 +176,13 @@
         dimension vz(20),vzold(20)
         data  pi2/1.5707963/,pi/3.1415927/
         data d2/-3.52E-4/
+
 !
+!       YLY: Where is "ang" being defined?
         p2(ang)= 1. -1.5*(sin(ang)**2)
+!       YLY: add print command
+        print *, 'ang', ang
+        print *, 'p2(ang)', p2(ang)
 !
         time=tau
         tsq= tau*tau
@@ -270,6 +286,12 @@
                if(nskip .gt. 30) stop
             end if
 ! calculate velocity channel appropriate to velocity vz
+!           YLY: debug
+            write(11,*), "nr, nt, np", nr, nt, np
+            write(11,*), "vz(ni)",vz(ni)
+            write(11,*), "vmin", vmin
+            write(11,*), "delv", delv
+!
             nv=nint( (vz(ni)-vmin)/delv +1.0 )
 ! calculate velocity at left hand side of channel
             vl= vmin +(float(nv-1)-0.5)*delv
