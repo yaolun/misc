@@ -180,9 +180,6 @@
 !
 ! YLY: Where is "ang" being defined?
 ! YLY: Legendre polynomial - P2(cos(theta)) = 1-3/2*sin(theta)
-! YLY: From the later usage (e.g. "yr=xr*(1. +d2*p2(ang1)*tau**2)"),
-!      the following line should define a function that calculates P2.
-!      Not sure this is the proper usage
         p2(ang)= 1. -1.5*(sin(ang)**2)
 !       YLY: add print command
         print *, 'ang', ang
@@ -410,6 +407,7 @@
         entry outercart(tau,ang,lp,ro,ux,uy,uz)
 !-------------------------------------------------
 ! calculate collapse solution, velocity in cartesian coordinates
+! YLY: This entry is not used by the code here.
 !-------------------------------------------------
         tsq=tau*tau
 ! density-----------------------------------------
@@ -551,7 +549,8 @@
 !  solve transcendental equation
 !  derived by Cassen and Moosman for parabolic trajectories
 !  zeta * sin**2(thetao) = 1 - cos(theta)/cos(thetao)
-!  given zeta, theta  solve for thetao
+!  YLY: Eq. 84 in TSC84
+!  given zeta, theta solve for thetao
 !----------------------------------------------------------
         implicit real*8 (b-h,o-z)
         dimension b(4),x(3)
