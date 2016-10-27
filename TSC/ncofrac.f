@@ -178,7 +178,11 @@
         data d2/-3.52E-4/
 
 !
-!       YLY: Where is "ang" being defined?
+! YLY: Where is "ang" being defined?
+! YLY: Legendre polynomial - P2(cos(theta)) = 1-3/2*sin(theta)
+! YLY: From the later usage (e.g. "yr=xr*(1. +d2*p2(ang1)*tau**2)"),
+!      the following line should define a function that calculates P2.
+!      Not sure this is the proper usage
         p2(ang)= 1. -1.5*(sin(ang)**2)
 !       YLY: add print command
         print *, 'ang', ang
@@ -198,6 +202,7 @@
         delph=(phimax-phimin)/float(npmax)
 !
 ! initialize lp
+! YLY: don't know what "lp" stands for
         lp=0
 ! ang1=theta, ang2=phi
 !  step through volume, increment in xr,theta,phi
@@ -208,21 +213,30 @@
         do 600 nr=nrmin,nrmax
           xr= xrmin +float(nr-1)*delxr
 ! related to volume element
+! YLY: write out msg if running the last element in r-grid
           if(nr.eq.nrmax) then
             delr=abs(xrmax-xr)
             write(7,*)' last step nr,xr,xrmax,delr',nr,xr,xrmax,delr
           end if
+! YLY: looks like a volume integral element
           const= xr**2 *delth*delph*delr
 ! loop over angle theta
           do 500 nt= 1,ntmax
             theta=thetamin +float(nt-1)*delth
+! YLY: theta_i in theta-grid
             ang1=theta
+! YLY: dV (volume)
             dvol=abs(sin(theta)*const)
 ! if theta= pi set dvol=0 to avoid roundoff
             if(nt.eq.ntmax) dvol=0.
 !
 !  calculate nearest point in dd array
+! YLY: Not sure the "p2" is properly defined
             yr=xr*(1. +d2*p2(ang1)*tau**2)
+            write(11,*), "xr, theta", xr, theta
+            write(11,*), "ang1, p2(ang1)", ang1, p2(ang1)
+            write(11,*), "yr", yr
+! YLY: Where is "lc" defined?
             do 75 l=lp-1,lc-1
               if(l.le.0) then
                 if(yr.lt.dd(1).or.yr.gt.dd(lc)) then
@@ -240,6 +254,8 @@
             lp=0
 !
 100         continue
+! YLY: Looks like the above do loop is to figure which value of lp
+!      should be used
 !
 !  calculate density,velocity at position xr,theta
 !       calculate inner solution
@@ -252,11 +268,13 @@
                       utheta=0.
                       uphi=0.
                   else
+! YLY: This part looks like linear interpolation for density and velocities.
                       r2=dd(lp+1)
                       r1=dd(lp)
                       call outersoln(tau,ang1,lp,ro1,ur1,utheta1,uphi1)
                       call outersoln(tau,ang1,lp+1,ro2,ur2,utheta2,uphi2)
                       delta=(yr-r1)/(r2-r1)
+! YLY: sound speed information seems missing
                       ro= ro1 +(ro2-ro1)*delta
                       ur= ur1 +(ur2-ur1)*delta
                       utheta= utheta1 +(utheta2-utheta1)*delta
@@ -267,6 +285,9 @@
 ! calculate mass element, l.o.s. velocity for all inclination angles
           delm= ro*dvol
 ! initialize vzold for loop over angle phi
+! YLY: not sure why need to do this
+! YLY: In axisymmetric model, phi won't be matter for getting los velocity.
+!      This line could be for preventing error if phimin = 0.
           phi= phimin -delph
           do 200 ni=1,ninc
            call vzpvect(ai(ni),theta,phi,ur,utheta,uphi,vzold(ni))
@@ -274,29 +295,37 @@
 ! loop over angle phi
           do 400 np= 1,npmax
                 phi= phimin +float(np-1)*delph
+! YLY: Don't see this variable "ang2" is used in the following lines of
+!      ncollapse.  Not sure it is for sharing outside of the subroutine.
                 ang2=phi
+! YLY: loop over inclination angles
           do 300 ni=1,ninc
 ! calculate l.o.s. velocity
             call vzpvect(ai(ni),theta,phi,ur,utheta,uphi,vz(ni))
 ! check if vz-vzold < delv
+! YLY: The only difference between these two "vzpvect" is the input phi.
+!      One is phimin-delph, and another one is looping over phi-grid.
+!      But I don't know what's the reason behind this.
             if( abs((vz(ni)-vzold(ni))/delv) .gt.0.5) then
 !              print *,' velocity channel skip',vz(ni),vzold(ni),xr,theta,phi
                write(7,*)' vel. channel skip',vz(ni),vzold(ni),xr,theta,phi
                nskip=nskip +1
                if(nskip .gt. 30) stop
             end if
-! calculate velocity channel appropriate to velocity vz
 !           YLY: debug
             write(11,*), "nr, nt, np", nr, nt, np
             write(11,*), "vz(ni)",vz(ni)
             write(11,*), "vmin", vmin
             write(11,*), "delv", delv
 !
+! calculate velocity channel appropriate to velocity vz
             nv=nint( (vz(ni)-vmin)/delv +1.0 )
 ! calculate velocity at left hand side of channel
             vl= vmin +(float(nv-1)-0.5)*delv
 ! calculate velocity at right hand side of channel
             vu= vl+delv
+! YLY: make sure the index of velocity not exceeding the size of velocity-grid
+!      in the input file.  max size = 1000
             if (nv.ge. 1 .and. nv.le. npoints) then
 ! put mass element into velocity profile for inclination ai(ni)
              if( vl.le.vzold(ni).and.vzold(ni).le.vu ) then
