@@ -307,7 +307,13 @@
 !              print *,' velocity channel skip',vz(ni),vzold(ni),xr,theta,phi
                write(7,*)' vel. channel skip',vz(ni),vzold(ni),xr,theta,phi
                nskip=nskip +1
-               if(nskip .gt. 30) stop
+! YLY: write out the reason for stop
+!              if(nskip .gt. 30) stop
+!
+               if(nskip .gt. 30) then
+                   write(7,*)'skipped channels exceeded max value', nskip
+                   stop
+               end if
             end if
 !           YLY: debug
             write(11,*), "nr, nt, np", nr, nt, np
