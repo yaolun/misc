@@ -252,17 +252,17 @@ for obsidFTS in Obsid:
         fwhmPMW = cal.phot.getBeamProf(array[1]).meta['FWHM_gMean%s'%array[1].title()].value
         fwhmPLW = cal.phot.getBeamProf(array[2]).meta['FWHM_gMean%s'%array[2].title()].value
 
-        # print "fwhmPSW", fwhmPSW
-        # print "fwhmPMW", fwhmPMW
-        # print "fwhmPLW", fwhmPLW
+        print "fwhmPSW", fwhmPSW
+        print "fwhmPMW", fwhmPMW
+        print "fwhmPLW", fwhmPLW
 
         rPSW = SQRT(fitted_size**2 + fwhmPSW**2)/2.0
         rPMW = SQRT(fitted_size**2 + fwhmPMW**2)/2.0
         rPLW = SQRT(fitted_size**2 + fwhmPLW**2)/2.0
 
-        # print "rPSW", rPSW
-        # print "rPMW", rPMW
-        # print "rPLW", rPLW
+        print "rPSW", rPSW
+        print "rPMW", rPMW
+        print "rPLW", rPLW
 
         # radius (aperture radius needed by timeline fitter and aperture photometry)
         # Default map pixel size
