@@ -13,8 +13,8 @@ pro tsc, modeltime, c_s, Omega_0, r, theta, rhoenv, rhofloor, renv_in, indir=ind
 ;                   Also calculate the V's
 ;                   Put alphas and V's into 2D (r,theta) array.
 ;                   Write out velocity if last point is infalling.
-;                   Calculate rho(r,theta) from the Cassen 
-;                   & Moosman solution if x<tau^2                  
+;                   Calculate rho(r,theta) from the Cassen
+;                   & Moosman solution if x<tau^2
 ;                   Calculate rho(r,theta) from the equation in
 ;                   TSC84 Figure 3 caption, if x>=tau^2
 ;
@@ -24,13 +24,13 @@ pro tsc, modeltime, c_s, Omega_0, r, theta, rhoenv, rhofloor, renv_in, indir=ind
 ;
 ; Modified by YLY
 ; INPUTS
-; indir           - The input directory of the grid data from Susan Terebey. If not 
+; indir           - The input directory of the grid data from Susan Terebey. If not
 ;                   assigned, the code will take its directory instead.
 ; outdir          - Output directory path
-; modeltime       - The age of the protostellar system in years. 
-; c_s             - Sound speed
-; Omega_0         - The rotating speed as the perturbation to the collapse model
-; r               - R-coordinate of the model
+; modeltime       - The age of the protostellar system in years.
+; c_s             - Sound speed in cm/s
+; Omega_0         - The rotating speed as the perturbation to the collapse model in s-1
+; r               - R-coordinate of the model in cm
 ; theta           - Theta-coordinate of the model
 ; timestep        - (Not sure about the function of this right now)
 ; rhofloor        - The lowest density allowed in the model. Primarily designed for preventing zero in calculation.
@@ -38,7 +38,7 @@ pro tsc, modeltime, c_s, Omega_0, r, theta, rhoenv, rhofloor, renv_in, indir=ind
 ;
 ; OUTPUTS
 ; rhoenv          - The density profile of envelope returned from the code.
-; 
+;
 
 
 
@@ -178,7 +178,7 @@ for i=0,nr-1 do begin
             if(x_tsc[i,j] eq 0.0) then rhoenv[i,j]=0.0
             if(x_tsc[i,j] gt 0.0) then begin
                 fv=(-1.0)*sqrt(xmo/x_tsc[i,j])
-                tsq=tau_tsc[i,j]*tau_tsc[i,j]           
+                tsq=tau_tsc[i,j]*tau_tsc[i,j]
                 zeta=(xmo^3)*tsq/(16.*x_tsc[i,j])       ; TSC84, eq. 83 and 85 plus some information from Shu77
                 ao=xmo/((x_tsc[i,j])^2.0)
 
@@ -277,7 +277,7 @@ for i=0,nr-1 do begin
                 endif
             endif
             if finite(rhoenv[i,j]) eq 0 then stop
-            ; if (i eq 0) and (j eq 67) then stop 
+            ; if (i eq 0) and (j eq 67) then stop
             ;rhoenv[i,j]=1.0e-4*(muh2*1.67e-24) ;switch off inner solution
         endif
         if(x_tsc[i,j] ge (tau_tsc[i,j]^2.0)) then begin    ;TSC solution
@@ -298,29 +298,4 @@ for i=0,nr-1 do begin
     endfor
 endfor
 
-; mass_envelope_temp=mass(rhoenv/gastodust,r,theta,gastodust=gastodust)
-; ratio=menv_input/mass_envelope_temp
-; rhoenv=rhoenv*ratio
-; mass_envelope_final=mass(rhoenv/gastodust,r,theta,gastodust=gastodust)
-; print,''
-; print,'The envelope mass should be:  ',menv_input/MS,' Msun'
-; print,'The envelope mass was originally:  ',mass_envelope_temp/MS,'  Msun'
-; print,'The ratio of the two is:  ',ratio
-; print,'The modified, final envelope mass is:  ',mass_envelope_final/MS,' Msun'
-; print,''
-; openw,1,'RESULTS_MENV/menv_'+strcompress(string(long(timestep)),/remove_all)+'.dat'
-; printf,1,modeltime,mass_envelope_final/MS,'    ',nan
-; close,1
-
-;
-; Mutually exclude the densities
-; 
-; ii = where( rhodisk gt rhoenv ) 
-; if ii[0] ge 0 then rhoenv[ii] = rhofloor
-; ii = where( rhodisk le rhoenv ) 
-; if ii[0] ge 0 then rhodisk[ii] = rhofloor
-
-; rho=rhodisk+rhoenv
-
 end
-
