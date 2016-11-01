@@ -111,14 +111,14 @@
 # COPS list selected from successful SECT Reduction
 Obsid=[1342242620,1342242621,1342245084,1342245094,1342245857,
        1342247625,1342248246,1342248249,1342249053,1342249470,
-       1342249473,1342249474,1342249475,1342249476,1342249477,
+       1342249474,1342249475,1342249476,1342249477,
        1342250509,1342250510,1342250512,1342250515,1342251285,
        1342251286,1342251287,1342251290,1342253646,1342253649,
        1342253652,1342254037]
 
 obj_list = ['RCrA-IRS7B','RCrA-IRS7C','HH46','L723-MM','L1014',
             'L1157','Ced110','BHR71','IRAS03245','L1551-IRS5',
-            'L1489','L1455-IRS3','B1-a','B1-c','IRAS03301',
+            'L1455-IRS3','B1-a','B1-c','IRAS03301',
             'TMR1','TMC1A','TMC1','IRAS15398','RNO91',
             'GSS30-IRS1','VLA1623','WL12','RCrA-IRS5A','L483',
             'B335','DKCha']
@@ -127,14 +127,14 @@ phot_list = [[1342216002,1342206678,1342206677], [1342216002,1342206678,13422066
              [1342189844,1342189843],[1342213179,1342213178], [1342226633], [1342190327,1342190326], [1342202251,1342202250],
              [1342190327,1342190326], [1342190327,1342190326], [1342190327,1342190326], [1342190327,1342190326], [1342202253,1342202252],
              [1342202253,1342202252], [1342202253,1342202252], [1342213183,1342213182], [1342263845,1342263844], [1342205094,1342205093,1342203074],
-             [1342205094,1342205093,1342203074], [1342205094,1342205093], [1342205094,1342205093], [1342216002,1342206678,1342206677], [1342229186],
+             [1342205094,1342205093,1342203074], [1342205094,1342205093], [1342216002,1342206678,1342206677], [1342229186],
              [1342192685], [1342213181,1342213180]]
 
 size_list =[37.0, 38.0, 16.0, 12.75, 38.0,
             11.0, 30.5, 15.5, 14.5, 14.25,
             54.0, 38.0, 14.0, 49.0, 26.5,
             18.25, 30.5, 35.0, 21.0, 38.5,
-            25.75, 41.0, 41.0, 40.0, 22.0,
+            25.75, 41.0, 40.0, 22.0,
             13.5, 13.25]
 
 
@@ -169,13 +169,15 @@ for obsidFTS in Obsid:
     ############################ Import Data ##################################
     # Loading an observation of Gamma Dra from the HSA
     phot_obs = phot_list[Obsid.index(obsidFTS)]
+    wave = []
     phot = []
     error = []
     phot_aper = []
-    alpha_data = asciiTableReader(file=indir+obsidFTS+'_alpha.txt', tableType='SPACES')
+    alpha_data = asciiTableReader(file=indir+str(obsidFTS)+'_alpha.txt', tableType='SPACES')
     alpha = [float(alpha_data[0].data[1]), float(alpha_data[1].data[1]), float(alpha_data[2].data[1])]
 
-    if phot_obs = '0':
+    if phot_obs == 0:
+
         print 'No photometry data found for ', obj_list[Obsid.index(obsidFTS)]
         continue
 
@@ -250,17 +252,17 @@ for obsidFTS in Obsid:
         fwhmPMW = cal.phot.getBeamProf(array[1]).meta['FWHM_gMean%s'%array[1].title()].value
         fwhmPLW = cal.phot.getBeamProf(array[2]).meta['FWHM_gMean%s'%array[2].title()].value
 
-        # print "fwhmPSW", fwhmPSW
-        # print "fwhmPMW", fwhmPMW
-        # print "fwhmPLW", fwhmPLW
+        print "fwhmPSW", fwhmPSW
+        print "fwhmPMW", fwhmPMW
+        print "fwhmPLW", fwhmPLW
 
         rPSW = SQRT(fitted_size**2 + fwhmPSW**2)/2.0
         rPMW = SQRT(fitted_size**2 + fwhmPMW**2)/2.0
         rPLW = SQRT(fitted_size**2 + fwhmPLW**2)/2.0
 
-        # print "rPSW", rPSW
-        # print "rPMW", rPMW
-        # print "rPLW", rPLW
+        print "rPSW", rPSW
+        print "rPMW", rPMW
+        print "rPLW", rPLW
 
         # radius (aperture radius needed by timeline fitter and aperture photometry)
         # Default map pixel size
@@ -326,18 +328,27 @@ for obsidFTS in Obsid:
         print format%('Flux Error from Aperture Photometry: PMW', errorAperPMW)
         print format%('Flux Error from Aperture Photometry: PLW', errorAperPLW)
 
-        phot.append([fluxAperPSW, fluxAperPMW, fluxAperPLW, errorAperPSW, errorAperPMW, errorAperPLW])
+        wave.extend([250,350,500])
+        phot.extend([fluxAperPSW, fluxAperPMW, fluxAperPLW])
+        error.extend([errorAperPSW, errorAperPMW, errorAperPLW])
+        phot_aper.extend([2*rPSW, 2*rPMW, 2*rPLW])
 
     # Write to ASCII table
+    wave = Float1d(wave)
+    phot = Float1d(phot)
+    error = Float1d(error)
+    phot_aper = Float1d(phot_aper)
+    phot_obsidForwrite = []
+    for o in phot_obs:
+        phot_obsidForwrite.extend([o,o,o])
+    phot_obsidForwrite = String1d(phot_obsidForwrite)
+    #
     tds = TableDataset()
-    wave = Float1d([250, 350, 500])
-    flux = Float1d([fluxAperPSW, fluxAperPMW, fluxAperPLW])
-    err =  Float1d([errorAperPSW, errorAperPMW, errorAperPLW])
-    aperture = Float1d([2*rPSW, 2*rPMW, 2*rPLW])
+    tds.addColumn("OBSID", Column(phot_obsidForwrite))
     tds.addColumn("wavelength(um)",Column(wave))
-    tds.addColumn("flux(Jy)",Column(flux))
-    tds.addColumn("uncertainty(Jy)",Column(err))
-    tds.addColumn("aperture(arcsec)",Column(aperture))
+    tds.addColumn("flux(Jy)",Column(phot))
+    tds.addColumn("uncertainty(Jy)",Column(error))
+    tds.addColumn("aperture(arcsec)",Column(phot_aper))
     asciiTableWriter(file=outdir+obj_list[Obsid.index(obsidFTS)]+"_spire_phot.txt",table=tds, writeMetadata=False)
     ############################### End of script ##################################
     ################################################################################
