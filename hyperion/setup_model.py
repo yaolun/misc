@@ -163,13 +163,10 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     # Make the Coordinates
     #
-    if ext_source != None:
-        rout = R_env_max*1.1
+    # if ext_source != None:
+    #     rout = R_env_max*1.1
     ri           = rin * (rout/rin)**(np.arange(nx+1).astype(dtype='float')/float(nx))
     ri           = np.hstack((0.0, ri))
-    # if ext_source != None:
-    #     ri = np.hstack((ri, ri.max()*1.01, R_env_max))
-    #     print 'max ri: ', ri.max()/AU
     thetai       = PI*np.arange(ny+1).astype(dtype='float')/float(ny)
     phii         = PI*2.0*np.arange(nz+1).astype(dtype='float')/float(nz)
 
@@ -600,22 +597,22 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     source.position = (0., 0., 0.)
     print 'L_center =  % 5.2f L_sun' % ((4*PI*rstar**2)*sigma*(tstar**4)/LS)
 
-    if ext_source != None:
-        # add external heating - ISRF
-        # use standard receipe from Hyperion doc
-        isrf = ascii.read(ext_source, names=['wavelength', 'J_lambda'])
-        isrf_nu = c/(isrf['wavelength']*1e-4)
-        isrf_jnu = isrf['J_lambda']*isrf['wavelength']/isrf_nu
-
-        if 'mmp83' in ext_source:
-            FOUR_PI_JNU = 0.0217
-        else:
-            FOUR_PI_JNU = raw_input('What is the FOUR_PI_JNU value?')
-
-        s_isrf = m.add_external_spherical_source()
-        s_isrf.radius = R_env_max
-        s_isrf.spectrum = (isrf_nu, isrf_jnu)
-        s_isrf.luminosity = PI * R_env_max**2 * FOUR_PI_JNU
+    # if ext_source != None:
+    #     # add external heating - ISRF
+    #     # use standard receipe from Hyperion doc
+    #     isrf = ascii.read(ext_source, names=['wavelength', 'J_lambda'])
+    #     isrf_nu = c/(isrf['wavelength']*1e-4)
+    #     isrf_jnu = isrf['J_lambda']*isrf['wavelength']/isrf_nu
+    #
+    #     if 'mmp83' in ext_source:
+    #         FOUR_PI_JNU = 0.0217
+    #     else:
+    #         FOUR_PI_JNU = raw_input('What is the FOUR_PI_JNU value?')
+    #
+    #     s_isrf = m.add_external_spherical_source()
+    #     s_isrf.radius = R_env_max
+    #     s_isrf.spectrum = (isrf_nu, isrf_jnu)
+    #     s_isrf.luminosity = PI * R_env_max**2 * FOUR_PI_JNU
 
     m.set_raytracing(True)
     # option of using more photons for imaging

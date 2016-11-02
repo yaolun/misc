@@ -312,14 +312,16 @@
 !
                if(nskip .gt. 30) then
                    write(7,*)'skipped channels exceeded max value', nskip
-                   stop
+!                   stop
                end if
             end if
 !           YLY: debug
             write(11,*), "nr, nt, np", nr, nt, np
-            write(11,*), "vz(ni)",vz(ni)
+            write(11,*), "vz(ni), vzold(ni)",vz(ni), vzold(ni)
             write(11,*), "vmin", vmin
             write(11,*), "delv", delv
+            write(11,*), "nskip", nskip
+
 !
 ! calculate velocity channel appropriate to velocity vz
             nv=nint( (vz(ni)-vmin)/delv +1.0 )
