@@ -3,7 +3,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
                 record=True,dstar=200.,aperture=None,dyn_cav=False,fix_params=None,
                 power=2,better_im=False,ellipsoid=False,TSC_dir='~/programs/misc/TSC/',
                 IDL_path='/Applications/exelis/idl83/bin/idl',auto_disk=0.25,fast_plot=False,
-                image_only=False, tsc_com=False):
+                image_only=False, tsc_com=False, ext_source=None):
     """
     params = dictionary of the model parameters
     'alma' keyword is obsoleted
@@ -19,6 +19,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     """
     import numpy as np
     import astropy.constants as const
+    from astropy.io import ascii
     import scipy as sci
     # to avoid X server error
     import matplotlib as mpl
@@ -162,6 +163,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
 
     # Make the Coordinates
     #
+    # if ext_source != None:
+    #     rout = R_env_max*1.1
     ri           = rin * (rout/rin)**(np.arange(nx+1).astype(dtype='float')/float(nx))
     ri           = np.hstack((0.0, ri))
     thetai       = PI*np.arange(ny+1).astype(dtype='float')/float(ny)
@@ -422,7 +425,8 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
         for ir in range(0,len(rc)):
             for itheta in range(0,len(thetac)):
                 for iphi in range(0,len(phic)):
-                    if rc[ir] > R_env_min:
+                    # for external heating option
+                    if (rc[ir] > R_env_min):
                         # Envelope profile
                         w = abs(rc[ir]*np.cos(np.pi/2 - thetac[itheta]))
                         z = rc[ir]*np.sin(np.pi/2 - thetac[itheta])
@@ -592,6 +596,23 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     source.temperature = tstar  # [K]
     source.position = (0., 0., 0.)
     print 'L_center =  % 5.2f L_sun' % ((4*PI*rstar**2)*sigma*(tstar**4)/LS)
+
+    # if ext_source != None:
+    #     # add external heating - ISRF
+    #     # use standard receipe from Hyperion doc
+    #     isrf = ascii.read(ext_source, names=['wavelength', 'J_lambda'])
+    #     isrf_nu = c/(isrf['wavelength']*1e-4)
+    #     isrf_jnu = isrf['J_lambda']*isrf['wavelength']/isrf_nu
+    #
+    #     if 'mmp83' in ext_source:
+    #         FOUR_PI_JNU = 0.0217
+    #     else:
+    #         FOUR_PI_JNU = raw_input('What is the FOUR_PI_JNU value?')
+    #
+    #     s_isrf = m.add_external_spherical_source()
+    #     s_isrf.radius = R_env_max
+    #     s_isrf.spectrum = (isrf_nu, isrf_jnu)
+    #     s_isrf.luminosity = PI * R_env_max**2 * FOUR_PI_JNU
 
     m.set_raytracing(True)
     # option of using more photons for imaging
