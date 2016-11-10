@@ -1,0 +1,31 @@
+Note on reducing PACS and SPIRE data with 1-D spectral extraction and line fitting
+
+PACS
+1. Download the latest data from Herschel Science Archive.
+    - [HIPE] "getPacsDIGIT.py" in hipe_script folder
+2. Parse the FITS file, which contains the spectra of full 5x5 pixels, into ASCII files.
+    - "cdfPacs1d.py" in line_fitting
+    - unlike the original version of CDF reduction, the pipeline doesn't copy over the FITS files.
+3. Extract the 1-D spectrum with a defined aperture size.
+    - "cdfPacs1d.py" in line_fitting
+4. Extract the photometry fluxes with the same aperture size used for 1-D spectral extraction.
+    - "pacs_phot_cdf.py" in hipe_script folder
+    - the output path is not consistent with the default CDF file structure at this moment.
+5. Perform line fitting on both cube abd 1-D spectra.
+    - "cdfPacs1d.py" in line_fitting
+
+
+SPIRE
+1. Download the latest data from Herschel Science Archive.
+    - [HIPE] "Spectrometer_Point_Pipeline_CDF.py" in hipe_script folder
+    - the script does not write out the cube FITS files explicitly, only the 1-D products.
+2. Parse the FITS file, which contains the spectra of all pixels, into ASCII files.
+3. Run the SECT in HIPE to get 1-D spectrum.
+    - [HIPE] "Spectrometer_Point_Pipeline_CDF.py" in hipe_script folder
+4. Fit the alpha for 250 um, 350 um, and 500 um bands.
+    - "spire_spectral_index.py" in spectra_analysis folder
+5. Calculate the photometry fluxes with the fitted alpha and convolved aperture sizes with the fitted source size.
+    - [HIPE] "spire_phot.py" in hipe_script folder
+6. Perform line fitting on both cube and 1-D spectra.
+    - re-format the 1-D SECT ASCII output to the format that the line fitting routines can read with "spire_postprocess1.py" in spectra_analysis folder
+    - or "PreFittedModifiy.py" in line_fitting folder, which has fitting code within.
