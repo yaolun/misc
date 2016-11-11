@@ -625,7 +625,7 @@ for i in range(len(Obsid)):
     obsList = getPhotObsidsForFts(spec.obsid)
 
     # Write out the fitted size and the OBSID of the photometry data.
-    if len(obsList) == 0
+    if len(obsList) == 0:
         misc_data = Float1d(fitted_size)
     else:
         misc_data = Float1d([fitted_size]+obsList)

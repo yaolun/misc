@@ -191,14 +191,16 @@ for o in obsid_spire:
 ###################### STEP 2 ######################
 # Parse the cube file into individual ASCII files.
 for o in obsid:
-    if obs[3] == '0':
+    if o[3] == '0':
         continue
-    if obs[1] == '0':
+    if o[1] == '0':
         continue
     # load aperture from SPIRE SECT reduction
-    if os.path.exists(outdir+str(obs[0])+'/spire/data/'+str(obs[0])+'_spire_phot.txt'):
-        spire_phot = ascii.read(outdir+str(obs[0])+'/spire/data/'+str(obs[0])+'_spire_phot.txt', data_start=4)
+    if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
+        spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
         aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
     else:
         aper_size = 31.8
-    cdfPacs1d(obs[1:3], pacsdatadir, outdir+obs[0], obs[0])
+    cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0], o[0])
+
+###################### STEP 3 ######################
