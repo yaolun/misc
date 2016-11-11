@@ -139,8 +139,8 @@ size_list =[37.0, 38.0, 16.0, 12.75, 38.0,
 
 
 ############################### Input #####################################
-indir = '/home/bettyjo/yaolun/CDF_SPIRE_reduction/'
-outdir = '/home/bettyjo/yaolun/CDF_SPIRE_reduction/photometry/'
+indir = '/home/bettyjo/yaolun/CDF_archive_v2/'
+outdir = indir
 fitted_size = 0
 # Radii of inner and outer annulus for background estimation
 # These radii are not important. I do not want to subtract any background from the total flux in the aperture used.

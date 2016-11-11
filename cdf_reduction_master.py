@@ -116,6 +116,19 @@ reduction_name = 'CDF_archive_v2'
 if not os.path.exists(outdir):
     os.mkdir(outdir)
 
+# create the header in the output file for line fitting
+# line strength reported in flux unit.
+header = ['Object','Line','LabWL(um)','ObsWL(um)','Sig_Cen(um)','Str(W/cm2)',
+          'Sig_str(W/cm2)','FWHM(um)','Sig_FWHM(um)','Base(W/cm2/um)',
+          'Noise(W/cm2/um)','SNR','E_u(K)','A(s-1)','g','RA(deg)','Dec(deg)',
+          'Pixel_No.','Blend','Validity']
+for element in header:
+    header[header.index(element)] = element + '  '
+foo = open(outdir+reduction_name+'_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+foo.close()
+
+
 # SPIRE reduction first for matching the PACS 1-D spectra with SECT-corrected spectra
 
 ###################### STEP 1 ######################
@@ -158,13 +171,13 @@ for o in obsid_spire:
             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
             ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
             slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum_sub=1, current_pix=1, double_gauss=1,
-            print_all=outdir+reduction_name+'_spire_lines.txt')
+            print_all=outdir+reduction_name+'_lines.txt')
     # SSW
     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
             ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
             ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum_sub=1, current_pix=1, double_gauss=1,
-            print_all=outdir+reduction_name+'_spire_lines.txt')
+            print_all=outdir+reduction_name+'_lines.txt')
 
 ###################### STEP 4 ######################
 # re-format the SECT-reduced 1-D product and perform fitting
@@ -190,6 +203,7 @@ for o in obsid_spire:
 
 ###################### STEP 2 ######################
 # Parse the cube file into individual ASCII files.
+# Calculate the 1-D PACS spectrum with a given aperture size
 for o in obsid:
     if o[3] == '0':
         continue
@@ -204,3 +218,35 @@ for o in obsid:
     cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0], o[0])
 
 ###################### STEP 3 ######################
+# Line fitting on both cube and 1-D products
+
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_pacs.pro')
+
+for o in obsid:
+    if o[3] == '0':
+        continue
+    if o[1] == '0':
+        continue
+
+    # cube
+    for ip in range(1,26):
+        idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_pixel'+str(ip)+'_hsa',
+                outdir=outdir+str(o[0])+'/pacs/advanced_products/cube/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/cube/plots/',
+                noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum_sub=1, flat=1, object=str(o[0]),
+                current_pix=str(ip), double_gauss=1, print_all=outdir+reduction_name+'_lines')
+    # 1-D
+    idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_weighted',
+            outdir=outdir+str(o[0])+'/pacs/advanced_products/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/plots/',
+            noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum_sub=1, flat=1, object=str(o[0]),
+            current_pix=str(ip), double_gauss=1, print_all=outdir+reduction_name+'_lines')
+
+
+for pix=1,25 do $
+	extract_pacs, indir=dir2fit+'/L1251B/fitting/pacs/data/cube/', filename='L1251B_pacs_pixel'+strtrim(string(pix),1)+'_'+suffix,$
+			outdir=dir2fit+'/L1251B/fitting/pacs/advanced_products/cube/', plotdir=dir2fit+'/L1251B/fitting/pacs/advanced_products/cube/plots/',$
+			noiselevel=3,localbaseline=10,global_noise=20,/fixed_width,/opt_width,/continuum_sub,/flat,object='L1251B',$
+			current_pix=strtrim(string(pix),1),/double_gauss
+
+extract_pacs, indir=dir2fit+'/L1251B/fitting/pacs/data/', filename='L1251B'+name+'_trim', outdir=dir2fit+'/L1251B/fitting/pacs/advanced_products/',$
+		plotdir=dir2fit+'/L1251B/fitting/pacs/advanced_products/plots/', noiselevel=3,$
+		ra=0,dec=0,localbaseline=10,global_noise=20,/fixed_width,/opt_width,/continuum_sub,/flat,object='L1251B',/double_gauss
