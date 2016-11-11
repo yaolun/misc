@@ -246,9 +246,10 @@ phot_list = []
 
 # first obsid
 start_obsid = 1342242620
+start_obsid = 1342254037
 
 # the overall output directory
-outdir = "/home/bettyjo/yaolun/CDF_SPIRE_reduction/"
+outdir = "/home/bettyjo/yaolun/CDF_archive_v2/"
 
 for i in range(len(Obsid)):
     start_ind = Obsid.index(start_obsid)
@@ -620,16 +621,27 @@ for i in range(len(Obsid)):
     spire_spec = convertWavescale(ds=spireProduct2SimpleSpectrum(input=correctedSpectrum),
                                     to='micrometer', referenceUnit='kHz')
     exportSpectrumToAscii(ds=spire_spec,file=outDir+str(myObsid)+'spire_sect.txt',meta=False)
-
-    print fitted_size
-    size_list.append(fitted_size)
     # check whether it has photometry
     obsList = getPhotObsidsForFts(spec.obsid)
-    if len(obsList) == 0:
-        phot_list.append(0)
+
+    # Write out the fitted size and the OBSID of the photometry data.
+    if len(obsList) == 0
+        misc_data = Float1d(fitted_size)
     else:
-        phot_list.append(obsList)
-    print 'OBSID of the photometry', obsList
+        misc_data = Float1d([fitted_size]+obsList)
+    tds = TableDataset()
+    tds.addColumn("size/phot_obsid", Column(misc_data))
+    asciiTableWriter(file=outDir+str(myObsid)+"_spire_sect_meta.txt",table=tds, writeMetadata=False)
+
+    #
+    # print fitted_size
+    # size_list.append(fitted_size)
+    # if len(obsList) == 0:
+    #     phot_list.append(0)
+    # else:
+    #     phot_list.append(obsList)
+    # print 'OBSID of the photometry', obsList
+
 
     # if len(obsList) != 0:
     #     ####################### Photometry Part ##################################
