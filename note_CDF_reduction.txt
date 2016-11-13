@@ -18,8 +18,8 @@ PACS
 SPIRE
 1. Download the latest data from Herschel Science Archive.
     - [HIPE] "Spectrometer_Point_Pipeline_CDF.py" in hipe_script folder
-    - the script does not write out the cube FITS files explicitly, only the 1-D products.
 2. Parse the FITS file, which contains the spectra of all pixels, into ASCII files.
+    - (?)
 3. Run the SECT in HIPE to get 1-D spectrum.
     - [HIPE] "Spectrometer_Point_Pipeline_CDF.py" in hipe_script folder
 4. Fit the alpha for 250 um, 350 um, and 500 um bands.

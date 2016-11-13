@@ -96,7 +96,10 @@
 40      continue
 
 !       YLY: for debug
-        open(unit=11,file='ncollapse_debug',status='new')
+C        open(unit=11,file='ncollapse_debug',status='new')
+!       YLY: for writing out density and velocities for given (r, theta)
+        open(unit=4,file='rho_v_env',status='new')
+        write(4,*) 'lp xr theta ro ur utheta uphi'
 !
         call ncollapse(tau)
 !
@@ -121,6 +124,8 @@
 !       write(0,'("program nco sucessfully completed")')
         write(7,*)' program nco sucessfully completed'
         close(7)
+!       YLY: close files
+        close(4)
 !
 999     continue
         stop
@@ -168,7 +173,7 @@
 ! of position at a given non-dimensional time tau
 !----------------------------------------------------------
         parameter(nangle=10,npoints=1000)
-        common /pldata2/ lc,mc,dd(1)
+        common /pldata/ lc,mc,dd(1)
         common /climits/ xrmin,xrmax,delxr,ntmax,npmax
         common /collpar/ d2,time,pi,pi2
         common /slimits/ nvmax,vmin,vmax,delv,ninc,ai(nangle)
@@ -178,12 +183,8 @@
         data d2/-3.52E-4/
 
 !
-! YLY: Where is "ang" being defined?
 ! YLY: Legendre polynomial - P2(cos(theta)) = 1-3/2*sin(theta)
         p2(ang)= 1. -1.5*(sin(ang)**2)
-!       YLY: add print command
-        print *, 'ang', ang
-        print *, 'p2(ang)', p2(ang)
 !
         time=tau
         tsq= tau*tau
@@ -230,10 +231,11 @@
 !  calculate nearest point in dd array
 ! YLY: Not sure the "p2" is properly defined
             yr=xr*(1. +d2*p2(ang1)*tau**2)
-            write(11,*), "xr, theta", xr, theta
-            write(11,*), "ang1, p2(ang1)", ang1, p2(ang1)
-            write(11,*), "yr", yr
+C            write(11,*), "xr, theta", xr, theta
+C            write(11,*), "ang1, p2(ang1)", ang1, p2(ang1)
+C            write(11,*), "yr", yr
 ! YLY: Where is "lc" defined?
+! YLY: "lp" turns out always be 0.
             do 75 l=lp-1,lc-1
               if(l.le.0) then
                 if(yr.lt.dd(1).or.yr.gt.dd(lc)) then
@@ -278,6 +280,9 @@
                       uphi= uphi1 +(uphi2-uphi1)*delta
                   end if
                 end if
+! YLY: Try to output the density and velocity in spherical coordinates for
+!      given (r, theta)
+          write(4,*) lp, xr, theta, ro, ur, utheta, uphi
 !
 ! calculate mass element, l.o.s. velocity for all inclination angles
           delm= ro*dvol
@@ -380,7 +385,7 @@
 ! calculates physical variables density,velocities
 ! for collapse solution
 !-------------------------------------------------------
-        common /pldata3/ lc,nc,dd(1)
+        common /pldata/ lc,nc,dd(1)
 !
         p2(a)= 1. -1.5*(sin(a))**2
         dp2(a)= -3.*sin(a)*cos(a)
