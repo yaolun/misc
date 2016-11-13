@@ -217,6 +217,9 @@ for o in obsid:
         aper_size = 31.8
     cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0], o[0])
 
+
+# need to modify this part for it to automatically figure out the aperture size that will result in a well-matched spectrum
+
 ###################### STEP 3 ######################
 # Line fitting on both cube and 1-D products
 
@@ -235,18 +238,17 @@ for o in obsid:
                 noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum_sub=1, flat=1, object=str(o[0]),
                 current_pix=str(ip), double_gauss=1, print_all=outdir+reduction_name+'_lines')
     # 1-D
+    # read in RA/Dec
+    radec_pacs = ascii.read(outdir+str(o[0])+'/pacs/data/cube/'+str(o[0])+'_pacs_pixel13_hsa_coord.txt')
     idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_weighted',
             outdir=outdir+str(o[0])+'/pacs/advanced_products/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/plots/',
             noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum_sub=1, flat=1, object=str(o[0]),
-            current_pix=str(ip), double_gauss=1, print_all=outdir+reduction_name+'_lines')
+            ra=np.mean(radec_pacs['RA(deg)']), dec=np.mean(radec_pacs['Dec(deg)']), current_pix=str(ip),
+            double_gauss=1, print_all=outdir+reduction_name+'_lines')
 
+###################### STEP 4 ######################
+# extract photometry with the aperture size specified or derived in above
+# [HIPE] execution
+#   - "pacs_phot_cdf.py" in hipe_script folder
 
-for pix=1,25 do $
-	extract_pacs, indir=dir2fit+'/L1251B/fitting/pacs/data/cube/', filename='L1251B_pacs_pixel'+strtrim(string(pix),1)+'_'+suffix,$
-			outdir=dir2fit+'/L1251B/fitting/pacs/advanced_products/cube/', plotdir=dir2fit+'/L1251B/fitting/pacs/advanced_products/cube/plots/',$
-			noiselevel=3,localbaseline=10,global_noise=20,/fixed_width,/opt_width,/continuum_sub,/flat,object='L1251B',$
-			current_pix=strtrim(string(pix),1),/double_gauss
-
-extract_pacs, indir=dir2fit+'/L1251B/fitting/pacs/data/', filename='L1251B'+name+'_trim', outdir=dir2fit+'/L1251B/fitting/pacs/advanced_products/',$
-		plotdir=dir2fit+'/L1251B/fitting/pacs/advanced_products/plots/', noiselevel=3,$
-		ra=0,dec=0,localbaseline=10,global_noise=20,/fixed_width,/opt_width,/continuum_sub,/flat,object='L1251B',/double_gauss
+# the default aperture size now is 31.8".
