@@ -40,6 +40,7 @@ spec = obs.refs['level2'].product.refs['HR_spectrum_point_apod'].product
 # spec = fitsReader(file = '/Users/yaolun/bhr71/calibration_testing/data/1342248249/level2/HR_spectrum_point_apod/hspirespectrometer1342248249_a1060001_spgApod_HR_20spss_1454323899152.fits')
 
 outdir = '/Users/yaolun/bhr71/best_calibrated/'
+outdir = '/Users/yaolun/test/'
 
 # Run SECT to correct the point-source calibrated spectra
 cal = spireCal(pool="spire_cal_14_3")
