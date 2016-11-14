@@ -23,7 +23,7 @@ def PacsSpire_SpecMatch(pacs, spire, threshold):
 
 # test script
 # from astropy.io import ascii
-# pacs = ascii.read('/Users/yaolun/bhr71/best_calibrated/BHR71_pacs_weighted.txt')
-# spire = ascii.read('/Users/yaolun/bhr71/best_calibrated/BHR71_spire_corrected.txt')
+# pacs = ascii.read('/Users/yaolun/test/BHR71_pacs_weighted.txt')
+# spire = ascii.read('/Users/yaolun/test/BHR71_spire_corrected.txt')
 # ans = PacsSpire_SpecMatch(pacs, spire, 0.1)
 # print ans
