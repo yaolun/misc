@@ -631,7 +631,7 @@ for i in range(len(Obsid)):
     if len(obsList) == 0:
         misc_data = Float1d(fitted_size)
     else:
-        misc_data = Float1d([fitted_size]+obsList)
+        misc_data = Float1d([fitted_size]).append(obsList)
     tds = TableDataset()
     tds.addColumn("size/phot_obsid", Column(misc_data))
     asciiTableWriter(file=outDir+str(myObsid)+"_spire_sect_meta.txt",table=tds, writeMetadata=False)
