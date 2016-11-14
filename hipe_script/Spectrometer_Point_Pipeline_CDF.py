@@ -68,6 +68,7 @@
 #     * New task added to correct low resolution observations
 from herschel.spire.ia.util import MetaDataDictionary
 from herschel.ia.toolbox.util import RestoreTask
+import os
 restore = RestoreTask()
 def addMultiObsMeta(meta, obsList):
     """
@@ -246,7 +247,6 @@ phot_list = []
 
 # first obsid
 start_obsid = 1342242620
-start_obsid = 1342254037
 
 # the overall output directory
 outdir = "/home/bettyjo/yaolun/CDF_archive_v2/"
@@ -269,6 +269,9 @@ for i in range(len(Obsid)):
     # (C) Specify the output directory for writing the resulting spectra into
     #     FITS files. Apodized spectra will only be saved to FITS files if apodize=1
     outDir = outdir + obj_list[i]+"/spire/data/"
+    # create directory
+    if not os.path.exists(outDir+'fits/'):
+        os.makedirs(outDir+'fits/')
     apodize = 1
     if apodize:
         apodName = "aNB_15"
