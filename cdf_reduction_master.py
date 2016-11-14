@@ -215,8 +215,8 @@ for o in obsid:
         aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
     else:
         aper_size = 31.8
-    cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0], o[0])
-
+    aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0], o[0])
+    print o[0], aper_size_fitted
 
 # need to modify this part for it to automatically figure out the aperture size that will result in a well-matched spectrum
 
@@ -235,14 +235,14 @@ for o in obsid:
     for ip in range(1,26):
         idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_pixel'+str(ip)+'_hsa',
                 outdir=outdir+str(o[0])+'/pacs/advanced_products/cube/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/cube/plots/',
-                noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum_sub=1, flat=1, object=str(o[0]),
+                noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum=1, flat=1, object=str(o[0]),
                 current_pix=str(ip), double_gauss=1, print_all=outdir+reduction_name+'_lines')
     # 1-D
     # read in RA/Dec
     radec_pacs = ascii.read(outdir+str(o[0])+'/pacs/data/cube/'+str(o[0])+'_pacs_pixel13_hsa_coord.txt')
     idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_weighted',
             outdir=outdir+str(o[0])+'/pacs/advanced_products/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/plots/',
-            noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum_sub=1, flat=1, object=str(o[0]),
+            noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum=1, flat=1, object=str(o[0]),
             ra=np.mean(radec_pacs['RA(deg)']), dec=np.mean(radec_pacs['Dec(deg)']), current_pix=str(ip),
             double_gauss=1, print_all=outdir+reduction_name+'_lines')
 
