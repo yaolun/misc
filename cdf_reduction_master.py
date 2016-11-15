@@ -152,9 +152,9 @@ for o in obsid_spire:
             filename=outdir+obj+'/spire/data/fits/'+o+'_HR_spectrum_extended_apod.fits',
             brightness=1)
     # get RA and Dec
-    idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+o+'_HR_spectrum_extended_apod.fits',
+    idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
             slw=1, write=outdir+obj+'/spire/data/cube/')
-    idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+o+'_HR_spectrum_extended_apod.fits',
+    idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
             ssw=1, write=outdir+obj+'/spire/data/cube/'+obj)
     # the output RA/Dec files are named as obj+radec_slw[ssw].txt
 
