@@ -192,7 +192,7 @@ SPIRE1D_run(obsid=obsid, indir=outdir+obj+'/spire/', outdir=outdir+obj+'/spire/'
 for o in obsid_spire:
     obj = obj_list_spire[obsid_spire.index(o)]
     print 'Step 5 - ', obj
-    spire_spectral_index(outdir+obj+'/spire/data/', o, obj)
+    spire_spectral_index(outdir+obj+'/spire/data/', str(o), obj)
 
 ###################### STEP 6 ######################
 # [HIPE] execution
