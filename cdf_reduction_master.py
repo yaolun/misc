@@ -185,7 +185,7 @@ if not os.path.exists(outdir):
 ###################### STEP 4 ######################
 # re-format the SECT-reduced 1-D product and perform fitting
 print 'Step 4'
-SPIRE1D_run(obsid=obsid, indir=outdir+obj+'/spire/', outdir=outdir+obj+'/spire/', global_dir=outdir+reduction_name)
+SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name)
 
 ###################### STEP 5 ######################
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
