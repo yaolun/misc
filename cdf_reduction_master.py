@@ -161,7 +161,7 @@ for o in obsid_spire:
 ###################### STEP 3 ######################
 # line fitting on cube products
 idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_spire.pro')
-idl('.r /home/bettyjo/yaolun/programs/gauss.pro')
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
 
 for o in obsid_spire:
     obj = obj_list_spire[obsid_spire.index(o)]
@@ -173,13 +173,13 @@ for o in obsid_spire:
     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
             ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
-            slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum_sub=1, current_pix=1, double_gauss=1,
+            slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
             print_all=outdir+reduction_name+'_lines.txt')
     # SSW
     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
             ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
-            ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum_sub=1, current_pix=1, double_gauss=1,
+            ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
             print_all=outdir+reduction_name+'_lines.txt')
 
 ###################### STEP 4 ######################
@@ -230,7 +230,7 @@ for o in obsid:
 # Line fitting on both cube and 1-D products
 
 idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_pacs.pro')
-idl('.r /home/bettyjo/yaolun/programs/gauss.pro')
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
 
 for o in obsid:
     if o[3] == '0':
