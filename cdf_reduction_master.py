@@ -147,6 +147,7 @@ idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_radec_spire_py.pro')
 
 for o in obsid_spire:
     obj = obj_list_spire[obsid_spire.index(o)]
+    print 'Step 2 - ', obj
     idl.pro('get_spire', outdir=outdir+obj+'/spire/data/cube/', object=obj,
             filename=outdir+obj+'/spire/data/fits/'+o+'_HR_spectrum_extended_apod.fits',
             brightness=1)
@@ -160,9 +161,11 @@ for o in obsid_spire:
 ###################### STEP 3 ######################
 # line fitting on cube products
 idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_spire.pro')
+idl('.r /home/bettyjo/yaolun/programs/gauss.pro')
 
 for o in obsid_spire:
     obj = obj_list_spire[obsid_spire.index(o)]
+    print 'Step 3 - ', obj
     # read in RA/Dec
     radec_slw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
     radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
@@ -181,12 +184,14 @@ for o in obsid_spire:
 
 ###################### STEP 4 ######################
 # re-format the SECT-reduced 1-D product and perform fitting
+print 'Step 4'
 SPIRE1D_run(obsid=obsid, indir=outdir+obj+'/spire/', outdir=outdir+obj+'/spire/', global_dir=outdir+reduction_name)
 
 ###################### STEP 5 ######################
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
 for o in obsid_spire:
     obj = obj_list_spire[obsid_spire.index(o)]
+    print 'Step 5 - ', obj
     spire_spectral_index(outdir+obj+'/spire/data/', o, obj)
 
 ###################### STEP 6 ######################
@@ -225,6 +230,7 @@ for o in obsid:
 # Line fitting on both cube and 1-D products
 
 idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_pacs.pro')
+idl('.r /home/bettyjo/yaolun/programs/gauss.pro')
 
 for o in obsid:
     if o[3] == '0':
