@@ -194,6 +194,7 @@ for o in obsid_spire:
 #   "spire_phot.py" in hipe_script folder
 #   measure the photometry fluxes at 250 um, 350 um, and 500 um with the convolved apeture sizes
 
+sys.exit("SPIRE part successfully finished!")
 
 # PACS reduction
 ###################### STEP 1 ######################
