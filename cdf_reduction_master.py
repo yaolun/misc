@@ -222,7 +222,7 @@ for o in obsid:
         aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
     else:
         aper_size = 31.8
-    aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0], o[0], auto_match=True)
+    aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0], auto_match=True)
     print o[0], aper_size_fitted
 
 # need to modify this part for it to automatically figure out the aperture size that will result in a well-matched spectrum
