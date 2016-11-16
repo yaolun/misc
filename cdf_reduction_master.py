@@ -215,13 +215,14 @@ for o in obsid:
         continue
     if o[1] == '0':
         continue
+    print 'Step 2 - ', o[0]
     # load aperture from SPIRE SECT reduction
     if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
         spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
         aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
     else:
         aper_size = 31.8
-    aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0], o[0])
+    aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0], o[0], auto_match=True)
     print o[0], aper_size_fitted
 
 # need to modify this part for it to automatically figure out the aperture size that will result in a well-matched spectrum
@@ -237,6 +238,7 @@ for o in obsid:
         continue
     if o[1] == '0':
         continue
+    print 'Step 3 - ', o[0]
 
     # cube
     for ip in range(1,26):
