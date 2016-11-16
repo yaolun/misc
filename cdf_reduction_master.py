@@ -189,17 +189,17 @@ if not os.path.exists(outdir):
 
 ###################### STEP 5 ######################
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
-for o in obsid_spire:
-    obj = obj_list_spire[obsid_spire.index(o)]
-    print 'Step 5 - ', obj
-    spire_spectral_index(outdir+obj+'/spire/data/', str(o), obj)
+# for o in obsid_spire:
+#     obj = obj_list_spire[obsid_spire.index(o)]
+#     print 'Step 5 - ', obj
+#     spire_spectral_index(outdir+obj+'/spire/data/', str(o), obj)
 
 ###################### STEP 6 ######################
 # [HIPE] execution
 #   "spire_phot.py" in hipe_script folder
 #   measure the photometry fluxes at 250 um, 350 um, and 500 um with the convolved apeture sizes
 
-sys.exit("SPIRE part successfully finished!")
+# sys.exit("SPIRE part successfully finished!")
 
 # PACS reduction
 ###################### STEP 1 ######################
