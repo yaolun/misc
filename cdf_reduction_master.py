@@ -210,10 +210,18 @@ if not os.path.exists(outdir):
 ###################### STEP 2 ######################
 # Parse the cube file into individual ASCII files.
 # Calculate the 1-D PACS spectrum with a given aperture size
+
+skip_sources = ['FUOri']
+
 for o in obsid:
     if o[3] == '0':
         continue
     if o[1] == '0':
+        continue
+    # skip some sources
+    # PACS data not downloaded
+    if str(o[0]) in skip_sources:
+        print 'skip ', o[0]
         continue
     print 'Step 2 - ', o[0]
     # load aperture from SPIRE SECT reduction
