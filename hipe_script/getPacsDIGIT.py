@@ -96,15 +96,16 @@ for obj in obsid:
         continue
     if obj[3] == '0':
         continue
-    print 'Getting ', obj[0]
 
-    if os.path.exists('/scratch/CDF_PACS_HSA/'+obj[1]+'/herschel.pacs.signal.PacsRebinnedCube/'+obj[1]+'_20hps3drbs_00.fits'):
+    if os.path.exists('/scratch/CDF_PACS_HSA/'+obj[1]+'/herschel.pacs.signal.PacsRebinnedCube/hpacs'+obj[1]+'_20hps3drbs_00.fits'):
         continue
     else:
+        print 'Getting ', obj[0], '-', obj[1]
         obs1 = getObservation(obj[1], useHsa=True)
         saveObservation(obs1, poolLocation='/scratch/CDF_PACS_HSA/')
-    if os.path.exists('/scratch/CDF_PACS_HSA/'+obj[2]+'/herschel.pacs.signal.PacsRebinnedCube/'+obj[2]+'_20hps3drbs_00.fits'):
+    if os.path.exists('/scratch/CDF_PACS_HSA/'+obj[2]+'/herschel.pacs.signal.PacsRebinnedCube/hpacs'+obj[2]+'_20hps3drbs_00.fits'):
         continue
     else:
+        print 'Getting ', obj[0], '-', obj[2]
         obs2 = getObservation(obj[2], useHsa=True)
         saveObservation(obs2, poolLocation='/scratch/CDF_PACS_HSA/')
