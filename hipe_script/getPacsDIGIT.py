@@ -92,10 +92,10 @@ obsid = [['AB_Aur','1342217842','1342217843','0'],\
 import os
 
 for obj in obsid:
-	if obj[1] == '0':
-		continue
-	if obj[3] == '0':
-		continue
+    if obj[1] == '0':
+        continue
+    if obj[3] == '0':
+        continue
     print 'Getting ', obj[0]
 
     if os.path.exists('/scratch/CDF_PACS_HSA/'+obj[1]+'/herschel.pacs.signal.PacsRebinnedCube/'+obj[1]+'_20hps3drbs_00.fits'):
@@ -106,5 +106,5 @@ for obj in obsid:
     if os.path.exists('/scratch/CDF_PACS_HSA/'+obj[2]+'/herschel.pacs.signal.PacsRebinnedCube/'+obj[2]+'_20hps3drbs_00.fits'):
         continue
     else:
-    	obs2 = getObservation(obj[2], useHsa=True)
-    	saveObservation(obs2, poolLocation='/scratch/CDF_PACS_HSA/')
+        obs2 = getObservation(obj[2], useHsa=True)
+        saveObservation(obs2, poolLocation='/scratch/CDF_PACS_HSA/')
