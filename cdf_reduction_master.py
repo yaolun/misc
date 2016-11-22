@@ -210,10 +210,17 @@ sys.exit("SPIRE part successfully finished!")
 ###################### STEP 2 ######################
 # Parse the cube file into individual ASCII files.
 # Calculate the 1-D PACS spectrum with a given aperture size
+skip = True
 for o in obsid:
     if o[3] == '0':
         continue
     if o[1] == '0':
+        continue
+    if o[0] == 'IRS46':
+        # for skipping processed objects
+        skip = False
+        continue
+    if skip:
         continue
     # load aperture from SPIRE SECT reduction
     if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
