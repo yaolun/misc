@@ -85,17 +85,27 @@ obsid = [['AB_Aur','1342217842','1342217843','0'],\
          ['VLA1623','0','0','1342251287'],\
          ['WL12','1342228187','1342228188','1342251290']]
 
-obsid = [['IRAS03245','1342214677','1342214676','1342249053'],\
-         ['IRAS03301','1342215668','1342216181','1342249477'],\
-         ['L1455-IRS3','1342204122','1342204123','1342249474']]
+# obsid = [['IRAS03245','1342214677','1342214676','1342249053'],\
+#          ['IRAS03301','1342215668','1342216181','1342249477'],\
+#          ['L1455-IRS3','1342204122','1342204123','1342249474']]
+
+import os
 
 for obj in obsid:
-	if obj[1] == '0':
-		continue
-	if obj[3] == '0':
-		continue
-	print 'Getting ', obj[0]
-	obs1 = getObservation(obj[1], useHsa=True)
-	obs2 = getObservation(obj[2], useHsa=True)
-	saveObservation(obs1, poolLocation='/scratch/CDF_PACS_HSA/') 
-	saveObservation(obs2, poolLocation='/scratch/CDF_PACS_HSA/')
+    if obj[1] == '0':
+        continue
+    if obj[3] == '0':
+        continue
+
+    if os.path.exists('/scratch/CDF_PACS_HSA/'+obj[1]+'/herschel.pacs.signal.PacsRebinnedCube/hpacs'+obj[1]+'_20hps3drbs_00.fits'):
+        continue
+    else:
+        print 'Getting ', obj[0], '-', obj[1]
+        obs1 = getObservation(obj[1], useHsa=True)
+        saveObservation(obs1, poolLocation='/scratch/CDF_PACS_HSA/')
+    if os.path.exists('/scratch/CDF_PACS_HSA/'+obj[2]+'/herschel.pacs.signal.PacsRebinnedCube/hpacs'+obj[2]+'_20hps3drbs_00.fits'):
+        continue
+    else:
+        print 'Getting ', obj[0], '-', obj[2]
+        obs2 = getObservation(obj[2], useHsa=True)
+        saveObservation(obs2, poolLocation='/scratch/CDF_PACS_HSA/')

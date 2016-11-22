@@ -118,88 +118,88 @@ if not os.path.exists(outdir):
 
 # create the header in the output file for line fitting
 # line strength reported in flux unit.
-header = ['Object','Line','LabWL(um)','ObsWL(um)','Sig_Cen(um)','Str(W/cm2)',
-          'Sig_str(W/cm2)','FWHM(um)','Sig_FWHM(um)','Base(W/cm2/um)',
-          'Noise(W/cm2/um)','SNR','E_u(K)','A(s-1)','g','RA(deg)','Dec(deg)',
-          'Pixel_No.','Blend','Validity']
-for element in header:
-    header[header.index(element)] = element + '  '
-foo = open(outdir+reduction_name+'_lines.txt', 'w')
-foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-foo.close()
-
-
-# SPIRE reduction first for matching the PACS 1-D spectra with SECT-corrected spectra
-
-###################### STEP 1 ######################
-# HIPE execution:
-#   "Spectrometer_Point_Pipeline_CDF.py" in hipe_script folder
-#   Make sure the source list provided in above is the same as the source list defined in the script used here.
-#   Check "outdir" to be the same as the outdir for the whole reduction.
-#   This script will output cube FITS files reduced by 4 standard SPIRE options, SECT-reduced FITS file, SECT-reduced ASCII file, and fitted size/phot_obsid for further use.
-
-###################### STEP 2 ######################
-# Parse the cube FITS file into individual ASCII files.
-# Use the "HR_spectrum_extened" product by default
-spirecubever = 'HR_spectrum_extened'
-idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_spire.pro')
-idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_radec_spire_py.pro')
-
-for o in obsid_spire:
-    obj = obj_list_spire[obsid_spire.index(o)]
-    print 'Step 2 - ', obj
-    idl.pro('get_spire', outdir=outdir+obj+'/spire/data/cube/', object=obj,
-            filename=outdir+obj+'/spire/data/fits/'+o+'_HR_spectrum_extended_apod.fits',
-            brightness=1)
-    # get RA and Dec
-    idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+o+'_HR_spectrum_extended_apod.fits',
-            slw=1, write=outdir+obj+'/spire/data/cube/')
-    idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+o+'_HR_spectrum_extended_apod.fits',
-            ssw=1, write=outdir+obj+'/spire/data/cube/'+obj)
-    # the output RA/Dec files are named as obj+radec_slw[ssw].txt
-
-###################### STEP 3 ######################
-# line fitting on cube products
-idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_spire.pro')
-idl('.r /home/bettyjo/yaolun/programs/gauss.pro')
-
-for o in obsid_spire:
-    obj = obj_list_spire[obsid_spire.index(o)]
-    print 'Step 3 - ', obj
-    # read in RA/Dec
-    radec_slw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
-    radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
-    # SLW
-    idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
-            plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
-            ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
-            slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum_sub=1, current_pix=1, double_gauss=1,
-            print_all=outdir+reduction_name+'_lines.txt')
-    # SSW
-    idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
-            plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
-            ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
-            ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum_sub=1, current_pix=1, double_gauss=1,
-            print_all=outdir+reduction_name+'_lines.txt')
+# header = ['Object','Line','LabWL(um)','ObsWL(um)','Sig_Cen(um)','Str(W/cm2)',
+#           'Sig_str(W/cm2)','FWHM(um)','Sig_FWHM(um)','Base(W/cm2/um)',
+#           'Noise(W/cm2/um)','SNR','E_u(K)','A(s-1)','g','RA(deg)','Dec(deg)',
+#           'Pixel_No.','Blend','Validity']
+# for element in header:
+#     header[header.index(element)] = element + '  '
+# foo = open(outdir+reduction_name+'_lines.txt', 'w')
+# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+# foo.close()
+#
+#
+# # SPIRE reduction first for matching the PACS 1-D spectra with SECT-corrected spectra
+#
+# ###################### STEP 1 ######################
+# # HIPE execution:
+# #   "Spectrometer_Point_Pipeline_CDF.py" in hipe_script folder
+# #   Make sure the source list provided in above is the same as the source list defined in the script used here.
+# #   Check "outdir" to be the same as the outdir for the whole reduction.
+# #   This script will output cube FITS files reduced by 4 standard SPIRE options, SECT-reduced FITS file, SECT-reduced ASCII file, and fitted size/phot_obsid for further use.
+#
+# ###################### STEP 2 ######################
+# # Parse the cube FITS file into individual ASCII files.
+# # Use the "HR_spectrum_extened" product by default
+# spirecubever = 'HR_spectrum_extened'
+# idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_spire.pro')
+# idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_radec_spire_py.pro')
+#
+# for o in obsid_spire:
+#     obj = obj_list_spire[obsid_spire.index(o)]
+#     print 'Step 2 - ', obj
+#     idl.pro('get_spire', outdir=outdir+obj+'/spire/data/cube/', object=obj,
+#             filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
+#             brightness=1)
+#     # get RA and Dec
+#     idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
+#             slw=1, write=outdir+obj+'/spire/data/cube/'+obj)
+#     idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
+#             ssw=1, write=outdir+obj+'/spire/data/cube/'+obj)
+#     # the output RA/Dec files are named as obj+radec_slw[ssw].txt
+#
+# ###################### STEP 3 ######################
+# # line fitting on cube products
+# idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_spire.pro')
+# idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
+#
+# for o in obsid_spire:
+#     obj = obj_list_spire[obsid_spire.index(o)]
+#     print 'Step 3 - ', obj
+#     # read in RA/Dec
+#     radec_slw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
+#     radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
+#     # SLW
+#     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
+#             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
+#             ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
+#             slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
+#             print_all=outdir+reduction_name+'_lines.txt')
+#     # SSW
+#     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
+#             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
+#             ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
+#             ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
+#             print_all=outdir+reduction_name+'_lines.txt')
 
 ###################### STEP 4 ######################
 # re-format the SECT-reduced 1-D product and perform fitting
-print 'Step 4'
-SPIRE1D_run(obsid=obsid, indir=outdir+obj+'/spire/', outdir=outdir+obj+'/spire/', global_dir=outdir+reduction_name)
+# print 'Step 4'
+# SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name)
 
 ###################### STEP 5 ######################
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
-for o in obsid_spire:
-    obj = obj_list_spire[obsid_spire.index(o)]
-    print 'Step 5 - ', obj
-    spire_spectral_index(outdir+obj+'/spire/data/', o, obj)
+# for o in obsid_spire:
+#     obj = obj_list_spire[obsid_spire.index(o)]
+#     print 'Step 5 - ', obj
+#     spire_spectral_index(outdir+obj+'/spire/data/', str(o), obj)
 
 ###################### STEP 6 ######################
 # [HIPE] execution
 #   "spire_phot.py" in hipe_script folder
 #   measure the photometry fluxes at 250 um, 350 um, and 500 um with the convolved apeture sizes
 
-sys.exit("SPIRE part successfully finished!")
+# sys.exit("SPIRE part successfully finished!")
 
 # PACS reduction
 ###################### STEP 1 ######################
@@ -216,19 +216,22 @@ for o in obsid:
         continue
     if o[1] == '0':
         continue
+
     if o[0] == 'IRS46':
         # for skipping processed objects
         skip = False
         continue
     if skip:
         continue
+
+    print 'Step 2 - ', o[0]
     # load aperture from SPIRE SECT reduction
     if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
         spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
         aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
     else:
         aper_size = 31.8
-    aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0], o[0])
+    aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0], auto_match=True)
     print o[0], aper_size_fitted
 
 # need to modify this part for it to automatically figure out the aperture size that will result in a well-matched spectrum
@@ -237,13 +240,14 @@ for o in obsid:
 # Line fitting on both cube and 1-D products
 
 idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_pacs.pro')
-idl('.r /home/bettyjo/yaolun/programs/gauss.pro')
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
 
 for o in obsid:
     if o[3] == '0':
         continue
     if o[1] == '0':
         continue
+    print 'Step 3 - ', o[0]
 
     # cube
     for ip in range(1,26):
