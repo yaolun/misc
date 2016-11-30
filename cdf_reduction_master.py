@@ -102,10 +102,10 @@ obsid = [['AB_Aur','1342217842','1342217843','0'],\
          ['TMC1','1342225803','1342225804','1342250512'],\
          ['TMC1A','1342192987','1342192988','1342250510'],\
          ['TMR1','1342192985','1342192986','1342250509'],\
-         ['V1057_Cyg','1342235853','1342235852','1342221695'],\
-         ['V1331_Cyg','1342233446','1342233445','1342221694'],\
-         ['V1515_Cyg','1342235691','1342235690','1342221685'],\
-         ['V1735_Cyg','1342235849','1342235848','1342219560'],\
+        #  ['V1057_Cyg','1342235853','1342235852','1342221695'],\
+        #  ['V1331_Cyg','1342233446','1342233445','1342221694'],\
+        #  ['V1515_Cyg','1342235691','1342235690','1342221685'],\
+        #  ['V1735_Cyg','1342235849','1342235848','1342219560'],\
          ['VLA1623','1342213918','1342213917','1342251287'],\
          ['WL12','1342228187','1342228188','1342251290']]
 
@@ -210,19 +210,20 @@ if not os.path.exists(outdir):
 ###################### STEP 2 ######################
 # Parse the cube file into individual ASCII files.
 # Calculate the 1-D PACS spectrum with a given aperture size
-
-skip_sources = ['FUOri']
-
+skip = True
 for o in obsid:
     if o[3] == '0':
         continue
     if o[1] == '0':
         continue
-    # skip some sources
-    # PACS data not downloaded
-    if str(o[0]) in skip_sources:
-        print 'skip ', o[0]
+
+    if o[0] == 'IRS46':
+        # for skipping processed objects
+        skip = False
         continue
+    if skip:
+        continue
+
     print 'Step 2 - ', o[0]
     # load aperture from SPIRE SECT reduction
     if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
