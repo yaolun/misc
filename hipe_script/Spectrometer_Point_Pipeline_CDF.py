@@ -246,7 +246,7 @@ size_list = []
 phot_list = []
 
 # first obsid
-start_obsid = 1342242620
+start_obsid = 1342251286
 
 # the overall output directory
 outdir = "/home/bettyjo/yaolun/CDF_archive_v2/"
@@ -633,7 +633,7 @@ for i in range(len(Obsid)):
     else:
         misc_data = Float1d([fitted_size]).append(Float1d(obsList))
     tds = TableDataset()
-    tds.addColumn("size", Column(Float1d(fitted_size)))
+    tds.addColumn("size", Column(Float1d([fitted_size])))
     tds.addColumn("phot_obsid", Column(obsList))
     asciiTableWriter(file=outDir+str(myObsid)+"_spire_sect_meta.txt",table=tds, writeMetadata=False)
 
