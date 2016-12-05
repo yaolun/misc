@@ -262,7 +262,7 @@ for o in obsid:
         idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_pixel'+str(ip)+'_hsa',
                 outdir=outdir+str(o[0])+'/pacs/advanced_products/cube/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/cube/plots/',
                 noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum=1, flat=1, object=str(o[0]),
-                current_pix=str(ip), double_gauss=1, print_all=outdir+reduction_name+'_lines')
+                current_pix=str(ip), double_gauss=1, print_all=outdir+reduction_name+'_pacs_lines')
     # 1-D
     # read in RA/Dec
     radec_pacs = ascii.read(outdir+str(o[0])+'/pacs/data/cube/'+str(o[0])+'_pacs_pixel13_hsa_coord.txt')
@@ -270,7 +270,7 @@ for o in obsid:
             outdir=outdir+str(o[0])+'/pacs/advanced_products/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/plots/',
             noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum=1, flat=1, object=str(o[0]),
             ra=np.mean(radec_pacs['RA(deg)']), dec=np.mean(radec_pacs['Dec(deg)']), current_pix=str(ip),
-            double_gauss=1, print_all=outdir+reduction_name+'_lines')
+            double_gauss=1, print_all=outdir+reduction_name+'_pacs_lines')
 
 ###################### STEP 4 ######################
 # extract photometry with the aperture size specified or derived in above
