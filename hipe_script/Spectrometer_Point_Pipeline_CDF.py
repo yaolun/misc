@@ -627,7 +627,7 @@ for i in range(len(Obsid)):
     	%(outDir+'fits/', myObsid, processRes))
     spire_spec = convertWavescale(ds=spireProduct2SimpleSpectrum(input=correctedSpectrum),
                                     to='micrometer', referenceUnit='kHz')
-    exportSpectrumToAscii(ds=spire_spec,file=outDir+str(myObsid)+'spire_sect.txt',meta=False)
+    exportSpectrumToAscii(ds=spire_spec,file=outDir+str(myObsid)+'_spire_sect.txt',meta=False)
     # check whether it has photometry
     obsList = getPhotObsidsForFts(spec.obsid)
 
