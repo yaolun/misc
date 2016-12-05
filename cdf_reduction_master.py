@@ -242,6 +242,8 @@ for o in obsid:
 idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_pacs.pro')
 idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
 
+import numpy as np
+
 for o in obsid:
     if o[3] == '0':
         continue
