@@ -118,15 +118,21 @@ if not os.path.exists(outdir):
 
 # create the header in the output file for line fitting
 # line strength reported in flux unit.
-# header = ['Object','Line','LabWL(um)','ObsWL(um)','Sig_Cen(um)','Str(W/cm2)',
-#           'Sig_str(W/cm2)','FWHM(um)','Sig_FWHM(um)','Base(W/cm2/um)',
-#           'Noise(W/cm2/um)','SNR','E_u(K)','A(s-1)','g','RA(deg)','Dec(deg)',
-#           'Pixel_No.','Blend','Validity']
-# for element in header:
-#     header[header.index(element)] = element + '  '
-# foo = open(outdir+reduction_name+'_lines.txt', 'w')
-# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-# foo.close()
+header = ['Object','Line','LabWL(um)','ObsWL(um)','Sig_Cen(um)','Str(W/cm2)',
+          'Sig_str(W/cm2)','FWHM(um)','Sig_FWHM(um)','Base(W/cm2/um)',
+          'Noise(W/cm2/um)','SNR','E_u(K)','A(s-1)','g','RA(deg)','Dec(deg)',
+          'Pixel_No.','Blend','Validity']
+for element in header:
+    header[header.index(element)] = element + '  '
+
+# for SPIRE
+foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+foo.close()
+# for PACS
+foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+foo.close()
 #
 #
 # # SPIRE reduction first for matching the PACS 1-D spectra with SECT-corrected spectra
@@ -180,12 +186,12 @@ if not os.path.exists(outdir):
 #             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
 #             ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
 #             ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
-#             print_all=outdir+reduction_name+'_lines.txt')
+#             print_all=outdir+reduction_name+'_spire_lines.txt')
 
 ###################### STEP 4 ######################
 # re-format the SECT-reduced 1-D product and perform fitting
 # print 'Step 4'
-# SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name)
+SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name+'_spire')
 
 ###################### STEP 5 ######################
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
@@ -199,7 +205,7 @@ if not os.path.exists(outdir):
 #   "spire_phot.py" in hipe_script folder
 #   measure the photometry fluxes at 250 um, 350 um, and 500 um with the convolved apeture sizes
 
-# sys.exit("SPIRE part successfully finished!")
+sys.exit("SPIRE part successfully finished!")
 
 # PACS reduction
 ###################### STEP 1 ######################
