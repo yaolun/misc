@@ -628,10 +628,10 @@ for i in range(len(Obsid)):
     obsList = getPhotObsidsForFts(spec.obsid)
 
     # Write out the fitted size and the OBSID of the photometry data.
-    if len(obsList) == 0:
-        misc_data = Float1d(fitted_size)
-    else:
-        misc_data = Float1d([fitted_size]).append(Float1d(obsList))
+    # if len(obsList) == 0:
+    #     misc_data = Float1d(fitted_size)
+    # else:
+    #     misc_data = Float1d([fitted_size]).append(Float1d(obsList))
     tds = TableDataset()
     tds.addColumn("size", Column(Float1d(fitted_size)))
     tds.addColumn("phot_obsid", Column(obsList))
