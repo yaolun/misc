@@ -85,28 +85,28 @@ def addMultiObsMeta(meta, obsList):
         param.setDescription("%s %03d"%(param.getDescription(), i))
         meta.set("%s%03d"%(myBaseParam, i), param)
 pass
-
-def getPhotObsidsForFts(id):
-    """
-    Get a list of photometer obsids that a given FTS obsid is contained in.
-    Input:
-        id FTS obsid as a number
-    Output:
-        list of photometer obsids that overlap with the FTS one
-    """
-    if not globals().has_key("photObsidForFts"):
-        hcssDir = Configuration.getProperty("var.hcss.dir")
-        restore(hcssDir+"/data/spire/ia/pipeline/scripts/merging/photObsidsForFts.ser")
-    key = "0x%X"%id
-    if globals().has_key("photObsidForFts"):
-        if photObsidForFts.has_key(key):
-            return photObsidForFts[key]
-        else:
-            print "No photometer observations found for %i"%id
-            return []
-    print "Cannot find photObsidForFts"
-    return []
-pass
+#
+# def getPhotObsidsForFts(id):
+#     """
+#     Get a list of photometer obsids that a given FTS obsid is contained in.
+#     Input:
+#         id FTS obsid as a number
+#     Output:
+#         list of photometer obsids that overlap with the FTS one
+#     """
+#     if not globals().has_key("photObsidForFts"):
+#         hcssDir = Configuration.getProperty("var.hcss.dir")
+#         restore(hcssDir+"/data/spire/ia/pipeline/scripts/merging/photObsidsForFts.ser")
+#     key = "0x%X"%id
+#     if globals().has_key("photObsidForFts"):
+#         if photObsidForFts.has_key(key):
+#             return photObsidForFts[key]
+#         else:
+#             print "No photometer observations found for %i"%id
+#             return []
+#     print "Cannot find photObsidForFts"
+#     return []
+# pass
 
 #####################################
 # Full AOR List for SPIRE-FTS (JDG) #
@@ -309,270 +309,273 @@ for i in range(len(Obsid)):
     #
     ###########################################################################
 
-    print "Processing observation %s"%(myObsid)
+    # skip the cube reduction part if the FITS files already exist
+    if not os.path.exists(outDir+'fits/'+str(myObsid)+'_'+processRes+'_spectrum_point_apod.fits'):
 
-    # Check that the script is appropriate for the observation
-    if (obs.meta['instMode'].value  != 'SOF1' or obs.meta['obsMode'].value == 'Raster'):
-       check=raw_input("Warning! You are trying to process a mapping observation with the Point Pipeline\nDo you wish to continue? (y/n)")
-       if String(check).toLowerCase() == 'y':
-           pass
-       else:
-          raise Exception("Incorrect script being used. Stopping.")
-    pass
+        print "Processing observation %s"%(myObsid)
 
-    # Attach the updated calibration tree to the observation context:
-    obs.calibration.update(cal)
-
-    # Define the central detectors:
-    centreDetectors = ["SLWC3","SSWD4"]
-
-
-    # Find out the bias mode of the observation (nominal/bright):
-    biasMode = obs.meta["biasMode"].value
-
-    # Extract necessary Calibration Products from the Observation Context
-    nonLinCorr     = obs.calibration.spec.nonLinCorr
-    chanNum        = obs.calibration.spec.chanNum
-    bolPar         = obs.calibration.spec.bolPar
-    lpfPar         = obs.calibration.spec.lpfPar
-    phaseCorrLim   = obs.calibration.spec.phaseCorrLim
-    chanTimeConst  = obs.calibration.spec.chanTimeConst
-    bsmPos         = obs.calibration.spec.bsmPos
-    detAngOff      = obs.calibration.spec.detAngOff
-    smecZpd        = obs.calibration.spec.smecZpd
-    chanTimeOff    = obs.calibration.spec.chanTimeOff
-    smecStepFactor = obs.calibration.spec.smecStepFactor
-    opdLimits      = obs.calibration.spec.opdLimits
-    bandEdge       = obs.calibration.spec.bandEdge
-    brightGain     = obs.calibration.spec.brightGain
-    extCorr        = obs.calibration.spec.extCorr
-    lrCorr         = obs.calibration.spec.lrCorr
-    # teleModel contains the OPD-dependent emissivity correction
-    # factors that are applied to the telescope model.
-    teleModel      = obs.calibration.spec.teleModel
-
-    # Extract necessary Auxiliary Products from the Observation Context
-    hpp  = obs.auxiliary.pointing
-    siam = obs.auxiliary.siam
-    hk   = obs.auxiliary.hk
-
-    # Get the Level-0.5 data directly from the observation
-    level0_5 = obs.level0_5
-
-    # Start to process the observation from Level 0.5
-    # Process each SMEC scan building block (0xa106) individually, append to a list
-    # context, and then merge.
-    bbList = SpireListContext()
-    for bbid in level0_5.getBbids(0xa106):
-        print "Processing building block 0x%X (%i/%i)"%(bbid, bbid-0xa1060000L, len(obs.level0_5.getBbids(0xa106)))
-        sdt   = level0_5.get(bbid).sdt
-        # Record the calibration tree version used by the pipeline:
-        sdt.calVersion = obs.calibration.version
-        nhkt  = level0_5.get(bbid).nhkt
-        smect = level0_5.get(bbid).smect
-        bsmt  = level0_5.get(bbid).bsmt
-        # Remove all detectors except the centre ones:
-        if processOnlyCenterDetectors:
-            sdt = filterChannels(sdt, keepChannels=centreDetectors)
-        # -----------------------------------------------------------
-        # Consult the Pipeline Specification Manual for more options of the waveletDeglitcher
-        # 1st level deglitching:
-        sdt = waveletDeglitcher(sdt, optionReconstruction="polynomialAdaptive10", newThresholdCoef=True)
-        # -----------------------------------------------------------
-        # Run the Non-linearity correction:
-        sdt = specNonLinearityCorrection(sdt, nonLinCorr=nonLinCorr)
-        # -----------------------------------------------------------
-        # Correct clipping where needed:
-        sdt = clippingCorrection(sdt)
-        # -----------------------------------------------------------
-        # Time domain phase correction:
-        sdt = timeDomainPhaseCorrection(sdt, nhkt, lpfPar=lpfPar, \
-                   phaseCorrLim=phaseCorrLim, chanTimeConst=chanTimeConst)
-        # -----------------------------------------------------------
-        # Get pointing info:
-        bat = calcBsmAngles(bsmt, bsmPos=bsmPos)
-        spp = createSpirePointing(hpp=hpp, siam=siam, \
-                         detAngOff=detAngOff, bat=bat)
-        # -----------------------------------------------------------
-        # Create interferogram:
-        sdi = createIfgm(sdt, smect=smect, nhkt=nhkt, spp=spp, \
-                         smecZpd=smecZpd,\
-                         chanTimeOff=chanTimeOff,\
-                         smecStepFactor=smecStepFactor)
-        # -----------------------------------------------------------
-        # Append this building block to the list, taking account whether the resolution
-        # was H+L or not
-        bbMap = SpireMapContext()
-        if obs.meta["commandedResolution"].value == "H+LR":
-            # for processing all scans as LR
-            if processRes == "LR":
-                sdi.processResolution = "LR"
-                bbMap.setProduct("ifgm", sdi)
-                bbMap.setProduct("nhkt", nhkt)
-                bbList.addProduct(bbMap)
-            # for processing the HR scans
-            elif processRes == sdi.processResolution:
-                bbMap.setProduct("ifgm", sdi)
-                bbMap.setProduct("nhkt", nhkt)
-                bbList.addProduct(bbMap)
-        else:
-            bbMap.setProduct("ifgm", sdi)
-            bbMap.setProduct("nhkt", nhkt)
-            bbList.addProduct(bbMap)
-    # Loop over building blocks ends here
-    # -----------------------------------------------------------
-    # Merge all the building blocks into one:
-    merged = mergeFtsBuildingBlocks(bbList)
-    sdi    = merged.getProduct("ifgm")
-    nhkt   = merged.getProduct("nhkt")
-
-    # -----------------------------------------------------------
-    # Make sure all interferograms are the same length:
-    sdi = makeSameOpds(sdi, opdLimits=opdLimits)
-
-    # -----------------------------------------------------------
-    # Baseline correction:
-    sdi = baselineCorrection(sdi, type="fourier", threshold=4)
-
-    # -----------------------------------------------------------
-    # 2nd-level deglitching:
-    sdi = deglitchIfgm(sdi, deglitchType="MAD")
-
-    # -----------------------------------------------------------
-    # Phase correction
-    # The phase correction is calculated from an averaged LR interferogram:
-    avgSdiFull = averageInterferogram(sdi)
-    lowResSdi  = avgSdiFull.copy()
-    lowResSdi.processResolution = "LR"
-    lowResSdi  = makeSameOpds(lowResSdi, opdLimits=opdLimits)
-    # Apply the phase correction:
-    sdi = phaseCorrection(sdi, avgSdi=lowResSdi, avgSdiFull=avgSdiFull, spectralUnit="GHz")
-
-    # -----------------------------------------------------------
-    # Fourier transform:
-    ssds = fourierTransform(sdi, ftType="postPhaseCorr", zeroPad="standard", \
-                            spectralUnit="GHz")
-
-    # -----------------------------------------------------------
-    # Get the RSRF calibration products
-    # Note: this will only work if the raw data was processed with HIPE v7 and above
-    # If you get an error here, re-downloading the observation from the HSA should fix it
-    instRsrf  = obs.calibration.spec.instRsrfList.getProduct(ssds)
-    teleRsrf  = obs.calibration.spec.teleRsrfList.getProduct(ssds)
-    beamParam = obs.calibration.spec.beamParamList.getProduct(ssds)
-
-    # -----------------------------------------------------------
-    # Remove out of band data:
-    ssds = removeOutOfBand(ssds, bandEdge=bandEdge)
-
-    # -----------------------------------------------------------
-    # Apply bright gain correction (bright source setting only):
-    if biasMode == "bright":
-        ssds = specApplyBrightGain(ssds, brightGain=brightGain)
-
-    # -----------------------------------------------------------
-    # Correction for instrument emission:
-    ssds = instCorrection(ssds, nhkt=nhkt, instRsrf=instRsrf)
-
-    # -----------------------------------------------------------
-    # Apply the extended flux calibration:
-    extended = specExtendedFluxConversion(ssds, teleRsrf=teleRsrf)
-
-    # -----------------------------------------------------------
-    # Correction for telescope emission:
-    extended = telescopeCorrection(extended, hk=hk, teleModel=teleModel)
-
-    # -----------------------------------------------------------
-    # Apply point-source flux calibration (*copying*, rather than replacing
-    # the variable "extended").
-    # Keep all detectors for which calibration data exists
-    pointSourceSds = filterChannels(extended.copy(), keepChannels=beamParam.uniqueDetectors)
-    pointSourceSds = specPointFluxConversion(pointSourceSds, beamParam=beamParam)
-
-    # -----------------------------------------------------------
-    # If LR, apply the LR correction to the point-source calibrated data
-    if pointSourceSds.processResolution=="LR":
-        pointSourceSds = applyLrCorr(pointSourceSds, lrCorr=lrCorr)
-
-    # -----------------------------------------------------------
-    # Average across all scans:
-    extended = averageSpectra(extended)
-    pointSourceSds = averageSpectra(pointSourceSds)
-
-    # -----------------------------------------------------------
-    # Apodization:
-    # For the extended calibrated data
-    extended_apod = apodizeSpectra(extended.copy(), apodName="aNB_15")
-    # For the point-source calibrated data
-    pointSourceSds_apod = apodizeSpectra(pointSourceSds.copy(), apodName="aNB_15")
-
-    # -----------------------------------------------------------
-    # Correct the frequency scale to be in the Local Standard of Rest
-    extended       = applyRadialVelocity(extended, targetFrame="lsr")
-    pointSourceSds = applyRadialVelocity(pointSourceSds, targetFrame="lsr")
-    # and for apodized data
-    extended_apod = applyRadialVelocity(extended_apod, targetFrame="lsr")
-    pointSourceSds_apod = applyRadialVelocity(pointSourceSds_apod, targetFrame="lsr")
-
-    # -----------------------------------------------------------
-    # Sort the metadata into a logical order
-    extended = metaDataSorter(extended)
-    pointSourceSds = metaDataSorter(pointSourceSds)
-    # and for apodized data
-    extended_apod = metaDataSorter(extended_apod)
-    pointSourceSds_apod = metaDataSorter(pointSourceSds_apod)
-
-    # -----------------------------------------------------------
-    # Apply the extended calibration correction to the extended spectra
-    extended = applyExtCalCorr(extended, specExtCorr=extCorr)
-    extended_apod = applyExtCalCorr(extended_apod, specExtCorr=extCorr)
-
-    # -----------------------------------------------------------
-    # Check to see if there are any photometer observations that overlap
-    # with this observation and if so, append their obsids to the metadata
-    obsList = getPhotObsidsForFts(obs.obsid)
-    if obsList!=None:
-        #
-        for l2ProdRef in obs.level2.refs:
-            addMultiObsMeta(extended.meta, obsList)
-            addMultiObsMeta(pointSourceSds.meta, obsList)
-            addMultiObsMeta(extended_apod.meta, obsList)
-            addMultiObsMeta(pointSourceSds_apod.meta, obsList)
+        # Check that the script is appropriate for the observation
+        if (obs.meta['instMode'].value  != 'SOF1' or obs.meta['obsMode'].value == 'Raster'):
+           check=raw_input("Warning! You are trying to process a mapping observation with the Point Pipeline\nDo you wish to continue? (y/n)")
+           if String(check).toLowerCase() == 'y':
+               pass
+           else:
+              raise Exception("Incorrect script being used. Stopping.")
         pass
-        addMultiObsMeta(obs.meta, obsList)
-    pass
 
-    # -----------------------------------------------------------
-    # Save the final spectra to FITS (both extended and point-source calibrated):
-    simpleFitsWriter(extended, "%s%i_%s_spectrum_extended.fits"\
-             %(outDir+'fits/', myObsid, extended.processResolution))
-    simpleFitsWriter(pointSourceSds, "%s%i_%s_spectrum_point.fits"\
-             %(outDir+'fits/', myObsid, pointSourceSds.processResolution))
-    # and if required, save the apodized data
-    if apodize:
-        simpleFitsWriter(extended_apod, "%s%i_%s_spectrum_extended_apod.fits"\
-             %(outDir+'fits/', myObsid, extended_apod.processResolution))
-        simpleFitsWriter(pointSourceSds_apod, "%s%i_%s_spectrum_point_apod.fits"\
-             %(outDir+'fits/', myObsid, pointSourceSds_apod.processResolution))
+        # Attach the updated calibration tree to the observation context:
+        obs.calibration.update(cal)
 
-    # -----------------------------------------------------------
-    # Update the Observation context format if necessary:
-    obs = updateObsContext(obs)
+        # Define the central detectors:
+        centreDetectors = ["SLWC3","SSWD4"]
 
-    # -----------------------------------------------------------
-    # Save the processed products back into the Observation Context.
-    # This is only possible if both Level-1 and Level-2 contexts are present.
-    if obs.level1 and obs.level2:
-        res = pointSourceSds.processResolution
-        # Save the products back into the right places inside the Observation Context
-        obs.level1.getProduct("Point_0_Jiggle_0_%s"%res).setProduct("interferogram", sdi)
-        obs.level2.setProduct("%s_spectrum_ext"%res, extended)
-        obs.level2.setProduct("%s_spectrum_point"%res, pointSourceSds)
-        obs.level2.setProduct("%s_spectrum_ext_apod"%res, extended_apod)
-        obs.level2.setProduct("%s_spectrum_point_apod"%res, pointSourceSds_apod)
-    # Finally we can save the new reprocessed observation back to your hard disk.
-    # Uncomment the next line and choose a poolName, either the existing one or a new one
-    #saveObservation(obs, poolName="enter-a-poolname", saveCalTree=True)
+
+        # Find out the bias mode of the observation (nominal/bright):
+        biasMode = obs.meta["biasMode"].value
+
+        # Extract necessary Calibration Products from the Observation Context
+        nonLinCorr     = obs.calibration.spec.nonLinCorr
+        chanNum        = obs.calibration.spec.chanNum
+        bolPar         = obs.calibration.spec.bolPar
+        lpfPar         = obs.calibration.spec.lpfPar
+        phaseCorrLim   = obs.calibration.spec.phaseCorrLim
+        chanTimeConst  = obs.calibration.spec.chanTimeConst
+        bsmPos         = obs.calibration.spec.bsmPos
+        detAngOff      = obs.calibration.spec.detAngOff
+        smecZpd        = obs.calibration.spec.smecZpd
+        chanTimeOff    = obs.calibration.spec.chanTimeOff
+        smecStepFactor = obs.calibration.spec.smecStepFactor
+        opdLimits      = obs.calibration.spec.opdLimits
+        bandEdge       = obs.calibration.spec.bandEdge
+        brightGain     = obs.calibration.spec.brightGain
+        extCorr        = obs.calibration.spec.extCorr
+        lrCorr         = obs.calibration.spec.lrCorr
+        # teleModel contains the OPD-dependent emissivity correction
+        # factors that are applied to the telescope model.
+        teleModel      = obs.calibration.spec.teleModel
+
+        # Extract necessary Auxiliary Products from the Observation Context
+        hpp  = obs.auxiliary.pointing
+        siam = obs.auxiliary.siam
+        hk   = obs.auxiliary.hk
+
+        # Get the Level-0.5 data directly from the observation
+        level0_5 = obs.level0_5
+
+        # Start to process the observation from Level 0.5
+        # Process each SMEC scan building block (0xa106) individually, append to a list
+        # context, and then merge.
+        bbList = SpireListContext()
+        for bbid in level0_5.getBbids(0xa106):
+            print "Processing building block 0x%X (%i/%i)"%(bbid, bbid-0xa1060000L, len(obs.level0_5.getBbids(0xa106)))
+            sdt   = level0_5.get(bbid).sdt
+            # Record the calibration tree version used by the pipeline:
+            sdt.calVersion = obs.calibration.version
+            nhkt  = level0_5.get(bbid).nhkt
+            smect = level0_5.get(bbid).smect
+            bsmt  = level0_5.get(bbid).bsmt
+            # Remove all detectors except the centre ones:
+            if processOnlyCenterDetectors:
+                sdt = filterChannels(sdt, keepChannels=centreDetectors)
+            # -----------------------------------------------------------
+            # Consult the Pipeline Specification Manual for more options of the waveletDeglitcher
+            # 1st level deglitching:
+            sdt = waveletDeglitcher(sdt, optionReconstruction="polynomialAdaptive10", newThresholdCoef=True)
+            # -----------------------------------------------------------
+            # Run the Non-linearity correction:
+            sdt = specNonLinearityCorrection(sdt, nonLinCorr=nonLinCorr)
+            # -----------------------------------------------------------
+            # Correct clipping where needed:
+            sdt = clippingCorrection(sdt)
+            # -----------------------------------------------------------
+            # Time domain phase correction:
+            sdt = timeDomainPhaseCorrection(sdt, nhkt, lpfPar=lpfPar, \
+                       phaseCorrLim=phaseCorrLim, chanTimeConst=chanTimeConst)
+            # -----------------------------------------------------------
+            # Get pointing info:
+            bat = calcBsmAngles(bsmt, bsmPos=bsmPos)
+            spp = createSpirePointing(hpp=hpp, siam=siam, \
+                             detAngOff=detAngOff, bat=bat)
+            # -----------------------------------------------------------
+            # Create interferogram:
+            sdi = createIfgm(sdt, smect=smect, nhkt=nhkt, spp=spp, \
+                             smecZpd=smecZpd,\
+                             chanTimeOff=chanTimeOff,\
+                             smecStepFactor=smecStepFactor)
+            # -----------------------------------------------------------
+            # Append this building block to the list, taking account whether the resolution
+            # was H+L or not
+            bbMap = SpireMapContext()
+            if obs.meta["commandedResolution"].value == "H+LR":
+                # for processing all scans as LR
+                if processRes == "LR":
+                    sdi.processResolution = "LR"
+                    bbMap.setProduct("ifgm", sdi)
+                    bbMap.setProduct("nhkt", nhkt)
+                    bbList.addProduct(bbMap)
+                # for processing the HR scans
+                elif processRes == sdi.processResolution:
+                    bbMap.setProduct("ifgm", sdi)
+                    bbMap.setProduct("nhkt", nhkt)
+                    bbList.addProduct(bbMap)
+            else:
+                bbMap.setProduct("ifgm", sdi)
+                bbMap.setProduct("nhkt", nhkt)
+                bbList.addProduct(bbMap)
+        # Loop over building blocks ends here
+        # -----------------------------------------------------------
+        # Merge all the building blocks into one:
+        merged = mergeFtsBuildingBlocks(bbList)
+        sdi    = merged.getProduct("ifgm")
+        nhkt   = merged.getProduct("nhkt")
+
+        # -----------------------------------------------------------
+        # Make sure all interferograms are the same length:
+        sdi = makeSameOpds(sdi, opdLimits=opdLimits)
+
+        # -----------------------------------------------------------
+        # Baseline correction:
+        sdi = baselineCorrection(sdi, type="fourier", threshold=4)
+
+        # -----------------------------------------------------------
+        # 2nd-level deglitching:
+        sdi = deglitchIfgm(sdi, deglitchType="MAD")
+
+        # -----------------------------------------------------------
+        # Phase correction
+        # The phase correction is calculated from an averaged LR interferogram:
+        avgSdiFull = averageInterferogram(sdi)
+        lowResSdi  = avgSdiFull.copy()
+        lowResSdi.processResolution = "LR"
+        lowResSdi  = makeSameOpds(lowResSdi, opdLimits=opdLimits)
+        # Apply the phase correction:
+        sdi = phaseCorrection(sdi, avgSdi=lowResSdi, avgSdiFull=avgSdiFull, spectralUnit="GHz")
+
+        # -----------------------------------------------------------
+        # Fourier transform:
+        ssds = fourierTransform(sdi, ftType="postPhaseCorr", zeroPad="standard", \
+                                spectralUnit="GHz")
+
+        # -----------------------------------------------------------
+        # Get the RSRF calibration products
+        # Note: this will only work if the raw data was processed with HIPE v7 and above
+        # If you get an error here, re-downloading the observation from the HSA should fix it
+        instRsrf  = obs.calibration.spec.instRsrfList.getProduct(ssds)
+        teleRsrf  = obs.calibration.spec.teleRsrfList.getProduct(ssds)
+        beamParam = obs.calibration.spec.beamParamList.getProduct(ssds)
+
+        # -----------------------------------------------------------
+        # Remove out of band data:
+        ssds = removeOutOfBand(ssds, bandEdge=bandEdge)
+
+        # -----------------------------------------------------------
+        # Apply bright gain correction (bright source setting only):
+        if biasMode == "bright":
+            ssds = specApplyBrightGain(ssds, brightGain=brightGain)
+
+        # -----------------------------------------------------------
+        # Correction for instrument emission:
+        ssds = instCorrection(ssds, nhkt=nhkt, instRsrf=instRsrf)
+
+        # -----------------------------------------------------------
+        # Apply the extended flux calibration:
+        extended = specExtendedFluxConversion(ssds, teleRsrf=teleRsrf)
+
+        # -----------------------------------------------------------
+        # Correction for telescope emission:
+        extended = telescopeCorrection(extended, hk=hk, teleModel=teleModel)
+
+        # -----------------------------------------------------------
+        # Apply point-source flux calibration (*copying*, rather than replacing
+        # the variable "extended").
+        # Keep all detectors for which calibration data exists
+        pointSourceSds = filterChannels(extended.copy(), keepChannels=beamParam.uniqueDetectors)
+        pointSourceSds = specPointFluxConversion(pointSourceSds, beamParam=beamParam)
+
+        # -----------------------------------------------------------
+        # If LR, apply the LR correction to the point-source calibrated data
+        if pointSourceSds.processResolution=="LR":
+            pointSourceSds = applyLrCorr(pointSourceSds, lrCorr=lrCorr)
+
+        # -----------------------------------------------------------
+        # Average across all scans:
+        extended = averageSpectra(extended)
+        pointSourceSds = averageSpectra(pointSourceSds)
+
+        # -----------------------------------------------------------
+        # Apodization:
+        # For the extended calibrated data
+        extended_apod = apodizeSpectra(extended.copy(), apodName="aNB_15")
+        # For the point-source calibrated data
+        pointSourceSds_apod = apodizeSpectra(pointSourceSds.copy(), apodName="aNB_15")
+
+        # -----------------------------------------------------------
+        # Correct the frequency scale to be in the Local Standard of Rest
+        extended       = applyRadialVelocity(extended, targetFrame="lsr")
+        pointSourceSds = applyRadialVelocity(pointSourceSds, targetFrame="lsr")
+        # and for apodized data
+        extended_apod = applyRadialVelocity(extended_apod, targetFrame="lsr")
+        pointSourceSds_apod = applyRadialVelocity(pointSourceSds_apod, targetFrame="lsr")
+
+        # -----------------------------------------------------------
+        # Sort the metadata into a logical order
+        extended = metaDataSorter(extended)
+        pointSourceSds = metaDataSorter(pointSourceSds)
+        # and for apodized data
+        extended_apod = metaDataSorter(extended_apod)
+        pointSourceSds_apod = metaDataSorter(pointSourceSds_apod)
+
+        # -----------------------------------------------------------
+        # Apply the extended calibration correction to the extended spectra
+        extended = applyExtCalCorr(extended, specExtCorr=extCorr)
+        extended_apod = applyExtCalCorr(extended_apod, specExtCorr=extCorr)
+
+        # -----------------------------------------------------------
+        # Check to see if there are any photometer observations that overlap
+        # with this observation and if so, append their obsids to the metadata
+        obsList = getPhotObsidsForFts(obs.obsid)
+        if obsList!=None:
+            #
+            for l2ProdRef in obs.level2.refs:
+                addMultiObsMeta(extended.meta, obsList)
+                addMultiObsMeta(pointSourceSds.meta, obsList)
+                addMultiObsMeta(extended_apod.meta, obsList)
+                addMultiObsMeta(pointSourceSds_apod.meta, obsList)
+            pass
+            addMultiObsMeta(obs.meta, obsList)
+        pass
+
+        # -----------------------------------------------------------
+        # Save the final spectra to FITS (both extended and point-source calibrated):
+        simpleFitsWriter(extended, "%s%i_%s_spectrum_extended.fits"\
+                 %(outDir+'fits/', myObsid, extended.processResolution))
+        simpleFitsWriter(pointSourceSds, "%s%i_%s_spectrum_point.fits"\
+                 %(outDir+'fits/', myObsid, pointSourceSds.processResolution))
+        # and if required, save the apodized data
+        if apodize:
+            simpleFitsWriter(extended_apod, "%s%i_%s_spectrum_extended_apod.fits"\
+                 %(outDir+'fits/', myObsid, extended_apod.processResolution))
+            simpleFitsWriter(pointSourceSds_apod, "%s%i_%s_spectrum_point_apod.fits"\
+                 %(outDir+'fits/', myObsid, pointSourceSds_apod.processResolution))
+
+        # -----------------------------------------------------------
+        # Update the Observation context format if necessary:
+        obs = updateObsContext(obs)
+
+        # -----------------------------------------------------------
+        # Save the processed products back into the Observation Context.
+        # This is only possible if both Level-1 and Level-2 contexts are present.
+        if obs.level1 and obs.level2:
+            res = pointSourceSds.processResolution
+            # Save the products back into the right places inside the Observation Context
+            obs.level1.getProduct("Point_0_Jiggle_0_%s"%res).setProduct("interferogram", sdi)
+            obs.level2.setProduct("%s_spectrum_ext"%res, extended)
+            obs.level2.setProduct("%s_spectrum_point"%res, pointSourceSds)
+            obs.level2.setProduct("%s_spectrum_ext_apod"%res, extended_apod)
+            obs.level2.setProduct("%s_spectrum_point_apod"%res, pointSourceSds_apod)
+        # Finally we can save the new reprocessed observation back to your hard disk.
+        # Uncomment the next line and choose a poolName, either the existing one or a new one
+        #saveObservation(obs, poolName="enter-a-poolname", saveCalTree=True)
 
     ############################################
     #  SECT Corrections along with Photometry  #
@@ -607,6 +610,7 @@ for i in range(len(Obsid)):
         print "Cannot find photObsidForFts"
         return []
     pass
+
 
     spec = obs.refs['level2'].product.refs['HR_spectrum_point_apod'].product
 
