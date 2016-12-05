@@ -123,19 +123,19 @@ obj_list = ['RCrA-IRS7B','RCrA-IRS7C','HH46','L723-MM','L1014',
             'GSS30-IRS1','VLA1623','WL12','RCrA-IRS5A','L483',
             'B335','DKCha']
 
-phot_list = [[1342216002,1342206678,1342206677], [1342216002,1342206678,1342206677], 0, [1342229605], [1342220631,1342219974],
-             [1342189844,1342189843],[1342213179,1342213178], [1342226633], [1342190327,1342190326], [1342202251,1342202250],
-             [1342190327,1342190326], [1342190327,1342190326], [1342190327,1342190326], [1342190327,1342190326], [1342202253,1342202252],
-             [1342202253,1342202252], [1342202253,1342202252], [1342213183,1342213182], [1342263845,1342263844], [1342205094,1342205093,1342203074],
-             [1342205094,1342205093,1342203074], [1342205094,1342205093], [1342216002,1342206678,1342206677], [1342229186],
-             [1342192685], [1342213181,1342213180]]
-
-size_list =[37.0, 38.0, 16.0, 12.75, 38.0,
-            11.0, 30.5, 15.5, 14.5, 14.25,
-            54.0, 38.0, 14.0, 49.0, 26.5,
-            18.25, 30.5, 35.0, 21.0, 38.5,
-            25.75, 41.0, 40.0, 22.0,
-            13.5, 13.25]
+# phot_list = [[1342216002,1342206678,1342206677], [1342216002,1342206678,1342206677], 0, [1342229605], [1342220631,1342219974],
+#              [1342189844,1342189843],[1342213179,1342213178], [1342226633], [1342190327,1342190326], [1342202251,1342202250],
+#              [1342190327,1342190326], [1342190327,1342190326], [1342190327,1342190326], [1342190327,1342190326], [1342202253,1342202252],
+#              [1342202253,1342202252], [1342202253,1342202252], [1342213183,1342213182], [1342263845,1342263844], [1342205094,1342205093,1342203074],
+#              [1342205094,1342205093,1342203074], [1342205094,1342205093], [1342216002,1342206678,1342206677], [1342229186],
+#              [1342192685], [1342213181,1342213180]]
+#
+# size_list =[37.0, 38.0, 16.0, 12.75, 38.0,
+#             11.0, 30.5, 15.5, 14.5, 14.25,
+#             54.0, 38.0, 14.0, 49.0, 26.5,
+#             18.25, 30.5, 35.0, 21.0, 38.5,
+#             25.75, 41.0, 40.0, 22.0,
+#             13.5, 13.25]
 
 
 ############################### Input #####################################
@@ -155,8 +155,14 @@ from java.lang.Math import PI
 
 for obsidFTS in Obsid:
     print 'processing ', obsidFTS, obj_list[Obsid.index(obsidFTS)]
-    print 'fitted size is ', size_list[Obsid.index(obsidFTS)]
-    fitted_size = size_list[Obsid.index(obsidFTS)]
+
+    indir = indir+obj_list[Obsid.index(obsidFTS)]+'/spire/data/'
+    outdir = indir
+    
+    # read in fitted size and photometry obsids
+    meta_data = asciiTableReader(file=indir+str(obsidFTS)+'_spire_sect_meta.txt', tableType='CSV')
+    fitted_size = meta_data['size'].data[0]
+    phot_obs = meta_data['phot_obsid'].data
     obs = getObservation(obsid=obsidFTS, useHsa=True)
     spec = obs.refs['level2'].product.refs['HR_spectrum_point_apod'].product
 
@@ -168,15 +174,17 @@ for obsidFTS in Obsid:
 
     ############################ Import Data ##################################
     # Loading an observation of Gamma Dra from the HSA
-    phot_obs = phot_list[Obsid.index(obsidFTS)]
+    # phot_obs = phot_list[Obsid.index(obsidFTS)]
     wave = []
     phot = []
     error = []
     phot_aper = []
-    alpha_data = asciiTableReader(file=indir+str(obsidFTS)+'_alpha.txt', tableType='SPACES')
+    alpha_data = asciiTableReader(file=indir+obj_list[Obsid.index(obsidFTS)]+'_alpha.txt', tableType='SPACES')
     alpha = [float(alpha_data[0].data[1]), float(alpha_data[1].data[1]), float(alpha_data[2].data[1])]
 
-    if phot_obs == 0:
+    # Loading the fitted source size from SECT meta output
+
+    if not IS_FINITE(phot_obs[0]):
 
         print 'No photometry data found for ', obj_list[Obsid.index(obsidFTS)]
         continue
