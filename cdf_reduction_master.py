@@ -125,14 +125,14 @@ header = ['Object','Line','LabWL(um)','ObsWL(um)','Sig_Cen(um)','Str(W/cm2)',
 for element in header:
     header[header.index(element)] = element + '  '
 
-# for SPIRE
-foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
-foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-foo.close()
-# for PACS
-foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
-foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-foo.close()
+# # for SPIRE
+# foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
+# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+# foo.close()
+# # for PACS
+# foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
+# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+# foo.close()
 #
 #
 # # SPIRE reduction first for matching the PACS 1-D spectra with SECT-corrected spectra
@@ -191,7 +191,7 @@ foo.close()
 ###################### STEP 4 ######################
 # re-format the SECT-reduced 1-D product and perform fitting
 # print 'Step 4'
-SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name+'_spire')
+# SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name+'_spire')
 
 ###################### STEP 5 ######################
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
@@ -205,7 +205,7 @@ SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reductio
 #   "spire_phot.py" in hipe_script folder
 #   measure the photometry fluxes at 250 um, 350 um, and 500 um with the convolved apeture sizes
 
-sys.exit("SPIRE part successfully finished!")
+# sys.exit("SPIRE part successfully finished!")
 
 # PACS reduction
 ###################### STEP 1 ######################
@@ -217,6 +217,11 @@ sys.exit("SPIRE part successfully finished!")
 # Parse the cube file into individual ASCII files.
 # Calculate the 1-D PACS spectrum with a given aperture size
 skip = True
+
+# file to write out fitted PACS apertures
+foo = open(outdir+'pacs_1d_apertures.txt', 'w')
+foo.write('{:>10s}{:>10s}\n'.format('Object','aperture'))
+
 for o in obsid:
     if o[3] == '0':
         continue
@@ -237,40 +242,42 @@ for o in obsid:
         aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
     else:
         aper_size = 31.8
+    print aper_size
     aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0], auto_match=True)
     print o[0], aper_size_fitted
+    foo.write('{:>10s}{:>10f} \n'.format(o[0], aper_size_fitted))
+foo.close()
 
-# need to modify this part for it to automatically figure out the aperture size that will result in a well-matched spectrum
 
 ###################### STEP 3 ######################
 # Line fitting on both cube and 1-D products
 
-idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_pacs.pro')
-idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
-
-import numpy as np
-
-for o in obsid:
-    if o[3] == '0':
-        continue
-    if o[1] == '0':
-        continue
-    print 'Step 3 - ', o[0]
-
-    # cube
-    for ip in range(1,26):
-        idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_pixel'+str(ip)+'_hsa',
-                outdir=outdir+str(o[0])+'/pacs/advanced_products/cube/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/cube/plots/',
-                noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum=1, flat=1, object=str(o[0]),
-                current_pix=str(ip), double_gauss=1, print_all=outdir+reduction_name+'_pacs_lines')
-    # 1-D
-    # read in RA/Dec
-    radec_pacs = ascii.read(outdir+str(o[0])+'/pacs/data/cube/'+str(o[0])+'_pacs_pixel13_hsa_coord.txt')
-    idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_weighted',
-            outdir=outdir+str(o[0])+'/pacs/advanced_products/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/plots/',
-            noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum=1, flat=1, object=str(o[0]),
-            ra=np.mean(radec_pacs['RA(deg)']), dec=np.mean(radec_pacs['Dec(deg)']), current_pix=str(ip),
-            double_gauss=1, print_all=outdir+reduction_name+'_pacs_lines')
+# idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_pacs.pro')
+# idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
+#
+# import numpy as np
+#
+# for o in obsid:
+#     if o[3] == '0':
+#         continue
+#     if o[1] == '0':
+#         continue
+#     print 'Step 3 - ', o[0]
+#
+#     # cube
+#     for ip in range(1,26):
+#         idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_pixel'+str(ip)+'_hsa',
+#                 outdir=outdir+str(o[0])+'/pacs/advanced_products/cube/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/cube/plots/',
+#                 noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum=1, flat=1, object=str(o[0]),
+#                 current_pix=str(ip), double_gauss=1, print_all=outdir+reduction_name+'_pacs_lines')
+#     # 1-D
+#     # read in RA/Dec
+#     radec_pacs = ascii.read(outdir+str(o[0])+'/pacs/data/cube/'+str(o[0])+'_pacs_pixel13_hsa_coord.txt')
+#     idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_weighted',
+#             outdir=outdir+str(o[0])+'/pacs/advanced_products/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/plots/',
+#             noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum=1, flat=1, object=str(o[0]),
+#             ra=np.mean(radec_pacs['RA(deg)']), dec=np.mean(radec_pacs['Dec(deg)']), current_pix=str(ip),
+#             double_gauss=1, print_all=outdir+reduction_name+'_pacs_lines')
 
 ###################### STEP 4 ######################
 # extract photometry with the aperture size specified or derived in above
