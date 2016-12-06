@@ -139,8 +139,7 @@ obj_list = ['RCrA-IRS7B','RCrA-IRS7C','HH46','L723-MM','L1014',
 
 
 ############################### Input #####################################
-indir = '/home/bettyjo/yaolun/CDF_archive_v2/'
-outdir = indir
+masterdir = '/home/bettyjo/yaolun/CDF_archive_v2/'
 fitted_size = 0
 # Radii of inner and outer annulus for background estimation
 # These radii are not important. I do not want to subtract any background from the total flux in the aperture used.
@@ -156,9 +155,9 @@ from java.lang.Math import PI
 for obsidFTS in Obsid:
     print 'processing ', obsidFTS, obj_list[Obsid.index(obsidFTS)]
 
-    indir = indir+obj_list[Obsid.index(obsidFTS)]+'/spire/data/'
+    indir = master+obj_list[Obsid.index(obsidFTS)]+'/spire/data/'
     outdir = indir
-    
+
     # read in fitted size and photometry obsids
     meta_data = asciiTableReader(file=indir+str(obsidFTS)+'_spire_sect_meta.txt', tableType='CSV')
     fitted_size = meta_data['size'].data[0]
