@@ -243,7 +243,7 @@ for o in obsid:
     else:
         aper_size = 31.8
     print aper_size
-    aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0], auto_match=True)
+    aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0], auto_match=True, print_all_path=outdir+reduction_name+'_pacs_lines')
     print o[0], aper_size_fitted
     foo.write('{:>10s}{:>10f} \n'.format(o[0], aper_size_fitted))
 foo.close()
