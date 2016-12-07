@@ -129,10 +129,10 @@ for element in header:
 # foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
 # foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
 # foo.close()
-# # for PACS
-# foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
-# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-# foo.close()
+# for PACS
+foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+foo.close()
 #
 #
 # # SPIRE reduction first for matching the PACS 1-D spectra with SECT-corrected spectra
