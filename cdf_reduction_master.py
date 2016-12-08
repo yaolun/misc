@@ -216,13 +216,13 @@ foo.close()
 ###################### STEP 2 ######################
 # Parse the cube file into individual ASCII files.
 # Calculate the 1-D PACS spectrum with a given aperture size
-skip = True
 
 # file to write out fitted PACS apertures
 foo = open(outdir+'pacs_1d_apertures.txt', 'w')
 foo.write('{:>10s}{:>10s}\n'.format('Object','aperture'))
 
 for o in obsid:
+    skip = False
     if o[3] == '0':
         continue
     if o[1] == '0':
@@ -230,7 +230,7 @@ for o in obsid:
 
     if o[0] == 'IRS46':
         # for skipping processed objects
-        skip = False
+        skip = True
         continue
     if skip:
         continue
@@ -245,7 +245,7 @@ for o in obsid:
     print aper_size
     aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0], auto_match=True, print_all_path=outdir+reduction_name+'_pacs_lines')
     print o[0], aper_size_fitted
-    foo.write('{:>10s}{:>10f} \n'.format(o[0], aper_size_fitted))
+    foo.write('{:>10s}{:>10.3f} \n'.format(o[0], aper_size_fitted))
 foo.close()
 
 
