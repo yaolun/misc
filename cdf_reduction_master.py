@@ -44,8 +44,7 @@ obsid = [['AB_Aur','1342217842','1342217843','0'],\
          ['EC82','1342192975','1342219435','0'],\
          ['Elias29','1342228519','1342228520','0'],\
         #  ['FUOri','1342250907','1342250908','1342230412'],\
-         ['GSS30-IRS1','1342215678','1342215679','0'],\
-         ['GSS30','0','0','1342251286'],\
+         ['GSS30-IRS1','1342215678','1342215679','1342251286'],\
          ['HD100453','1342211695','1342211696','0'],\
          ['HD100546','1342188037','1342188038','0'],\
          ['HD104237','1342207819','1342207820','0'],\
@@ -126,9 +125,9 @@ for element in header:
     header[header.index(element)] = element + '  '
 
 # # for SPIRE
-# foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
-# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-# foo.close()
+foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+foo.close()
 # for PACS
 foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
 foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
@@ -191,7 +190,7 @@ foo.close()
 ###################### STEP 4 ######################
 # re-format the SECT-reduced 1-D product and perform fitting
 # print 'Step 4'
-# SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name+'_spire')
+SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name+'_spire')
 
 ###################### STEP 5 ######################
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
@@ -205,7 +204,7 @@ foo.close()
 #   "spire_phot.py" in hipe_script folder
 #   measure the photometry fluxes at 250 um, 350 um, and 500 um with the convolved apeture sizes
 
-# sys.exit("SPIRE part successfully finished!")
+sys.exit("SPIRE part successfully finished!")
 
 # PACS reduction
 ###################### STEP 1 ######################
@@ -220,6 +219,8 @@ foo.close()
 # file to write out fitted PACS apertures
 foo = open(outdir+'pacs_1d_apertures.txt', 'w')
 foo.write('{:>10s}{:>10s}\n'.format('Object','aperture'))
+
+start_from = ''
 
 for o in obsid:
     skip = False
