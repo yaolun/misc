@@ -180,13 +180,13 @@ for o in obsid_spire:
             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
             ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
             slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
-            print_all=outdir+reduction_name+'_lines.txt')
+            print_all=outdir+reduction_name+'_spire_lines')
     # SSW
     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
             ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
             ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
-            print_all=outdir+reduction_name+'_spire_lines.txt')
+            print_all=outdir+reduction_name+'_spire_lines')
 
     # make contour plots
     idl.pro('plot_contour', noise=3, indir=outdir+obj+'/spire/advanced_products/cube/',
