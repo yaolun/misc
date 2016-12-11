@@ -174,8 +174,7 @@ for o in obsid_spire:
     print 'Step 3 - ', obj
     # read in RA/Dec
     radec_slw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
-    radec_ssw = ascii.read(outdir+obj+'/spir
-    e/data/cube/'+obj+'_radec_slw.txt')
+    radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
     # SLW
     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
