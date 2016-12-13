@@ -124,14 +124,6 @@ header = ['Object','Line','LabWL(um)','ObsWL(um)','Sig_Cen(um)','Str(W/cm2)',
 for element in header:
     header[header.index(element)] = element + '  '
 
-# # for SPIRE
-foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
-foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-foo.close()
-# for PACS
-foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
-foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-foo.close()
 #
 #
 # # SPIRE reduction first for matching the PACS 1-D spectra with SECT-corrected spectra
@@ -167,30 +159,42 @@ foo.close()
 # # line fitting on cube products
 # idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_spire.pro')
 # idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
-#
+# idl('.r /home/bettyjo/yaolun/programs/line_fitting/plot_contour.pro')
+
+# # for SPIRE
+# foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
+# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+# foo.close()
+
+# #
 # for o in obsid_spire:
 #     obj = obj_list_spire[obsid_spire.index(o)]
 #     print 'Step 3 - ', obj
 #     # read in RA/Dec
 #     radec_slw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
-#     radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
+#     radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_ssw.txt')
 #     # SLW
 #     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
 #             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
 #             ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
 #             slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
-#             print_all=outdir+reduction_name+'_lines.txt')
+#             print_all=outdir+reduction_name+'_spire_lines')
 #     # SSW
 #     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
 #             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
 #             ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
 #             ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
-#             print_all=outdir+reduction_name+'_spire_lines.txt')
+#             print_all=outdir+reduction_name+'_spire_lines')
+#
+#     # make contour plots
+#     idl.pro('plot_contour', noise=3, indir=outdir+obj+'/spire/advanced_products/cube/',
+#             plotdir=outdir+obj+'/spire/advanced_products/contours/', objname=obj,
+#             spire=1, brightness=1)
 
 ###################### STEP 4 ######################
 # re-format the SECT-reduced 1-D product and perform fitting
 # print 'Step 4'
-SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name+'_spire')
+# SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name+'_spire')
 
 ###################### STEP 5 ######################
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
@@ -204,7 +208,7 @@ SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reductio
 #   "spire_phot.py" in hipe_script folder
 #   measure the photometry fluxes at 250 um, 350 um, and 500 um with the convolved apeture sizes
 
-sys.exit("SPIRE part successfully finished!")
+# sys.exit("SPIRE part successfully finished!")
 
 # PACS reduction
 ###################### STEP 1 ######################
@@ -215,6 +219,11 @@ sys.exit("SPIRE part successfully finished!")
 ###################### STEP 2 ######################
 # Parse the cube file into individual ASCII files.
 # Calculate the 1-D PACS spectrum with a given aperture size
+
+# for PACS
+foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+foo.close()
 
 # file to write out fitted PACS apertures
 foo = open(outdir+'pacs_1d_apertures.txt', 'w')
