@@ -155,7 +155,7 @@ from java.lang.Math import PI
 for obsidFTS in Obsid:
     print 'processing ', obsidFTS, obj_list[Obsid.index(obsidFTS)]
 
-    indir = master+obj_list[Obsid.index(obsidFTS)]+'/spire/data/'
+    indir = masterdir+obj_list[Obsid.index(obsidFTS)]+'/spire/data/'
     outdir = indir
 
     # read in fitted size and photometry obsids
