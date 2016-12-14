@@ -1424,7 +1424,7 @@ def models_vs_obs(modelname,outdir,label, obs=None,dstar=200.0,wl_aper=None,rtou
     if stretch == True:
         ax_sed.set_ylim([-18,-7.5])
     else:
-        ax_sed.set_ylim([-13, -7.5])
+        ax_sed.set_ylim([-14, -7])
     ax_sed.set_xlim([0.3,3.3])
 
     lg_data = ax_sed.legend(loc='lower center',fontsize=12*mag,numpoints=1,framealpha=0.3)
@@ -1597,6 +1597,7 @@ def radial_grid(indir, array, outdir, wave, dstar, obs=False, color_array=None, 
         color_array = [cmap(np.linspace(0, 0.9, len(array))[i]) for i in range(len(array))]
 
     sim_plots = []
+    obs_plot = []
 
     for imod in range(len(array)):
         data_dum = ascii.read(indir+'model'+str(array[imod])+'_radial_profile_'+wave+'um.txt')
@@ -1836,18 +1837,18 @@ cmap = ['viridis', 'inferno']
 radial_grid_incl('/Users/yaolun/bhr71/hyperion/controlled/', array_list, outdir,
                  wave, cmap, labels, 200, obs=False)
 #
-model_vs_obs('model65', '/Users/yaolun/bhr71/hyperion/controlled/', outdir, obs=obs)
+model_vs_obs('model126', '/Users/yaolun/bhr71/hyperion/test/', outdir, obs=obs)
 #
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/controlled/model175',
-               '/Users/yaolun/bhr71/hyperion/controlled/model3',
-               '/Users/yaolun/bhr71/hyperion/controlled/model65'],
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/test/model2',
+               '/Users/yaolun/bhr71/hyperion/test/model3',
+               '/Users/yaolun/bhr71/hyperion/test/model126'],
                outdir,
                [r'$\rm{Kristensen\,et.\,al.\,(2012)}$',
                r'$\rm{geometry\,from\,B97}$',
                r'$\rm{best\,fit\,model\,(this\,study)}$'], obs, stretch=True)
 #
-models_vs_obs(['/Users/yaolun/bhr71/hyperion/model32',
-               '/Users/yaolun/bhr71/hyperion/model32_nontsc'],
+models_vs_obs(['/Users/yaolun/bhr71/hyperion/test/model126',
+               '/Users/yaolun/bhr71/hyperion/test/model126_nontsc'],
                '/Users/yaolun/test/updated_bhr71/Aug16/',
                [r'$\rm{full\,TSC}$',r'$\rm{infall-only\,TSC}$'], obs)
 
