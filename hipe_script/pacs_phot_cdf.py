@@ -61,10 +61,11 @@ obsid_phot = {'Source': ['L1157', 'L1014', 'IRAS03301+3111', 'B1-c', 'B1-a',
                         '-15:47:01.4']
 }
 
-outdir = '/home/bettyjo/yaolun/CDF_archive/pacs_phot/'
+outdir = '/home/bettyjo/yaolun/CDF_archive_v2/'
+aper_data = asciiTableReader(file=outdir+'pacs_1d_apertures.txt', tableType='SPACES')
 
 # aperture size in radius
-aper = 31.8/2
+# aper = 31.8/2
 
 # PACS aperture photometry
 for i in range(len(obsid_phot['Source'])):
@@ -73,9 +74,18 @@ for i in range(len(obsid_phot['Source'])):
         print 'No photometry obsid found for ', obsid_phot['Source'][i]
         continue
 
+    if not obsid_phot['Source'][i] in aper_data['Object'].data:
+        print obsid_phot['Source'][i], ' not found in the processed object list.'
+        continue
+
+    aper = aper_data['aperture'].data[list(aper_data['Object'].data).index(obsid_phot['Source'][i])]
+
     wave = []
     flux = []
     error = []
+
+    # get aperture fitted by matching PACS and SPIRE spectra
+
 
     for obsid in obsid_dum:
     	obs = getObservation(obsid=obsid,useHsa=True)
@@ -119,4 +129,5 @@ for i in range(len(obsid_phot['Source'])):
     tds.addColumn("wavelength(um)",Column(wave))
     tds.addColumn("flux(Jy)",Column(flux))
     tds.addColumn("uncertainty(Jy)",Column(err))
-    asciiTableWriter(file=outdir+obsid_phot['Source'][i]+"_phot_sect.txt",table=tds, writeMetadata=False)
+    asciiTableWriter(file=outdir+obsid_phot['Source'][i]+'/pacs/data/'+obsid_phot['Source'][i]+'_phot_sect.txt',
+                     table=tds, writeMetadata=False)
