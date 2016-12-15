@@ -274,8 +274,8 @@ foo.close()
 pacs_line = open(outdir+reduction_name+'_pacs_lines.txt', 'r').readlines()
 spire_line = open(outdir+reduction_name+'_spire_lines.txt', 'r').readlines()
 
-for p in pacs_line:
+for p in range(len(pacs_line)):
     foo.write(pacs_line[p])
-for s in spire_line:
+for s in range(len(spire_line)):
     foo.write(spire_line[s])
 foo.close()
