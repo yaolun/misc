@@ -269,7 +269,6 @@ for element in header:
 # combine the line fitting results of PACS and SPIRE spectra
 foo = open(outdir+reduction_name+'_lines.txt', 'w')
 foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-foo.close()
 
 pacs_line = open(outdir+reduction_name+'_pacs_lines.txt', 'r').readlines()
 spire_line = open(outdir+reduction_name+'_spire_lines.txt', 'r').readlines()
