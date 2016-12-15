@@ -1,11 +1,11 @@
 obsid_phot = {'Source': ['L1157', 'L1014', 'IRAS03301+3111', 'B1-c', 'B1-a',
                          'IRAS03245+3002', 'L1455-IRS3', 'TMR1', 'TMC1', 'TMC1A',
                          'L1551-IRS5', 'B335', 'GSS30-IRS1', 'VLA1623-243', 'WL12',
-                         'IRS46_44', 'RCrA-IRS7C', 'RCrA-IRS5A', 'RCrA-IRS7B', 'BHR71',
+                         'IRS46', 'RCrA-IRS7C', 'RCrA-IRS5A', 'RCrA-IRS7B', 'BHR71',
                          'DKCha', 'Elias29', 'IRAM04191+1522', 'IRS63', 'L1448-MM', 'L1489',
                          'L1527', 'Serpens-SMM3', 'Serpens-SMM4', 'Ced110-IRS4', 'HH100',
                          'HH46', 'IRAS15398-3359', 'L483', 'L723-MM', 'RNO91'],
-              'obsid': [[1342224778, 1342224779, 1342189844, 1342189845],
+              'obsid': [[1342224778, 1342224779, 1342189845],
                         [1342225450, 1342225449],
                         [1342227103, 1342227104],
                         [1342267246, 1342267247],
@@ -64,11 +64,21 @@ obsid_phot = {'Source': ['L1157', 'L1014', 'IRAS03301+3111', 'B1-c', 'B1-a',
 outdir = '/home/bettyjo/yaolun/CDF_archive_v2/'
 aper_data = asciiTableReader(file=outdir+'pacs_1d_apertures.txt', tableType='SPACES')
 
+import sys
+
 # aperture size in radius
 # aper = 31.8/2
 
+start_from = 'IRS46'
+skip = True
+
 # PACS aperture photometry
 for i in range(len(obsid_phot['Source'])):
+    if obsid_phot['Source'][i] == start_from:
+        skip = False
+    if skip:
+        print obsid_phot['Source'][i], ' is skipped.'
+        continue
     obsid_dum = obsid_phot['obsid'][i]
     if len(obsid_dum) == 0:
         print 'No photometry obsid found for ', obsid_phot['Source'][i]
@@ -78,7 +88,10 @@ for i in range(len(obsid_phot['Source'])):
         print obsid_phot['Source'][i], ' not found in the processed object list.'
         continue
 
-    aper = aper_data['aperture'].data[list(aper_data['Object'].data).index(obsid_phot['Source'][i])]
+    aper = aper_data['aperture'].data[list(aper_data['Object'].data).index(obsid_phot['Source'][i])] / 2
+
+    if aper > 100.:
+	aper = 26.5
 
     wave = []
     flux = []
@@ -91,6 +104,16 @@ for i in range(len(obsid_phot['Source'])):
     	obs = getObservation(obsid=obsid,useHsa=True)
     	caltree=getCalTree(obs=obs)
 
+        innerArcsec = 150.0
+        outerArcsec = 200.0
+        if obsid_phot['Source'][i] == 'RCrA-IRS7C':
+            innerArcsec = 40.0
+            outerArcsec = 60.0
+
+	if obs.meta['instrument'].string == 'SPIRE':
+	    print obsid, ' is SPIRE'
+	    continue
+
     	blue_cam = obs.refs['level2'].product.refs['HPPPMAPB'].product
     	red_cam = obs.refs['level2'].product.refs['HPPPMAPR'].product
 
@@ -99,10 +122,10 @@ for i in range(len(obsid_phot['Source'])):
 
     	blue_phot = annularSkyAperturePhotometry(image=blue_cam, fractional=1,
     				centerRa=obsid_phot['ra'][i], centerDec=obsid_phot['dec'][i], radiusArcsec=aper,
-    				innerArcsec=150.0, outerArcsec=200.0)
+    				innerArcsec=innerArcsec, outerArcsec=outerArcsec)
     	red_phot = annularSkyAperturePhotometry(image=red_cam, fractional=1,
     				centerRa=obsid_phot['ra'][i], centerDec=obsid_phot['dec'][i], radiusArcsec=aper,
-    				innerArcsec=150.0, outerArcsec=200.0)
+    				innerArcsec=innerArcsec, outerArcsec=outerArcsec)
 
     	blue_phot_cor = photApertureCorrectionPointSource(apphot=blue_phot, band="blue", \
     				calTree=caltree, responsivityVersion=6)
@@ -129,5 +152,6 @@ for i in range(len(obsid_phot['Source'])):
     tds.addColumn("wavelength(um)",Column(wave))
     tds.addColumn("flux(Jy)",Column(flux))
     tds.addColumn("uncertainty(Jy)",Column(err))
-    asciiTableWriter(file=outdir+obsid_phot['Source'][i]+'/pacs/data/'+obsid_phot['Source'][i]+'_phot_sect.txt',
+    asciiTableWriter(file=outdir+obsid_phot['Source'][i]+'/pacs/data/'+obsid_phot['Source'][i]+'_pacs_phot.txt',
                      table=tds, writeMetadata=False)
+
