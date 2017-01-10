@@ -220,78 +220,61 @@ for element in header:
 # Parse the cube file into individual ASCII files.
 # Calculate the 1-D PACS spectrum with a given aperture size
 
-# for PACS
-foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
-foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-foo.close()
-
-# file to write out fitted PACS apertures
-foo = open(outdir+'pacs_1d_apertures.txt', 'w')
-foo.write('{:>10s}{:>10s}\n'.format('Object','aperture'))
-
-start_from = ''
-
-for o in obsid:
-    skip = False
-    if o[3] == '0':
-        continue
-    if o[1] == '0':
-        continue
-
-    if o[0] == 'IRS46':
-        # for skipping processed objects
-        skip = True
-        continue
-    if skip:
-        continue
-
-    print 'Step 2 - ', o[0]
-    # load aperture from SPIRE SECT reduction
-    if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
-        spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
-        aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
-    else:
-        aper_size = 31.8
-    print aper_size
-    aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0], auto_match=True, print_all_path=outdir+reduction_name+'_pacs_lines')
-    print o[0], aper_size_fitted
-    foo.write('{:>10s}{:>10.3f} \n'.format(o[0], aper_size_fitted))
-foo.close()
-
-
-###################### STEP 3 ######################
-# Line fitting on both cube and 1-D products
-
-# idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_pacs.pro')
-# idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
+# # for PACS
+# foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
+# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+# foo.close()
 #
-# import numpy as np
+# # file to write out fitted PACS apertures
+# foo = open(outdir+'pacs_1d_apertures.txt', 'w')
+# foo.write('{:>10s}{:>10s}\n'.format('#Object','aperture'))
+#
+# start_from = ''
 #
 # for o in obsid:
+#     skip = False
 #     if o[3] == '0':
 #         continue
 #     if o[1] == '0':
 #         continue
-#     print 'Step 3 - ', o[0]
 #
-#     # cube
-#     for ip in range(1,26):
-#         idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_pixel'+str(ip)+'_hsa',
-#                 outdir=outdir+str(o[0])+'/pacs/advanced_products/cube/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/cube/plots/',
-#                 noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum=1, flat=1, object=str(o[0]),
-#                 current_pix=str(ip), double_gauss=1, print_all=outdir+reduction_name+'_pacs_lines')
-#     # 1-D
-#     # read in RA/Dec
-#     radec_pacs = ascii.read(outdir+str(o[0])+'/pacs/data/cube/'+str(o[0])+'_pacs_pixel13_hsa_coord.txt')
-#     idl.pro('extract_pacs', indir=outdir+str(o[0])+'/pacs/data/cube/', filename=str(o[0])+'_pacs_weighted',
-#             outdir=outdir+str(o[0])+'/pacs/advanced_products/', plotdir=outdir+str(o[0])+'/pacs/advanced_products/plots/',
-#             noiselevel=3, localbaseline=10, global_noise=20, fixed_width=1, opt_width=1, continuum=1, flat=1, object=str(o[0]),
-#             ra=np.mean(radec_pacs['RA(deg)']), dec=np.mean(radec_pacs['Dec(deg)']), current_pix=str(ip),
-#             double_gauss=1, print_all=outdir+reduction_name+'_pacs_lines')
+#     if o[0] == 'IRS46':
+#         # for skipping processed objects
+#         skip = True
+#     if skip:
+#         continue
+#
+#     print 'Step 2 - ', o[0]
+#     # load aperture from SPIRE SECT reduction
+#     if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
+#         spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
+#         aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
+#     else:
+#         aper_size = 31.8
+#     print aper_size
+#     aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0], auto_match=True, print_all_path=outdir+reduction_name+'_pacs_lines')
+#     print o[0], aper_size_fitted
+#     foo.write('{:>10s}{:>10.3f} \n'.format(o[0], aper_size_fitted))
+# foo.close()
 
-###################### STEP 4 ######################
+
+###################### STEP 3 ######################
 # extract photometry with the aperture size specified or derived in above
 # [HIPE] execution
 #   - "pacs_phot_cdf.py" in hipe_script folder
 
 # the default aperture size now is 31.8".
+
+###################### STEP 4 ######################
+# combine the line fitting results of PACS and SPIRE spectra
+foo = open(outdir+reduction_name+'_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+
+pacs_line = open(outdir+reduction_name+'_pacs_lines.txt', 'r').readlines()
+spire_line = open(outdir+reduction_name+'_spire_lines.txt', 'r').readlines()
+
+for p in range(len(pacs_line)):
+    foo.write(pacs_line[p])
+for s in range(len(spire_line)):
+    foo.write(spire_line[s])
+foo.close()
