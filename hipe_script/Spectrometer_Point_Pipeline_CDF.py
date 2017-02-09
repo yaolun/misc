@@ -86,27 +86,27 @@ def addMultiObsMeta(meta, obsList):
         meta.set("%s%03d"%(myBaseParam, i), param)
 pass
 
-    def getPhotObsidsForFts(id):
-        """
-        Get a list of photometer obsids that a given FTS obsid is contained in.
-        Input:
-            id FTS obsid as a number
-        Output:
-            list of photometer obsids that overlap with the FTS one
-        """
-        if not globals().has_key("photObsidForFts"):
-            hcssDir = Configuration.getProperty("var.hcss.dir")
-            restore(hcssDir+"/data/spire/ia/pipeline/scripts/merging/photObsidsForFts.ser")
-        key = "0x%X"%id
-        if globals().has_key("photObsidForFts"):
-            if photObsidForFts.has_key(key):
-                return photObsidForFts[key]
-            else:
-                print "No photometer observations found for 0x%X"%id
-                return []
-        print "Cannot find photObsidForFts"
-        return []
-    pass
+def getPhotObsidsForFts(id):
+    """
+    Get a list of photometer obsids that a given FTS obsid is contained in.
+    Input:
+        id FTS obsid as a number
+    Output:
+        list of photometer obsids that overlap with the FTS one
+    """
+    if not globals().has_key("photObsidForFts"):
+        hcssDir = Configuration.getProperty("var.hcss.dir")
+        restore(hcssDir+"/data/spire/ia/pipeline/scripts/merging/photObsidsForFts.ser")
+    key = "0x%X"%id
+    if globals().has_key("photObsidForFts"):
+        if photObsidForFts.has_key(key):
+            return photObsidForFts[key]
+        else:
+            print "No photometer observations found for 0x%X"%id
+            return []
+    print "Cannot find photObsidForFts"
+    return []
+pass
 
 #####################################
 # Full AOR List for SPIRE-FTS (JDG) #
