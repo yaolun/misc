@@ -85,28 +85,28 @@ def addMultiObsMeta(meta, obsList):
         param.setDescription("%s %03d"%(param.getDescription(), i))
         meta.set("%s%03d"%(myBaseParam, i), param)
 pass
-#
-# def getPhotObsidsForFts(id):
-#     """
-#     Get a list of photometer obsids that a given FTS obsid is contained in.
-#     Input:
-#         id FTS obsid as a number
-#     Output:
-#         list of photometer obsids that overlap with the FTS one
-#     """
-#     if not globals().has_key("photObsidForFts"):
-#         hcssDir = Configuration.getProperty("var.hcss.dir")
-#         restore(hcssDir+"/data/spire/ia/pipeline/scripts/merging/photObsidsForFts.ser")
-#     key = "0x%X"%id
-#     if globals().has_key("photObsidForFts"):
-#         if photObsidForFts.has_key(key):
-#             return photObsidForFts[key]
-#         else:
-#             print "No photometer observations found for %i"%id
-#             return []
-#     print "Cannot find photObsidForFts"
-#     return []
-# pass
+
+def getPhotObsidsForFts(id):
+    """
+    Get a list of photometer obsids that a given FTS obsid is contained in.
+    Input:
+        id FTS obsid as a number
+    Output:
+        list of photometer obsids that overlap with the FTS one
+    """
+    if not globals().has_key("photObsidForFts"):
+        hcssDir = Configuration.getProperty("var.hcss.dir")
+        restore(hcssDir+"/data/spire/ia/pipeline/scripts/merging/photObsidsForFts.ser")
+    key = "0x%X"%id
+    if globals().has_key("photObsidForFts"):
+        if photObsidForFts.has_key(key):
+            return photObsidForFts[key]
+        else:
+            print "No photometer observations found for 0x%X"%id
+            return []
+    print "Cannot find photObsidForFts"
+    return []
+pass
 
 #####################################
 # Full AOR List for SPIRE-FTS (JDG) #
@@ -217,7 +217,7 @@ Obsid=[1342242620,1342242621,1342245084,1342245094,1342245857,
        1342249474,1342249475,1342249476,1342249477,1342250509,
        1342250510,1342250512,1342250515,1342251285,1342251286,
        1342251287,1342251290,1342253646,1342253649,1342253652,
-       1342254037]
+       1342254037,1342252897]
 
 # SECT cannot converage at L1489 1342249473, L1527 1342250511, HH100 1342252897
 # mapping observation IRS44/46 1342251289
@@ -227,7 +227,7 @@ obj_list = ['RCrA-IRS7B','RCrA-IRS7C','HH46','L723-MM','L1014',
             'L1455-IRS3','B1-a','B1-c','IRAS03301','TMR1',
             'TMC1A','TMC1','IRAS15398','RNO91','GSS30-IRS1',
             'VLA1623','WL12','RCrA-IRS5A','L483','B335',
-            'DKCha']
+            'DKCha','HH100']
 
 #L1489 Deep Scan
 #Obsid=[1342214855,1342214856,1342214854]
@@ -246,7 +246,7 @@ size_list = []
 phot_list = []
 
 # first obsid
-start_obsid = 1342242620
+start_obsid = 1342252897
 
 # the overall output directory
 outdir = "/home/bettyjo/yaolun/CDF_archive_v2/"
@@ -589,28 +589,10 @@ for i in range(len(Obsid)):
 
     ############################### Setup #####################################
 
-    def getPhotObsidsForFts(id):
-        """
-        Get a list of photometer obsids that a given FTS obsid is contained in.
-        Input:
-            id FTS obsid as a number
-        Output:
-            list of photometer obsids that overlap with the FTS one
-        """
-        if not globals().has_key("photObsidForFts"):
-            hcssDir = Configuration.getProperty("var.hcss.dir")
-            restore(hcssDir+"/data/spire/ia/pipeline/scripts/merging/photObsidsForFts.ser")
-        key = "0x%X"%id
-        if globals().has_key("photObsidForFts"):
-            if photObsidForFts.has_key(key):
-                return photObsidForFts[key]
-            else:
-                print "No photometer observations found for 0x%X"%id
-                return []
-        print "Cannot find photObsidForFts"
-        return []
-    pass
 
+
+    if obj_list[i] == 'HH100':
+        continue
 
     spec = obs.refs['level2'].product.refs['HR_spectrum_point_apod'].product
 
