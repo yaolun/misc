@@ -220,42 +220,56 @@ for element in header:
 # Parse the cube file into individual ASCII files.
 # Calculate the 1-D PACS spectrum with a given aperture size
 
-# # for PACS
-# foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
-# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-# foo.close()
-#
-# # file to write out fitted PACS apertures
-# foo = open(outdir+'pacs_1d_apertures.txt', 'w')
-# foo.write('{:>10s}{:>10s}\n'.format('#Object','aperture'))
-#
-# start_from = ''
-#
-# for o in obsid:
-#     skip = False
-#     if o[3] == '0':
-#         continue
-#     if o[1] == '0':
-#         continue
-#
-#     if o[0] == 'IRS46':
-#         # for skipping processed objects
-#         skip = True
-#     if skip:
-#         continue
-#
-#     print 'Step 2 - ', o[0]
-#     # load aperture from SPIRE SECT reduction
-#     if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
-#         spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
-#         aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
-#     else:
-#         aper_size = 31.8
-#     print aper_size
-#     aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0], auto_match=True, print_all_path=outdir+reduction_name+'_pacs_lines')
-#     print o[0], aper_size_fitted
-#     foo.write('{:>10s}{:>10.3f} \n'.format(o[0], aper_size_fitted))
-# foo.close()
+# for PACS
+foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+foo.close()
+
+# Choose to use existing fitted apertures
+if useAper:
+    if os.path.exists(outdir+'pacs_1d_apertures.txt'):
+        fitted_apers = ascii.read(outdir+'pacs_1d_apertures.txt')
+else:
+    # file to write out fitted PACS apertures
+    foo = open(outdir+'pacs_1d_apertures.txt', 'w')
+    foo.write('{:>10s}{:>10s}\n'.format('#Object','aperture'))
+
+
+start_from = ''
+
+for o in obsid:
+    skip = False
+    if o[3] == '0':
+        continue
+    if o[1] == '0':
+        continue
+
+    if o[0] == 'IRS46':
+        # for skipping processed objects
+        skip = True
+    if skip:
+        continue
+
+    print 'Step 2 - ', o[0]
+    # # load aperture from SPIRE SECT reduction
+    # if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
+    #     spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
+    #     aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
+    # else:
+    #     aper_size = 31.8
+    # print aper_size
+    if not useAper:
+        aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0],
+                                     auto_match=True, print_all_path=outdir+reduction_name+'_pacs_lines')
+        print o[0], aper_size_fitted
+        foo.write('{:>10s}{:>10.3f} \n'.format(o[0], aper_size_fitted))
+
+    else:
+        cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0],
+                  aper_size=fitted_apers['aperture'][fitted_apers['Object'] == o[0]],
+                  print_all_path=outdir+reduction_name+'_pacs_lines')
+if not useAper:
+    foo.close()
 
 
 ###################### STEP 3 ######################
@@ -267,14 +281,14 @@ for element in header:
 
 ###################### STEP 4 ######################
 # combine the line fitting results of PACS and SPIRE spectra
-foo = open(outdir+reduction_name+'_lines.txt', 'w')
-foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-
-pacs_line = open(outdir+reduction_name+'_pacs_lines.txt', 'r').readlines()
-spire_line = open(outdir+reduction_name+'_spire_lines.txt', 'r').readlines()
-
-for p in range(len(pacs_line)):
-    foo.write(pacs_line[p])
-for s in range(len(spire_line)):
-    foo.write(spire_line[s])
-foo.close()
+# foo = open(outdir+reduction_name+'_lines.txt', 'w')
+# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+#
+# pacs_line = open(outdir+reduction_name+'_pacs_lines.txt', 'r').readlines()
+# spire_line = open(outdir+reduction_name+'_spire_lines.txt', 'r').readlines()
+#
+# for p in range(len(pacs_line)):
+#     foo.write(pacs_line[p])
+# for s in range(len(spire_line)):
+#     foo.write(spire_line[s])
+# foo.close()
