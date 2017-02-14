@@ -225,6 +225,9 @@ foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
 foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
 foo.close()
 
+# option to use the existing fitted PACS 1D extraction apertures
+useAper = True
+
 # Choose to use existing fitted apertures
 if useAper:
     if os.path.exists(outdir+'pacs_1d_apertures.txt'):
