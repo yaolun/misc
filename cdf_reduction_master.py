@@ -226,9 +226,18 @@ for element in header:
 # foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
 # foo.close()
 #
-# # file to write out fitted PACS apertures
-# foo = open(outdir+'pacs_1d_apertures.txt', 'w')
-# foo.write('{:>10s}{:>10s}\n'.format('#Object','aperture'))
+# # option to use the existing fitted PACS 1D extraction apertures
+# useAper = True
+#
+# # Choose to use existing fitted apertures
+# if useAper:
+#     if os.path.exists(outdir+'pacs_1d_apertures.txt'):
+#         fitted_apers = ascii.read(outdir+'pacs_1d_apertures.txt')
+# else:
+#     # file to write out fitted PACS apertures
+#     foo = open(outdir+'pacs_1d_apertures.txt', 'w')
+#     foo.write('{:>10s}{:>10s}\n'.format('#Object','aperture'))
+#
 #
 # start_from = ''
 #
@@ -246,17 +255,25 @@ for element in header:
 #         continue
 #
 #     print 'Step 2 - ', o[0]
-#     # load aperture from SPIRE SECT reduction
-#     if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
-#         spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
-#         aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
+#     # # load aperture from SPIRE SECT reduction
+#     # if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
+#     #     spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
+#     #     aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
+#     # else:
+#     #     aper_size = 31.8
+#     # print aper_size
+#     if not useAper:
+#         aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0],
+#                                      auto_match=True, print_all_path=outdir+reduction_name+'_pacs_lines')
+#         print o[0], aper_size_fitted
+#         foo.write('{:>10s}{:>10.3f} \n'.format(o[0], aper_size_fitted))
+#
 #     else:
-#         aper_size = 31.8
-#     print aper_size
-#     aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0], auto_match=True, print_all_path=outdir+reduction_name+'_pacs_lines')
-#     print o[0], aper_size_fitted
-#     foo.write('{:>10s}{:>10.3f} \n'.format(o[0], aper_size_fitted))
-# foo.close()
+#         cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0],
+#                   aper_size=fitted_apers['aperture'][fitted_apers['Object'] == o[0]],
+#                   print_all_path=outdir+reduction_name+'_pacs_lines')
+# if not useAper:
+#     foo.close()
 
 
 ###################### STEP 3 ######################

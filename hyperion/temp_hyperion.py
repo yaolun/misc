@@ -48,7 +48,7 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     im.set_edgecolor('face')
 
     ax.set_xlabel(r'$\rm{Polar\,angle\,(Degree)}$',fontsize=20)
-    ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20, labelpad=-140, color='grey')
+    # ax.set_ylabel(r'$\rm{Radius\,(AU)}$',fontsize=20, labelpad=-140, color='grey')
     # ax.set_ylabel('',fontsize=20, labelpad=-140, color='grey')
     ax.tick_params(labelsize=16)
     ax.tick_params(axis='y', colors='grey')
@@ -57,8 +57,8 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     # ax.set_yticks(np.log10(np.array([1, 10, 100, 1000, 10000, max(rc)/AU])))
     #
     ax.set_yticklabels([])
-    # ax.grid(True, color='LightGray', linewidth=1)
-    ax.grid(True, color='k', linewidth=1)
+    ax.grid(True, color='LightGray', linewidth=1.5)
+    # ax.grid(True, color='k', linewidth=1)
 
     ax.set_xticklabels([r'$\rm{90^{\circ}}$',r'$\rm{45^{\circ}}$',r'$\rm{0^{\circ}}$',r'$\rm{-45^{\circ}}$',\
                             r'$\rm{-90^{\circ}}$',r'$\rm{-135^{\circ}}$',r'$\rm{180^{\circ}}$',r'$\rm{135^{\circ}}$'])
@@ -79,7 +79,7 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     for label in ax.get_yticklabels():
         label.set_fontproperties(ticks_font)
 
-    fig.savefig(outdir+print_name+'_temperature_10K.png', format='png', dpi=300, bbox_inches='tight')
+    fig.savefig(outdir+print_name+'_temperature.png', format='png', dpi=300, bbox_inches='tight')
     fig.clf()
 
     # Plot the radial temperature profile
@@ -132,6 +132,6 @@ def temp_hyperion(rtout,outdir, bb_dust=False):
     fig.savefig(outdir+print_name+'_temp_radial.pdf',format='pdf',dpi=300,bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Volumes/SD-Mac/model126.rtout'
-# outdir = '/Users/yaolun/test/'
-# temp_hyperion(rtout, outdir, bb_dust=True)
+rtout = '/Volumes/SD-Mac/model126.rtout'
+outdir = '/Users/yaolun/test/'
+temp_hyperion(rtout, outdir, bb_dust=True)
