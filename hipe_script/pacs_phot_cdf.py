@@ -69,7 +69,7 @@ import sys
 # aperture size in radius
 # aper = 31.8/2
 
-start_from = 'IRS46'
+start_from = 'L1157'
 skip = True
 
 # PACS aperture photometry
@@ -88,10 +88,10 @@ for i in range(len(obsid_phot['Source'])):
         print obsid_phot['Source'][i], ' not found in the processed object list.'
         continue
 
-    aper = aper_data['aperture'].data[list(aper_data['Object'].data).index(obsid_phot['Source'][i])] / 2
+    radius = aper_data['aperture'].data[list(aper_data['Object'].data).index(obsid_phot['Source'][i])] / 2
 
-    if aper > 100.:
-	aper = 26.5
+    if radius > 26.5:
+	radius = 26.5
 
     wave = []
     flux = []
@@ -121,10 +121,10 @@ for i in range(len(obsid_phot['Source'])):
         red_wave =  red_cam.meta['wavelength'].double
 
     	blue_phot = annularSkyAperturePhotometry(image=blue_cam, fractional=1,
-    				centerRa=obsid_phot['ra'][i], centerDec=obsid_phot['dec'][i], radiusArcsec=aper,
+    				centerRa=obsid_phot['ra'][i], centerDec=obsid_phot['dec'][i], radiusArcsec=radius,
     				innerArcsec=innerArcsec, outerArcsec=outerArcsec)
     	red_phot = annularSkyAperturePhotometry(image=red_cam, fractional=1,
-    				centerRa=obsid_phot['ra'][i], centerDec=obsid_phot['dec'][i], radiusArcsec=aper,
+    				centerRa=obsid_phot['ra'][i], centerDec=obsid_phot['dec'][i], radiusArcsec=radius,
     				innerArcsec=innerArcsec, outerArcsec=outerArcsec)
 
     	blue_phot_cor = photApertureCorrectionPointSource(apphot=blue_phot, band="blue", \
@@ -154,4 +154,3 @@ for i in range(len(obsid_phot['Source'])):
     tds.addColumn("uncertainty(Jy)",Column(err))
     asciiTableWriter(file=outdir+obsid_phot['Source'][i]+'/pacs/data/'+obsid_phot['Source'][i]+'_pacs_phot.txt',
                      table=tds, writeMetadata=False)
-
