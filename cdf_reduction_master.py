@@ -133,7 +133,8 @@ for element in header:
 # #   "Spectrometer_Point_Pipeline_CDF.py" in hipe_script folder
 # #   Make sure the source list provided in above is the same as the source list defined in the script used here.
 # #   Check "outdir" to be the same as the outdir for the whole reduction.
-# #   This script will output cube FITS files reduced by 4 standard SPIRE options, SECT-reduced FITS file, SECT-reduced ASCII file, and fitted size/phot_obsid for further use.
+# #   This script will output cube FITS files reduced by 4 standard SPIRE options, SECT-reduced FITS file, SECT-reduced ASCII file,
+# #   and fitted size/phot_obsid for further use.
 #
 # ###################### STEP 2 ######################
 # # Parse the cube FITS file into individual ASCII files.
