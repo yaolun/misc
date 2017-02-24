@@ -145,7 +145,7 @@ idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_radec_spire_py.pro')
 
 for o in obsid_spire:
     # for running a certain source
-    if o != 'HH100':
+    if o != obsid_spire[obj_list_spire.index('HH100')]:
         continue
     obj = obj_list_spire[obsid_spire.index(o)]
     print 'Step 2 - ', obj
@@ -173,7 +173,7 @@ foo.close()
 #
 for o in obsid_spire:
     # for running a certain source
-    if o != 'HH100':
+    if o != obsid_spire[obj_list_spire.index('HH100')]:
         continue
     obj = obj_list_spire[obsid_spire.index(o)]
     print 'Step 3 - ', obj
