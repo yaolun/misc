@@ -91,7 +91,7 @@ for i in range(len(obsid_phot['Source'])):
     radius = aper_data['aperture'].data[list(aper_data['Object'].data).index(obsid_phot['Source'][i])] / 2
 
     if radius > 26.5:
-	radius = 26.5
+        radius = 26.5
 
     wave = []
     flux = []

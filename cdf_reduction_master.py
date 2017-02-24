@@ -20,7 +20,7 @@ obsid_spire = [1342242620,1342242621,1342245084,1342245094,1342245857,
                1342249474,1342249475,1342249476,1342249477,1342250509,
                1342250510,1342250512,1342250515,1342251285,1342251286,
                1342251287,1342251290,1342253646,1342253649,1342253652,
-               1342254037]
+               1342254037,1342252897]
 
 # SECT cannot converage at L1489 1342249473, L1527 1342250511, HH100 1342252897
 # mapping observation IRS44/46 1342251289
@@ -30,7 +30,7 @@ obj_list_spire = ['RCrA-IRS7B','RCrA-IRS7C','HH46','L723-MM','L1014',
                   'L1455-IRS3','B1-a','B1-c','IRAS03301','TMR1',
                   'TMC1A','TMC1','IRAS15398','RNO91','GSS30-IRS1',
                   'VLA1623','WL12','RCrA-IRS5A','L483','B335',
-                  'DKCha']
+                  'DKCha','HH100']
 
 # all source info
 obsid = [['AB_Aur','1342217842','1342217843','0'],\
@@ -139,58 +139,64 @@ for element in header:
 # ###################### STEP 2 ######################
 # # Parse the cube FITS file into individual ASCII files.
 # # Use the "HR_spectrum_extened" product by default
-# spirecubever = 'HR_spectrum_extened'
-# idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_spire.pro')
-# idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_radec_spire_py.pro')
-#
-# for o in obsid_spire:
-#     obj = obj_list_spire[obsid_spire.index(o)]
-#     print 'Step 2 - ', obj
-#     idl.pro('get_spire', outdir=outdir+obj+'/spire/data/cube/', object=obj,
-#             filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
-#             brightness=1)
-#     # get RA and Dec
-#     idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
-#             slw=1, write=outdir+obj+'/spire/data/cube/'+obj)
-#     idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
-#             ssw=1, write=outdir+obj+'/spire/data/cube/'+obj)
-#     # the output RA/Dec files are named as obj+radec_slw[ssw].txt
+spirecubever = 'HR_spectrum_extened'
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_spire.pro')
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_radec_spire_py.pro')
+
+for o in obsid_spire:
+    # for running a certain source
+    if o != 'HH100':
+        continue
+    obj = obj_list_spire[obsid_spire.index(o)]
+    print 'Step 2 - ', obj
+    idl.pro('get_spire', outdir=outdir+obj+'/spire/data/cube/', object=obj,
+            filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
+            brightness=1)
+    # get RA and Dec
+    idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
+            slw=1, write=outdir+obj+'/spire/data/cube/'+obj)
+    idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
+            ssw=1, write=outdir+obj+'/spire/data/cube/'+obj)
+    # the output RA/Dec files are named as obj+radec_slw[ssw].txt
 #
 # ###################### STEP 3 ######################
 # # line fitting on cube products
-# idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_spire.pro')
-# idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
-# idl('.r /home/bettyjo/yaolun/programs/line_fitting/plot_contour.pro')
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_spire.pro')
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/plot_contour.pro')
 
-# # for SPIRE
-# foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
-# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-# foo.close()
+# for SPIRE
+foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+foo.close()
 
-# #
-# for o in obsid_spire:
-#     obj = obj_list_spire[obsid_spire.index(o)]
-#     print 'Step 3 - ', obj
-#     # read in RA/Dec
-#     radec_slw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
-#     radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_ssw.txt')
-#     # SLW
-#     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
-#             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
-#             ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
-#             slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
-#             print_all=outdir+reduction_name+'_spire_lines')
-#     # SSW
-#     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
-#             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
-#             ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
-#             ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
-#             print_all=outdir+reduction_name+'_spire_lines')
 #
-#     # make contour plots
-#     idl.pro('plot_contour', noise=3, indir=outdir+obj+'/spire/advanced_products/cube/',
-#             plotdir=outdir+obj+'/spire/advanced_products/contours/', objname=obj,
-#             spire=1, brightness=1)
+for o in obsid_spire:
+    # for running a certain source
+    if o != 'HH100':
+        continue
+    obj = obj_list_spire[obsid_spire.index(o)]
+    print 'Step 3 - ', obj
+    # read in RA/Dec
+    radec_slw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
+    radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_ssw.txt')
+    # SLW
+    idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
+            plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
+            ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
+            slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
+            print_all=outdir+reduction_name+'_spire_lines')
+    # SSW
+    idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
+            plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
+            ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
+            ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
+            print_all=outdir+reduction_name+'_spire_lines')
+
+    # make contour plots
+    idl.pro('plot_contour', noise=3, indir=outdir+obj+'/spire/advanced_products/cube/',
+            plotdir=outdir+obj+'/spire/advanced_products/contours/', objname=obj,
+            spire=1, brightness=1)
 
 ###################### STEP 4 ######################
 # re-format the SECT-reduced 1-D product and perform fitting
@@ -285,14 +291,14 @@ for element in header:
 
 ###################### STEP 4 ######################
 # combine the line fitting results of PACS and SPIRE spectra
-foo = open(outdir+reduction_name+'_lines.txt', 'w')
-foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-
-pacs_line = open(outdir+reduction_name+'_pacs_lines.txt', 'r').readlines()
-spire_line = open(outdir+reduction_name+'_spire_lines.txt', 'r').readlines()
-
-for p in range(len(pacs_line)):
-    foo.write(pacs_line[p])
-for s in range(len(spire_line)):
-    foo.write(spire_line[s])
-foo.close()
+# foo = open(outdir+reduction_name+'_lines.txt', 'w')
+# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+#
+# pacs_line = open(outdir+reduction_name+'_pacs_lines.txt', 'r').readlines()
+# spire_line = open(outdir+reduction_name+'_spire_lines.txt', 'r').readlines()
+#
+# for p in range(len(pacs_line)):
+#     foo.write(pacs_line[p])
+# for s in range(len(spire_line)):
+#     foo.write(spire_line[s])
+# foo.close()
