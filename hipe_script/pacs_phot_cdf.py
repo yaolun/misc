@@ -120,10 +120,10 @@ for i in range(len(obsid_phot['Source'])):
         blue_wave = blue_cam.meta['wavelength'].double
         red_wave =  red_cam.meta['wavelength'].double
 
-    	blue_phot = annularSkyAperturePhotometry(image=blue_cam, fractional=1,
+    	blue_phot = annularSkyAperturePhotometry(image=blue_cam, fractional=1,\
     				centerRa=obsid_phot['ra'][i], centerDec=obsid_phot['dec'][i], radiusArcsec=radius,
     				innerArcsec=innerArcsec, outerArcsec=outerArcsec)
-    	red_phot = annularSkyAperturePhotometry(image=red_cam, fractional=1,
+    	red_phot = annularSkyAperturePhotometry(image=red_cam, fractional=1,\
     				centerRa=obsid_phot['ra'][i], centerDec=obsid_phot['dec'][i], radiusArcsec=radius,
     				innerArcsec=innerArcsec, outerArcsec=outerArcsec)
 
