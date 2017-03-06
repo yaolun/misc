@@ -205,10 +205,10 @@ for element in header:
 
 ###################### STEP 5 ######################
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
-# for o in obsid_spire:
-#     obj = obj_list_spire[obsid_spire.index(o)]
-#     print 'Step 5 - ', obj
-#     spire_spectral_index(outdir+obj+'/spire/data/', str(o), obj)
+for o in obsid_spire:
+    obj = obj_list_spire[obsid_spire.index(o)]
+    print 'Step 5 - ', obj
+    spire_spectral_index(outdir+obj+'/spire/data/', str(o), obj)
 
 ###################### STEP 6 ######################
 # [HIPE] execution
@@ -291,14 +291,14 @@ for element in header:
 
 ###################### STEP 4 ######################
 # combine the line fitting results of PACS and SPIRE spectra
-foo = open(outdir+reduction_name+'_lines.txt', 'w')
-foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-
-pacs_line = open(outdir+reduction_name+'_pacs_lines.txt', 'r').readlines()
-spire_line = open(outdir+reduction_name+'_spire_lines.txt', 'r').readlines()
-
-for p in range(len(pacs_line)):
-    foo.write(pacs_line[p])
-for s in range(len(spire_line)):
-    foo.write(spire_line[s])
-foo.close()
+# foo = open(outdir+reduction_name+'_lines.txt', 'w')
+# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+#
+# pacs_line = open(outdir+reduction_name+'_pacs_lines.txt', 'r').readlines()
+# spire_line = open(outdir+reduction_name+'_spire_lines.txt', 'r').readlines()
+#
+# for p in range(len(pacs_line)):
+#     foo.write(pacs_line[p])
+# for s in range(len(spire_line)):
+#     foo.write(spire_line[s])
+# foo.close()
