@@ -207,6 +207,8 @@ for element in header:
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
 for o in obsid_spire:
     obj = obj_list_spire[obsid_spire.index(o)]
+    if obj == 'HH100':
+        continue
     print 'Step 5 - ', obj
     spire_spectral_index(outdir+obj+'/spire/data/', str(o), obj)
 
