@@ -3,7 +3,8 @@
 # library import
 import os
 import pidly
-idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
+# idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
+idl = pidly.IDL('/Applications/exelis/idl83/bin/idl')
 
 from astropy.io import ascii
 import sys
@@ -117,7 +118,7 @@ obsid = [['L1251B','1342269932','1342269933','0']]
 # reduction_name = 'CDF_archive_v2'
 
 outdir = '/Users/yaolun/data/L1251B/Mar17/reduction/'
-pacsdatadir = '/Users/yaolun/data/L1251B/Mar17/'
+pacsdatadir = '/Users/yaolun/data/L1251B/Mar17/ov2_up2/'
 reduction_name = 'L1251B_Mar17'
 
 if not os.path.exists(outdir):
@@ -270,7 +271,7 @@ for o in obsid:
     if skip:
         continue
 
-    print 'Step 2 - ', o[0]
+    print('Step 2 - ', o[0])
     # # load aperture from SPIRE SECT reduction
     # if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
     #     spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
@@ -281,7 +282,7 @@ for o in obsid:
     if not useAper:
         aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0],
                                      auto_match=True, print_all_path=outdir+reduction_name+'_pacs_lines')
-        print o[0], aper_size_fitted
+        print(o[0], aper_size_fitted)
         foo.write('{:>10s}{:>10.3f} \n'.format(o[0], aper_size_fitted))
 
     else:
