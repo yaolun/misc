@@ -118,7 +118,7 @@ obsid = [['L1251B','1342269932','1342269933','0']]
 # reduction_name = 'CDF_archive_v2'
 
 outdir = '/Users/yaolun/data/L1251B/Mar17/reduction/'
-pacsdatadir = '/Users/yaolun/data/L1251B/Mar17/ov2_up2/'
+pacsdatadir = '/Users/yaolun/data/L1251B/Mar17/ov8_up7/'
 reduction_name = 'L1251B_Mar17'
 
 if not os.path.exists(outdir):
