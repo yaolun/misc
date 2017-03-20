@@ -82,13 +82,16 @@ obsid = [['AB_Aur','1342217842','1342217843','0'],\
 #          ['IRAS03301','1342215668','1342216181','1342249477'],\
 #          ['L1455-IRS3','1342204122','1342204123','1342249474']]
 
+# L1251B
+obsid = [['L1251B','1342269932','1342269933','0']]
+
 import os
 
 for obj in obsid:
     if obj[1] == '0':
         continue
-    if obj[3] == '0':
-        continue
+#    if obj[3] == '0':
+#        continue
 
     if not os.path.exists('/scratch/CDF_PACS_HSA/'+obj[1]+'/herschel.pacs.signal.PacsRebinnedCube/hpacs'+obj[1]+'_20hps3drbs_00.fits'):
         print 'Getting ', obj[0], '-', obj[1]
