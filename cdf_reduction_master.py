@@ -3,8 +3,10 @@
 # library import
 import os
 import pidly
-# idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
-idl = pidly.IDL('/Applications/exelis/idl83/bin/idl')
+if 'bettyjo' in os.path.expanduser('~'):
+    idl = pidly.IDL('/opt/local/exelis/idl83/bin/idl')
+else:
+    idl = pidly.IDL('/Applications/exelis/idl83/bin/idl')
 
 from astropy.io import ascii
 import sys
