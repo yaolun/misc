@@ -1,0 +1,80 @@
+# plot the whole dataset
+plotms(vis='calibrated_final.ms',
+xaxis='channel',
+yaxis='amp',
+field='3',
+avgspw=False,
+avgtime='1e9',
+avgscan=True,
+avgbaseline=True)
+
+# split the data
+for spw in [0,1,2,3]:
+    split(vis='calibrated_final.ms',outputvis='calibrated_final.ms.spw'+str(spw),
+           spw=str(spw),datacolumn='data')
+
+# plot one of the split ms
+plotms(vis='calibrated_final.ms.spw1',
+xaxis='channel',
+yaxis='amp',
+field='3',
+avgspw=False,
+avgtime='1e9',
+avgscan=True,
+avgbaseline=True)
+
+# further split
+split(vis='calibrated_final.ms.spw1',outputvis='calibrated_final.ms.spw1.split',
+       spw='0:700~1200',datacolumn='data')
+
+# plot again
+# continuum subtraction in uv-space
+uvcontsub(vis = 'calibrated_final.ms',
+spw='1',
+field = '3',
+fitspw = '1:800~1100',
+excludechans = True,
+fitorder = 0,
+solint='int')
+
+plotms(vis='calibrated_final.ms.contsub',
+xaxis='channel',
+yaxis='amp',
+field='0',
+avgspw=False,
+avgtime='1e9',
+avgscan=True,
+avgbaseline=True)
+
+# split
+split(vis='calibrated_final.ms.contsub',outputvis='calibrated_final.ms.contsub.split',
+       spw='0:700~1200',datacolumn='data')
+
+plotms(vis='calibrated_final.ms.contsub.split',
+xaxis='channel',
+yaxis='amp',
+field='0',
+avgspw=False,
+avgtime='1e9',
+avgscan=True,
+avgbaseline=True)
+
+# clean
+restfreq = '356.73422GHz'
+
+clean(vis = 'calibrated_final.ms.contsub.split',
+imagename = 'bhr71_contsub_split',
+field = '0',
+spw = '0',
+mode = 'velocity',
+nchan = 15,
+start = '0.0km/s',
+width = '0.5km/s',
+outframe = 'LSRK',
+restfreq = restfreq,
+interactive = True,
+imsize = [250, 250],
+cell = '0.08arcsec',
+phasecenter = 0,
+weighting = 'briggs',
+robust = 0.5)
