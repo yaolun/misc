@@ -183,6 +183,8 @@ foo.close()
 # #
 # # #
 # The option of wavelength shift for testing the false-positive rate
+print 'FPtest' in reduction_name
+print reduction_name
 if 'FPtest' in reduction_name:
     wl_shift = 6.8
     print 'wavelength shift turned on', wl_shift
