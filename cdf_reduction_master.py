@@ -177,9 +177,13 @@ idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
 idl('.r /home/bettyjo/yaolun/programs/line_fitting/plot_contour.pro')
 #
 # # for SPIRE
-foo = open(outdir+reduction_name+'_spire_lines_1d.txt', 'w')
+foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
 foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
 foo.close()
+foo = open(outdir+reduction_name+'_spire_1d_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+foo.close()
+
 # #
 # # #
 # The option of wavelength shift for testing the false-positive rate
@@ -251,6 +255,9 @@ SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reductio
 
 # # for PACS
 # foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
+# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+# foo.close()
+# foo = open(outdir+reduction_name+'_pacs_1d_lines.txt', 'w')
 # foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
 # foo.close()
 #
