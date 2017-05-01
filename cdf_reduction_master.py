@@ -197,8 +197,8 @@ else:
 
 for o in obsid_spire:
     # for running a certain source
-    if o != obsid_spire[obj_list_spire.index('HH100')]:
-        continue
+    # if o != obsid_spire[obj_list_spire.index('HH100')]:
+    #     continue
     obj = obj_list_spire[obsid_spire.index(o)]
     print 'Step 3 - ', obj
     # read in RA/Dec
