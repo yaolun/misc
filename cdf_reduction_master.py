@@ -115,9 +115,9 @@ obsid = [['AB_Aur','1342217842','1342217843','0'],\
 # obsid = [['L1251B','1342269932','1342269933','0']]
 
 # reduction parameters
-outdir = '/home/bettyjo/yaolun/CDF_archive_v2/'
+outdir = '/home/bettyjo/yaolun/CDF_archive_v2_FPtest/'
 pacsdatadir = '/scratch/CDF_PACS_HSA/'
-reduction_name = 'CDF_archive_v2'
+reduction_name = 'CDF_archive_v2_FPtest'
 
 # outdir = '/Users/yaolun/data/L1251B/Mar17/reduction/'
 # pacsdatadir = '/Users/yaolun/data/L1251B/Mar17/ov8_up7/'
@@ -148,8 +148,8 @@ for element in header:
 # #   and fitted size/phot_obsid for further use.
 #
 # ###################### STEP 2 ######################
-# # Parse the cube FITS file into individual ASCII files.
-# # Use the "HR_spectrum_extened" product by default
+# Parse the cube FITS file into individual ASCII files.
+# Use the "HR_spectrum_extened" product by default
 # spirecubever = 'HR_spectrum_extened'
 # idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_spire.pro')
 # idl('.r /home/bettyjo/yaolun/programs/line_fitting/get_radec_spire_py.pro')
@@ -168,13 +168,13 @@ for element in header:
 #             slw=1, write=outdir+obj+'/spire/data/cube/'+obj)
 #     idl.pro('get_radec_spire', filename=outdir+obj+'/spire/data/fits/'+str(o)+'_HR_spectrum_extended_apod.fits',
 #             ssw=1, write=outdir+obj+'/spire/data/cube/'+obj)
-    # the output RA/Dec files are named as obj+radec_slw[ssw].txt
+# the output RA/Dec files are named as obj+radec_slw[ssw].txt
 #
 # ###################### STEP 3 ######################
-# # line fitting on cube products
-# idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_spire.pro')
-# idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
-# idl('.r /home/bettyjo/yaolun/programs/line_fitting/plot_contour.pro')
+# line fitting on cube products
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_spire.pro')
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
+idl('.r /home/bettyjo/yaolun/programs/line_fitting/plot_contour.pro')
 #
 # # for SPIRE
 foo = open(outdir+reduction_name+'_spire_lines_1d.txt', 'w')
@@ -182,37 +182,43 @@ foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s
 foo.close()
 #
 # #
-# for o in obsid_spire:
-#     # for running a certain source
-#     if o != obsid_spire[obj_list_spire.index('HH100')]:
-#         continue
-#     obj = obj_list_spire[obsid_spire.index(o)]
-#     print 'Step 3 - ', obj
-#     # read in RA/Dec
-#     radec_slw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
-#     radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_ssw.txt')
-#     # SLW
-#     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
-#             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
-#             ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
-#             slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
-#             print_all=outdir+reduction_name+'_spire_lines')
-#     # SSW
-#     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
-#             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
-#             ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
-#             ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
-#             print_all=outdir+reduction_name+'_spire_lines')
-#
-#     # make contour plots
-#     idl.pro('plot_contour', noise=3, indir=outdir+obj+'/spire/advanced_products/cube/',
-#             plotdir=outdir+obj+'/spire/advanced_products/contours/', objname=obj,
-#             spire=1, brightness=1)
+# The option of wavelength shift for testing the false-positive rate
+if 'FPtest' in reduction_name:
+    wl_shift = 6.8
+else:
+    wl_shift = 0
+
+for o in obsid_spire:
+    # for running a certain source
+    if o != obsid_spire[obj_list_spire.index('HH100')]:
+        continue
+    obj = obj_list_spire[obsid_spire.index(o)]
+    print 'Step 3 - ', obj
+    # read in RA/Dec
+    radec_slw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
+    radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_ssw.txt')
+    # SLW
+    idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
+            plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
+            ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
+            slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
+            print_all=outdir+reduction_name+'_spire_lines', wl_shift=wl_shift)
+    # SSW
+    idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
+            plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
+            ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
+            ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
+            print_all=outdir+reduction_name+'_spire_lines', wl_shift=wl_shift)
+
+    # make contour plots
+    idl.pro('plot_contour', noise=3, indir=outdir+obj+'/spire/advanced_products/cube/',
+            plotdir=outdir+obj+'/spire/advanced_products/contours/', objname=obj,
+            spire=1, brightness=1)
 
 ###################### STEP 4 ######################
 # re-format the SECT-reduced 1-D product and perform fitting
 # print 'Step 4'
-SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name+'_spire_1d')
+SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name+'_spire_1d', wl_shift=wl_shift)
 
 ###################### STEP 5 ######################
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
