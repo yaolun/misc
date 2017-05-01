@@ -312,11 +312,11 @@ for element in header:
 foo = open(outdir+reduction_name+'_lines.txt', 'w')
 foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
 
-pacs_line = open(outdir+reduction_name+'_pacs_lines.txt', 'r').readlines()
+# pacs_line = open(outdir+reduction_name+'_pacs_lines.txt', 'r').readlines()
 spire_line = open(outdir+reduction_name+'_spire_lines.txt', 'r').readlines()
 
-for p in range(len(pacs_line)):
-    foo.write(pacs_line[p])
+# for p in range(len(pacs_line)):
+#     foo.write(pacs_line[p])
 for s in range(len(spire_line)):
     foo.write(spire_line[s])
 foo.close()
