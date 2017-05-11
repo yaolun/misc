@@ -71,8 +71,9 @@
 #     * Spectral cubes gridded with the convolution algorithm are now produced in 
 #       addition to those gridded with the naive projection algorithm
 from herschel.spire.ia.util import MetaDataDictionary 
-from herschel.ia.toolbox.util import RestoreTask
-restore = RestoreTask()
+from herschel.share.util import StringUtil
+from herschel.ia.pg import ProductSink
+
 def addMultiObsMeta(meta, obsList):
     """
     Insert metadata for related observations.
@@ -99,17 +100,35 @@ def getPhotObsidsForFts(id):
     """
     if not globals().has_key("photObsidForFts"):
         hcssDir = Configuration.getProperty("var.hcss.dir")
-        restore(hcssDir+"/data/spire/ia/pipeline/scripts/merging/photObsidsForFts.ser")
-    key = "0x%X"%id
-    if globals().has_key("photObsidForFts"):
-        if photObsidForFts.has_key(key):
-            return photObsidForFts[key]
-        else:
-            print "No photometer observations found for %i"%id
+        fname = (hcssDir+"/data/spire/ia/pipeline/scripts/merging/photObsidsForFts.csv")
+        try:
+            fin = open(fname,"r")
+        except:
+            print "Cannot find photObsidsForFts.csv file"
             return []
-    print "Cannot find photObsidForFts"
-    return []
-pass
+        #
+        photObsidForFts = {}
+        for line in fin:
+            ss = line.rstrip().split(',')
+            key = ss[0]
+            nn = len(ss)
+            obsids = Long1d()
+            if (nn > 0):
+                for i in range(1,nn):
+                    photObs = StringUtil.parseLong(ss[i].strip())
+                    if (photObs): obsids.append(photObs)
+            photObsidForFts[key] = obsids
+        fin.close()
+    key = "0x%X"%id
+    #if globals().has_key("photObsidForFts"):
+    if photObsidForFts.has_key(key):
+        return photObsidForFts[key]
+    else:
+        print "No photometer observations found for %i or not an FTS observation"%id
+        return []
+#
+# define the SLW detectors to be included in the LR correction for extended source calibrated spectra
+#
 
 lrSlwChannels = [ \
     "SLWB2",
@@ -140,7 +159,6 @@ lrSlwChannelsToRemove = [ \
 ###########################################################################
 #
 # (A) Specify OBSID:
-myObsid = 1342251289
 # L1251B
 myObsid = 1342268303
 #
@@ -149,7 +167,7 @@ myObsid = 1342268303
 # (C) Specify the output directory for writing the resulting spectra and 
 #     cubes into FITS files
 #     Apodized spectra will only be saved to FITS files if apodize=1
-outDir = "/home/bettyjo/yaolun/L1251B/spire/hipe14/"
+outDir = "/home/bettyjo/yaolun/L1251B/spire/"
 apodize = 1
 #
 # (D) For H+L observations only - changing this option has no effect for
@@ -175,7 +193,7 @@ obs = getObservation(myObsid, useHsa=True, save=True)
 #
 # (G) Calibration Context and Calibration Files 
 #     Load the latest calibration tree from the HSA
-cal = spireCal(calTree = "spire_cal_14_3")
+cal = spireCal(calTree = "spire_cal")
 #
 #     To load the calibration tree from the HSA 
 #     and save it as a pool use:
@@ -248,150 +266,175 @@ for key in level0_5.meta.keySet():
         sdsList.meta[key]=level0_5.meta[key].copy()
         sdsList_apod.meta[key]=level0_5.meta[key].copy()
 
-# Each building block is a different jiggle position
-for bbid in level0_5.getBbids(0xa106):
-    print"Processing building block 0x%X (%i/%i)"%(bbid, bbid-0xa1060000L, \
-                           len(obs.level0_5.getBbids(0xa106)))
-    sdt   = level0_5.get(bbid).sdt
-    # Record the calibration tree version used by the pipeline:
-    sdt.calVersion = obs.calibration.version
-    nhkt  = level0_5.get(bbid).nhkt
-    smect = level0_5.get(bbid).smect
-    bsmt  = level0_5.get(bbid).bsmt
-    # Extract the jiggle ID from the metadata:
-    jiggId = sdt.meta["jiggId"].value
-    # Extract raster ID from the metadata:
-    raster = sdt.meta["pointNum"].value
-    # -----------------------------------------------------------
-    # 1st level deglitching:    
-    # Consult the Pipeline Specification Manual for more options 
-    # of the waveletDeglitcher
-    sdt = waveletDeglitcher(sdt, optionReconstruction="polynomialAdaptive10",\
-                            newThresholdCoef=True)
-    # -----------------------------------------------------------
-    # Run the Non-linearity correction:
-    sdt = specNonLinearityCorrection(sdt, nonLinCorr=nonLinCorr)
-    # -----------------------------------------------------------
-    # Repair clipped samples where needed:
-    sdt = clippingCorrection(sdt)
-    # -----------------------------------------------------------
-    # Time domain phase correction:
-    sdt = timeDomainPhaseCorrection(sdt, nhkt, lpfPar=lpfPar, \
-               phaseCorrLim=phaseCorrLim, chanTimeConst=chanTimeConst)        
-    # -----------------------------------------------------------
-    # Add pointing info:
-    bat = calcBsmAngles(bsmt, bsmPos=bsmPos)
-    spp = createSpirePointing(hpp=hpp, siam=siam, \
-                            detAngOff=detAngOff, bat=bat)
-    # -----------------------------------------------------------
-    # Create interferogram:
-    sdi = createIfgm(sdt, smect=smect, nhkt=nhkt, spp=spp, \
-                     smecZpd=smecZpd,\
-                     chanTimeOff=chanTimeOff,\
-                     smecStepFactor=smecStepFactor)
-    # -----------------------------------------------------------
-    # Update the resolution if processing a H+L observation as LR
-    if obs.meta["commandedResolution"].value == "H+LR" and processRes == "LR":
-        sdi.processResolution = "LR"
-    # Adjust OPD ranges to ensure that they are the same for all scans
-    sdi = makeSameOpds(sdi, opdLimits=opdLimits)
-    # -----------------------------------------------------------
-    # Baseline correction:
-    sdi = baselineCorrection(sdi, type="fourier", threshold=4)
-    # -----------------------------------------------------------
-    # 2nd level deglitching:
-    sdi = deglitchIfgm(sdi, deglitchType="MAD")
-    # -----------------------------------------------------------
-    # Phase correction
-    # The phase correction is calculated from an averaged LR interferogram:
-    avgSdiFull = averageInterferogram(sdi)
-    lowResSdi  = avgSdiFull.copy()
-    lowResSdi.processResolution = "LR"
-    lowResSdi  = makeSameOpds(lowResSdi, opdLimits=opdLimits)
-    # Apply the phase correction:
-    sdi = phaseCorrection(sdi, avgSdi=lowResSdi, avgSdiFull=avgSdiFull, \
-                            spectralUnit="GHz")
-    # -----------------------------------------------------------
-    # Fourier transform:
-    ssds = fourierTransform(sdi, ftType="postPhaseCorr", zeroPad="standard", \
-                            spectralUnit="GHz")
-    # -----------------------------------------------------------
-    # Get the RSRF calibration products
-    # Note: this will only work if the raw data was processed with 
-    # HIPE v7 and above. If you get an error here, re-downloading 
-    # the observation from the HSA should fix it
-    instRsrf = obs.calibration.spec.instRsrfList.getProduct(ssds)
-    teleRsrf = obs.calibration.spec.teleRsrfList.getProduct(ssds)
-    # -----------------------------------------------------------
-    # Remove out of band data:
-    ssds = removeOutOfBand(ssds, bandEdge=bandEdge)
-    # -----------------------------------------------------------
-    # Apply bright gain correction (bright source setting only):
-    if biasMode == "bright":
-        ssds = specApplyBrightGain(ssds, brightGain=brightGain)
-    # -----------------------------------------------------------
-    # Correction for instrument emission:
-    ssds = instCorrection(ssds, nhkt=nhkt, instRsrf=instRsrf)
-    # -----------------------------------------------------------
-    # Get the flux conversion calibration products and apply to spectra:
-    ssds = specExtendedFluxConversion(ssds, teleRsrf=teleRsrf)
-    # -----------------------------------------------------------
-    # Correction for telescope emission:
-    ssds = telescopeCorrection(ssds, hk=hk, teleModel=teleModel)
-    # -----------------------------------------------------------
-    # If LR, apply the LR correction
-    if ssds.processResolution=="LR":
-        lrCorr = obs.calibration.spec.lrCorr
-        beamParam = obs.calibration.spec.beamParamList.getProduct(ssds)
-        ssdsFull = ssds.copy()
-        ssdsFull = filterChannels(ssdsFull, removeChannels=String1d(lrSlwChannels))
-        ssds = filterChannels(ssds, keepChannels=String1d(lrSlwChannels))
-        ssds = specPointFluxConversion(ssds, beamParam=beamParam)
-        ssds = applyLrCorr(ssds, lrCorr=lrCorr)
-        ssds = specLrExtFluxConv(ssds, ssdsFull, beamParam=beamParam)
-    # -----------------------------------------------------------
-    # Average across all scans:
-    ssds = averageSpectra(ssds)
-    # ----------------------------------------------------------- 
-    # Apodization:
-    ssds_apod = apodizeSpectra(ssds.copy(), apodName="aNB_15")
-    # -----------------------------------------------------------
-    # Correct the frequency scale to be in the Local Standard of Rest
-    ssds = applyRadialVelocity(ssds, targetFrame="lsr")
-    ssds_apod = applyRadialVelocity(ssds_apod, targetFrame="lsr")
-    # -----------------------------------------------------------
-    # Sort the metadata into a logical order
-    ssds = metaDataSorter(ssds)
-    ssds_apod = metaDataSorter(ssds_apod)
-    # ----------------------------------------------------------- 
-    # Append this scan to the list, taking account whether the
-    # resolution was H+L or not
-    if obs.meta["commandedResolution"].value == "H+LR":
-        # for processing all scans as LR
-        if processRes == "LR":
-            sdsList.setProduct("%d"%(sdsList.refs.size()), ssds)
-            sdsList_apod.setProduct("%d"%(sdsList_apod.refs.size()), ssds_apod)
-        # for processing the HR scans
-        elif processRes == ssds.processResolution:
-            sdsList.setProduct("%d"%(sdsList.refs.size()), ssds)
-            sdsList_apod.setProduct("%d"%(sdsList_apod.refs.size()), ssds_apod)
-    # or, otherwise
-    else:
-        sdsList.setProduct("%d"%(sdsList.refs.size()),ssds)
-        sdsList_apod.setProduct("%d"%(sdsList_apod.refs.size()),ssds_apod)
-        #
-    # -----------------------------------------------------------
-    # Save the interferogram data back into the Observation Context:
-    if obs.level1:
-        res = ssds.processResolution
-        obs.level1.getProduct("Point_%i_Jiggle_%i_%s"%(raster,\
-            jiggId, res)).setProduct("interferogram", sdi)
-        # Remove the old style products (pre-HIPE13) if they exist
-        obs.level1.getProduct("Point_%i_Jiggle_%i_%s"%(raster,\
-            jiggId, res)).refs.remove("apodized_spectrum")
-        obs.level1.getProduct("Point_%i_Jiggle_%i_%s"%(raster,\
-            jiggId, res)).refs.remove("unapodized_spectrum")
+# Get the point and jiggle numbers, and the resolutions
+# for this observation and map them to the building block ids
+obsLayout = observationLayout(obs)
 
+# Loop over all point, jiggle numbers and resolutions
+for point in obsLayout.getPointNumbers():
+    for jiggle in obsLayout.getJiggleNumbers(point):
+        ress = obsLayout.getResolutions(point, jiggle)
+        # If H+L, loop twice per point/jiggle pair
+        if obs.meta["commandedResolution"].value == "H+LR":
+            resolutionsToProcess=String1d(["HR", "LR"])
+        else:
+            resolutionsToProcess=String1d(UNIQ(ress))
+        bbList = SpireListContext()
+        for res in resolutionsToProcess:
+            # Each building block is a different poiint, jiggle position and resolution tuple
+            for bbid in obsLayout.getBbids(point, jiggle, res):
+                print"Processing building block 0x%X (%i/%i)"%(bbid, bbid-0xa1060000L, \
+                                       len(obs.level0_5.getBbids(0xa106)))
+                sdt   = level0_5.get(bbid).sdt
+                # Record the calibration tree version used by the pipeline:
+                sdt.calVersion = obs.calibration.version
+                nhkt  = level0_5.get(bbid).nhkt
+                smect = level0_5.get(bbid).smect
+                bsmt  = level0_5.get(bbid).bsmt
+                # Extract the jiggle ID from the metadata:
+                jiggId = sdt.meta["jiggId"].value
+                # Extract raster ID from the metadata:
+                raster = sdt.meta["pointNum"].value
+                # -----------------------------------------------------------
+                # 1st level deglitching:    
+                # Consult the Pipeline Specification Manual for more options 
+                # of the waveletDeglitcher
+                sdt = waveletDeglitcher(sdt, optionReconstruction="polynomialAdaptive10",\
+                                        newThresholdCoef=True)
+                # -----------------------------------------------------------
+                # Run the Non-linearity correction:
+                sdt = specNonLinearityCorrection(sdt, nonLinCorr=nonLinCorr)
+                # -----------------------------------------------------------
+                # Repair clipped samples where needed:
+                sdt = clippingCorrection(sdt)
+                # -----------------------------------------------------------
+                # Time domain phase correction:
+                sdt = timeDomainPhaseCorrection(sdt, nhkt, lpfPar=lpfPar, \
+                           phaseCorrLim=phaseCorrLim, chanTimeConst=chanTimeConst)        
+                # -----------------------------------------------------------
+                # Add pointing info:
+                bat = calcBsmAngles(bsmt, bsmPos=bsmPos)
+                spp = createSpirePointing(hpp=hpp, siam=siam, \
+                                        detAngOff=detAngOff, bat=bat)
+                # -----------------------------------------------------------
+                # Create interferogram:
+                sdi = createIfgm(sdt, smect=smect, nhkt=nhkt, spp=spp, \
+                                 smecZpd=smecZpd,\
+                                 chanTimeOff=chanTimeOff,\
+                                 smecStepFactor=smecStepFactor)
+                # -----------------------------------------------------------
+                # Append this building block to the list, taking account whether the resolution
+                # was H+L or not
+                bbMap = SpireMapContext()
+                ref=ProductSink.getInstance().save(sdi)
+                bbMap.refs["ifgm"]=ref
+                ref=ProductSink.getInstance().save(nhkt)
+                bbMap.refs["nhkt"]=ref
+                bbList.addRef(ProductRef(bbMap))
+            pass
+            # -----------------------------------------------------------
+            merged = mergeFtsBuildingBlocks(bbList)
+            sdi    = merged.refs["ifgm"].product
+            nhkt   = merged.refs["nhkt"].product
+            sdi.setProcessResolution(res)
+            sdi.setBbid(bbid)
+            # Adjust OPD ranges to ensure that they are the same for all scans
+            sdi = makeSameOpds(sdi, opdLimits=opdLimits)
+            # -----------------------------------------------------------
+            # Baseline correction:
+            sdi = baselineCorrection(sdi, type="fourier", threshold=4)
+            # -----------------------------------------------------------
+            # 2nd level deglitching:
+            sdi = deglitchIfgm(sdi, deglitchType="MAD")
+            # -----------------------------------------------------------
+            # Phase correction
+            # The phase correction is calculated from an averaged LR interferogram:
+            avgSdiFull = averageInterferogram(sdi)
+            lowResSdi  = avgSdiFull.copy()
+            lowResSdi.processResolution = "LR"
+            lowResSdi  = makeSameOpds(lowResSdi, opdLimits=opdLimits)
+            # Apply the phase correction:
+            sdi = phaseCorrection(sdi, avgSdi=lowResSdi, avgSdiFull=avgSdiFull, \
+                                    spectralUnit="GHz")
+            # -----------------------------------------------------------
+            # Fourier transform:
+            ssds = fourierTransform(sdi, ftType="postPhaseCorr", zeroPad="standard", \
+                                    spectralUnit="GHz")
+            # -----------------------------------------------------------
+            # Get the RSRF calibration products
+            # Note: this will only work if the raw data was processed with 
+            # HIPE v7 and above. If you get an error here, re-downloading 
+            # the observation from the HSA should fix it
+            instRsrf = obs.calibration.spec.instRsrfList.getProduct(ssds)
+            teleRsrf = obs.calibration.spec.teleRsrfList.getProduct(ssds)
+            # -----------------------------------------------------------
+            # Remove out of band data:
+            ssds = removeOutOfBand(ssds, bandEdge=bandEdge)
+            # -----------------------------------------------------------
+            # Apply bright gain correction (bright source setting only):
+            if biasMode == "bright":
+                ssds = specApplyBrightGain(ssds, brightGain=brightGain)
+            # -----------------------------------------------------------
+            # Correction for instrument emission:
+            ssds = instCorrection(ssds, nhkt=nhkt, instRsrf=instRsrf)
+            # -----------------------------------------------------------
+            # Get the flux conversion calibration products and apply to spectra:
+            ssds = specExtendedFluxConversion(ssds, teleRsrf=teleRsrf)
+            # -----------------------------------------------------------
+            # Correction for telescope emission:
+            ssds = telescopeCorrection(ssds, hk=hk, teleModel=teleModel)
+            ssdsCopy = ssds.copy()
+            # -----------------------------------------------------------
+            # If LR, apply the LR correction
+            if res=="LR":
+                lrCorr = obs.calibration.spec.lrCorr
+                beamParam = obs.calibration.spec.beamParamList.getProduct(ssds)
+                ssdsFull = ssds.copy()
+                ssdsFull = filterChannels(ssdsFull, removeChannels=String1d(lrSlwChannels))
+                ssds = filterChannels(ssds, keepChannels=String1d(lrSlwChannels))
+                ssds = specPointFluxConversion(ssds, beamParam=beamParam)
+                ssds = applyLrCorr(ssds, lrCorr=lrCorr)
+                ssds = specLrExtFluxConv(ssds, ssdsFull, beamParam=beamParam)
+            # -----------------------------------------------------------
+            # Average across all scans:
+            asds = averageSpectra(ssds)
+            # ----------------------------------------------------------- 
+            # Apodization:
+            ssds_apod = apodizeSpectra(asds.copy(), apodName="aNB_15")
+            # -----------------------------------------------------------
+            # Correct the frequency scale to be in the Local Standard of Rest
+            asds = applyRadialVelocity(asds, targetFrame="lsr")
+            ssds_apod = applyRadialVelocity(ssds_apod, targetFrame="lsr")
+            # -----------------------------------------------------------
+            # Sort the metadata into a logical order
+            asds = metaDataSorter(asds)
+            ssds_apod = metaDataSorter(ssds_apod)
+            # ----------------------------------------------------------- 
+            # Append this scan to the list, taking account whether the
+            # resolution was H+L or not
+            sdsList.setProduct("%d"%(sdsList.refs.size()), asds)
+            sdsList_apod.setProduct("%d"%(sdsList_apod.refs.size()), ssds_apod)
+            # -----------------------------------------------------------
+            # Save the interferogram data back into the Observation Context:
+            if obs.level1:
+                res = ssds.processResolution
+                obs.level1.getProduct("Point_%i_Jiggle_%i_%s"%(raster,\
+                    jiggId, res)).setProduct("interferogram", sdi)
+                # Remove the old style products (pre-HIPE13) if they exist
+                obs.level1.getProduct("Point_%i_Jiggle_%i_%s"%(raster,\
+                    jiggId, res)).refs.remove("apodized_spectrum")
+                obs.level1.getProduct("Point_%i_Jiggle_%i_%s"%(raster,\
+                    jiggId, res)).refs.remove("unapodized_spectrum")
+            pass
+        pass
+    pass
+pass
+# ---------------------------------------------------------------
+# Set the resolution for the cubes.
+# If H+L, use processRes
+cubeRes = res
+if obs.meta["commandedResolution"].value == "H+LR":
+    cubeRes = processRes
 # ---------------------------------------------------------------
 # Carry out regridding
 mapSampling = obs.meta['mapSampling'].value
@@ -403,9 +446,9 @@ for array in ["SSW", "SLW"]:
     # -----------------------------------------------------------
     # Create a listing of all spectra and positions in a spectrum2d
     preCube = spirePreprocessCube(context=sdsList, arrayType=array, \
-                             unvignetted=False)
+                             resolution = cubeRes, unvignetted=False)
     preCube_apod = spirePreprocessCube(context=sdsList_apod, arrayType=array, \
-                             unvignetted=False)
+                             resolution = cubeRes, unvignetted=False)
     # -----------------------------------------------------------
     # Apply the extended calibration correction to extended spectra
     preCube = applyExtCalCorr(preCube, specExtCorr=extCorr)

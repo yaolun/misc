@@ -149,7 +149,7 @@ myObsid = 1342268303
 # (C) Specify the output directory for writing the resulting spectra and 
 #     cubes into FITS files
 #     Apodized spectra will only be saved to FITS files if apodize=1
-outDir = "/home/bettyjo/yaolun/L1251B/spire/hipe14/"
+outDir = "/home/bettyjo/yaolun/L1251B/"
 apodize = 1
 #
 # (D) For H+L observations only - changing this option has no effect for
@@ -445,6 +445,7 @@ for array in ["SSW", "SLW"]:
     # -----------------------------------------------------------
     # Check to see if there are any photometer observations that overlap
     # with this observation and if so, append their obsids to the metadata
+
     obsList = getPhotObsidsForFts(obs.obsid)
     # -----------------------------------------------------------
     # If LR, save the full preCubes
