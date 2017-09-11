@@ -141,14 +141,16 @@ lrSlwChannelsToRemove = [ \
 #
 # (A) Specify OBSID:
 myObsid = 1342251289
+# L1251B
+myObsid = 1342268303
 #
 # (B) N/A
 #
 # (C) Specify the output directory for writing the resulting spectra and 
 #     cubes into FITS files
 #     Apodized spectra will only be saved to FITS files if apodize=1
-outDir = "/scratch/"
-apodize = 0
+outDir = "/home/bettyjo/yaolun/L1251B/spire/hipe14/"
+apodize = 1
 #
 # (D) For H+L observations only - changing this option has no effect for
 #     observations that were not observed in "High+Low" mode:
@@ -165,7 +167,7 @@ gridSpacing={"full":        {"SSW": 0.5 * sswFwhm, "SLW": 0.5 * slwFwhm}, \
 #
 # (F) Load an observation context into HIPE:
 #     1. To search for the observation in your local store use:
-obs = getObservation(myObsid)
+obs = getObservation(myObsid, useHsa=True, save=True)
 #     2. To specify a pool name in your local store use:
 #obs = getObservation(myObsid, poolName="poolName") 
 #     3. To load data directly from the HSA use:
@@ -173,7 +175,7 @@ obs = getObservation(myObsid)
 #
 # (G) Calibration Context and Calibration Files 
 #     Load the latest calibration tree from the HSA
-cal = spireCal(calTree = "spire_cal")
+cal = spireCal(calTree = "spire_cal_14_3")
 #
 #     To load the calibration tree from the HSA 
 #     and save it as a pool use:

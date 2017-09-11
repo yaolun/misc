@@ -251,6 +251,11 @@ start_obsid = 1342251289
 # the overall output directory
 outdir = "/home/bettyjo/yaolun/CDF_archive_v2/"
 
+# for reducing L1251B
+Obsid = [1342268303]
+obj_list = ['L1251B']
+outdir = '/home/bettyjo/yaolun/L1251B/spire/'
+
 for i in range(len(Obsid)):
     start_ind = Obsid.index(start_obsid)
     if i < start_ind:

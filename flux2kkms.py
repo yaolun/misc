@@ -48,6 +48,29 @@ wl = np.array([63.174233, 157.75969])
 flux = np.array([3.3077937e-19, 4.3660825e-21]) * 1e7
 print flux2kkms(wl, flux, pix_size) / assumed_velo
 
+# Cycle 6 re-estimation
+print 'L1551-IRS5 [CII] minimum contour in beam'
+wl = np.array([157.75969])
+flux = np.array([3.4e-16]) * np.pi*(9.4/2)**2
+print flux2kkms(wl, flux, pix_size)
+
+print 'L1551-IRS5 [OI] minimum contour in beam'
+wl = np.array([63.174233])
+flux = np.array([3.4e-16]) * np.pi*(9.4/2)**2
+print flux2kkms(wl, flux, pix_size)
+
+print 'L1551-IRS5 [CII] at Center, Red, and Blue position'
+wl = np.array([157.75969])
+flux = np.array([5.26e-16, 5.97e-16, 4.29e-16]) * np.pi*(15.5/2)**2
+print flux2kkms(wl, flux, 15.5)
+
+print 'L1551-IRS5 [OI] at Center, Red, and Blue position'
+wl = np.array([63.174233])
+flux = np.array([4.3e-14, 2.46e-14, 2.03e-14]) * np.pi*(6.3/2)**2
+print flux2kkms(wl, flux, 6.3)
+
+
+
 # offset to the center: (d_RA, d_Dec) = (6, 4).  velocity offset ~ +40 km/s.
 # together with v_lsr = 6.5 km/s and Earth v_lsr ~ -10 km/s, the line will center around 32.5 km/s
 center = (67.89196135, 18.13468391)
@@ -89,3 +112,15 @@ offset = (-22.18, 33.28)
 off_coord = coord_offset(center, offset)
 off = SkyCoord(ra=off_coord[0]*u.degree, dec=off_coord[1]*u.degree, frame='icrs')
 print off.ra.hms, off.dec.dms
+
+# For cycle 6 re-estimation
+offset_red = (5.78682692, 3.75800934)
+offset_blue = (-5.78682692, -3.75800934)
+
+off_coord_red = coord_offset(center, offset_red)
+off_red = SkyCoord(ra=off_coord_red[0]*u.degree, dec=off_coord_red[1]*u.degree, frame='icrs')
+print 'red', off_red.ra.hms, off_red.dec.dms
+
+off_coord_blue = coord_offset(center, offset_blue)
+off_blue = SkyCoord(ra=off_coord_blue[0]*u.degree, dec=off_coord_blue[1]*u.degree, frame='icrs')
+print 'blue', off_blue.ra.hms, off_blue.dec.dms

@@ -56,9 +56,11 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=200., group=0, marker=
     # This is the command to show the image. The parameters vmin and vmax are
     # the min and max levels for the colorscale (remove for default values).
     # cmap = sns.cubehelix_palette(start=0.1, rot=-0.7, gamma=0.2, as_cmap=True)
+
     cmap = plt.cm.CMRmap
     im = ax.imshow(val,
-            norm=mpl.colors.LogNorm(vmin=1.515e-01, vmax=4.118e+01),
+            # norm=mpl.colors.LogNorm(vmin=1.515e-01, vmax=4.118e+01),
+            norm=mpl.colors.LogNorm(vmin=1e-04, vmax=1e+01),
             cmap=cmap, origin='lower', extent=[-w, w, -w, w], aspect=1)
 
     # draw the flux extraction regions
@@ -79,6 +81,7 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=200., group=0, marker=
     ax.set_xlim([-w,w])
     ax.set_ylim([-w,w])
     # ax.plot([0],[-10], '+', color='m', markersize=10, mew=2)
+    print(w)
 
     # plot scalebar
     if scalebar != None:
@@ -127,8 +130,8 @@ def hyperion_image(rtout, wave, plotdir, printname, dstar=200., group=0, marker=
     fig.savefig(plotdir+printname+'_image_'+str(wave)+'.pdf', format='pdf', dpi=300, bbox_inches='tight')
     fig.clf()
 
-# rtout = '/Volumes/SD-Mac/model2.rtout'
-# wave = 3.6
-# plotdir = '/Users/yaolun/bhr71/hyperion/controlled/'
-# hyperion_image(rtout, wave, plotdir, 'model2', group=0, dstar=200., marker=0, size=100, convolve=False,
-#         unit='MJy\,sr^{-1}', scalebar=30)
+rtout = '/Volumes/SD-Mac/model22.rtout'
+wave = 25
+plotdir = '/Users/yaolun/research/PREMISE_ERS/'
+hyperion_image(rtout, wave, plotdir, 'model22', group=0, dstar=100., marker=0, size='full', convolve=False,
+        unit='MJy\,sr^{-1}', scalebar=30)
