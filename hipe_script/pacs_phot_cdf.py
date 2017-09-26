@@ -70,7 +70,7 @@ import sys
 # aperture size in radius
 # aper = 31.8/2
 
-start_from = 'L1157'
+start_from = 'Ced110'
 skip = True
 
 # PACS aperture photometry
@@ -92,8 +92,8 @@ for i in range(len(obsid_phot['Source'])):
         print 'Adopt a default aperture of 31.8'
         radius = 31.8/2
         # continue
-
-    radius = aper_data['aperture'].data[list(aper_data['Object'].data).index(obsid_phot['Source'][i])] / 2
+    else:
+        radius = aper_data['aperture'].data[list(aper_data['Object'].data).index(obsid_phot['Source'][i])] / 2
 
     if radius > 26.5:
         radius = 26.5
