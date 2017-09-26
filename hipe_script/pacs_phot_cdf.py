@@ -62,6 +62,11 @@ obsid_phot = {'Source': ['L1157', 'L1014', 'IRAS03301', 'B1-c', 'B1-a',
                         '-15:47:01.4']
 }
 
+obsid_phot = obsid_phot[(obsid_phot['Source'] == 'Ced110') + \
+                        (obsid_phot['Source'] == 'IRAS15398') + \
+                        (obsid_phot['Source'] == 'L723-MM') + \
+                        (obsid_phot['Source'] == 'L483') + \
+                        (obsid_phot['Source'] == 'RNO91')]
 
 outdir = '/home/bettyjo/yaolun/CDF_archive_v2/'
 aper_data = asciiTableReader(file=outdir+'pacs_1d_apertures.txt', tableType='SPACES')
