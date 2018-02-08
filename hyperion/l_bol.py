@@ -9,13 +9,13 @@ def l_bol(wl,fv,dist):
 	# constants setup
 	#
 	c = const.c.cgs.value
-	pc = 3.086e+18
+	pc = const.pc.cgs.value
 	PI = np.pi
-	SL = 3.846e+33
+	SL = const.L_sun.cgs.value
 	# Convert the unit from Jy to erg s-1 cm-2 Hz-1
 	fv = np.array(fv)*1e-23
 	freq = c/(1e-4*np.array(wl))
-	
+
 	diff_dum = freq[1:]-freq[0:-1]
 	freq_interpol = np.hstack((freq[0:-1]+diff_dum/2.0,freq[0:-1]+diff_dum/2.0,freq[0],freq[-1]))
 	freq_interpol = freq_interpol[np.argsort(freq_interpol)[::-1]]
@@ -29,7 +29,7 @@ def l_bol(wl,fv,dist):
 			fv_interpol[2*i-1] = fv[i-1]
 			fv_interpol[2*i] = fv[i]
 	fv_interpol[-1] = fv[-1]
-	
+
 	dv = freq_interpol[0:-1]-freq_interpol[1:]
 	dv = np.delete(dv,np.where(dv==0))
 
