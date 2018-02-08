@@ -21,33 +21,42 @@
 !       write(0,'("calculates spectral line profile data for collapsing cloud")')
 ! input file names
 10      continue
-        print *,' input data file=?(grid.plt:N)'
+C        print *,' input data file=?(grid.plt:N)'
 !       write(0,'("input data file=?(grid.plt:N)")')
-        read (*,'(a)',end=999) infile
+C        read (*,'(a)',end=999) infile
+        infile = 'grid.plt34.mod'
         call oneddata(infile,error)
         if(error)goto10
 ! output file names
-        print *,' output summary file=?'
+C        print *,' output summary file=?'
 !       write(0,'("output summary file=?")')
-        read (*,'(a)',end=999) txtfile
-        open(unit=7,file=txtfile,status='new')
+C        read (*,'(a)',end=999) txtfile
+        txtfile='output_summary'
+        open(unit=7,file=txtfile,status='replace')
         print *,' output data file=?'
 !       write(0,'("output data file=?")')
-        read (*,'(a)',end=999) outfile
-        print *,' use old data file?(t .or. f)'
-!       write(0,'("use old data file?(t .or. f)")')
-        read (*,*,end=999)test
-        if(test) then
-          print *,' old data file=?'
-!         write(0,'("old data file=?")')
-          read (*,'(a)',end=999) oldfile
-          open(unit=3,file=oldfile,status='old')
-          read(3,*) nvmax,vmin,vmax,delv,tau,ninc,(aid(ni),ni=1,ninc)
-          do 20 nv=1,nvmax
-            read(3,*,end=999) (data(nv,ni),ni=1,ninc)
-20        continue
-          close(3)
-        else
+C        read (*,'(a)',end=999) outfile
+        outfile='output_data'
+C        print *,' use old data file?(t .or. f)'
+C       write(0,'("use old data file?(t .or. f)")')
+C        read (*,*,end=999) test
+C        if(test) then
+C          print *,' old data file=?'
+C         write(0,'("old data file=?")')
+C          read (*,'(a)',end=999) oldfile
+C          open(unit=3,file=oldfile,status='old')
+C          read(3,*) nvmax,vmin,vmax,delv,tau,ninc,(aid(ni),ni=1,ninc)
+C          do 20 nv=1,nvmax
+C            read(3,*,end=999) (data(nv,ni),ni=1,ninc)
+C20        continue
+C          close(3)
+C        else
+
+C         read the parameters from a file
+          open(unit=13, file='tsc.par')
+          read(13,*) vmin, vmax, delv, ninc, inc, tau
+          
+
           print *,' vmin=?,vmax=?,delv=?'
 !         write(0,'("vmin=?,vmax=?,delv=?")')
 !         YLY: not sure the "end=999" is needed here
@@ -57,7 +66,7 @@
           print *,' inclination angle: #=?, angle 1,2,...=?(degrees)'
 !         write(0,'("inclination angle: #=?, angle 1,2,...=?(degrees)")')
 !         YLY: not sure the "end=999" is needed here
-!         read(*,*,end=999) ninc,(aid(ni),ni=1,ninc)
+C         read(*,*,end=999) ninc,(aid(ni),ni=1,ninc)
           read(*,*) ninc,(aid(ni),ni=1,ninc)
         print *,' nondimensional time tau=?'
 !       write(0,'("nondimensional time tau=?")')
@@ -103,7 +112,7 @@ C        open(unit=11,file='ncollapse_debug',status='new')
 !
         call ncollapse(tau)
 !
-        open(unit=9,file=outfile,status='new')
+        open(unit=9,file=outfile,status='replace')
         write(9,802) nvmax,vmin,vmax,delv,tau,ninc,(aid(ni),ni=1,ninc)
         do 80 nv=1,nvmax
             v= vmin +float(nv-1)*delv

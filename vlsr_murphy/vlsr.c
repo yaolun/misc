@@ -20,7 +20,7 @@ typedef struct {
  *
  *  Author:  Edward M. Murphy
  *  Written:  1998 February 17
- *  
+ *
  */
 
 main(argc, argv)
@@ -46,12 +46,12 @@ static char daytab[2][13] = {
   {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
   {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 };
- 
+
 int day_of_year(year, month, day)
 int year, month, day;
 {
 int i, leap;
- 
+
      leap = year%4 == 0 && year%100 != 0 || year%400 == 0;
      for (i=1; i < month; i++)
         day += daytab[leap][i];
@@ -75,7 +75,7 @@ int i, leap;
 // printf("<TITLE>Ed Murphy's VLSR Calculator</TITLE>\n");
 // printf("<h1>V<sub>LSR</sub> Calculator Version 1.0</h1>\n");
 
-// /*  Determine the length of the input from Mosaic */    
+// /*  Determine the length of the input from Mosaic */
 // cl = atoi(getenv("CONTENT_LENGTH"));
 
 // /*  Read in the input one character at a time.  The fields are delimeted
@@ -98,27 +98,27 @@ int i, leap;
 // for(x=0; x <= m; x++) {
 //      if (DEBUG) printf("<li> <code>\"%s\" = \"%s\"</code>%c",
 //           entries[x].name, entries[x].val, 10);
-//      if (strcmp(entries[x].name, "year") == 0) 
+//      if (strcmp(entries[x].name, "year") == 0)
 // 	  year_in = entries[x].val;
-//      if (strcmp(entries[x].name, "month") == 0) 
+//      if (strcmp(entries[x].name, "month") == 0)
 // 	  month_in = entries[x].val;
-//      if (strcmp(entries[x].name, "day") == 0) 
+//      if (strcmp(entries[x].name, "day") == 0)
 // 	  day_in = entries[x].val;
-//      if (strcmp(entries[x].name, "uttime") == 0) 
+//      if (strcmp(entries[x].name, "uttime") == 0)
 // 	  uttime_in = entries[x].val;
-//      if (strcmp(entries[x].name, "right_ascension") == 0) 
+//      if (strcmp(entries[x].name, "right_ascension") == 0)
 // 	  right_ascension = entries[x].val;
-//      if (strcmp(entries[x].name, "declination") == 0) 
+//      if (strcmp(entries[x].name, "declination") == 0)
 // 	  declination = entries[x].val;
-//      if (strcmp(entries[x].name, "equinox") == 0) 
+//      if (strcmp(entries[x].name, "equinox") == 0)
 // 	  equinox = entries[x].val;
-//      if (strcmp(entries[x].name, "longitude") == 0) 
+//      if (strcmp(entries[x].name, "longitude") == 0)
 // 	  longitude = entries[x].val;
-//      if (strcmp(entries[x].name, "latitude") == 0) 
+//      if (strcmp(entries[x].name, "latitude") == 0)
 // 	  latitude = entries[x].val;
-//      if (strcmp(entries[x].name, "elevation") == 0) 
+//      if (strcmp(entries[x].name, "elevation") == 0)
 // 	  elevation = entries[x].val;
-//      if (strcmp(entries[x].name, "earthframe") == 0) 
+//      if (strcmp(entries[x].name, "earthframe") == 0)
 // 	  earthframe = entries[x].val;
 //     }
 //     if (DEBUG) printf("</ul>%c",10);
@@ -143,7 +143,7 @@ int i, leap;
 //         }
 //    else month=1.0;
 // day=atof(day_in);
-// utin=atof(uttime_in); 
+// utin=atof(uttime_in);
 // rain=atof(right_ascension);
 // decin=atof(declination);
 // lat=atof(latitude);
@@ -159,7 +159,7 @@ int i, leap;
 // ra*=15.0;
 // parnum(decin,&dec);
 // parnum(utin,&uttime);
- 
+
 // // doy=(double) day_of_year((int) year, (int) month, (int) day);
 
 // /*  Run dop for IAU defined standard of rest */
@@ -170,13 +170,13 @@ vel_sys=20.0;
 //                    year,doy,uttime);
 // if (DEBUG) printf("DOP INPUT: %10.6f %10.6f %10.6f\n",lon,lat,elev);
 
-/* ra and dec are in degree */ 
+/* ra and dec are in degree */
 ra = 67.89196135;
 dec = 18.13468391;
 epoch = 2000;
-year = 2016;
-month = 11;
-day = 11;
+year = 2018;
+month = 6;
+day = 20;
 doy=(double) day_of_year((int) year, (int) month, (int) day);
 uttime = 6;
 /* lat and lon in degree */
@@ -189,10 +189,10 @@ dop_ed(ra,dec,epoch,year,doy,uttime,lat,lon,elev,&xlst,&vsun,&vmon,&vobs,&v1,
 
 /* Geocentric */
 printf("Geocentric\n");
-printf("Standard IAU Solar Motion V_LSR =%+10.2f\n",v1-vobs); 
+printf("Standard IAU Solar Motion V_LSR =%+10.2f\n",v1-vobs);
 /* Topocentric */
 printf("Topocentric\n");
-printf("Standard IAU Solar Motion V_LSR =%+10.2f\n",v1); 
+printf("Standard IAU Solar Motion V_LSR =%+10.2f\n",v1);
 
 /*  Run dop for Mihalas and Binney standard */
 ra_sys=17.765618;  /* l=53.0, b=25.0 in epoch 1900 coords */
@@ -203,21 +203,21 @@ dop_ed(ra,dec,epoch,year,doy,uttime,lat,lon,elev,&xlst,&vsun,&vmon,&vobs,&v1,
 
 /* Geocentric */
 printf("Geocentric\n");
-printf("Mihalas & Binney Solar Motion V_LSR =%+10.2f\n",v1-vobs); 
+printf("Mihalas & Binney Solar Motion V_LSR =%+10.2f\n",v1-vobs);
 /* Topocentric */
 printf("Topocentric\n");
 printf("Mihalas & Binney Solar Motion V_LSR =%+10.2f\n",v1);
 
-// if (earthframe[0]=='g') 
+// if (earthframe[0]=='g')
 //      printf("<H3>Geocentric</H3>\n");
 //    else
 //      printf("<H3>Topocentric</H3>\n");
 
 
-// if (earthframe[0]=='g') 
-//      printf("<H3>Standard IAU Solar Motion V<sub>LSR</sub>=%+10.2f</H3>\n",v1-vobs); 
+// if (earthframe[0]=='g')
+//      printf("<H3>Standard IAU Solar Motion V<sub>LSR</sub>=%+10.2f</H3>\n",v1-vobs);
 //  else
-//      printf("<H3>Standard IAU Solar Motion V<sub>LSR</sub>=%+10.2f</H3>\n",v1); 
+//      printf("<H3>Standard IAU Solar Motion V<sub>LSR</sub>=%+10.2f</H3>\n",v1);
 
 //      printf("<BR>\n");
 
@@ -228,13 +228,13 @@ printf("Mihalas & Binney Solar Motion V_LSR =%+10.2f\n",v1);
 // dop_ed(ra,dec,epoch,year,doy,uttime,lat,lon,elev,&xlst,&vsun,&vmon,&vobs,&v1,
 //        ra_sys,dec_sys,vel_sys);
 
-// if (earthframe[0]=='g') 
-//      printf("<H3>Mihalas & Binney Solar Motion V<sub>LSR</sub>=%+10.2f</H3>\n",v1-vobs); 
+// if (earthframe[0]=='g')
+//      printf("<H3>Mihalas & Binney Solar Motion V<sub>LSR</sub>=%+10.2f</H3>\n",v1-vobs);
 //  else
-//      printf("<H3>Mihalas & Binney Solar Motion V<sub>LSR</sub>=%+10.2f</H3>\n",v1); 
+//      printf("<H3>Mihalas & Binney Solar Motion V<sub>LSR</sub>=%+10.2f</H3>\n",v1);
 
 
-// /*  End HTML stuff */   
+// /*  End HTML stuff */
 //     printf("<HR>\n");
 //     printf("The algorithm for calculating V<sub>LSR</sub> was written by\n");
 //     printf("M. A. Gordon and can be found in <EM> Methods of Experimental Physics,\n");
@@ -261,31 +261,19 @@ printf("Mihalas & Binney Solar Motion V_LSR =%+10.2f\n",v1);
 }/*  End main */
 
 /*  Procedure day_of_year calculates the day of the year. */
- 
+
 // static char daytab[2][13] = {
 //   {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
 //   {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 // };
- 
+
 // int day_of_year(year, month, day)
 // int year, month, day;
 // {
 // int i, leap;
- 
+
 //      leap = year%4 == 0 && year%100 != 0 || year%400 == 0;
 //      for (i=1; i < month; i++)
 //         day += daytab[leap][i];
 //      return day;
 // }
-
-
-
-
-
-
-
-
-
-
-
-

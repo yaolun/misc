@@ -598,7 +598,10 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     if better_im == False:
         im_photon = 1e6
     else:
-        im_photon = 5e7
+        if mono:
+            im_photon = 5e7
+        else:
+            im_photon = 5e7*wav_num
 
     if mono == True:
         if (type(mono_wave) == int) or (type(mono_wave) == float) or (type(mono_wave) == str):
