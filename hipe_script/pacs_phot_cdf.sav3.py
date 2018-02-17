@@ -11,7 +11,7 @@ obsid_phot = {'Source': ['L1157', 'L1014', 'IRAS03301', 'B1-c', 'B1-a',
                         [1342227103, 1342227104],
                         [1342267246, 1342267247],
                         [1342227103, 1342227104], #
-                        [1342227103, 1342227104, 1342190326, 1342190327],
+                        [1342227103, 1342227104],
                         [1342227103, 1342227104],
                         [1342228175, 1342228174],
                         [1342202252],
@@ -82,7 +82,7 @@ for i in range(len(obsid_phot['Source'])):
         print obsid_phot['Source'][i], ' is skipped.'
         continue
 
-    if obsid_phot['Source'][i] not in ['IRAS03245']:
+    if obsid_phot['Source'][i] not in ['IRAS03245', 'VLA1623']:
         continue
 
     obsid_dum = obsid_phot['obsid'][i]

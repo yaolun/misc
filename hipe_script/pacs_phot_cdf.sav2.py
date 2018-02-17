@@ -11,7 +11,7 @@ obsid_phot = {'Source': ['L1157', 'L1014', 'IRAS03301', 'B1-c', 'B1-a',
                         [1342227103, 1342227104],
                         [1342267246, 1342267247],
                         [1342227103, 1342227104], #
-                        [1342227103, 1342227104, 1342190326, 1342190327],
+                        [1342227103, 1342227104],
                         [1342227103, 1342227104],
                         [1342228175, 1342228174],
                         [1342202252],
@@ -75,16 +75,13 @@ skip = True
 
 # PACS aperture photometry
 for i in range(len(obsid_phot['Source'])):
-
+    if obsid_phot['Source'][i] != 'L1157':
+        continue
     if obsid_phot['Source'][i] == start_from:
         skip = False
     if skip:
         print obsid_phot['Source'][i], ' is skipped.'
         continue
-
-    if obsid_phot['Source'][i] not in ['IRAS03245']:
-        continue
-
     obsid_dum = obsid_phot['obsid'][i]
     if len(obsid_dum) == 0:
         print 'No photometry obsid found for ', obsid_phot['Source'][i]
@@ -108,7 +105,7 @@ for i in range(len(obsid_phot['Source'])):
     # get aperture fitted by matching PACS and SPIRE spectra
 
     for obsid in obsid_dum:
-    	obs = getObservation(obsid=obsid,useHsa=True, instrument='PACS')
+    	obs = getObservation(obsid=obsid,useHsa=True)
     	caltree=getCalTree(obs=obs)
 
         innerArcsec = 150.0
