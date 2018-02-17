@@ -115,9 +115,9 @@ obsid = [['AB_Aur','1342217842','1342217843','0'],\
 # obsid = [['L1251B','1342269932','1342269933','0']]
 
 # reduction parameters
-outdir = '/home/bettyjo/yaolun/CDF_archive_v2_FPtest/'
+outdir = '/home/bettyjo/yaolun/CDF_archive_v2/'
 pacsdatadir = '/scratch/CDF_PACS_HSA/'
-reduction_name = 'CDF_archive_v2_FPtest'
+reduction_name = 'CDF_archive_v2'
 
 # outdir = '/Users/yaolun/data/L1251B/Mar17/reduction/'
 # pacsdatadir = '/Users/yaolun/data/L1251B/Mar17/ov8_up7/'
@@ -172,60 +172,60 @@ for element in header:
 #
 # ###################### STEP 3 ######################
 # line fitting on cube products
-idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_spire.pro')
-idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
-idl('.r /home/bettyjo/yaolun/programs/line_fitting/plot_contour.pro')
+# idl('.r /home/bettyjo/yaolun/programs/line_fitting/extract_spire.pro')
+# idl('.r /home/bettyjo/yaolun/programs/line_fitting/gauss.pro')
+# idl('.r /home/bettyjo/yaolun/programs/line_fitting/plot_contour.pro')
 #
 # # for SPIRE
-foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
-foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-foo.close()
-foo = open(outdir+reduction_name+'_spire_1d_lines.txt', 'w')
-foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-foo.close()
+# foo = open(outdir+reduction_name+'_spire_lines.txt', 'w')
+# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+# foo.close()
+# foo = open(outdir+reduction_name+'_spire_1d_lines.txt', 'w')
+# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+# foo.close()
 
 # #
 # # #
 # The option of wavelength shift for testing the false-positive rate
-print 'FPtest' in reduction_name
-print reduction_name
-if 'FPtest' in reduction_name:
-    wl_shift = 6.8
-    print 'wavelength shift turned on', wl_shift
-else:
-    wl_shift = 0
-
-for o in obsid_spire:
-    # for running a certain source
-    # if o != obsid_spire[obj_list_spire.index('HH100')]:
-    #     continue
-    obj = obj_list_spire[obsid_spire.index(o)]
-    print 'Step 3 - ', obj
-    # read in RA/Dec
-    radec_slw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
-    radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_ssw.txt')
-    # SLW
-    idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
-            plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
-            ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
-            slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
-            print_all=outdir+reduction_name+'_spire_lines', wl_shift=wl_shift)
-    # SSW
-    idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
-            plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
-            ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
-            ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
-            print_all=outdir+reduction_name+'_spire_lines', wl_shift=wl_shift)
-
-    # make contour plots
-    idl.pro('plot_contour', noise=3, indir=outdir+obj+'/spire/advanced_products/cube/',
-            plotdir=outdir+obj+'/spire/advanced_products/contours/', objname=obj,
-            spire=1, brightness=1)
+# print 'FPtest' in reduction_name
+# print reduction_name
+# if 'FPtest' in reduction_name:
+#     wl_shift = 6.8
+#     print 'wavelength shift turned on', wl_shift
+# else:
+#     wl_shift = 0
+#
+# for o in obsid_spire:
+#     # for running a certain source
+#     # if o != obsid_spire[obj_list_spire.index('HH100')]:
+#     #     continue
+#     obj = obj_list_spire[obsid_spire.index(o)]
+#     print 'Step 3 - ', obj
+#     # read in RA/Dec
+#     radec_slw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_slw.txt')
+#     radec_ssw = ascii.read(outdir+obj+'/spire/data/cube/'+obj+'_radec_ssw.txt')
+#     # SLW
+#     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
+#             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
+#             ra=radec_slw['RA(deg)'].data, dec=radec_slw['Dec(deg)'].data, coordpix=radec_slw['Pixel'].data,
+#             slw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
+#             print_all=outdir+reduction_name+'_spire_lines', wl_shift=wl_shift)
+#     # SSW
+#     idl.pro('extract_spire', indir=outdir+obj+'/spire/data/cube/', outdir=outdir+obj+'/spire/advanced_products/cube/',
+#             plotdir=outdir+obj+'/spire/advanced_products/cube/plots/', localbaseline=10, global_noise=20,
+#             ra=radec_ssw['RA(deg)'].data, dec=radec_ssw['Dec(deg)'].data, coordpix=radec_ssw['Pixel'].data,
+#             ssw=1, noiselevel=3, brightness=1, object=obj, flat=1, continuum=1, current_pix=1, double_gauss=1,
+#             print_all=outdir+reduction_name+'_spire_lines', wl_shift=wl_shift)
+#
+#     # make contour plots
+#     idl.pro('plot_contour', noise=3, indir=outdir+obj+'/spire/advanced_products/cube/',
+#             plotdir=outdir+obj+'/spire/advanced_products/contours/', objname=obj,
+#             spire=1, brightness=1)
 
 ###################### STEP 4 ######################
 # re-format the SECT-reduced 1-D product and perform fitting
-print 'Step 4'
-SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name+'_spire_1d', wl_shift=wl_shift)
+# print 'Step 4'
+# SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reduction_name+'_spire_1d', wl_shift=wl_shift)
 
 ###################### STEP 5 ######################
 # Fit alpha for three photometric bands for later measuring photometric fluxes.
@@ -253,62 +253,62 @@ SPIRE1D_run(obsid=obsid, indir=outdir, outdir=outdir, global_dir=outdir+reductio
 # Parse the cube file into individual ASCII files.
 # Calculate the 1-D PACS spectrum with a given aperture size
 
-# # for PACS
-# foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
-# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-# foo.close()
-# foo = open(outdir+reduction_name+'_pacs_1d_lines.txt', 'w')
-# foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
-# foo.close()
-#
-# # option to use the existing fitted PACS 1D extraction apertures
-# useAper = True
-#
-# # Choose to use existing fitted apertures
-# if useAper:
-#     if os.path.exists(outdir+'pacs_1d_apertures.txt'):
-#         fitted_apers = ascii.read(outdir+'pacs_1d_apertures.txt')
-# else:
-#     # file to write out fitted PACS apertures
-#     foo = open(outdir+'pacs_1d_apertures.txt', 'w')
-#     foo.write('{:>10s}{:>10s}\n'.format('#Object','aperture'))
-#
-#
-# start_from = ''
-#
-# for o in obsid:
-#     skip = False
-#     # if o[3] == '0':
-#     #     continue
-#     if o[1] == '0':
-#         continue
-#
-#     if o[0] == 'IRS46':
-#         # for skipping processed objects
-#         skip = True
-#     if skip:
-#         continue
-#
-#     print('Step 2 - ', o[0])
-#     # # load aperture from SPIRE SECT reduction
-#     # if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
-#     #     spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
-#     #     aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
-#     # else:
-#     #     aper_size = 31.8
-#     # print aper_size
-#     if not useAper:
-#         aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0],
-#                                      auto_match=True, print_all_path=outdir+reduction_name+'_pacs_lines')
-#         print(o[0], aper_size_fitted)
-#         foo.write('{:>10s}{:>10.3f} \n'.format(o[0], aper_size_fitted))
-#
-#     else:
-#         cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0],
-#                   aper_size=fitted_apers['aperture'][fitted_apers['Object'] == o[0]],
-#                   print_all_path=outdir+reduction_name+'_pacs_lines')
-# if not useAper:
-#     foo.close()
+# for PACS
+foo = open(outdir+reduction_name+'_pacs_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+foo.close()
+foo = open(outdir+reduction_name+'_pacs_1d_lines.txt', 'w')
+foo.write('{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s}{:>20s} \n'.format(*header))
+foo.close()
+
+# option to use the existing fitted PACS 1D extraction apertures
+useAper = True
+
+# Choose to use existing fitted apertures
+if useAper:
+    if os.path.exists(outdir+'pacs_1d_apertures.txt'):
+        fitted_apers = ascii.read(outdir+'pacs_1d_apertures.txt')
+else:
+    # file to write out fitted PACS apertures
+    foo = open(outdir+'pacs_1d_apertures.txt', 'w')
+    foo.write('{:>10s}{:>10s}\n'.format('#Object','aperture'))
+
+
+start_from = ''
+
+for o in obsid:
+    skip = False
+    # if o[3] == '0':
+    #     continue
+    if o[1] == '0':
+        continue
+
+    if o[0] == 'IRS46':
+        # for skipping processed objects
+        skip = True
+    if skip:
+        continue
+
+    print('Step 2 - ', o[0])
+    # # load aperture from SPIRE SECT reduction
+    # if os.path.exists(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt'):
+    #     spire_phot = ascii.read(outdir+str(o[0])+'/spire/data/'+str(o[0])+'_spire_phot.txt', data_start=4)
+    #     aper_size = spire_phot['aperture(arcsec)'][spire_phot['wavelength(um)'] == spire_phot['wavelength(um)'].min()][0]
+    # else:
+    #     aper_size = 31.8
+    # print aper_size
+    if not useAper:
+        aper_size_fitted = cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0],
+                                     auto_match=True, print_all_path=outdir+reduction_name+'_pacs_lines')
+        print(o[0], aper_size_fitted)
+        foo.write('{:>10s}{:>10.3f} \n'.format(o[0], aper_size_fitted))
+
+    else:
+        cdfPacs1d(o[1:3], pacsdatadir, outdir+o[0]+'/', o[0],
+                  aper_size=fitted_apers['aperture'][fitted_apers['Object'] == o[0]],
+                  print_all_path=outdir+reduction_name+'_pacs_lines')
+if not useAper:
+    foo.close()
 
 ###################### STEP 3 ######################
 # extract photometry with the aperture size specified or derived in above

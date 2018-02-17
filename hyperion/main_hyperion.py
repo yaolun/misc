@@ -16,6 +16,8 @@ import time
 low_res = True
 # the angular range at whcih the azimuthal averaged radial intensity will perform.
 rrange = [10, 200]
+# the range of wavelength.  [wav_min, wav_max, wav_num]
+wav_range = (1.0, 25., 1000)
 
 # Default setting
 run = True
@@ -170,12 +172,13 @@ if extract_only == False:
         # calculate the initial dust profile
         # option to fix some parameter
         # fix_params = {'R_min': 0.14}
-        m = setup_model(outdir_dum,outdir,'model'+str(int(model_num)+i),params_dict,
-                        home+dict_path['dust_file'],plot=True,fast_plot=fast_plot,
-                        idl=True,record=record,mono=mono,mono_wave=mono_wave,
-                        aperture=aperture,fix_params=fix_params, low_res=low_res,
-                        power=power,better_im=better_im,ellipsoid=ellipsoid,
-                        dstar=dstar,TSC_dir=home+dict_path['TSC_dir'],
+        m = setup_model(outdir_dum,outdir, 'model'+str(int(model_num)+i),
+                        params_dict, home+dict_path['dust_file'], wav_range,
+                        plot=True, fast_plot=fast_plot, idl=True, record=record,
+                        mono=mono, mono_wave=mono_wave, aperture=aperture,
+                        fix_params=fix_params,  low_res=low_res, power=power,
+                        better_im=better_im, ellipsoid=ellipsoid, dstar=dstar,
+                        TSC_dir=home+dict_path['TSC_dir'],
                         IDL_path=dict_path['IDL_path'], image_only=image_only)
         if run == False:
             print 'Hyperion run is skipped. Make sure you have run this model before'

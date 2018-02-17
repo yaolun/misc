@@ -1,9 +1,11 @@
-def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,plot=False,\
-                low_res=True,flat=True,scale=1,radmc=False,mono=False,mono_wave=None,
-                record=True,dstar=200.,aperture=None,dyn_cav=False,fix_params=None,
-                power=2,better_im=False,ellipsoid=False,TSC_dir='~/programs/misc/TSC/',
-                IDL_path='/Applications/exelis/idl83/bin/idl',auto_disk=0.25,fast_plot=False,
-                image_only=False, tsc_com=False):
+def setup_model(outdir, record_dir, outname, params, dust_file, wav_range,
+                tsc=True, idl=False, plot=False, low_res=True, flat=True,
+                scale=1, radmc=False, mono=False, mono_wave=None, record=True,
+                dstar=200., aperture=None, dyn_cav=False, fix_params=None,
+                power=2, better_im=False, ellipsoid=False,
+                TSC_dir='~/programs/misc/TSC/',
+                IDL_path='/Applications/exelis/idl83/bin/idl', auto_disk=0.25,
+                fast_plot=False, image_only=False, tsc_com=False):
     """
     params = dictionary of the model parameters
     'alma' keyword is obsoleted
@@ -51,10 +53,7 @@ def setup_model(outdir,record_dir,outname,params,dust_file,tsc=True,idl=False,pl
     m = Model()
 
     # min and max wavelength to compute (need to define them first for checking dust properties)
-    # !!!
-    wav_min = 2.0
-    wav_max = 1400.
-    wav_num = 1400
+    wav_min, wav_max, wav_num = wav_range
 
     # Create dust properties
     # Hyperion needs nu, albedo, chi, g, p_lin_max
