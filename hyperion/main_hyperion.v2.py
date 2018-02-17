@@ -10,6 +10,7 @@ from temp_hyperion import temp_hyperion
 from hyperion_image import hyperion_image
 from azimuthal_avg_radial_intensity import azimuthal_avg_radial_intensity
 import time
+import argparse
 
 # option for high resolution r-grid
 # !!!
@@ -17,7 +18,7 @@ low_res = True
 # the angular range at whcih the azimuthal averaged radial intensity will perform.
 rrange = [10, 200]
 # the range of wavelength.  [wav_min, wav_max, wav_num]
-wav_range = (1.0, 25., 1000)
+wav_range = (1.0, 25., 1400)
 
 # Default setting
 run = True
@@ -39,44 +40,69 @@ azimuthal = True
 skip_regular = False
 fix_params = {}
 
+# get command-line arguments (ver 2.0)
+parser = argparse.ArgumentParser(description='Options for manually control the modeling')
+parser.add_argument('--norun', action='store_false')
+parser.add_argument('--norecord', action='store_true')
+parser.add_argument('--mono', action='store_true')
+parser.add_argument('--control', action='store_true')
+parser.add_argument('--extract_only', action='store_true')
+parser.add_argument('--temp', action='store_true')
+parser.add_argument('--skip_regular', action='store_true')
+parser.add_argument('--alma', action='store_true')
+parser.add_argument('--core_num')
+parser.add_argument('--better_im', action='store_true')
+parser.add_argument('--chi2', action='store_true')
+parser.add_argument('--test', action='store_true')
+parser.add_argument('--ellipsoid', action='store_true')
+parser.add_argument('--fast_plot', action='store_true')
+
+args = vars(parser.parse_args(sys.argv.split()))
+
+
 # Get command-line arguments
-if 'norun' in sys.argv:
-    run = False
-if 'norecord' in sys.argv:
-    record = False
-if 'mono' in sys.argv:
-    mono = True
-    image_only = True
-    azimuthal = False
-    print 'Monochromatic RT now force "image_only" simulations.'
-    print 'Need to go the code for more options.'
-if 'control' in sys.argv:
-    control = True
-if 'extract_only' in sys.argv:
-    extract_only = True
-if 'temp' in sys.argv:
-    temp = True
-if 'skip_regular' in sys.argv:
-    skip_regular = True
-if 'alma' in sys.argv:
-    alma = True
-if '18' in sys.argv:
-    core_num = 18
-if 'better_im' in sys.argv:
-    better_im = True
-if 'chi2' in sys.argv:
-    chi2 = True
-if 'test' in sys.argv:
-    test = True
-if 'ellipsoid' in sys.argv:
-    ellipsoid = True
-if 'fast_plot' in sys.argv:
-    fast_plot = True
+# if 'norun' in sys.argv:
+#     run = False
+# if 'norecord' in sys.argv:
+#     record = False
+# if 'mono' in sys.argv:
+#     mono = True
+#     image_only = True
+#     azimuthal = False
+#     print 'Monochromatic RT now force "image_only" simulations.'
+#     print 'Need to go the code for more options.'
+# if 'control' in sys.argv:
+#     control = True
+# if 'extract_only' in sys.argv:
+#     extract_only = True
+# if 'temp' in sys.argv:
+#     temp = True
+# if 'skip_regular' in sys.argv:
+#     skip_regular = True
+# if 'alma' in sys.argv:
+#     alma = True
+# if '18' in sys.argv:
+#     core_num = 18
+# if 'better_im' in sys.argv:
+#     better_im = True
+# if 'chi2' in sys.argv:
+#     chi2 = True
+# if 'test' in sys.argv:
+#     test = True
+# if 'ellipsoid' in sys.argv:
+#     ellipsoid = True
+# if 'fast_plot' in sys.argv:
+#     fast_plot = True
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
 # require additional input for monochromatic radiative transfer
 if mono:
+    image_only = True
+    azimuthal = False
+    print 'Monochromatic RT now force "image_only" simulations.'
+    print 'Need to go the code for more options.'
+
     mono_wave = raw_input('What are the bands for monochromatic RT?')
     # Here are some pre-set wavelengths
     if mono_wave == 'NIR':
@@ -96,6 +122,7 @@ if mono:
 
     unit = 'MJy\,sr^{-1}'
     print 'Image unit is set to be MJy/sr'
+
 # path setting version 1.1
 # The path file "run_hyperion_path.txt" has to be placed at the same directory as main_hyperion.py
 home = os.path.expanduser('~')
@@ -116,23 +143,23 @@ pprint(dict_path)
 wl_aper, aper_arcsec = np.genfromtxt(home+dict_path['obs_dir']+'aperture.txt', skip_header=1, dtype=float).T
 aperture = {'wave': wl_aper, 'aperture': aper_arcsec}
 
-if control == True:
+if control:
     print 'Running the controlled grids for paper...'
     params_table = home + dict_path['input_table']+'input_table_control.txt'
     outdir = home + dict_path['outdir']+'controlled/'
-if alma == True:
+if alma:
     print 'Running for ALMA proposal...'
     params_table = home + dict_path['input_table']+'input_table_alma.txt'
     outdir = home + dict_path['outdir']+'alma/'
-if chi2 == True:
+if chi2:
     print 'Running for chi2 grid...'
     params_table = home + dict_path['input_table']+'input_table_chi2.txt'
     outdir = home + dict_path['outdir']+'chi2_grid/'
-if test == True:
+if test:
     print 'testing mode...'
     params_table = home + dict_path['input_table']+'test_input.txt'
     outdir = home + dict_path['outdir']+'test/'
-if ellipsoid == True:
+if ellipsoid:
     print 'Running with ellipsoid cavities...'
     params_table = home + dict_path['input_table']+'input_table_ellipsoid.txt'
     outdir = home + dict_path['outdir']+'ellipsoid/'
@@ -180,7 +207,7 @@ if extract_only == False:
                         better_im=better_im, ellipsoid=ellipsoid, dstar=dstar,
                         TSC_dir=home+dict_path['TSC_dir'],
                         IDL_path=dict_path['IDL_path'], image_only=image_only)
-        if run == False:
+        if norun:
             print 'Hyperion run is skipped. Make sure you have run this model before'
         else:
             # Run hyperion
