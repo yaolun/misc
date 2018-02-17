@@ -61,7 +61,7 @@ if 'skip_regular' in sys.argv:
 if 'alma' in sys.argv:
     alma = True
 if '18' in sys.argv:
-    core_num = 18
+    core_num = 10
 if 'better_im' in sys.argv:
     better_im = True
 if 'chi2' in sys.argv:
