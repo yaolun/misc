@@ -75,7 +75,7 @@ if 'fast_plot' in sys.argv:
     fast_plot = True
 if 'no_azimuthal' in sys.argv:
     azimuthal = False
-if 'no_image' in sys_argv:
+if 'no_image' in sys.argv:
     image = False
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
