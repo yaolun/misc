@@ -37,6 +37,7 @@ fast_plot = False
 image_only = False
 azimuthal = True
 skip_regular = False
+image = True
 fix_params = {}
 
 # Get command-line arguments
@@ -72,6 +73,10 @@ if 'ellipsoid' in sys.argv:
     ellipsoid = True
 if 'fast_plot' in sys.argv:
     fast_plot = True
+if 'no_azimuthal' in sys.argv:
+    azimuthal = False
+if 'no_image' in sys_argv:
+    image = False
 
 print 'Setting - run: %s, record: %s, mono: %s' % (run,record,mono)
 
@@ -194,8 +199,9 @@ if extract_only == False:
         print 'Seems finish, lets check out the results'
         if not mono:
             extract_hyperion(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
-                             indir=home+dict_path['obs_dir'],outdir=outdir_dum,
-                             aperture=aperture,filter_func=True,obj=obj,dstar=dstar)
+                             indir=home+dict_path['obs_dir'], outdir=outdir_dum,
+                             aperture=aperture, filter_func=True, obj=obj,
+                             dstar=dstar, image=image)
         else:
             if type(mono_wave) is str:
                 hyperion_image(outdir_dum+'model'+str(int(model_num)+i)+'.rtout',
@@ -242,9 +248,11 @@ else:
         # the indir here is the dir that contains the observed spectra.
         if not skip_regular:
             if not mono:
-                extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',indir=home+dict_path['obs_dir'],
-                                 outdir=outdir_dum,aperture=aperture,
-                                 filter_func=True,obj=obj,dstar=dstar)
+                extract_hyperion(outdir_dum+'model'+str(i)+'.rtout',
+                                 indir=home+dict_path['obs_dir'],
+                                 outdir=outdir_dum, aperture=aperture,
+                                 filter_func=True, obj=obj, dstar=dstar,
+                                 image=image)
             else:
                 if type(mono_wave) is str:
                     hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
