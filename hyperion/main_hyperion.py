@@ -256,7 +256,8 @@ else:
             else:
                 if type(mono_wave) is str:
                     hyperion_image(outdir_dum+'model'+str(i)+'.rtout',
-                            float(mono_wave), outdir_dum, 'model'+str(i),dstar=dstar, unit=unit)
+                            float(mono_wave), outdir_dum, 'model'+str(i),
+                            dstar=dstar, unit=unit)
                 else:
                     for w in mono_wave:
                         hyperion_image(outdir_dum+'model'+str(i)+'.rtout', w,
