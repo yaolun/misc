@@ -645,7 +645,7 @@ def setup_model(outdir, record_dir, outname, params, dust_file, wav_range,
         wl_aper = aperture['wave']
         aper    = aperture['aperture']
         # create the non-repetitive aperture list and index array
-        aper_reduced = list(set(aper)).sort()
+        aper_reduced = sorted(list(set(aper)))
         index_reduced = np.arange(1, len(aper_reduced)+1)
 
         dict_peel_sed = {}

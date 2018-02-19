@@ -96,7 +96,7 @@ def extract_hyperion(filename,indir=None,outdir=None,dstar=200.0,aperture=None,
     wl_aper = aperture['wave']
     aper    = aperture['aperture']
     # create the non-repetitive aperture list and index array
-    aper_reduced = list(set(aper)).sort()
+    aper_reduced = sorted(list(set(aper)))
     index_reduced = np.arange(1, len(aper_reduced)+1)  # '+1': the zeroth slice corresponds to infinite aperture
 
     # Create the plot
