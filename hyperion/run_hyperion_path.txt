@@ -1,5 +1,5 @@
 # All paths are related to home directory, except for IDL_path
-input_table		/programs/misc/hyperion/
+input_table		/programs/misc/hyperion/input_table_jwstNIR.txt
 outdir 			/hyperion/bhr71/
 # dust_file		/dust_model/Ormel2011/hyperion/ic-sil+gra3opc.txt
 dust_file		/programs/misc/oh5_hyperion.txt
