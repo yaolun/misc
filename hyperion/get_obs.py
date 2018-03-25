@@ -33,11 +33,11 @@ def get_obs(indir, obj='BHR71', phot=True, spec=True):
             sigma_dum = np.zeros_like(wl_noise[i])
             for iwl in range(0,len(wl_noise[i])):
                 if iwl < sig_num/2:
-                    sigma_dum[iwl] = np.std(np.hstack((flux_noise[i][0:sig_num/2],flux_noise[i][0:sig_num/2-iwl])))
+                    sigma_dum[iwl] = np.std(np.hstack((flux_noise[i][0:int(sig_num/2)],flux_noise[i][0:int(sig_num/2)-iwl])))
                 elif len(wl_noise[i])-iwl < sig_num/2:
-                    sigma_dum[iwl] = np.std(np.hstack((flux_noise[i][iwl:],flux_noise[i][len(wl_noise[i])-sig_num/2:])))
+                    sigma_dum[iwl] = np.std(np.hstack((flux_noise[i][iwl:],flux_noise[i][len(wl_noise[i])-int(sig_num/2):])))
                 else:
-                    sigma_dum[iwl] = np.std(flux_noise[i][iwl-sig_num/2:iwl+sig_num/2])
+                    sigma_dum[iwl] = np.std(flux_noise[i][iwl-int(sig_num/2):iwl+int(sig_num/2)])
             sigma_noise = np.hstack((sigma_noise, sigma_dum))
         sigma_noise = np.hstack((unc_irs, sigma_noise))
 
