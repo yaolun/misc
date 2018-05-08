@@ -53,8 +53,8 @@ C          close(3)
 C        else
 
 C         read the parameters from a file
-          open(unit=13, file='tsc.par')
-          read(13,*) vmin, vmax, delv, ninc, inc, tau
+C          open(unit=13, file='tsc.par')
+C          read(13,*) vmin, vmax, delv, ninc, inc, tau
           
 
           print *,' vmin=?,vmax=?,delv=?'
