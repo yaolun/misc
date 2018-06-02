@@ -94,7 +94,7 @@ C        open(unit=11,file='ncollapse_debug',status='new')
         read(lun,*) mcol,lcol
         print *,mcol,lcol
         do 10 l=1,lcol
-          print *,l,m
+C          print *,l,m
           read(lun,*,end=900) (dd((m-1)*lcol+l),m=1,mcol)
 !         add by YLY
           error=.false.
