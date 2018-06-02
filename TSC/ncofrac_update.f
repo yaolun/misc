@@ -162,7 +162,7 @@ C          print *,l,m
 ! YLY: write out msg if running the last element in r-grid
           if(nr.eq.nrmax) then
             delr=abs(xrmax-xr)
-            write(7,*)' last step nr,xr,xrmax,delr',nr,xr,xrmax,delr
+C            write(7,*)' last step nr,xr,xrmax,delr',nr,xr,xrmax,delr
           end if
 ! YLY: looks like a volume integral element
           const= xr**2 *delth*delph*delr
@@ -258,22 +258,22 @@ C            write(11,*), "yr", yr
 !      But I don't know what's the reason behind this.
             if( abs((vz(ni)-vzold(ni))/delv) .gt.0.5) then
 !              print *,' velocity channel skip',vz(ni),vzold(ni),xr,theta,phi
-               write(7,*)' vel. channel skip',vz(ni),vzold(ni),xr,theta,phi
+C               write(7,*)' vel. channel skip',vz(ni),vzold(ni),xr,theta,phi
                nskip=nskip +1
 ! YLY: write out the reason for stop
 !              if(nskip .gt. 30) stop
 !
                if(nskip .gt. 30) then
-                   write(7,*)'skipped channels exceeded max value', nskip
+C                   write(7,*)'skipped channels exceeded max value', nskip
 !                   stop
                end if
             end if
 !           YLY: debug
-            write(11,*), "nr, nt, np", nr, nt, np
-            write(11,*), "vz(ni), vzold(ni)",vz(ni), vzold(ni)
-            write(11,*), "vmin", vmin
-            write(11,*), "delv", delv
-            write(11,*), "nskip", nskip
+C            write(11,*), "nr, nt, np", nr, nt, np
+C            write(11,*), "vz(ni), vzold(ni)",vz(ni), vzold(ni)
+C            write(11,*), "vmin", vmin
+C            write(11,*), "delv", delv
+C            write(11,*), "nskip", nskip
 
 !
 ! calculate velocity channel appropriate to velocity vz
@@ -307,7 +307,7 @@ C            write(11,*), "yr", yr
 !             write(7,*)' d(nv,ni),d(nv+1,ni)new',data(nv,ni),data(nv+1,ni)
               end if
             else
-              write(7,*)' vel. outside bounds',vz(ni)
+C              write(7,*)' vel. outside bounds',vz(ni)
 !             print *,' vel. outside bounds',vz(ni)
             end if
 ! save velocity for checking velocity channel skip
@@ -322,7 +322,7 @@ C            write(11,*), "yr", yr
 !         write(7,800) vz(ni),delm,xr,theta,phi,ro,ur,utheta,uphi,dvol
 400         continue
 500       continue
-          write(7,800) vz(ni),delm,xr,theta,phi,ro,ur,utheta,uphi,dvol
+C          write(7,800) vz(ni),delm,xr,theta,phi,ro,ur,utheta,uphi,dvol
 600     continue
 !
         return
